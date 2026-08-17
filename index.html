@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NicaEnglish Club — Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg: #000000; --surface: #000000; --surface2: #050505; --surface3: #080808;
+  --border: #1a1a28; --border2: #22223a; --gold: #f0b429; --gold2: #c8891a;
+  --gold3: #ffd966; --gold-dim: rgba(240,180,41,0.1); --gold-glow: rgba(240,180,41,0.06);
+  --red: #ff4d4d; --green: #00d68f; --blue: #4d9fff; --muted: #484860;
+  --text: #e8e8f2; --white: #ffffff; --r-sm: 14px; --r: 20px; --r-lg: 28px; --r-xl: 36px;
+  --shadow-card: 0 20px 50px rgba(0,0,0,.6);
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--gold); color: #000; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes shimmer { 0%{background-position:-400% center} 100%{background-position:400% center} }
+@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes glow { 0%,100%{box-shadow:0 0 20px rgba(240,180,41,.15)} 50%{box-shadow:0 0 40px rgba(240,180,41,.3)} }
+@keyframes premium-glow { 0% { border-color: var(--gold2); box-shadow: 0 0 5px var(--gold-dim); } 50% { border-color: var(--gold3); box-shadow: 0 0 20px var(--gold-dim); } 100% { border-color: var(--gold2); box-shadow: 0 0 5px var(--gold-dim); } }
+
+.screen { display:none; }
+.screen.active { display:flex; flex-direction:column; animation: fadeIn .35s ease; }
+.loading-screen { position:fixed; inset:0; background:var(--bg); z-index:300; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+.load-logo { width:64px; height:64px; border-radius:20px; background:linear-gradient(135deg, var(--gold), var(--gold2)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px; color:#000; animation: glow 2s ease infinite; overflow:hidden; }
+.spinner { width:32px; height:32px; border:2px solid var(--border2); border-top-color:var(--gold); border-radius:50%; animation:spin .7s linear infinite; }
+
+/* LOGO DINÁMICO — se aplica a loading, login y nav */
+.app-logo { transition: background .3s var(--ease); }
+.app-logo.has-image { background: #0a0a0a; padding: 0; }
+.app-logo img { width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
+
+#s-login { align-items:center; justify-content:center; min-height:100vh; padding:20px; background: var(--bg); }
+.login-wrap { width:100%; max-width:420px; display:flex; flex-direction:column; gap:16px; position:relative; z-index:10; }
+.login-card { background: #000000; border:1px solid var(--border2); border-radius: var(--r-xl); padding: 40px 28px 32px; box-shadow: var(--shadow-card); animation: fadeUp .7s both; }
+
+.logo-mark { width:68px; height:68px; border-radius:22px; margin:0 auto 16px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; font-size:18px; letter-spacing:.5px; box-shadow: 0 10px 30px var(--gold-glow); }
+.brand-title { font-family:'Playfair Display',serif; font-size:28px; color:var(--white); text-align:center; }
+.brand-title span { background:linear-gradient(90deg, var(--gold2), var(--gold3), var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-size:300% auto; animation:shimmer 4s linear infinite; }
+
+.input-shell { position:relative; margin-bottom:14px; }
+.input-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--muted); transition:color .2s var(--ease); pointer-events:none; }
+.field-input { width:100%; padding:15px 16px 15px 44px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:var(--r-sm); color:var(--text); outline:none; font-family:inherit; font-size:14px; transition: border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease); }
+.field-input:focus { border-color: var(--gold2); background:rgba(255,255,255,.07); box-shadow: 0 0 0 3px var(--gold-dim); }
+.field-input:focus + .input-icon, .input-shell:focus-within .input-icon { color: var(--gold); }
+.btn-login { width:100%; padding:16px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:700; border:none; border-radius:var(--r-sm); cursor:pointer; font-family:inherit; font-size:14px; transition: transform .15s var(--ease), box-shadow .15s var(--ease), filter .15s var(--ease); }
+.btn-login:hover { transform: translateY(-1px); box-shadow: 0 12px 28px var(--gold-glow); filter: brightness(1.04); }
+.btn-login:active { transform: translateY(0); }
+
+.cta-card {
+  background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+  border: 1px solid var(--gold2);
+  border-radius: var(--r-xl);
+  padding: 28px 24px;
+  text-align: center;
+  animation: premium-glow 3s infinite ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+.cta-card::after {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(240,180,41,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:99px; background:rgba(240,180,41,.1); color:var(--gold); font-size:9px; text-transform:uppercase; margin-bottom:12px; font-weight: 700; border: 1px solid var(--gold-dim); letter-spacing:1px; }
+.btn-cta { width:100%; padding:15px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:800; border:none; border-radius:var(--r-sm); cursor:pointer; text-transform: uppercase; letter-spacing: 1px; font-family:inherit; font-size:12.5px; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.btn-cta:hover { transform: translateY(-1px); box-shadow: 0 14px 30px var(--gold-glow); }
+
+/* ESTILOS ESTUDIANTE */
+.stu-nav { position:sticky; top:0; z-index:50; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; background: rgba(0,0,0,.85); backdrop-filter: blur(10px); border-bottom:1px solid var(--border); }
+.nav-logo-box { width:30px; height:30px; background:var(--gold); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#000; font-weight:700; font-size:12px; }
+.btn-salir { background:transparent; border:1px solid var(--border2); color:var(--muted); padding:6px 12px; border-radius:8px; font-size:10px; font-weight:700; letter-spacing:.5px; cursor:pointer; font-family:inherit; transition: color .2s var(--ease), border-color .2s var(--ease); }
+.btn-salir:hover { color: var(--red); border-color: rgba(255,77,77,.3); }
+
+.hero-banner { padding:28px 18px 0; background: #000000; }
+.avatar-ring { width:72px; height:72px; border-radius:50%; padding:3px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); overflow:hidden; flex-shrink:0; }
+.avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid #000; }
+.avatar-default { width:100%; height:100%; border-radius:50%; background:var(--surface3); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:24px; font-weight:700; border:3px solid #000; }
+
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 18px; }
+.stat-pill { background: #000000; border:1px solid var(--border); border-radius:var(--r); padding:16px 10px; text-align:center; transition: border-color .2s var(--ease), transform .2s var(--ease); }
+.stat-pill:hover { border-color: var(--border2); transform: translateY(-2px); }
+.stat-num { font-family:'Playfair Display',serif; font-size:28px; color:var(--gold); }
+
+/* BANNER PROYECTADO */
+.banner-projection { margin: 0 18px 20px; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border); background: var(--surface2); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; }
+.banner-projection img, .banner-projection iframe { width: 100%; height: 100%; object-fit: cover; border: none; }
+.banner-default-text { text-align: center; padding: 20px; }
+.banner-default-text h2 { font-family: 'Playfair Display'; color: var(--gold); font-size: 22px; margin-bottom: 5px; letter-spacing: .5px; }
+.banner-default-text p { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; }
+
+/* GRÁFICO DE ÁREA */
+.week-card { background: #000000; border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; margin:0 18px 20px; }
+.card-eyebrow { font-size:10px; color:var(--muted); margin-bottom:5px; letter-spacing:1.5px; font-weight:700; text-transform:uppercase; }
+.graph-container { position: relative; width: 100%; height: 80px; margin-top: 15px; }
+.graph-svg { width: 100%; height: 100%; overflow: visible; }
+.graph-path-area { fill: url(#grad-gold); opacity: 0.3; transition: all 1s ease; }
+.graph-path-line { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(240,180,41,0.5)); transition: all 1s ease; }
+.graph-labels-row { display: flex; justify-content: space-between; margin-top: 10px; padding: 0 5px; }
+.graph-label { font-size: 9px; color: var(--muted); font-weight: 700; width: 20px; text-align: center; transition: color .3s var(--ease); }
+.graph-label.active { color: var(--gold); }
+
+.ring-card { background: #000000; border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; margin:0 18px 20px; display:flex; align-items:center; gap:20px; }
+.res-card { text-decoration:none; display:flex; align-items:center; gap:14px; background: #000000; border:1px solid var(--border); border-radius:var(--r); padding:16px; margin:0 18px 10px; transition: border-color .2s var(--ease), transform .2s var(--ease), background .2s var(--ease); }
+.res-card:hover { border-color: var(--gold2); transform: translateX(3px); background: #050505; }
+
+/* ADMIN */
+.admin-wrap { max-width:520px; margin:0 auto; padding:20px; }
+.admin-card { background: #000000; border:1px solid var(--border2); border-radius:var(--r-xl); overflow:hidden; box-shadow: var(--shadow-card); }
+.tab-btn { flex:1; padding:14px; background:#050505; border:none; color:var(--muted); cursor:pointer; font-family:inherit; font-size:13px; font-weight:600; transition: color .2s var(--ease), background .2s var(--ease); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color:var(--gold); border-bottom:2px solid var(--gold); background:#000; }
+.admin-input { width:100%; padding:14px; background:rgba(255,255,255,0.05); border:1px solid var(--border2); color:#fff; border-radius:12px; margin-bottom:10px; outline:none; font-family:inherit; font-size:14px; transition: border-color .2s var(--ease), box-shadow .2s var(--ease); }
+.admin-input:focus { border-color: var(--gold2); box-shadow: 0 0 0 3px var(--gold-dim); }
+.admin-section { margin-bottom: 25px; border-bottom: 1px solid var(--border2); padding-bottom: 20px; }
+.admin-section:last-of-type { border-bottom:none; }
+.admin-label { font-size: 10px; color: var(--gold); font-weight: 800; margin-bottom: 10px; letter-spacing: 1.5px; text-transform:uppercase; display:flex; align-items:center; gap:6px; }
+.btn-outline-gold { background: var(--surface3); color: var(--gold); border: 1px solid var(--gold2); }
+.btn-outline-gold:hover { background: var(--gold-dim); }
+.ico-btn { width:32px; height:32px; border-radius:8px; border:1px solid; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: 0.2s; }
+.ico-btn:hover { filter: brightness(1.3); transform: translateY(-1px); }
+
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.9); backdrop-filter:blur(10px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; }
+.modal-bg.open { display:flex; }
+.modal-box { background:#000; border:1px solid var(--border2); border-radius:var(--r-xl); padding:32px; text-align:center; max-width:360px; width:100%; box-shadow: var(--shadow-card); animation: fadeUp .3s var(--ease) both; }
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loading">
+  <div class="load-logo app-logo">NEC</div>
+  <div class="spinner"></div>
+</div>
+
+<div id="app-root">
+  <!-- LOGIN SCREEN -->
+  <div id="s-login" class="screen">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="logo-mark app-logo">NEC</div>
+        <h1 class="brand-title">Nica<span>English</span>Club</h1>
+        <p style="text-align:center; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin-top:5px;">Natural Language Acquisition</p>
+        <div style="margin-top:30px;">
+          <div class="input-shell">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input type="text" id="login-nombre" class="field-input" placeholder="Nombre de usuario">
+          </div>
+          <div class="input-shell">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="login-pass" class="field-input" placeholder="Contraseña">
+          </div>
+          <button class="btn-login" id="btn-entrar">Ingresar al Portal</button>
+          <div id="login-error" style="color:var(--red); font-size:12px; margin-top:10px; text-align:center; display:none;">Credenciales incorrectas.</div>
+        </div>
+      </div>
+      <div class="cta-card">
+        <div class="cta-badge"><i class="fa-solid fa-crown"></i> Beneficios Premium</div>
+        <h3 style="color:#fff; margin-bottom:8px; font-family: 'Playfair Display'; font-size: 20px;">¿Listo para el siguiente nivel?</h3>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Accede a tutorías personalizadas y material exclusivo de NicaEnglish.</p>
+        <button class="btn-cta" onclick="window.open('https://sites.google.com/view/nicaenglishclub/planes','_blank')">Ver Planes Gold</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT SCREEN -->
+  <div id="s-student" class="screen">
+    <nav class="stu-nav">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="nav-logo-box app-logo">NEC</div>
+        <span style="font-family:'Playfair Display'; color:#fff; font-weight:700;">NicaEnglish</span>
+      </div>
+      <button onclick="cerrarSesion()" class="btn-salir">SALIR</button>
+    </nav>
+
+    <div class="hero-banner">
+      <div class="profile-row" style="display:flex; align-items:center; gap:15px;">
+        <div class="avatar-ring" id="avatar-container"></div>
+        <div>
+          <p style="font-size:9px; color:var(--gold); letter-spacing:1px; font-weight:700;">WELCOME BACK</p>
+          <h2 id="nombre-alumno-ui" style="font-family:'Playfair Display'; font-size:26px; color:#fff;">Estudiante</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-pill"><div class="stat-num" id="stat-dias">0</div><p style="font-size:8px; color:var(--muted);">DÍAS ESTA SEMANA</p></div>
+      <div class="stat-pill"><div class="stat-num" id="stat-total">0</div><p style="font-size:8px; color:var(--muted);">TOTAL ACCESOS</p></div>
+      <div class="stat-pill"><div class="stat-num" id="stat-semanas">0</div><p style="font-size:8px; color:var(--muted);">LOGROS</p></div>
+    </div>
+
+    <!-- BANNER AREA -->
+    <div id="banner-area" class="banner-projection">
+        <div class="banner-default-text">
+            <h2>NICA ENGLISH CLUB</h2>
+            <p>train your english</p>
+        </div>
+    </div>
+
+    <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
+    <div class="week-card">
+      <p class="card-eyebrow">STREAK GRAPH (CURVA SEMANAL)</p>
+      <div class="graph-container" id="streak-graph"></div>
+    </div>
+
+    <div class="ring-card">
+      <div style="position:relative; width:64px; height:64px;">
+        <svg width="64" height="64" viewBox="0 0 84 84" style="transform:rotate(-90deg)">
+          <circle cx="42" cy="42" r="36" fill="none" stroke="var(--border2)" stroke-width="7"/>
+          <circle id="ring-circle" cx="42" cy="42" r="36" fill="none" stroke="var(--gold)" stroke-width="7" stroke-dasharray="226" stroke-dashoffset="226" style="transition:1.5s; stroke-linecap:round;"/>
+        </svg>
+        <div id="ring-pct" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--gold); font-weight:700; font-size:14px;">0%</div>
+      </div>
+      <div>
+        <h3 id="ring-msg" style="color:#fff; font-size:17px; margin-bottom:2px; font-family:'Playfair Display';">¡Comienza tu racha!</h3>
+        <p id="ring-sub" style="font-size:12px; color:var(--muted);">Completa los 7 días de la semana.</p>
+      </div>
+    </div>
+
+    <p style="padding-left:18px; font-size:10px; color:var(--muted); letter-spacing:2px; margin-bottom:15px; font-weight:700;">RECURSOS Y CLASES</p>
+    <div id="contenedor-galeria"></div>
+  </div>
+
+  <!-- ADMIN SCREEN -->
+  <div id="s-admin" class="screen">
+    <div class="admin-wrap">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="font-family:'Playfair Display'; color:#fff; font-size:28px;">Panel Control</h2>
+        <button onclick="cerrarSesion()" style="color:var(--red); background:transparent; border:none; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit;">SALIR</button>
+      </div>
+      <div class="admin-card">
+        <div style="display:flex;">
+          <button class="tab-btn active" id="btn-tab-enlaces" onclick="switchTab('enlaces',this)">Recursos</button>
+          <button class="tab-btn" id="btn-tab-alumnos" onclick="switchTab('alumnos',this)">Alumnos</button>
+        </div>
+        <div id="tab-enlaces" class="tab-content active" style="padding:20px;">
+          <!-- LOGO CONFIG -->
+          <div class="admin-section">
+            <p class="admin-label"><i class="fa-solid fa-icons"></i> Identidad Visual (Logo)</p>
+            <input type="url" id="config-logo-url" class="admin-input" placeholder="URL Imagen del Logo (Google Drive)">
+            <button class="btn-login btn-outline-gold" onclick="guardarLogo()">Actualizar Logo</button>
+          </div>
+
+          <!-- BANNER CONFIG -->
+          <div class="admin-section">
+            <p class="admin-label"><i class="fa-solid fa-panorama"></i> Configuración del Banner</p>
+            <input type="url" id="config-banner-url" class="admin-input" placeholder="URL Imagen (Drive) o Video (YouTube)">
+            <button class="btn-login btn-outline-gold" onclick="guardarBanner()">Actualizar Banner</button>
+          </div>
+
+          <input type="hidden" id="enlace-id-edicion">
+          <input type="text" id="link-titulo" class="admin-input" placeholder="Título de la clase">
+          <input type="url" id="link-url" class="admin-input" placeholder="https://url-clase.com">
+          <button class="btn-login" id="btn-guardar-enlace" onclick="guardarEnlace()">Publicar Enlace</button>
+          <div id="lista-enlaces-ui" style="margin-top:20px;"></div>
+        </div>
+        <div id="tab-alumnos" class="tab-content" style="padding:20px; display:none;">
+          <input type="hidden" id="alumno-id-edicion">
+          <input type="text" id="alumno-nombre" class="admin-input" placeholder="Nombre completo del alumno">
+          <input type="text" id="alumno-pass" class="admin-input" placeholder="Contraseña">
+          <input type="url" id="alumno-foto" class="admin-input" placeholder="URL Foto Perfil">
+          <button class="btn-login" id="btn-guardar-alumno" onclick="registrarAlumno()">Crear Alumno</button>
+          <button onclick="resetearAsistenciaSemanal()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,77,77,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">RESETEAR SEMANA MANUAL</button>
+          <div id="lista-alumnos-ui" style="margin-top:20px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal-box">
+    <h3 id="modal-title" style="color:#fff; font-family:'Playfair Display'; font-size:22px;"></h3>
+    <p id="modal-desc" style="margin:18px 0; color:var(--muted); line-height:1.5; font-size:14px;"></p>
+    <button onclick="closeModal()" class="btn-login">Entendido</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
+  authDomain: "nicaenglishportal.firebaseapp.com",
+  projectId: "nicaenglishportal",
+  storageBucket: "nicaenglishportal.firebasestorage.app",
+  messagingSenderId: "30475218925",
+  appId: "1:30475218925:web:bd98007b81d1f3860fdc44"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const CORREO_ADMIN = "95gusmg@gmail.com";
+let sessionActiva = null;
+
+setTimeout(() => { document.getElementById('loading').style.display='none'; showScreen('s-login'); }, 1500);
+
+// Aplica el logo (imagen de Drive) a todos los puntos de marca: loading, login y nav estudiante
+initLogoWatch();
+
+function getLocalDateStr(d) {
+  const t = new Date(d.toLocaleString("en-US", {timeZone: "America/Managua"}));
+  return t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,'0') + "-" + String(t.getDate()).padStart(2,'0');
+}
+function getMonday(d) {
+  const t = new Date(d.toLocaleString("en-US", {timeZone: "America/Managua"}));
+  const day = t.getDay(), diff = t.getDate() - day + (day === 0 ? -6 : 1);
+  t.setDate(diff); t.setHours(0,0,0,0);
+  return t;
+}
+function resolverUrlDrive(url) {
+  if (!url) return url;
+  if (url.includes('drive.google.com')) {
+    const idMatch = url.match(/\/d\/(.+?)\/|id=(.+?)(&|$)/);
+    const driveId = idMatch ? (idMatch[1] || idMatch[2]) : null;
+    if (driveId) return `https://lh3.googleusercontent.com/d/${driveId}`;
+  }
+  return url;
+}
+
+async function initLogoWatch() {
+  try { if (!auth.currentUser) await signInAnonymously(auth); } catch (e) { /* si falla, se mantiene el logo por defecto */ }
+  try {
+    onSnapshot(doc(db, 'config', 'logo'), (d) => {
+      const url = d.exists() ? d.data().url : '';
+      aplicarLogo(url);
+    }, () => { /* sin permisos o sin conexión: se mantiene "NEC" */ });
+  } catch (e) { /* silencioso */ }
+}
+
+function aplicarLogo(url) {
+  const final = resolverUrlDrive(url);
+  document.querySelectorAll('.app-logo').forEach(el => {
+    if (final) {
+      el.classList.add('has-image');
+      el.innerHTML = `<img src="${final}" alt="Logo NicaEnglish Club" onerror="this.parentElement.classList.remove('has-image'); this.parentElement.innerHTML='NEC';">`;
+    } else {
+      el.classList.remove('has-image');
+      el.innerHTML = 'NEC';
+    }
+  });
+}
+
+document.getElementById('btn-entrar').addEventListener('click', async () => {
+  const entrada = document.getElementById('login-nombre').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  if (entrada.toLowerCase() === CORREO_ADMIN) {
+    try {
+      await signOut(auth);
+      await signInWithEmailAndPassword(auth, entrada, pass);
+      showScreen('s-admin'); cargarDatosAdmin();
+    } catch(e) { errEl.style.display='block'; }
+    return;
+  }
+
+  try {
+    await signOut(auth);
+    await signInAnonymously(auth);
+    const snap = await getDocs(collection(db,'alumnos'));
+    let found = null;
+    snap.forEach(d => {
+      const data = d.data();
+      if ((data.usuario === norm(entrada) || data.nombre === entrada) && data.pass == pass) {
+        found = {id:d.id, ...data};
+      }
+    });
+    if (found) {
+      sessionActiva = found;
+      await registrarAcceso(found);
+      renderUI(found);
+      showScreen('s-student');
+      escucharRecursos();
+      escucharBanner();
+    } else { errEl.style.display='block'; await signOut(auth); }
+  } catch(e) { console.error(e); }
+});
+
+async function registrarAcceso(alumno) {
+  const hoyStr = getLocalDateStr(new Date());
+  const lunesActualStr = getLocalDateStr(getMonday(new Date()));
+  let dias = (alumno.dias_semana || []).filter(d => d >= lunesActualStr);
+  if (!dias.includes(hoyStr)) dias.push(hoyStr);
+  const upd = { total_logins: (alumno.total_logins || 0) + 1, dias_semana: dias, logins: dias.length, ultimo_acceso: hoyStr };
+  await updateDoc(doc(db,'alumnos',alumno.id), upd);
+  sessionActiva.dias_semana = dias;
+  sessionActiva.total_logins = upd.total_logins;
+}
+
+function renderUI(alumno) {
+  const hoyStr = getLocalDateStr(new Date());
+  const diasValidos = (alumno.dias_semana || []).filter(d => d <= hoyStr);
+  const diasLogueados = diasValidos.length;
+  const initial = alumno.nombre.charAt(0).toUpperCase();
+  const container = document.getElementById('avatar-container');
+  let fotoFinal = resolverUrlDrive(alumno.foto || '');
+  container.innerHTML = fotoFinal ? `<img src="${fotoFinal}" class="avatar-img" onerror="this.outerHTML='<div class=\\'avatar-default\\'>${initial}</div>'">` : `<div class="avatar-default">${initial}</div>`;
+  document.getElementById('nombre-alumno-ui').innerText = alumno.nombre;
+  document.getElementById('stat-dias').innerText = diasLogueados;
+  document.getElementById('stat-total').innerText = alumno.total_logins || 0;
+  document.getElementById('stat-semanas').innerText = Math.floor((alumno.total_logins||0)/7);
+  const pct = Math.min((diasLogueados/7)*100, 100);
+  document.getElementById('ring-pct').innerText = Math.round(pct) + "%";
+  document.getElementById('ring-circle').style.strokeDashoffset = 226 - (226 * pct/100);
+  const msgs = ['Día 1: ¡Empieza!','Día 2: ¡Sigue así!','Día 3: ¡Vas bien!','Día 4: ¡Mitad!','Día 5: ¡Excelente!','Día 6: ¡Falta 1!','🏆 META 7/7'];
+  document.getElementById('ring-msg').innerText = msgs[Math.min(diasLogueados,6)];
+  renderGraph(diasValidos);
+}
+
+function renderGraph(diasSemana) {
+  const container = document.getElementById('streak-graph');
+  if(!container) return; // Seguridad
+  const lunes = getMonday(new Date());
+  const hoyStr = getLocalDateStr(new Date());
+  const puntos = [];
+  const width = 100;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(lunes);
+    d.setDate(lunes.getDate() + i);
+    const dStr = getLocalDateStr(d);
+    const isActive = diasSemana.includes(dStr) && dStr <= hoyStr;
+    const x = (i * (width / 6));
+    const y = isActive ? 10 : 55;
+    puntos.push({x, y, active: isActive});
+  }
+  let dPath = `M ${puntos[0].x} ${puntos[0].y}`;
+  for (let i = 0; i < puntos.length - 1; i++) {
+    const curr = puntos[i]; const next = puntos[i+1];
+    const cp1x = curr.x + (next.x - curr.x) / 2;
+    dPath += ` C ${cp1x} ${curr.y}, ${cp1x} ${next.y}, ${next.x} ${next.y}`;
+  }
+  const areaPath = dPath + ` V 70 H 0 Z`;
+  container.innerHTML = `<svg class="graph-svg" viewBox="0 0 100 70" preserveAspectRatio="none"><defs><linearGradient id="grad-gold" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:var(--gold);stop-opacity:1" /><stop offset="100%" style="stop-color:var(--gold);stop-opacity:0" /></linearGradient></defs><path d="${areaPath}" class="graph-path-area" /><path d="${dPath}" class="graph-path-line" /></svg><div class="graph-labels-row">${puntos.map((p, i) => `<span class="graph-label ${p.active ? 'active' : ''}">${['L','M','X','J','V','S','D'][i]}</span>`).join('')}</div>`;
+}
+
+function escucharBanner() {
+    onSnapshot(doc(db, 'config', 'banner'), (d) => {
+        const area = document.getElementById('banner-area');
+        if (!d.exists() || !d.data().url) return;
+        const url = d.data().url;
+        const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]{11})/);
+        if (ytMatch) {
+            area.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0" allowfullscreen></iframe>`;
+        } else {
+            area.innerHTML = `<img src="${resolverUrlDrive(url)}">`;
+        }
+    });
+}
+
+function escucharRecursos() {
+  onSnapshot(query(collection(db,'enlaces'), orderBy('fecha','desc')), snap => {
+    const cont = document.getElementById('contenedor-galeria'); cont.innerHTML = '';
+    const icons = ['fa-play', 'fa-book-open', 'fa-microphone-lines', 'fa-headphones', 'fa-video', 'fa-bolt', 'fa-star', 'fa-lightbulb'];
+    let idx = 0;
+    snap.forEach(d => {
+      const data = d.data(); const icon = icons[idx % icons.length];
+      cont.innerHTML += `<a href="${data.url}" target="_blank" class="res-card"><div style="width:40px; height:40px; background:var(--gold-dim); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--gold);"><i class="fa-solid ${icon}"></i></div><div><div style="color:#fff; font-weight:600; font-size:14px;">${data.titulo}</div><div style="color:var(--gold); font-size:10px;">Train Your English</div></div></a>`;
+      idx++;
+    });
+  });
+}
+
+function cargarDatosAdmin() {
+  getDoc(doc(db, 'config', 'logo')).then(d => { if(d.exists()) document.getElementById('config-logo-url').value = d.data().url; });
+  getDoc(doc(db, 'config', 'banner')).then(d => { if(d.exists()) document.getElementById('config-banner-url').value = d.data().url; });
+  onSnapshot(collection(db,'enlaces'), snap => {
+    const list = document.getElementById('lista-enlaces-ui'); list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:13px;">${data.titulo}</span><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionEnlace('${d.id}','${data.titulo}','${data.url}')"><i class="fa-solid fa-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,77,77,0.2)" onclick="borrarDoc('enlaces','${d.id}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
+    });
+  });
+  onSnapshot(collection(db,'alumnos'), snap => {
+    const list = document.getElementById('lista-alumnos-ui'); list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;">${data.nombre}<br><small style="color:var(--muted)">P: ${data.pass}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}','${data.nombre}','${data.pass}','${data.foto}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,77,77,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
+    });
+  });
+}
+
+window.guardarLogo = async () => {
+    const url = document.getElementById('config-logo-url').value.trim();
+    await setDoc(doc(db, 'config', 'logo'), { url });
+    showModal("Éxito", "Logo actualizado correctamente. Se reflejará en la pantalla de carga, el login y el panel del alumno.");
+};
+
+window.guardarBanner = async () => {
+    const url = document.getElementById('config-banner-url').value.trim();
+    await setDoc(doc(db, 'config', 'banner'), { url });
+    showModal("Éxito", "Banner actualizado correctamente.");
+};
+
+window.borrarDoc = async (coll, id) => { if(confirm('¿Borrar registro?')) await deleteDoc(doc(db, coll, id)); };
+window.prepararEdicionAlumno = (id, nombre, pass, foto) => {
+  document.getElementById('alumno-id-edicion').value = id; document.getElementById('alumno-nombre').value = nombre; document.getElementById('alumno-pass').value = pass; document.getElementById('alumno-foto').value = foto || ''; document.getElementById('btn-guardar-alumno').innerText = "Actualizar Alumno";
+};
+window.registrarAlumno = async () => {
+  const n = document.getElementById('alumno-nombre').value, p = document.getElementById('alumno-pass').value, f = document.getElementById('alumno-foto').value, id = document.getElementById('alumno-id-edicion').value;
+  if(!n || !p) return;
+  if(id) await updateDoc(doc(db, 'alumnos', id), { nombre:n, pass:p, foto:f, usuario:norm(n) });
+  else await addDoc(collection(db,'alumnos'), { nombre:n, pass:p, foto:f, usuario:norm(n), logins:0, total_logins:0, dias_semana:[] });
+  location.reload();
+};
+window.prepararEdicionEnlace = (id, t, u) => {
+  document.getElementById('enlace-id-edicion').value = id; document.getElementById('link-titulo').value = t; document.getElementById('link-url').value = u; document.getElementById('btn-guardar-enlace').innerText = "Actualizar Enlace";
+};
+window.guardarEnlace = async () => {
+  const t = document.getElementById('link-titulo').value, u = document.getElementById('link-url').value, id = document.getElementById('enlace-id-edicion').value;
+  if(!t || !u) return;
+  if(id) await updateDoc(doc(db, 'enlaces', id), { titulo:t, url:u });
+  else await addDoc(collection(db,'enlaces'), { titulo:t, url:u, fecha:Date.now() });
+  location.reload();
+};
+window.resetearAsistenciaSemanal = async () => {
+  if(confirm("¿Reiniciar asistencia de todos?")) {
+    const snap = await getDocs(collection(db,'alumnos'));
+    snap.forEach(async d => await updateDoc(doc(db,'alumnos',d.id), {logins:0, dias_semana:[]}));
+    showModal("Hecho", "Semana reiniciada.");
+  }
+};
+window.cerrarSesion = () => { signOut(auth).then(() => location.reload()); };
+window.switchTab = (n, b) => {
+  document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
+  b.classList.add('active'); document.getElementById('tab-'+n).style.display='block';
+};
+window.showModal = (t, d) => { document.getElementById('modal-title').innerText=t; document.getElementById('modal-desc').innerText=d; document.getElementById('modal-bg').classList.add('open'); };
+window.closeModal = () => document.getElementById('modal-bg').classList.remove('open');
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,".").trim(); }
+</script>
+</body>
+</html>
