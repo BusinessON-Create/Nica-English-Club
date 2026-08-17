@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Everyday English — Nica English Club</title>
+<meta name="description" content="100 Everyday English Verbs & Expressions. Learn everyday English. Visualize it. Use it. Live it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===================== TOPBAR ===================== -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="club-tag">Nica English Club</span>
+      <span class="app-name">Everyday English</span>
+    </div>
+    <div class="topbar-stats">
+      <span class="stat-chip">⭐ <strong id="topbar-xp">0</strong></span>
+      <span class="stat-chip">🔥 <strong id="topbar-streak">0</strong></span>
+    </div>
+  </div>
+
+  <!-- ===================== NAV ===================== -->
+  <nav class="nav-tabs">
+    <button class="nav-tab active" data-view="home"><span class="nav-icon">🏠</span>Home</button>
+    <button class="nav-tab" data-view="learn"><span class="nav-icon">📚</span>Learn</button>
+    <button class="nav-tab" data-view="trivia"><span class="nav-icon">🎯</span>Trivia</button>
+    <button class="nav-tab" data-view="think"><span class="nav-icon">🧠</span>Think</button>
+    <button class="nav-tab" data-view="review"><span class="nav-icon">🔄</span>Review</button>
+    <button class="nav-tab" data-view="favorites"><span class="nav-icon">⭐</span>Favorites</button>
+    <button class="nav-tab" data-view="progress"><span class="nav-icon">📊</span>Progress</button>
+  </nav>
+
+  <!-- ===================== HOME ===================== -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="kicker">Nica English Club · Everyday English</div>
+      <h1>100 Everyday English<br>Verbs &amp; Expressions</h1>
+      <p class="sub">Learn everyday English. Visualize it. Use it. Live it.</p>
+      <div class="mantra">🧠 <strong>Aprendiendo a pensar en inglés</strong> — English → visualization → meaning → real life → speak.</div>
+    </div>
+
+    <div class="progress-row">
+      <span class="label">Your progress</span>
+      <span class="value" id="home-progress-label">0 / 100</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="home-progress-fill" style="width:0%"></div></div>
+
+    <div class="stat-grid" id="home-stats"></div>
+
+    <div class="section-title"><h3>Jump into practice</h3></div>
+    <div class="quick-grid">
+      <button class="quick-card" id="qc-learn"><span class="qi">📚</span><div class="qt">Learn</div><div class="qd">Browse all 100 expressions by category</div></button>
+      <button class="quick-card" id="qc-trivia"><span class="qi">🎯</span><div class="qt">Trivia</div><div class="qd">Random questions from real-life situations</div></button>
+      <button class="quick-card" id="qc-think"><span class="qi">🧠</span><div class="qt">Think in English</div><div class="qd">Don't translate. Create your own sentences</div></button>
+      <button class="quick-card" id="qc-review"><span class="qi">🔄</span><div class="qt">Review</div><div class="qd">Work on your weakest expressions</div></button>
+      <button class="quick-card" id="qc-5min"><span class="qi">⚡</span><div class="qt">5-Minute Practice</div><div class="qd">A quick mixed session to keep your streak</div></button>
+    </div>
+  </section>
+
+  <!-- ===================== LEARN ===================== -->
+  <section class="view" id="view-learn">
+    <div class="view-header">
+      <span class="eyebrow">Learn</span>
+      <h2>The Everyday English Library</h2>
+      <p>Don't translate. Visualize. Think. Speak.</p>
+    </div>
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" id="learn-search" placeholder="Search an expression... (e.g. get dressed, hang out, look for)">
+    </div>
+    <div class="chip-row" id="learn-chips"></div>
+    <div class="expr-grid" id="learn-grid"></div>
+  </section>
+
+  <!-- ===================== TRIVIA ===================== -->
+  <section class="view" id="view-trivia">
+    <div class="view-header">
+      <span class="eyebrow">🎯 Everyday English Trivia</span>
+      <h2>Test yourself, don't translate</h2>
+      <p>Random questions: visualization, real-life situations, verb forms, and complete-the-sentence.</p>
+    </div>
+
+    <div id="trivia-setup">
+      <div class="mode-grid">
+        <button class="mode-card" data-session="5"><span class="mi">⚡</span><div class="mt">Quick Practice</div><div class="md">5 questions</div></button>
+        <button class="mode-card" data-session="10"><span class="mi">🎯</span><div class="mt">Normal Practice</div><div class="md">10 questions</div></button>
+        <button class="mode-card" data-session="20"><span class="mi">🧠</span><div class="mt">Deep Practice</div><div class="md">20 questions</div></button>
+      </div>
+    </div>
+
+    <div id="trivia-session" style="display:none;">
+      <div class="session-progress">
+        <div class="progress-track" style="flex:1;"><div class="progress-fill" id="session-progress-fill" style="width:0%"></div></div>
+        <span class="count" id="session-count">Question 1 / 10</span>
+      </div>
+      <div class="q-card" id="q-card"></div>
+    </div>
+
+    <div id="trivia-summary" style="display:none;"></div>
+  </section>
+
+  <!-- ===================== THINK IN ENGLISH ===================== -->
+  <section class="view" id="view-think">
+    <div class="view-header">
+      <span class="eyebrow">🧠 Think in English</span>
+      <h2>Don't translate. Create.</h2>
+      <p>Produce your own English from a real-life situation — no shortcuts through Spanish.</p>
+    </div>
+
+    <div class="mode-grid mb-16">
+      <button class="mode-card" data-think-level="1"><span class="mi">1️⃣</span><div class="mt">Level 1</div><div class="md">See the expression, write your own sentence</div></button>
+      <button class="mode-card" data-think-level="2"><span class="mi">2️⃣</span><div class="mt">Level 2</div><div class="md">Only the situation — find the expression</div></button>
+      <button class="mode-card" data-think-level="3"><span class="mi">3️⃣</span><div class="mt">Level 3</div><div class="md">Advanced — produce it with no hints</div></button>
+    </div>
+    <button class="btn btn-primary btn-block mb-16" id="random-challenge-btn">🎲 Random Challenge</button>
+
+    <div class="panel" id="think-content"></div>
+  </section>
+
+  <!-- ===================== REVIEW ===================== -->
+  <section class="view" id="view-review">
+    <div class="view-header">
+      <span class="eyebrow">🔄 Review</span>
+      <h2>Work on your weak spots</h2>
+      <p>Prioritized automatically: mistakes, low accuracy, and expressions you haven't practiced yet.</p>
+    </div>
+    <div class="stat-grid" id="review-stats"></div>
+    <button class="btn btn-primary btn-block mb-16" id="review-start-btn">Start review session</button>
+    <div class="section-title"><h3>Priority queue</h3></div>
+    <div class="expr-grid" id="review-queue"></div>
+  </section>
+
+  <!-- ===================== FAVORITES ===================== -->
+  <section class="view" id="view-favorites">
+    <div class="view-header">
+      <span class="eyebrow">⭐ My Favorites</span>
+      <h2>Your saved expressions</h2>
+    </div>
+    <div class="expr-grid" id="favorites-grid"></div>
+  </section>
+
+  <!-- ===================== PROGRESS ===================== -->
+  <section class="view" id="view-progress">
+    <div class="view-header">
+      <span class="eyebrow">📊 My Progress</span>
+      <h2>Track your training</h2>
+    </div>
+
+    <div class="level-banner" id="progress-level"></div>
+    <div class="stat-grid" id="progress-stats"></div>
+
+    <div class="section-title"><h3>By category</h3></div>
+    <div id="progress-categories"></div>
+
+    <div class="section-title"><h3>Achievements</h3></div>
+    <div class="achv-grid" id="progress-achievements"></div>
+
+    <div class="section-title"><h3>Settings</h3></div>
+    <div class="toggle-row mb-16">
+      <div>
+        <div class="tr-label">🚫 No Translation Mode</div>
+        <div class="tr-desc">Hide Spanish interpretations during practice</div>
+      </div>
+      <div class="switch" id="no-translation-switch"></div>
+    </div>
+
+    <button class="btn btn-block" id="reset-progress-btn" style="border-color:rgba(248,113,113,0.35); color:var(--red);">Reset progress</button>
+    <div class="confirm-box mt-16" id="reset-confirm" style="display:none;">
+      <p style="font-size:13.5px; margin-bottom:12px;"><strong>This will erase all your XP, streak, and progress.</strong> This can't be undone.</p>
+      <div style="display:flex; gap:10px;">
+        <button class="btn" id="reset-cancel-btn" style="flex:1;">Cancel</button>
+        <button class="btn" id="reset-confirm-btn" style="flex:1; border-color:var(--red); color:var(--red);">Yes, reset everything</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===================== EXPRESSION MODAL ===================== -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-card" id="modal-body"></div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
