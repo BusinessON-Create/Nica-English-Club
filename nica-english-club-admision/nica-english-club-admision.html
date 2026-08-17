@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Ingreso - Nica English Club</title>
+    <link rel="icon" href="https://drive.google.com/uc?export=view&id=1N4MQaUcJvjAgzUgrakdO5qBcsR1qQCkU">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+        :root { 
+            --gold: #ffd700;
+            --gold-light: #ffe44d;
+            --gold-glow: rgba(255, 215, 0, 0.15);
+            --bg: #000000;
+            --card-bg: #0a0a0a;
+            --input-bg: #121212;
+            --border-color: #222222;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            margin: 0; 
+            padding: 30px 15px; 
+            background: radial-gradient(circle at center, #141414 0%, #000000 100%); 
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .premium-container { 
+            background: var(--card-bg); 
+            max-width: 650px; 
+            margin: 20px auto; 
+            border-radius: 20px; 
+            border: 1px solid rgba(255, 215, 0, 0.3); 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px var(--gold-glow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .premium-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .premium-header { 
+            padding: 35px 20px; 
+            text-align: center; 
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(to bottom, #111, #000);
+        }
+
+        .brand-logo {
+            display: block;
+            max-width: 150px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 18px;
+            border: none;
+            outline: none;
+            background: transparent;
+            object-fit: contain;
+        }
+
+        .premium-header h2 { 
+            font-family: 'Playfair Display', serif;
+            margin: 0; 
+            font-size: 26px; 
+            color: var(--gold); 
+            text-transform: uppercase; 
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+
+        .exclusivity-badge {
+            background: rgba(255, 215, 0, 0.05);
+            color: var(--gold);
+            font-size: 10px;
+            padding: 5px 15px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            display: inline-block;
+            margin-top: 12px;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        form { padding: 30px 35px; }
+        
+        .section-label { 
+            font-size: 11px; 
+            color: var(--gold); 
+            border-bottom: 1px solid var(--border-color); 
+            margin: 25px 0 15px; 
+            padding-bottom: 6px; 
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 12px; margin-bottom: 7px; font-weight: 400; opacity: 0.85; color: #ccc; }
+
+        input, select { 
+            width: 100%; 
+            padding: 13px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            font-size: 14px; 
+            background: var(--input-bg); 
+            color: white; 
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus, select:focus { 
+            border-color: var(--gold); 
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.1); 
+            background: #181818;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8) sepia(1) saturate(4) hue-rotate(15deg);
+            cursor: pointer;
+        }
+
+        .gold-btn { 
+            background: linear-gradient(135deg, var(--gold) 0%, #d4b200 100%); 
+            color: black; 
+            border: none; 
+            padding: 18px; 
+            width: 100%; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            font-size: 15px;
+            margin-top: 30px; 
+            cursor: pointer; 
+            text-transform: uppercase;
+            letter-spacing: 2px; 
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .gold-btn:hover:not(:disabled) { 
+            background: #ffffff; 
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+        
+        .gold-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        #success-ui { 
+            display: none; 
+            text-align: center; 
+            padding: 90px 25px; 
+        }
+
+        .wa-confirmation-box {
+            display: inline-block;
+            background: linear-gradient(135deg, #25d366 0%, #1ecc5b 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 25px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .legal-notice { text-align: center; font-size: 11px; color: #555; margin-top: 25px; line-height: 1.6; }
+
+        .premium-alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #0d0d0d;
+            border: 1px solid var(--gold);
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.25);
+            z-index: 10000;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+        }
+        .premium-alert p {
+            font-size: 14px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .premium-alert button {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .premium-alert button:hover { background: #fff; }
+        
+        .overlay-blur {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+        }
+
+        @media (max-width: 600px) { 
+            .grid { grid-template-columns: 1fr; gap: 12px; } 
+            form { padding: 20px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="premium-container">
+    <div id="form-wrapper">
+        <div class="premium-header">
+            <img class="brand-logo" src="https://drive.google.com/uc?export=view&id=1N4MQaUcJvjAgzUgrakdO5qBcsR1qQCkU" alt="Nica English Club">
+            <h2>APLICACIÓN DE INGRESO</h2>
+            <div class="exclusivity-badge">CUPOS LIMITADOS POR GRUPO</div>
+            <p style="font-size: 10px; letter-spacing: 2px; opacity: 0.8; margin-top:12px; font-weight: 500;">NICA ENGLISH CLUB • ENTRENA TU INGLÉS</p>
+        </div>
+
+        <form id="admissionForm">
+            <div class="section-label">Datos del Aplicante</div>
+            <div class="form-group">
+                <label>Nombre y Apellido Completo</label>
+                <input type="text" name="nombre" placeholder="Nombre y Apellido" required>
+            </div>
+            
+            <div class="grid">
+                <div class="form-group">
+                    <label>Edad</label>
+                    <input type="number" name="edad" placeholder="Ej. 20" required>
+                </div>
+                <div class="form-group">
+                    <label>Ciudad / Municipio</label>
+                    <input type="text" name="ciudad" placeholder="Ej. Managua" required>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="form-group">
+                    <label>Número de WhatsApp</label>
+                    <input type="tel" name="telefono" placeholder="8888 8888" required>
+                </div>
+                <div class="form-group">
+                    <label>Objetivo del Entrenamiento</label>
+                    <select name="objetivo">
+                        <option value="Trabajar en Call Center">Trabajar en Call Center</option>
+                        <option value="Crecimiento Personal">Crecimiento Personal</option>
+                        <option value="Viaje / Negocios">Viaje / Negocios</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="form-group">
+                    <label>Nivel de Inglés Actual</label>
+                    <select name="nivel">
+                        <option value="Principiante">Desde Cero</option>
+                        <option value="Intermedio">Entiendo pero no hablo</option>
+                        <option value="Avanzado">Fluido / Conversacional</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Modalidad de Estudio</label>
+                    <select name="modalidad">
+                        <option value="En linea">En linea</option>
+                        <option value="Presencial">Presencial (proximamente)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-label">Plan</div>
+            <div class="form-group">
+                <label>Seleccione el plan de su interés</label>
+                <select name="plan" required>
+                    <option value="" disabled selected>Seleccione un plan...</option>
+                    <option value="Solo elite">Solo elite</option>
+                    <option value="Duo dinamico">Duo dinamico</option>
+                    <option value="VIP 1 a 1">VIP 1 a 1</option>
+                    <option value="Programa San Carlos RSJ">Programa San Carlos RSJ</option>
+                </select>
+            </div>
+
+            <div class="section-label">Beneficios Académicos</div>
+            <div class="form-group">
+                <label>¿Aplica a Media Beca? (Secundaria 3ro a 5to)</label>
+                <select id="aplica_beca" name="aplica_beca" onchange="mostrarSubidaNotas(this)">
+                    <option value="No">No aplico por ahora</option>
+                    <option value="Si - Cumplo requisitos">Sí, Notas > 85%</option>
+                </select>
+            </div>
+
+            <div id="campo_notes" style="display:none; background: rgba(255,215,0,0.03); padding: 15px; border-radius: 10px; border: 1px dashed var(--gold); margin-bottom: 15px;">
+                <label style="color: var(--gold); font-weight: 500;">Adjuntar Foto de Boletín (Opcional)</label>
+                <input type="file" id="boletin_file" accept="image/*" style="border: none; background: transparent; padding: 5px 0;">
+            </div>
+
+            <div class="section-label">Estimación de Ingreso</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Horario</label>
+                    <select name="horario">
+                        <option value="10:15 - 11:45 AM">Mañana (10:15 - 11:45 AM) [Lunes a Miércoles]</option>
+                        <option value="3:15 - 4:45 PM">Tarde (3:15 - 4:45 PM) [Lunes a Miércoles]</option>
+                        <option value="6:15 - 7:15 PM">Noche (6:15 - 7:15 PM) [Lunes a Jueves]</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Inicio (Estimada)</label>
+                    <input type="date" id="fecha_cita" name="fecha_cita" required onchange="validarFecha(this)">
+                </div>
+            </div>
+            <p style="font-size: 11px; color: #aaa; margin-top: -5px; margin-bottom: 15px; line-height: 1.4; font-style: italic;">
+                * Por favor, seleccione la fecha en la que le gustaría iniciar. Tenga en cuenta que la asignación final dependerá de la disponibilidad de cupos para ubicarlo de la mejor manera posible.
+            </p>
+
+            <button type="submit" class="gold-btn" id="submitBtn">
+                <span>SOLICITAR MI ENTREVISTA</span>
+                <span style="font-size: 18px; line-height: 1;">&rarr;</span>
+            </button>
+            
+            <div class="legal-notice">
+                Confirmamos su lugar en orden de llegada. Estaremos validando su perfil a la brevedad.
+            </div>
+        </form>
+    </div>
+
+    <div id="success-ui">
+        <h3 style="font-family: 'Playfair Display', serif; color: var(--gold); font-size: 32px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">¡Solicitud Enviada!</h3>
+        <p style="font-size: 16px; opacity: 0.9; color: #ffffff;">Su proceso de admisión ha comenzado.</p>
+        
+        <div class="wa-confirmation-box">
+            Recibirás la confirmación por WhatsApp
+        </div>
+        
+        <p style="font-size: 11px; margin-top: 40px; color: #444;">Nica English Club Nicaragua • Entrenamiento de Alto Nivel</p>
+        <button onclick="location.reload()" style="background:none; border: 1px solid #222; color: #555; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 11px;">Enviar otra respuesta</button>
+    </div>
+</div>
+
+<div id="alert-blur" class="overlay-blur"></div>
+<div id="alert-modal" class="premium-alert">
+    <p id="alert-message"></p>
+    <button onclick="closeCustomAlert()">Aceptar</button>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyB-AUkJMr0H286Ms7hwh0FQP0-i4mxFFmf-l1y27tnjI6GpyVuEEi-sQ9zK99dzuw/exec";
+
+    function showCustomAlert(message) {
+        document.getElementById('alert-message').innerText = message;
+        document.getElementById('alert-blur').style.display = 'block';
+        document.getElementById('alert-modal').style.display = 'block';
+    }
+
+    function closeCustomAlert() {
+        document.getElementById('alert-blur').style.display = 'none';
+        document.getElementById('alert-modal').style.display = 'none';
+    }
+
+    function validarFecha(input) {
+        // Se ejecuta siempre que elijan cualquier fecha para recordarles las condiciones sin bloquearlos
+        showCustomAlert("Nota importante: Recuerde que los días oficiales de clase son de Lunes a Miércoles o de Lunes a Jueves, según el horario y el programa que haya seleccionado.");
+    }
+
+    function mostrarSubidaNotas(select) {
+        document.getElementById('campo_notes').style.display = select.value.includes("Si") ? 'block' : 'none';
+    }
+
+    const form = document.getElementById('admissionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formWrapper = document.getElementById('form-wrapper');
+    const successUi = document.getElementById('success-ui');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "PROCESANDO ADMISIÓN...";
+
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+
+        fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            body: params,
+            mode: 'no-cors' 
+        })
+        .then(() => {
+            formWrapper.style.display = 'none';
+            successUi.style.display = 'block';
+            window.scrollTo(0,0);
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = "ERROR - REINTENTAR";
+            showCustomAlert("Hubo un error al enviar. Por favor intente de nuevo.");
+        });
+    });
+</script>
+
+</body>
+</html>
