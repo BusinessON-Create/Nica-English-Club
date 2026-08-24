@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nica English Club · Módulo 1: Ensamblador Visual de Estructuras</title>
+<meta name="description" content="Aprende inglés armando moldes gramaticales fijos con vocabulario dinámico." />
+
+<!-- ============================================================
+     TAILWIND CSS (Play CDN) + CONFIG
+     ============================================================ -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          // "Fundición" palette — inspired by molds & casting (el "molde")
+          necInk:        '#0F1B1A', // fondo modo oscuro
+          necInkSurface: '#16262A', // tarjetas modo oscuro
+          necInkLine:    '#24373A', // bordes modo oscuro
+          necPaper:      '#F2F6F1', // fondo modo claro (verde-grisáceo frío, NO crema)
+          necPaperSurf:  '#FFFFFF', // tarjetas modo claro
+          necPaperLine:  '#DCE5DD', // bordes modo claro
+          necGold:       '#E7A93C', // Estructura Fija (el molde / metal fundido)
+          necGoldDeep:   '#B9822A',
+          necCoral:      '#FF6A4D', // Verbo en Acción
+          necCoralDeep:  '#D8492F',
+          necTeal:       '#2FB6A6', // Complemento / Experiencia
+          necTealDeep:   '#1E8C80',
+          necLime:       '#B7E24A', // Acento / CTA / Racha (volcánico)
+          necSlate:      '#5C6B67', // Sujeto (neutro)
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['"Inter"', 'sans-serif'],
+          mold: ['"JetBrains Mono"', 'monospace'],
+        },
+        boxShadow: {
+          cast: 'inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 4px rgba(0,0,0,0.25), 0 6px 14px -6px rgba(0,0,0,0.35)',
+          castDark: 'inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -2px 4px rgba(0,0,0,0.45), 0 6px 14px -6px rgba(0,0,0,0.5)',
+        },
+        keyframes: {
+          pour: {
+            '0%':   { transform: 'scale(0.97)', filter: 'brightness(1)' },
+            '35%':  { transform: 'scale(1.015)', filter: 'brightness(1.08)' },
+            '100%': { transform: 'scale(1)', filter: 'brightness(1)' },
+          },
+          popIn: {
+            '0%':   { transform: 'scale(0.85)', opacity: '0' },
+            '100%': { transform: 'scale(1)', opacity: '1' },
+          },
+          rise: {
+            '0%':   { transform: 'translateY(6px)', opacity: '0' },
+            '100%': { transform: 'translateY(0)', opacity: '1' },
+          }
+        },
+        animation: {
+          pour: 'pour 420ms cubic-bezier(.2,.7,.3,1)',
+          popIn: 'popIn 220ms cubic-bezier(.2,.7,.3,1)',
+          rise: 'rise 260ms ease-out',
+        }
+      }
+    }
+  }
+</script>
+
+<!-- Tipografías -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Oculta scrollbar en carruseles de chips, sin perder el scroll */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Textura sutil tipo "metal fundido" para el bloque fijo (Estructura Fija) */
+  .mold-texture {
+    background-image:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px);
+  }
+
+  /* Foco visible accesible */
+  .focus-ring:focus-visible {
+    outline: 2px solid #B7E24A;
+    outline-offset: 2px;
+  }
+
+  html { scroll-behavior: smooth; }
+</style>
+</head>
+
+<body class="bg-necPaper dark:bg-necInk text-necInk dark:text-necPaper font-body transition-colors duration-300 min-h-screen">
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 pb-28">
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+  <header class="flex items-center justify-between gap-3 pt-6 pb-5">
+    <div class="flex items-center gap-3 min-w-0">
+      <!-- ======= SLOT DE LOGO =======
+           Reemplaza assets/logo.png por tu imagen real.
+           Si el archivo no existe, se muestra un placeholder "TU LOGO". -->
+      <div class="w-11 h-11 shrink-0 rounded-xl border-2 border-dashed border-necGold/50 dark:border-necGold/40 flex items-center justify-center overflow-hidden bg-white dark:bg-necInkSurface">
+        <img id="logo-img" src="assets/logo.png" alt="Logo Nica English Club"
+             class="w-full h-full object-contain hidden"
+             onload="this.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden');"
+             onerror="this.classList.add('hidden');" />
+        <span id="logo-fallback" class="text-[9px] font-mold font-bold text-necGoldDeep dark:text-necGold text-center leading-tight px-0.5">TU<br/>LOGO</span>
+      </div>
+      <div class="min-w-0">
+        <p class="text-[11px] uppercase tracking-[0.14em] text-necSlate dark:text-necPaper/50 font-semibold truncate">Nica English Club</p>
+        <h1 class="font-display font-bold text-lg leading-tight truncate">Ensamblador de Estructuras</h1>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 shrink-0">
+      <!-- Racha / total de oraciones armadas (global) -->
+      <div id="global-tally" class="hidden sm:flex items-center gap-1.5 bg-necLime/20 dark:bg-necLime/15 text-necGoldDeep dark:text-necLime px-3 py-1.5 rounded-full text-xs font-bold border border-necLime/40">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="currentColor"/></svg>
+        <span id="global-tally-count">0</span>
+      </div>
+      <!-- Toggle modo oscuro -->
+      <button id="theme-toggle" type="button" aria-label="Cambiar tema" class="focus-ring w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-necInkSurface border border-necPaperLine dark:border-necInkLine hover:border-necGold transition-colors">
+        <svg id="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" class="hidden"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       SELECTOR DE MOLDES (estructuras disponibles — data-driven)
+       ============================================================ -->
+  <nav aria-label="Selector de estructura">
+    <div id="molde-selector" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1"></div>
+  </nav>
+
+  <!-- ============================================================
+       TARJETA DEL MOLDE (fórmula fija + etiquetas de rol)
+       ============================================================ -->
+  <section class="mt-4 rounded-3xl bg-white dark:bg-necInkSurface border border-necPaperLine dark:border-necInkLine p-4 sm:p-5 shadow-sm">
+    <p class="text-[11px] uppercase tracking-[0.14em] text-necSlate dark:text-necPaper/50 font-semibold mb-3">El molde</p>
+
+    <!-- Fila de la fórmula: Sujeto + Estructura Fija + Verbo + Complemento -->
+    <div class="flex flex-wrap items-stretch gap-2">
+      <div class="flex flex-col items-start">
+        <span class="text-[10px] font-semibold text-necSlate dark:text-necPaper/40 mb-1 ml-1">Sujeto</span>
+        <div id="chip-subject" class="px-3 py-2 rounded-xl bg-necPaper dark:bg-necInk border border-necPaperLine dark:border-necInkLine font-display font-semibold text-sm"></div>
+      </div>
+
+      <div class="flex flex-col items-start">
+        <span class="text-[10px] font-semibold text-necGoldDeep dark:text-necGold mb-1 ml-1">Estructura fija</span>
+        <div id="chip-fixed" class="mold-texture px-3 py-2 rounded-xl bg-gradient-to-b from-necGold to-necGoldDeep text-necInk font-mold font-bold text-sm shadow-cast dark:shadow-castDark whitespace-nowrap"></div>
+      </div>
+
+      <div class="flex flex-col items-start flex-1 min-w-[9rem]">
+        <span class="text-[10px] font-semibold text-necCoralDeep dark:text-necCoral mb-1 ml-1">Verbo en acción</span>
+        <div id="chip-verb" class="px-3 py-2 rounded-xl bg-necCoral/15 dark:bg-necCoral/20 border border-necCoral/40 text-necCoralDeep dark:text-necCoral font-display font-semibold text-sm truncate"></div>
+      </div>
+
+      <div class="flex flex-col items-start flex-1 min-w-[10rem]">
+        <span class="text-[10px] font-semibold text-necTealDeep dark:text-necTeal mb-1 ml-1">Complemento / Experiencia</span>
+        <div id="chip-complement" class="px-3 py-2 rounded-xl bg-necTeal/15 dark:bg-necTeal/20 border border-necTeal/40 text-necTealDeep dark:text-necTeal font-display font-semibold text-sm truncate"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VISTA PREVIA GRANDE (oración ensamblada en vivo)
+       ============================================================ -->
+  <section id="preview-card" class="mt-4 rounded-3xl bg-necInk dark:bg-black/40 text-necPaper p-5 sm:p-6 relative overflow-hidden">
+    <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-necGold/10 blur-2xl"></div>
+    <p class="text-[11px] uppercase tracking-[0.14em] text-necPaper/45 font-semibold mb-2">Tu oración</p>
+
+    <p id="sentence-preview" class="font-display font-bold text-2xl sm:text-3xl leading-snug relative"></p>
+
+    <div class="flex flex-wrap items-center gap-2 mt-4">
+      <button id="btn-audio" type="button" class="focus-ring inline-flex items-center gap-2 bg-necLime text-necInk font-semibold text-sm px-4 py-2 rounded-full hover:brightness-105 active:scale-95 transition">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4Z" fill="currentColor"/><path d="M17 8a5 5 0 0 1 0 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Escuchar
+      </button>
+
+      <span id="context-tag" class="inline-flex items-start gap-1.5 bg-white/10 text-necPaper/85 text-xs px-3 py-2 rounded-full max-w-full">
+        <span class="shrink-0">🧠</span><span id="context-tag-text"></span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SELECTORES DINÁMICOS: Verbos y Complementos
+       ============================================================ -->
+  <section class="mt-5">
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-[11px] uppercase tracking-[0.14em] text-necCoralDeep dark:text-necCoral font-semibold">Elige el verbo</p>
+    </div>
+    <div id="verb-list" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1"></div>
+  </section>
+
+  <section class="mt-4">
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-[11px] uppercase tracking-[0.14em] text-necTealDeep dark:text-necTeal font-semibold">Elige el complemento</p>
+    </div>
+    <div id="complement-list" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1"></div>
+  </section>
+
+  <!-- ============================================================
+       GAMIFICACIÓN: contador de combinaciones descubiertas
+       ============================================================ -->
+  <section class="mt-5 rounded-2xl bg-necGold/10 dark:bg-necGold/10 border border-necGold/30 p-4">
+    <div class="flex items-center justify-between gap-3 mb-2">
+      <p class="text-sm font-semibold text-necGoldDeep dark:text-necGold">
+        🏗️ <span id="tally-text">Con este molde ya puedes decir 0 cosas distintas</span>
+      </p>
+      <span id="tally-fraction" class="text-xs font-mold text-necGoldDeep dark:text-necGold shrink-0">0/0</span>
+    </div>
+    <div class="h-2 rounded-full bg-necGold/20 overflow-hidden">
+      <div id="tally-bar" class="h-full bg-gradient-to-r from-necGold to-necCoral transition-all duration-500" style="width:0%"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GUARDAR EN BITÁCORA
+       ============================================================ -->
+  <section class="mt-4 rounded-2xl bg-white dark:bg-necInkSurface border border-necPaperLine dark:border-necInkLine p-4">
+    <button id="btn-save-toggle" type="button" class="focus-ring w-full inline-flex items-center justify-center gap-2 bg-necInk dark:bg-necPaper text-necPaper dark:text-necInk font-display font-semibold text-sm px-4 py-3 rounded-xl hover:brightness-110 active:scale-[0.98] transition">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z" fill="currentColor"/></svg>
+      Guardar en mi bitácora
+    </button>
+
+    <div id="save-panel" class="hidden mt-3 animate-rise">
+      <label for="save-note" class="text-xs font-semibold text-necSlate dark:text-necPaper/60 block mb-1.5">Cuenta tu propio ejemplo de vida real (opcional)</label>
+      <textarea id="save-note" rows="2" placeholder="Ej: I'm used to drinking coffee before class..." class="focus-ring w-full resize-none rounded-xl border border-necPaperLine dark:border-necInkLine bg-necPaper dark:bg-necInk p-3 text-sm placeholder:text-necSlate/50"></textarea>
+      <div class="flex gap-2 mt-2">
+        <button id="btn-save-confirm" type="button" class="focus-ring flex-1 bg-necLime text-necInk font-semibold text-sm px-4 py-2.5 rounded-xl hover:brightness-105 active:scale-95 transition">Confirmar</button>
+        <button id="btn-save-cancel" type="button" class="focus-ring px-4 py-2.5 rounded-xl border border-necPaperLine dark:border-necInkLine text-sm font-semibold">Cancelar</button>
+      </div>
+    </div>
+
+    <p id="save-toast" class="hidden text-sm text-necTealDeep dark:text-necTeal font-semibold mt-2 animate-rise">✓ Guardado en tu bitácora</p>
+  </section>
+
+  <!-- ============================================================
+       BITÁCORA (historial guardado)
+       ============================================================ -->
+  <section class="mt-4">
+    <button id="btn-bitacora-toggle" type="button" class="focus-ring w-full flex items-center justify-between gap-2 text-sm font-semibold text-necSlate dark:text-necPaper/70 px-1 py-2">
+      <span>📒 Mi bitácora (<span id="bitacora-count">0</span>)</span>
+      <svg id="bitacora-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" class="transition-transform"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="bitacora-list" class="hidden flex flex-col gap-2 mt-1"></div>
+  </section>
+
+  <footer class="text-center text-xs text-necSlate dark:text-necPaper/40 mt-10">
+    Nica English Club · Módulo 1 — Ensamblador Visual de Estructuras
+  </footer>
+</div>
+
+<!-- ============================================================
+     LÓGICA (JavaScript vanilla, modular)
+     ============================================================ -->
+<script>
+(() => {
+  'use strict';
+
+  /* ==========================================================
+   * 1) DATOS — edítalos o agrega nuevos moldes aquí.
+   *    Cada molde necesita: id, title, subject, fixed, context,
+   *    verbs[] y complements[] (cada uno {id, en, es}).
+   * ========================================================== */
+  const MOLDES = [
+    {
+      id: 'used_to',
+      title: "'m used to",
+      subject: 'I',
+      fixed: "'m used to",
+      context: 'Uso: para hablar de hábitos actuales que antes costaban trabajo.',
+      verbs: [
+        { id: 'waking_up',  en: 'waking up',        es: 'despertarme' },
+        { id: 'drinking',   en: 'drinking coffee',  es: 'tomar café' },
+        { id: 'working',    en: 'working from home',es: 'trabajar desde casa' },
+        { id: 'speaking',   en: 'speaking English', es: 'hablar inglés' },
+        { id: 'eating',     en: 'eating spicy food',es: 'comer picante' },
+        { id: 'driving',    en: 'driving in traffic',es:'manejar en tráfico' },
+      ],
+      complements: [
+        { id: 'mondays',  en: 'early on Mondays',      es: 'temprano los lunes' },
+        { id: 'breakfast',en: 'before breakfast',      es: 'antes del desayuno' },
+        { id: 'everyday', en: 'every day',             es: 'todos los días' },
+        { id: 'coworkers',en: 'with my coworkers',     es: 'con mis compañeros' },
+        { id: 'lunch',    en: 'at lunch time',         es: 'a la hora del almuerzo' },
+        { id: 'managua',  en: 'here in Managua',       es: 'aquí en Managua' },
+      ],
+    },
+    {
+      id: 'should_have',
+      title: 'should have',
+      subject: 'I',
+      fixed: 'should have',
+      context: 'Uso: para expresar arrepentimiento sobre algo del pasado.',
+      verbs: [
+        { id: 'studied',   en: 'studied more',      es: 'estudiado más' },
+        { id: 'called',    en: 'called her',        es: 'llamado a ella' },
+        { id: 'saved',     en: 'saved money',       es: 'ahorrado dinero' },
+        { id: 'listened',  en: 'listened to you',   es: 'escuchado a ti' },
+        { id: 'arrived',   en: 'arrived earlier',   es: 'llegado más temprano' },
+        { id: 'practiced', en: 'practiced English', es: 'practicado inglés' },
+      ],
+      complements: [
+        { id: 'exam',     en: 'before the exam',   es: 'antes del examen' },
+        { id: 'lastnight',en: 'last night',        es: 'anoche' },
+        { id: 'thisyear', en: 'this year',         es: 'este año' },
+        { id: 'trip',     en: 'about the trip',    es: 'sobre el viaje' },
+        { id: 'meeting',  en: 'to the meeting',    es: 'a la reunión' },
+        { id: 'daily',    en: 'every single day',  es: 'todos los días' },
+      ],
+    },
+    {
+      id: 'makes_me',
+      title: 'makes me',
+      subject: 'It',
+      fixed: 'makes me',
+      context: 'Uso: para explicar cómo te hace sentir una situación.',
+      verbs: [
+        { id: 'nervous',  en: 'feel nervous',    es: 'sentirme nervioso/a' },
+        { id: 'proud',    en: 'feel proud',      es: 'sentirme orgulloso/a' },
+        { id: 'excited',  en: 'feel excited',    es: 'sentirme emocionado/a' },
+        { id: 'tired',    en: 'feel tired',      es: 'sentirme cansado/a' },
+        { id: 'confident',en: 'feel confident',  es: 'sentirme seguro/a' },
+        { id: 'happy',    en: 'feel happy',      es: 'sentirme feliz' },
+      ],
+      complements: [
+        { id: 'public',  en: 'when I speak in public',    es: 'cuando hablo en público' },
+        { id: 'finish',  en: 'when I finish a project',   es: 'cuando termino un proyecto' },
+        { id: 'trip',    en: 'before a trip',             es: 'antes de un viaje' },
+        { id: 'study',   en: 'after studying all night',  es: 'después de estudiar toda la noche' },
+        { id: 'help',    en: 'when I help someone',       es: 'cuando ayudo a alguien' },
+        { id: 'fridays', en: 'on Fridays',                es: 'los viernes' },
+      ],
+    },
+  ];
+
+  /* ==========================================================
+   * 2) ESTADO
+   * ========================================================== */
+  const state = {
+    moldeId: MOLDES[0].id,
+    verbId: MOLDES[0].verbs[0].id,
+    complementId: MOLDES[0].complements[0].id,
+  };
+
+  const LS_KEYS = {
+    theme: 'nec_theme',
+    combos: (moldeId) => `nec_combos_${moldeId}`,
+    bitacora: 'nec_bitacora',
+  };
+
+  const currentMolde = () => MOLDES.find(m => m.id === state.moldeId);
+  const currentVerb = () => currentMolde().verbs.find(v => v.id === state.verbId);
+  const currentComplement = () => currentMolde().complements.find(c => c.id === state.complementId);
+
+  /* ==========================================================
+   * 3) HELPERS DE UI
+   * ========================================================== */
+  const $ = (sel) => document.querySelector(sel);
+  const el = (tag, cls) => { const n = document.createElement(tag); if (cls) n.className = cls; return n; };
+
+  function buildSentence(molde, verb, complement) {
+    return `${molde.subject} ${molde.fixed} ${verb.en} ${complement.en}`.replace(/\s+/g, ' ').trim();
+  }
+
+  /* ---------- Selector de moldes ---------- */
+  function renderMoldeSelector() {
+    const wrap = $('#molde-selector');
+    wrap.innerHTML = '';
+    MOLDES.forEach(m => {
+      const btn = el('button', 'focus-ring shrink-0 px-3.5 py-2 rounded-full text-sm font-display font-semibold border transition-colors ' +
+        (m.id === state.moldeId
+          ? 'bg-necInk text-necPaper dark:bg-necLime dark:text-necInk border-necInk dark:border-necLime'
+          : 'bg-white dark:bg-necInkSurface text-necSlate dark:text-necPaper/70 border-necPaperLine dark:border-necInkLine hover:border-necGold'));
+      btn.type = 'button';
+      btn.textContent = `${m.subject} ${m.title}`;
+      btn.addEventListener('click', () => {
+        state.moldeId = m.id;
+        state.verbId = m.verbs[0].id;
+        state.complementId = m.complements[0].id;
+        renderAll();
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  /* ---------- Tarjeta del molde (fórmula) ---------- */
+  function renderMoldeCard() {
+    const m = currentMolde();
+    $('#chip-subject').textContent = m.subject;
+    $('#chip-fixed').textContent = m.fixed;
+  }
+
+  /* ---------- Chips activos (dentro de la fórmula) ---------- */
+  function renderActiveChips() {
+    $('#chip-verb').textContent = currentVerb().en;
+    $('#chip-complement').textContent = currentComplement().en;
+  }
+
+  /* ---------- Listas seleccionables de verbos / complementos ---------- */
+  function renderOptionList(containerSel, items, activeId, colorClasses, onPick) {
+    const wrap = $(containerSel);
+    wrap.innerHTML = '';
+    items.forEach(item => {
+      const active = item.id === activeId;
+      const btn = el('button', 'focus-ring shrink-0 px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all snap-start ' +
+        (active ? colorClasses.active : colorClasses.inactive));
+      btn.type = 'button';
+      btn.innerHTML = `<span class="block">${item.en}</span><span class="block text-[10px] font-normal opacity-70">${item.es}</span>`;
+      btn.addEventListener('click', () => onPick(item.id));
+      wrap.appendChild(btn);
+    });
+  }
+
+  function renderVerbList() {
+    renderOptionList('#verb-list', currentMolde().verbs, state.verbId, {
+      active: 'bg-necCoral text-white border-necCoral shadow-sm',
+      inactive: 'bg-white dark:bg-necInkSurface text-necInk dark:text-necPaper/80 border-necPaperLine dark:border-necInkLine hover:border-necCoral',
+    }, (id) => { state.verbId = id; onCombinationChanged(); });
+  }
+
+  function renderComplementList() {
+    renderOptionList('#complement-list', currentMolde().complements, state.complementId, {
+      active: 'bg-necTeal text-white border-necTeal shadow-sm',
+      inactive: 'bg-white dark:bg-necInkSurface text-necInk dark:text-necPaper/80 border-necPaperLine dark:border-necInkLine hover:border-necTeal',
+    }, (id) => { state.complementId = id; onCombinationChanged(); });
+  }
+
+  /* ---------- Vista previa de la oración ---------- */
+  function renderPreview({ animate = true } = {}) {
+    const m = currentMolde(), v = currentVerb(), c = currentComplement();
+    const preview = $('#sentence-preview');
+    preview.innerHTML =
+      `<span class="text-necPaper/90">${m.subject}</span> ` +
+      `<span class="text-necGold">${m.fixed}</span> ` +
+      `<span class="text-necCoral">${v.en}</span> ` +
+      `<span class="text-necTeal">${c.en}</span>`;
+
+    $('#context-tag-text').textContent = m.context;
+
+    if (animate) {
+      const card = $('#preview-card');
+      card.classList.remove('animate-pour');
+      void card.offsetWidth; // reinicia animación
+      card.classList.add('animate-pour');
+    }
+  }
+
+  /* ==========================================================
+   * 4) AUDIO (Web Speech API — sin dependencias externas)
+   * ========================================================== */
+  function speak(text) {
+    if (!('speechSynthesis' in window)) {
+      alert('Tu navegador no soporta audio de voz. Prueba con Chrome o Edge.');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.rate = 0.92; // ritmo natural, un poco más lento para práctica
+    utter.pitch = 1;
+    const voices = window.speechSynthesis.getVoices();
+    const enVoice = voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang?.startsWith('en'));
+    if (enVoice) utter.voice = enVoice;
+    window.speechSynthesis.speak(utter);
+  }
+
+  $('#btn-audio').addEventListener('click', () => {
+    const m = currentMolde(), v = currentVerb(), c = currentComplement();
+    speak(buildSentence(m, v, c));
+  });
+
+  // Algunos navegadores cargan las voces de forma asíncrona
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {};
+  }
+
+  /* ==========================================================
+   * 5) GAMIFICACIÓN — combinaciones distintas descubiertas
+   * ========================================================== */
+  function getSeenCombos(moldeId) {
+    try { return new Set(JSON.parse(localStorage.getItem(LS_KEYS.combos(moldeId)) || '[]')); }
+    catch { return new Set(); }
+  }
+  function saveSeenCombos(moldeId, set) {
+    localStorage.setItem(LS_KEYS.combos(moldeId), JSON.stringify([...set]));
+  }
+  function markCurrentComboSeen() {
+    const m = currentMolde();
+    const key = `${state.verbId}::${state.complementId}`;
+    const seen = getSeenCombos(m.id);
+    seen.add(key);
+    saveSeenCombos(m.id, seen);
+    return seen.size;
+  }
+
+  function renderTally() {
+    const m = currentMolde();
+    const seen = getSeenCombos(m.id);
+    const total = m.verbs.length * m.complements.length;
+    const count = seen.size;
+    $('#tally-text').textContent = `Con este molde ya puedes decir ${count} cosa${count === 1 ? '' : 's'} distinta${count === 1 ? '' : 's'}`;
+    $('#tally-fraction').textContent = `${count}/${total}`;
+    $('#tally-bar').style.width = `${total ? Math.round((count / total) * 100) : 0}%`;
+    renderGlobalTally();
+  }
+
+  function renderGlobalTally() {
+    let total = 0;
+    MOLDES.forEach(m => { total += getSeenCombos(m.id).size; });
+    $('#global-tally-count').textContent = total;
+  }
+
+  function onCombinationChanged() {
+    markCurrentComboSeen();
+    renderActiveChips();
+    renderPreview();
+    renderVerbList();
+    renderComplementList();
+    renderTally();
+  }
+
+  /* ==========================================================
+   * 6) BITÁCORA (guardar oraciones + notas personales)
+   * ========================================================== */
+  function getBitacora() {
+    try { return JSON.parse(localStorage.getItem(LS_KEYS.bitacora) || '[]'); }
+    catch { return []; }
+  }
+  function setBitacora(list) {
+    localStorage.setItem(LS_KEYS.bitacora, JSON.stringify(list));
+  }
+
+  $('#btn-save-toggle').addEventListener('click', () => {
+    $('#save-panel').classList.toggle('hidden');
+    $('#save-toast').classList.add('hidden');
+    $('#save-note').focus();
+  });
+  $('#btn-save-cancel').addEventListener('click', () => {
+    $('#save-panel').classList.add('hidden');
+    $('#save-note').value = '';
+  });
+  $('#btn-save-confirm').addEventListener('click', () => {
+    const m = currentMolde(), v = currentVerb(), c = currentComplement();
+    const entry = {
+      id: Date.now(),
+      moldeTitle: `${m.subject} ${m.fixed}`,
+      sentence: buildSentence(m, v, c),
+      note: $('#save-note').value.trim(),
+      date: new Date().toLocaleDateString('es-NI', { day: '2-digit', month: 'short', year: 'numeric' }),
+    };
+    const list = getBitacora();
+    list.unshift(entry);
+    setBitacora(list);
+    $('#save-note').value = '';
+    $('#save-panel').classList.add('hidden');
+    $('#save-toast').classList.remove('hidden');
+    setTimeout(() => $('#save-toast').classList.add('hidden'), 2500);
+    renderBitacora();
+  });
+
+  function renderBitacora() {
+    const list = getBitacora();
+    $('#bitacora-count').textContent = list.length;
+    const wrap = $('#bitacora-list');
+    wrap.innerHTML = '';
+    if (list.length === 0) {
+      const empty = el('p', 'text-sm text-necSlate dark:text-necPaper/40 px-1 py-2');
+      empty.textContent = 'Aún no has guardado oraciones. ¡Arma una y guárdala!';
+      wrap.appendChild(empty);
+      return;
+    }
+    list.forEach(entry => {
+      const card = el('div', 'animate-popIn rounded-xl border border-necPaperLine dark:border-necInkLine bg-white dark:bg-necInkSurface p-3 flex items-start justify-between gap-2');
+      card.innerHTML = `
+        <div class="min-w-0">
+          <p class="font-display font-semibold text-sm truncate">${entry.sentence}</p>
+          ${entry.note ? `<p class="text-xs text-necTealDeep dark:text-necTeal mt-1">📝 ${entry.note}</p>` : ''}
+          <p class="text-[10px] text-necSlate dark:text-necPaper/40 mt-1">${entry.moldeTitle} · ${entry.date}</p>
+        </div>
+        <button aria-label="Eliminar" data-id="${entry.id}" class="focus-ring shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-necSlate hover:text-necCoral hover:bg-necCoral/10 transition">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>`;
+      card.querySelector('button').addEventListener('click', (e) => {
+        const id = Number(e.currentTarget.dataset.id);
+        setBitacora(getBitacora().filter(x => x.id !== id));
+        renderBitacora();
+      });
+      wrap.appendChild(card);
+    });
+  }
+
+  $('#btn-bitacora-toggle').addEventListener('click', () => {
+    $('#bitacora-list').classList.toggle('hidden');
+    $('#bitacora-chevron').classList.toggle('rotate-180');
+  });
+
+  /* ==========================================================
+   * 7) MODO OSCURO
+   * ========================================================== */
+  function applyTheme(theme) {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    $('#icon-sun').classList.toggle('hidden', theme !== 'dark');
+    $('#icon-moon').classList.toggle('hidden', theme === 'dark');
+    localStorage.setItem(LS_KEYS.theme, theme);
+  }
+  function initTheme() {
+    const saved = localStorage.getItem(LS_KEYS.theme);
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+  }
+  $('#theme-toggle').addEventListener('click', () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    applyTheme(isDark ? 'light' : 'dark');
+  });
+
+  /* ==========================================================
+   * 8) RENDER GENERAL + INIT
+   * ========================================================== */
+  function renderAll() {
+    renderMoldeSelector();
+    renderMoldeCard();
+    renderActiveChips();
+    renderPreview({ animate: false });
+    renderVerbList();
+    renderComplementList();
+    renderTally();
+  }
+
+  initTheme();
+  renderAll();
+  renderBitacora();
+})();
+</script>
+</body>
+</html>
