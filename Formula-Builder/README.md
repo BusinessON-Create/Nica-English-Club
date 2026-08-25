@@ -14,6 +14,26 @@ moldes gramaticales fijos con vocabulario dinámico.
 2. Ábrelo en el navegador: el placeholder desaparece y se muestra tu logo.
 3. Si tu archivo tiene otro nombre/formato, cambia el `src="assets/logo.png"` del `<img id="logo-img">` en `index.html`.
 
+## Moldes incluidos (30)
+
+La app ya viene con **30 estructuras clave del inglés americano cotidiano**,
+agrupadas por función comunicativa — el vocabulario es neutro y se entiende
+en cualquier país de habla inglesa:
+
+- **Hábitos:** `'m used to`, `used to`
+- **Arrepentimiento:** `should have`, `shouldn't have`, `wish I had`
+- **Emociones:** `makes me`, `drives me`, `'m afraid of`, `can't stand`
+- **Obligación:** `have to`, `need to`, `'m supposed to`, `don't have to`
+- **Habilidad/posibilidad:** `'m able to`, `could`, `might`
+- **Planes y futuro:** `'m going to`, `'m planning to`, `'m thinking about`, `can't wait to`, `'m looking forward to`
+- **Experiencia:** `'ve never`, `'ve just`
+- **Preferencias:** `'d rather`, `prefer`, `'d love to`
+- **Consejos/hipotéticos:** `If I were you, I'd`, `would`, `guess I'll`
+- **Opinión:** `think it's`
+
+Cada uno trae 6 verbos y 6 complementos ya listos (36 combinaciones posibles
+por molde, más de 1,000 oraciones distintas en total).
+
 ## Agregar más moldes (estructuras)
 
 Edita el array `MOLDES` dentro del `<script>` de `index.html`:
@@ -21,7 +41,7 @@ Edita el array `MOLDES` dentro del `<script>` de `index.html`:
 ```js
 {
   id: 'un_id_unico',
-  title: 'texto corto para el selector (ej: "used to")',
+  label: 'texto corto para el botón del selector (ej: "used to")',
   subject: 'I',              // sujeto de la fórmula
   fixed: "'m used to",       // la estructura fija (no cambia)
   context: 'Uso: explica cuándo se usa este molde.',
@@ -35,6 +55,11 @@ Edita el array `MOLDES` dentro del `<script>` de `index.html`:
   ],
 }
 ```
+
+**Nota sobre contracciones:** si tu `fixed` empieza con apóstrofo (`'m`, `'d`,
+`'ve`, `'s`), el código automáticamente pega la palabra al sujeto sin espacio
+(ej: `I` + `'m used to` → `I'm used to`, no `I 'm used to`). Esto lo maneja la
+función `smartJoin()` — no necesitas hacer nada especial al agregar un molde nuevo.
 
 No hay límite de moldes, verbos ni complementos — la interfaz, el contador de
 combinaciones y la bitácora se adaptan automáticamente.

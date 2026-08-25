@@ -267,36 +267,64 @@
 
   /* ==========================================================
    * 1) DATOS — edítalos o agrega nuevos moldes aquí.
-   *    Cada molde necesita: id, title, subject, fixed, context,
-   *    verbs[] y complements[] (cada uno {id, en, es}).
+   *    Cada molde necesita: id, label (texto corto para el selector),
+   *    subject, fixed, context, verbs[] y complements[] (cada uno {id, en, es}).
+   *    Vocabulario: inglés americano neutro, de uso diario, entendible
+   *    en cualquier país de habla inglesa.
    * ========================================================== */
   const MOLDES = [
+    // ---------- HÁBITOS Y RUTINAS ----------
     {
       id: 'used_to',
-      title: "'m used to",
+      label: "'m used to",
       subject: 'I',
       fixed: "'m used to",
       context: 'Uso: para hablar de hábitos actuales que antes costaban trabajo.',
       verbs: [
-        { id: 'waking_up',  en: 'waking up',        es: 'despertarme' },
-        { id: 'drinking',   en: 'drinking coffee',  es: 'tomar café' },
-        { id: 'working',    en: 'working from home',es: 'trabajar desde casa' },
-        { id: 'speaking',   en: 'speaking English', es: 'hablar inglés' },
-        { id: 'eating',     en: 'eating spicy food',es: 'comer picante' },
-        { id: 'driving',    en: 'driving in traffic',es:'manejar en tráfico' },
+        { id: 'waking_up', en: 'waking up',         es: 'despertarme' },
+        { id: 'drinking',  en: 'drinking coffee',   es: 'tomar café' },
+        { id: 'working',   en: 'working from home', es: 'trabajar desde casa' },
+        { id: 'speaking',  en: 'speaking English',  es: 'hablar inglés' },
+        { id: 'eating',    en: 'eating spicy food', es: 'comer picante' },
+        { id: 'driving',   en: 'driving in traffic',es: 'manejar en tráfico' },
       ],
       complements: [
-        { id: 'mondays',  en: 'early on Mondays',      es: 'temprano los lunes' },
-        { id: 'breakfast',en: 'before breakfast',      es: 'antes del desayuno' },
-        { id: 'everyday', en: 'every day',             es: 'todos los días' },
-        { id: 'coworkers',en: 'with my coworkers',     es: 'con mis compañeros' },
-        { id: 'lunch',    en: 'at lunch time',         es: 'a la hora del almuerzo' },
-        { id: 'managua',  en: 'here in Managua',       es: 'aquí en Managua' },
+        { id: 'mondays',   en: 'early on Mondays',  es: 'temprano los lunes' },
+        { id: 'breakfast', en: 'before breakfast',  es: 'antes del desayuno' },
+        { id: 'everyday',  en: 'every day',         es: 'todos los días' },
+        { id: 'coworkers', en: 'with my coworkers', es: 'con mis compañeros' },
+        { id: 'lunch',     en: 'at lunch time',     es: 'a la hora del almuerzo' },
+        { id: 'managua',   en: 'here in Managua',   es: 'aquí en Managua' },
       ],
     },
     {
+      id: 'simple_used_to',
+      label: 'used to',
+      subject: 'I',
+      fixed: 'used to',
+      context: 'Uso: para hablar de un hábito del pasado que ya no es cierto.',
+      verbs: [
+        { id: 'play_soccer',  en: 'play soccer',           es: 'jugar fútbol' },
+        { id: 'live_town',    en: 'live in a small town',  es: 'vivir en un pueblo pequeño' },
+        { id: 'smoke',        en: 'smoke',                 es: 'fumar' },
+        { id: 'work_nights',  en: 'work night shifts',     es: 'trabajar de noche' },
+        { id: 'ride_bike',    en: 'ride my bike everywhere',es: 'andar en bici a todos lados' },
+        { id: 'watch_cartoons',en:'watch cartoons all day',es: 'ver caricaturas todo el día' },
+      ],
+      complements: [
+        { id: 'weekend', en: 'every weekend',    es: 'cada fin de semana' },
+        { id: 'kid',     en: 'when I was a kid', es: 'cuando era niño/a' },
+        { id: 'lot',     en: 'a lot',            es: 'mucho' },
+        { id: 'downtown',en: 'downtown',         es: 'en el centro' },
+        { id: 'school',  en: 'after school',     es: 'después de clases' },
+        { id: 'backthen',en: 'back then',        es: 'en aquel entonces' },
+      ],
+    },
+
+    // ---------- ARREPENTIMIENTO Y CRÍTICA AL PASADO ----------
+    {
       id: 'should_have',
-      title: 'should have',
+      label: 'should have',
       subject: 'I',
       fixed: 'should have',
       context: 'Uso: para expresar arrepentimiento sobre algo del pasado.',
@@ -309,17 +337,65 @@
         { id: 'practiced', en: 'practiced English', es: 'practicado inglés' },
       ],
       complements: [
-        { id: 'exam',     en: 'before the exam',   es: 'antes del examen' },
-        { id: 'lastnight',en: 'last night',        es: 'anoche' },
-        { id: 'thisyear', en: 'this year',         es: 'este año' },
-        { id: 'trip',     en: 'about the trip',    es: 'sobre el viaje' },
-        { id: 'meeting',  en: 'to the meeting',    es: 'a la reunión' },
-        { id: 'daily',    en: 'every single day',  es: 'todos los días' },
+        { id: 'exam',      en: 'before the exam',  es: 'antes del examen' },
+        { id: 'lastnight', en: 'last night',       es: 'anoche' },
+        { id: 'thisyear',  en: 'this year',        es: 'este año' },
+        { id: 'trip',      en: 'about the trip',   es: 'sobre el viaje' },
+        { id: 'meeting',   en: 'to the meeting',   es: 'a la reunión' },
+        { id: 'daily',     en: 'every single day', es: 'todos los días' },
       ],
     },
     {
+      id: 'shouldnt_have',
+      label: "shouldn't have",
+      subject: 'I',
+      fixed: "shouldn't have",
+      context: 'Uso: para arrepentirte de algo que sí hiciste.',
+      verbs: [
+        { id: 'eaten_much',   en: 'eaten so much',       es: 'comido tanto' },
+        { id: 'said_that',    en: 'said that',           es: 'dicho eso' },
+        { id: 'spent_money',  en: 'spent so much money', es: 'gastado tanto dinero' },
+        { id: 'stayed_late',  en: 'stayed up so late',   es: 'desvelado tanto' },
+        { id: 'trusted_him',  en: 'trusted him',         es: 'confiado en él' },
+        { id: 'ignored_warn', en: 'ignored the warning', es: 'ignorado la advertencia' },
+      ],
+      complements: [
+        { id: 'lastnight', en: 'last night',   es: 'anoche' },
+        { id: 'party',     en: 'at the party', es: 'en la fiesta' },
+        { id: 'month',     en: 'this month',   es: 'este mes' },
+        { id: 'yesterday', en: 'yesterday',    es: 'ayer' },
+        { id: 'trip',      en: 'on the trip',  es: 'en el viaje' },
+        { id: 'work',      en: 'at work',      es: 'en el trabajo' },
+      ],
+    },
+    {
+      id: 'wish_had',
+      label: 'wish I had',
+      subject: 'I',
+      fixed: 'wish I had',
+      context: 'Uso: para lamentar algo que no hiciste en el pasado.',
+      verbs: [
+        { id: 'studied_harder', en: 'studied harder',      es: 'estudiado más' },
+        { id: 'told_truth',     en: 'told her the truth',  es: 'dicho la verdad' },
+        { id: 'saved_more',     en: 'saved more money',    es: 'ahorrado más dinero' },
+        { id: 'taken_job',      en: 'taken that job',      es: 'aceptado ese trabajo' },
+        { id: 'listened_parents',en:'listened to my parents',es:'escuchado a mis padres' },
+        { id: 'learned_swim',   en: 'learned to swim',     es: 'aprendido a nadar' },
+      ],
+      complements: [
+        { id: 'backthen', en: 'back then',                es: 'en aquel entonces' },
+        { id: 'college',  en: 'in college',                es: 'en la universidad' },
+        { id: 'lastyear', en: 'last year',                 es: 'el año pasado' },
+        { id: 'chance',   en: 'when I had the chance',     es: 'cuando tuve la oportunidad' },
+        { id: 'toolate',  en: 'before it was too late',    es: 'antes de que fuera tarde' },
+        { id: 'yearsago', en: 'years ago',                 es: 'hace años' },
+      ],
+    },
+
+    // ---------- EMOCIONES ----------
+    {
       id: 'makes_me',
-      title: 'makes me',
+      label: 'makes me',
       subject: 'It',
       fixed: 'makes me',
       context: 'Uso: para explicar cómo te hace sentir una situación.',
@@ -338,6 +414,572 @@
         { id: 'study',   en: 'after studying all night',  es: 'después de estudiar toda la noche' },
         { id: 'help',    en: 'when I help someone',       es: 'cuando ayudo a alguien' },
         { id: 'fridays', en: 'on Fridays',                es: 'los viernes' },
+      ],
+    },
+    {
+      id: 'drives_me_crazy',
+      label: 'drives me',
+      subject: 'That',
+      fixed: 'drives me',
+      context: 'Uso: para decir qué comportamiento te molesta muchísimo.',
+      verbs: [
+        { id: 'crazy',  en: 'crazy',       es: 'loco/a' },
+        { id: 'nuts',   en: 'nuts',        es: 'loco/a' },
+        { id: 'insane', en: 'insane',      es: 'loco/a (fuerte)' },
+        { id: 'upwall', en: 'up the wall', es: 'desesperado/a' },
+        { id: 'bananas',en: 'bananas',     es: 'loco/a (informal)' },
+        { id: 'mad',    en: 'mad',         es: 'furioso/a' },
+      ],
+      complements: [
+        { id: 'late',    en: 'when people are late',           es: 'cuando la gente llega tarde' },
+        { id: 'rain',    en: 'when it rains all day',           es: 'cuando llueve todo el día' },
+        { id: 'wifi',    en: 'when the wifi is slow',           es: 'cuando el wifi va lento' },
+        { id: 'interrupt',en:'when he interrupts me',           es: 'cuando él me interrumpe' },
+        { id: 'planned', en: "when things don't go as planned", es: 'cuando las cosas no salen como se planearon' },
+        { id: 'everytime',en:'every single time',                es: 'cada vez' },
+      ],
+    },
+    {
+      id: 'afraid_of',
+      label: 'afraid of',
+      subject: 'I',
+      fixed: "'m afraid of",
+      context: 'Uso: para hablar de un miedo o temor.',
+      verbs: [
+        { id: 'flying',     en: 'flying',              es: 'volar' },
+        { id: 'speaking',   en: 'speaking in public',  es: 'hablar en público' },
+        { id: 'mistakes',   en: 'making mistakes',     es: 'cometer errores' },
+        { id: 'losing_job', en: 'losing my job',       es: 'perder mi trabajo' },
+        { id: 'alone',      en: 'being alone',         es: 'estar solo/a' },
+        { id: 'failing',    en: 'failing',             es: 'fracasar' },
+      ],
+      complements: [
+        { id: 'sometimes', en: 'sometimes',                    es: 'a veces' },
+        { id: 'honest',    en: 'to be honest',                 es: 'para ser honesto/a' },
+        { id: 'college',   en: 'ever since college',           es: 'desde la universidad' },
+        { id: 'mostppl',   en: 'more than most people',        es: 'más que la mayoría' },
+        { id: 'general',   en: 'in general',                   es: 'en general' },
+        { id: 'lately',    en: 'lately',                       es: 'últimamente' },
+      ],
+    },
+    {
+      id: 'cant_stand',
+      label: "can't stand",
+      subject: 'I',
+      fixed: "can't stand",
+      context: "Uso: para hablar de algo que te molesta muchísimo (más fuerte que 'no me gusta').",
+      verbs: [
+        { id: 'waiting',   en: 'waiting in line', es: 'hacer fila' },
+        { id: 'late',      en: 'being late',      es: 'llegar tarde' },
+        { id: 'noises',    en: 'loud noises',     es: 'los ruidos fuertes' },
+        { id: 'smalltalk', en: 'small talk',      es: 'la plática superficial' },
+        { id: 'traffic',   en: 'traffic',         es: 'el tráfico' },
+        { id: 'rudeppl',   en: 'rude people',     es: 'la gente grosera' },
+      ],
+      complements: [
+        { id: 'honestly', en: 'honestly',                    es: 'honestamente' },
+        { id: 'morning',  en: 'especially in the morning',   es: 'sobre todo en la mañana' },
+        { id: 'atall',    en: 'at all',                       es: 'para nada' },
+        { id: 'thesedays',en: 'these days',                   es: 'hoy en día' },
+        { id: 'tired',    en: "when I'm tired",               es: 'cuando estoy cansado/a' },
+        { id: 'mosttime', en: 'most of the time',             es: 'la mayoría del tiempo' },
+      ],
+    },
+
+    // ---------- OBLIGACIÓN Y NECESIDAD ----------
+    {
+      id: 'have_to',
+      label: 'have to',
+      subject: 'I',
+      fixed: 'have to',
+      context: 'Uso: para hablar de una obligación o necesidad.',
+      verbs: [
+        { id: 'report',   en: 'finish this report', es: 'terminar este informe' },
+        { id: 'kids',     en: 'pick up my kids',     es: 'recoger a mis hijos' },
+        { id: 'doctor',   en: 'call the doctor',     es: 'llamar al doctor' },
+        { id: 'clean',    en: 'clean the house',     es: 'limpiar la casa' },
+        { id: 'work',     en: 'go to work',          es: 'ir a trabajar' },
+        { id: 'passport', en: 'renew my passport',   es: 'renovar mi pasaporte' },
+      ],
+      complements: [
+        { id: 'friday',   en: 'by Friday',       es: 'antes del viernes' },
+        { id: 'afternoon',en: 'this afternoon',  es: 'esta tarde' },
+        { id: 'noon',     en: 'before noon',     es: 'antes del mediodía' },
+        { id: 'week',     en: 'every week',      es: 'cada semana' },
+        { id: 'now',      en: 'right now',       es: 'ahora mismo' },
+        { id: 'nextmonth',en: 'next month',      es: 'el próximo mes' },
+      ],
+    },
+    {
+      id: 'need_to',
+      label: 'need to',
+      subject: 'I',
+      fixed: 'need to',
+      context: 'Uso: para hablar de algo que necesitas hacer.',
+      verbs: [
+        { id: 'finish',  en: 'finish this',      es: 'terminar esto' },
+        { id: 'talk',    en: 'talk to you',      es: 'hablar contigo' },
+        { id: 'break',   en: 'take a break',     es: 'tomar un descanso' },
+        { id: 'grocery', en: 'buy groceries',    es: 'comprar víveres' },
+        { id: 'email',   en: 'check my email',   es: 'revisar mi correo' },
+        { id: 'sleep',   en: 'get some sleep',   es: 'dormir un poco' },
+      ],
+      complements: [
+        { id: 'now',      en: 'right now',              es: 'ahora mismo' },
+        { id: 'tonight',  en: 'before tonight',         es: 'antes de esta noche' },
+        { id: 'asap',     en: 'as soon as possible',    es: 'lo antes posible' },
+        { id: 'today',    en: 'today',                  es: 'hoy' },
+        { id: 'week',     en: 'this week',              es: 'esta semana' },
+        { id: 'deadline', en: 'before the deadline',    es: 'antes de la fecha límite' },
+      ],
+    },
+    {
+      id: 'supposed_to',
+      label: 'supposed to',
+      subject: 'I',
+      fixed: "'m supposed to",
+      context: 'Uso: para hablar de lo que se espera que hagas.',
+      verbs: [
+        { id: 'meet',    en: 'meet him',            es: 'reunirme con él' },
+        { id: 'email',   en: 'send the email',      es: 'enviar el correo' },
+        { id: 'bethere', en: 'be there',            es: 'estar ahí' },
+        { id: 'finish',  en: 'finish the project',  es: 'terminar el proyecto' },
+        { id: 'pay',     en: 'pay the bill',        es: 'pagar la factura' },
+        { id: 'pickup',  en: 'pick her up',         es: 'recogerla' },
+      ],
+      complements: [
+        { id: '9am',     en: 'at 9 AM',           es: 'a las 9 de la mañana' },
+        { id: 'tomorrow',en: 'by tomorrow',       es: 'para mañana' },
+        { id: 'week',    en: 'this week',         es: 'esta semana' },
+        { id: 'meeting', en: 'before the meeting',es: 'antes de la reunión' },
+        { id: 'monday',  en: 'on Monday',         es: 'el lunes' },
+        { id: 'lunch',   en: 'after lunch',       es: 'después del almuerzo' },
+      ],
+    },
+    {
+      id: 'dont_have_to',
+      label: "don't have to",
+      subject: 'I',
+      fixed: "don't have to",
+      context: 'Uso: para decir que algo NO es obligatorio.',
+      verbs: [
+        { id: 'wake',    en: 'wake up early',   es: 'despertar temprano' },
+        { id: 'suit',    en: 'wear a suit',     es: 'usar traje' },
+        { id: 'office',  en: 'go to the office',es: 'ir a la oficina' },
+        { id: 'cook',    en: 'cook dinner',     es: 'cocinar la cena' },
+        { id: 'drive',   en: 'drive there',     es: 'manejar hasta allá' },
+        { id: 'bring',   en: 'bring anything',  es: 'traer nada' },
+      ],
+      complements: [
+        { id: 'weekends', en: 'on weekends',        es: 'los fines de semana' },
+        { id: 'anymore',  en: 'anymore',            es: 'ya' },
+        { id: 'week',     en: 'this week',          es: 'esta semana' },
+        { id: 'tomorrow', en: 'tomorrow',           es: 'mañana' },
+        { id: 'dontwant', en: "if I don't want to", es: 'si no quiero' },
+        { id: 'thesedays',en: 'these days',         es: 'hoy en día' },
+      ],
+    },
+
+    // ---------- HABILIDAD Y POSIBILIDAD ----------
+    {
+      id: 'able_to',
+      label: 'able to',
+      subject: 'I',
+      fixed: "'m able to",
+      context: 'Uso: para hablar de una habilidad o capacidad.',
+      verbs: [
+        { id: 'languages', en: 'speak two languages', es: 'hablar dos idiomas' },
+        { id: 'fixcars',   en: 'fix cars',            es: 'reparar carros' },
+        { id: 'pressure',  en: 'work under pressure', es: 'trabajar bajo presión' },
+        { id: 'cook',      en: 'cook pretty well',    es: 'cocinar bastante bien' },
+        { id: 'run',       en: 'run five miles',      es: 'correr cinco millas' },
+        { id: 'solve',     en: 'solve the problem',   es: 'resolver el problema' },
+      ],
+      complements: [
+        { id: 'now',      en: 'now',                es: 'ahora' },
+        { id: 'own',      en: 'on my own',          es: 'por mi cuenta' },
+        { id: 'nohelp',   en: 'without help',       es: 'sin ayuda' },
+        { id: 'easily',   en: 'pretty easily',      es: 'bastante fácil' },
+        { id: 'mosttime', en: 'most of the time',   es: 'la mayoría del tiempo' },
+        { id: 'practice', en: 'thanks to practice', es: 'gracias a la práctica' },
+      ],
+    },
+    {
+      id: 'could',
+      label: 'could',
+      subject: 'I',
+      fixed: 'could',
+      context: 'Uso: para hablar de una habilidad que tenías en el pasado.',
+      verbs: [
+        { id: 'swim',    en: 'swim',                 es: 'nadar' },
+        { id: 'guitar',  en: 'play the guitar',      es: 'tocar guitarra' },
+        { id: 'run',     en: 'run really fast',      es: 'correr muy rápido' },
+        { id: 'french',  en: 'speak French',         es: 'hablar francés' },
+        { id: 'draw',    en: 'draw really well',     es: 'dibujar muy bien' },
+        { id: 'stayup',  en: 'stay up all night',    es: 'desvelarme toda la noche' },
+      ],
+      complements: [
+        { id: 'younger',  en: 'when I was younger', es: 'cuando era más joven' },
+        { id: 'kid',      en: 'as a kid',           es: 'de niño/a' },
+        { id: 'school',   en: 'back in school',     es: 'en la escuela' },
+        { id: 'injury',   en: 'before the injury',  es: 'antes de la lesión' },
+        { id: 'yearsago', en: 'a few years ago',    es: 'hace algunos años' },
+        { id: 'highschool',en:'in high school',     es: 'en la secundaria' },
+      ],
+    },
+    {
+      id: 'might',
+      label: 'might',
+      subject: 'I',
+      fixed: 'might',
+      context: 'Uso: para hablar de algo posible, pero no seguro.',
+      verbs: [
+        { id: 'party',  en: 'go to the party',   es: 'ir a la fiesta' },
+        { id: 'trip',   en: 'take a trip',       es: 'hacer un viaje' },
+        { id: 'jobs',   en: 'change jobs',       es: 'cambiar de trabajo' },
+        { id: 'call',   en: 'call you later',    es: 'llamarte más tarde' },
+        { id: 'home',   en: 'stay home',         es: 'quedarme en casa' },
+        { id: 'phone',  en: 'buy a new phone',   es: 'comprar un celular nuevo' },
+      ],
+      complements: [
+        { id: 'weekend',en: 'this weekend',              es: 'este fin de semana' },
+        { id: 'month',  en: 'next month',                es: 'el próximo mes' },
+        { id: 'time',   en: 'if I have time',            es: 'si tengo tiempo' },
+        { id: 'weather',en: 'depending on the weather',  es: 'dependiendo del clima' },
+        { id: 'later',  en: 'later today',               es: 'más tarde hoy' },
+        { id: 'who',    en: 'who knows',                 es: 'quién sabe' },
+      ],
+    },
+
+    // ---------- PLANES Y FUTURO ----------
+    {
+      id: 'going_to',
+      label: 'going to',
+      subject: 'I',
+      fixed: "'m going to",
+      context: 'Uso: para hablar de un plan o intención futura.',
+      verbs: [
+        { id: 'business', en: 'start a business',     es: 'iniciar un negocio' },
+        { id: 'move',     en: 'move to a new city',   es: 'mudarme a otra ciudad' },
+        { id: 'cook',     en: 'learn to cook',        es: 'aprender a cocinar' },
+        { id: 'family',   en: 'visit my family',      es: 'visitar a mi familia' },
+        { id: 'house',    en: 'buy a house',          es: 'comprar una casa' },
+        { id: 'career',   en: 'change careers',       es: 'cambiar de carrera' },
+      ],
+      complements: [
+        { id: 'nextyear', en: 'next year',                    es: 'el próximo año' },
+        { id: 'soon',     en: 'soon',                         es: 'pronto' },
+        { id: 'summer',   en: 'this summer',                  es: 'este verano' },
+        { id: 'asap',     en: 'as soon as possible',          es: 'lo antes posible' },
+        { id: 'eventually',en:'eventually',                   es: 'eventualmente' },
+        { id: 'save',     en: 'once I save enough',           es: 'una vez que ahorre suficiente' },
+      ],
+    },
+    {
+      id: 'planning_to',
+      label: 'planning to',
+      subject: 'I',
+      fixed: "'m planning to",
+      context: 'Uso: para hablar de un plan más concreto.',
+      verbs: [
+        { id: 'europe',    en: 'travel to Europe',   es: 'viajar a Europa' },
+        { id: 'apply',     en: 'apply for the job',  es: 'aplicar al trabajo' },
+        { id: 'car',       en: 'buy a car',          es: 'comprar un carro' },
+        { id: 'college',   en: 'start college',      es: 'empezar la universidad' },
+        { id: 'app',       en: 'launch the app',     es: 'lanzar la app' },
+        { id: 'certified', en: 'get certified',      es: 'certificarme' },
+      ],
+      complements: [
+        { id: 'spring',    en: 'next spring',              es: 'la próxima primavera' },
+        { id: 'endyear',   en: 'by the end of the year',   es: 'para fin de año' },
+        { id: 'quarter',   en: 'this quarter',             es: 'este trimestre' },
+        { id: 'graduation',en: 'after graduation',         es: 'después de graduarme' },
+        { id: 'months',    en: 'in a few months',          es: 'en unos meses' },
+        { id: 'ready',     en: "once I'm ready",           es: 'cuando esté listo/a' },
+      ],
+    },
+    {
+      id: 'thinking_about',
+      label: 'thinking about',
+      subject: 'I',
+      fixed: "'m thinking about",
+      context: 'Uso: para hablar de algo que estás considerando hacer.',
+      verbs: [
+        { id: 'quitting', en: 'quitting my job',       es: 'renunciar a mi trabajo' },
+        { id: 'moving',   en: 'moving abroad',         es: 'mudarme al extranjero' },
+        { id: 'school',   en: 'going back to school',  es: 'volver a estudiar' },
+        { id: 'diet',     en: 'starting a diet',       es: 'empezar una dieta' },
+        { id: 'dog',      en: 'adopting a dog',        es: 'adoptar un perro' },
+        { id: 'code',     en: 'learning to code',      es: 'aprender a programar' },
+      ],
+      complements: [
+        { id: 'lately',   en: 'lately',                     es: 'últimamente' },
+        { id: 'days',     en: 'these days',                 es: 'en estos días' },
+        { id: 'nextyear', en: 'for next year',              es: 'para el próximo año' },
+        { id: 'notsure',  en: "but I'm not sure yet",       es: 'pero no estoy seguro/a todavía' },
+        { id: 'moremore', en: 'more and more',              es: 'cada vez más' },
+        { id: 'month',    en: 'this month',                 es: 'este mes' },
+      ],
+    },
+    {
+      id: 'cant_wait_to',
+      label: "can't wait to",
+      subject: 'I',
+      fixed: "can't wait to",
+      context: 'Uso: para expresar mucha emoción por algo que va a pasar.',
+      verbs: [
+        { id: 'seeyou',  en: 'see you',                es: 'verte' },
+        { id: 'job',     en: 'start the new job',      es: 'empezar el nuevo trabajo' },
+        { id: 'vacation',en: 'go on vacation',         es: 'irme de vacaciones' },
+        { id: 'restaurant',en:'try that restaurant',   es: 'probar ese restaurante' },
+        { id: 'game',    en: 'watch the game',         es: 'ver el partido' },
+        { id: 'gifts',   en: 'open my gifts',          es: 'abrir mis regalos' },
+      ],
+      complements: [
+        { id: 'weekend', en: 'this weekend',  es: 'este fin de semana' },
+        { id: 'nextweek',en: 'next week',     es: 'la próxima semana' },
+        { id: 'tomorrow',en: 'tomorrow',      es: 'mañana' },
+        { id: 'tonight', en: 'tonight',       es: 'esta noche' },
+        { id: 'summer',  en: 'this summer',   es: 'este verano' },
+        { id: 'friday',  en: 'on Friday',     es: 'el viernes' },
+      ],
+    },
+    {
+      id: 'looking_forward_to',
+      label: 'looking forward to',
+      subject: 'I',
+      fixed: "'m looking forward to",
+      context: 'Uso: para hablar de algo que esperas con muchas ganas.',
+      verbs: [
+        { id: 'seeing',   en: 'seeing you',           es: 'verte' },
+        { id: 'starting', en: 'starting the new job', es: 'empezar el nuevo trabajo' },
+        { id: 'visiting', en: 'visiting my family',   es: 'visitar a mi familia' },
+        { id: 'weekend',  en: 'the weekend',          es: 'el fin de semana' },
+        { id: 'traveling',en: 'traveling again',      es: 'volver a viajar' },
+        { id: 'meeting',  en: 'meeting the team',     es: 'conocer al equipo' },
+      ],
+      complements: [
+        { id: 'weekend',  en: 'this weekend',        es: 'este fin de semana' },
+        { id: 'nextmonth',en: 'next month',          es: 'el próximo mes' },
+        { id: 'somuch',   en: 'so much',             es: 'muchísimo' },
+        { id: 'already',  en: 'already',             es: 'ya' },
+        { id: 'more',     en: 'more than you know',  es: 'más de lo que crees' },
+        { id: 'thisyear', en: 'this year',           es: 'este año' },
+      ],
+    },
+
+    // ---------- EXPERIENCIA (PRESENT PERFECT) ----------
+    {
+      id: 'never_participle',
+      label: "'ve never",
+      subject: 'I',
+      fixed: "'ve never",
+      context: 'Uso: para hablar de experiencias que nunca has tenido.',
+      verbs: [
+        { id: 'europe',    en: 'been to Europe',   es: 'estado en Europa' },
+        { id: 'sushi',     en: 'tried sushi',      es: 'probado sushi' },
+        { id: 'movie',     en: 'seen that movie',  es: 'visto esa película' },
+        { id: 'horse',     en: 'ridden a horse',   es: 'montado a caballo' },
+        { id: 'test',      en: 'failed a test',    es: 'reprobado un examen' },
+        { id: 'celebrity', en: 'met a celebrity',  es: 'conocido a una celebridad' },
+      ],
+      complements: [
+        { id: 'life',     en: 'in my life',        es: 'en mi vida' },
+        { id: 'before',   en: 'before',            es: 'antes' },
+        { id: 'sofar',    en: 'so far',            es: 'hasta ahora' },
+        { id: 'untilnow', en: 'until now',         es: 'hasta ahora' },
+        { id: 'ever',     en: 'ever',              es: 'nunca (énfasis)' },
+        { id: 'remember', en: 'that I remember',   es: 'que yo recuerde' },
+      ],
+    },
+    {
+      id: 'just_participle',
+      label: "'ve just",
+      subject: 'I',
+      fixed: "'ve just",
+      context: 'Uso: para hablar de algo que acabas de hacer.',
+      verbs: [
+        { id: 'homework', en: 'finished my homework', es: 'terminado mi tarea' },
+        { id: 'home',     en: 'gotten home',          es: 'llegado a casa' },
+        { id: 'lunch',    en: 'eaten lunch',          es: 'almorzado' },
+        { id: 'email',    en: 'sent the email',       es: 'enviado el correo' },
+        { id: 'woken',    en: 'woken up',             es: 'despertado' },
+        { id: 'arrived',  en: 'arrived',              es: 'llegado' },
+      ],
+      complements: [
+        { id: 'minutes', en: 'a few minutes ago', es: 'hace unos minutos' },
+        { id: 'now',     en: 'right now',         es: 'justo ahora' },
+        { id: 'morning', en: 'this morning',      es: 'esta mañana' },
+        { id: 'call',    en: 'before you called', es: 'antes de que llamaras' },
+        { id: 'office',  en: 'at the office',     es: 'en la oficina' },
+        { id: 'home',    en: 'home',              es: 'a casa' },
+      ],
+    },
+
+    // ---------- PREFERENCIAS ----------
+    {
+      id: 'rather',
+      label: "'d rather",
+      subject: 'I',
+      fixed: "'d rather",
+      context: 'Uso: para expresar una preferencia entre dos opciones.',
+      verbs: [
+        { id: 'home',  en: 'stay home',           es: 'quedarme en casa' },
+        { id: 'walk',  en: 'walk than drive',     es: 'caminar en vez de manejar' },
+        { id: 'eat',   en: 'eat at home',         es: 'comer en casa' },
+        { id: 'watch', en: 'watch a movie',       es: 'ver una película' },
+        { id: 'alone', en: 'work alone',          es: 'trabajar solo/a' },
+        { id: 'save',  en: 'save the money',      es: 'ahorrar el dinero' },
+      ],
+      complements: [
+        { id: 'tonight',  en: 'tonight',          es: 'esta noche' },
+        { id: 'weekend',  en: 'this weekend',     es: 'este fin de semana' },
+        { id: 'okay',     en: "if that's okay",   es: 'si está bien' },
+        { id: 'now',      en: 'right now',        es: 'ahora mismo' },
+        { id: 'mostdays', en: 'most days',        es: 'la mayoría de los días' },
+        { id: 'honestly', en: 'honestly',         es: 'honestamente' },
+      ],
+    },
+    {
+      id: 'prefer_ing',
+      label: 'prefer',
+      subject: 'I',
+      fixed: 'prefer',
+      context: 'Uso: para hablar de tus gustos y preferencias generales.',
+      verbs: [
+        { id: 'home',    en: 'working from home',  es: 'trabajar desde casa' },
+        { id: 'reading', en: 'reading books',      es: 'leer libros' },
+        { id: 'cooking', en: 'cooking at home',    es: 'cocinar en casa' },
+        { id: 'traveling',en:'traveling alone',    es: 'viajar solo/a' },
+        { id: 'texting', en: 'texting',            es: 'mandar mensajes' },
+        { id: 'waking',  en: 'waking up early',    es: 'despertarme temprano' },
+      ],
+      complements: [
+        { id: 'office',   en: 'over going to the office', es: 'en vez de ir a la oficina' },
+        { id: 'goingout', en: 'to going out',              es: 'en vez de salir' },
+        { id: 'weekends', en: 'on weekends',               es: 'los fines de semana' },
+        { id: 'mosttime', en: 'most of the time',          es: 'la mayoría del tiempo' },
+        { id: 'thesedays',en: 'these days',                es: 'hoy en día' },
+        { id: 'general',  en: 'in general',                es: 'en general' },
+      ],
+    },
+    {
+      id: 'love_to',
+      label: "'d love to",
+      subject: 'I',
+      fixed: "'d love to",
+      context: 'Uso: para expresar entusiasmo por hacer algo.',
+      verbs: [
+        { id: 'nicaragua', en: 'visit Nicaragua',     es: 'visitar Nicaragua' },
+        { id: 'italian',   en: 'learn Italian',       es: 'aprender italiano' },
+        { id: 'restaurant',en: 'try that restaurant', es: 'probar ese restaurante' },
+        { id: 'joinyou',   en: 'join you',            es: 'acompañarte' },
+        { id: 'seemovie',  en: 'see that movie',      es: 'ver esa película' },
+        { id: 'family',    en: 'meet your family',    es: 'conocer a tu familia' },
+      ],
+      complements: [
+        { id: 'sometime', en: 'sometime',          es: 'algún día' },
+        { id: 'weekend',  en: 'this weekend',      es: 'este fin de semana' },
+        { id: 'free',     en: "if you're free",    es: 'si estás libre' },
+        { id: 'chance',   en: 'when I get the chance', es: 'cuando tenga la oportunidad' },
+        { id: 'oneday',   en: 'one day',           es: 'algún día' },
+        { id: 'soon',     en: 'soon',              es: 'pronto' },
+      ],
+    },
+
+    // ---------- CONSEJOS E HIPOTÉTICOS ----------
+    {
+      id: 'if_i_were_you',
+      label: "If I were you, I'd",
+      subject: 'If I were you,',
+      fixed: "I'd",
+      context: 'Uso: para dar un consejo hipotético.',
+      verbs: [
+        { id: 'talk',   en: 'talk to her',           es: 'hablar con ella' },
+        { id: 'ask',    en: 'ask for help',          es: 'pedir ayuda' },
+        { id: 'take',   en: 'take the job',          es: 'aceptar el trabajo' },
+        { id: 'wait',   en: 'wait a bit longer',     es: 'esperar un poco más' },
+        { id: 'save',   en: 'save more money',       es: 'ahorrar más dinero' },
+        { id: 'tryagain',en: 'try again',            es: 'intentarlo de nuevo' },
+      ],
+      complements: [
+        { id: 'right_away', en: 'right away',                 es: 'de inmediato' },
+        { id: 'toolate',    en: "before it's too late",       es: 'antes de que sea tarde' },
+        { id: 'first',      en: 'first',                      es: 'primero' },
+        { id: 'shoes',      en: 'if I were in your shoes',    es: 'si estuviera en tu lugar' },
+        { id: 'hesitation', en: 'without hesitation',         es: 'sin dudarlo' },
+        { id: 'week',       en: 'this week',                  es: 'esta semana' },
+      ],
+    },
+    {
+      id: 'would_if',
+      label: 'would',
+      subject: 'I',
+      fixed: 'would',
+      context: 'Uso: para hablar de una situación hipotética.',
+      verbs: [
+        { id: 'travel',  en: 'travel more',           es: 'viajar más' },
+        { id: 'house',   en: 'buy a house',           es: 'comprar una casa' },
+        { id: 'helpyou', en: 'help you',              es: 'ayudarte' },
+        { id: 'job',     en: 'change my job',         es: 'cambiar de trabajo' },
+        { id: 'abroad',  en: 'move abroad',           es: 'mudarme al extranjero' },
+        { id: 'business',en: 'start my own business', es: 'empezar mi propio negocio' },
+      ],
+      complements: [
+        { id: 'money',    en: 'if I had the money',    es: 'si tuviera el dinero' },
+        { id: 'could',    en: 'if I could',            es: 'si pudiera' },
+        { id: 'situation',en: 'in your situation',     es: 'en tu situación' },
+        { id: 'nodoubt',  en: 'without a doubt',       es: 'sin duda' },
+        { id: 'someday',  en: 'someday',               es: 'algún día' },
+        { id: 'moretime', en: 'if I had more time',    es: 'si tuviera más tiempo' },
+      ],
+    },
+    {
+      id: 'guess_ill',
+      label: "guess I'll",
+      subject: 'I',
+      fixed: "guess I'll",
+      context: 'Uso: para hablar de una decisión poco segura, casi al momento.',
+      verbs: [
+        { id: 'home',    en: 'stay home',            es: 'quedarme en casa' },
+        { id: 'pizza',   en: 'order pizza',          es: 'pedir pizza' },
+        { id: 'wait',    en: 'wait and see',         es: 'esperar a ver' },
+        { id: 'boss',    en: 'ask my boss',          es: 'preguntarle a mi jefe' },
+        { id: 'figure',  en: 'figure it out',        es: 'resolverlo' },
+        { id: 'tryagain',en: 'try again tomorrow',   es: 'intentarlo de nuevo mañana' },
+      ],
+      complements: [
+        { id: 'tonight', en: 'tonight',            es: 'esta noche' },
+        { id: 'fornow',  en: 'for now',            es: 'por ahora' },
+        { id: 'thistime',en: 'this time',          es: 'esta vez' },
+        { id: 'nothing', en: 'if nothing changes', es: 'si nada cambia' },
+        { id: 'later',   en: 'later',              es: 'más tarde' },
+        { id: 'weekend', en: 'this weekend',       es: 'este fin de semana' },
+      ],
+    },
+
+    // ---------- OPINIÓN ----------
+    {
+      id: 'think_its',
+      label: "think it's",
+      subject: 'I',
+      fixed: "think it's",
+      context: 'Uso: para dar tu opinión sobre algo de forma clara.',
+      verbs: [
+        { id: 'idea',   en: 'a great idea',       es: 'una gran idea' },
+        { id: 'expensive',en: 'too expensive',    es: 'demasiado caro' },
+        { id: 'worthit',en: 'worth it',           es: 'que vale la pena' },
+        { id: 'best',   en: 'the best option',    es: 'la mejor opción' },
+        { id: 'waste',  en: 'a waste of time',    es: 'una pérdida de tiempo' },
+        { id: 'trying', en: 'worth trying',       es: 'que vale la pena intentar' },
+      ],
+      complements: [
+        { id: 'now',     en: 'right now',          es: 'ahora mismo' },
+        { id: 'longrun', en: 'in the long run',    es: 'a largo plazo' },
+        { id: 'mostppl', en: 'for most people',    es: 'para la mayoría' },
+        { id: 'honestly',en: 'honestly',           es: 'honestamente' },
+        { id: 'point',   en: 'at this point',      es: 'a estas alturas' },
+        { id: 'overall', en: 'overall',            es: 'en general' },
       ],
     },
   ];
@@ -367,8 +1009,19 @@
   const $ = (sel) => document.querySelector(sel);
   const el = (tag, cls) => { const n = document.createElement(tag); if (cls) n.className = cls; return n; };
 
+  // Une partes de una oración con espacio, EXCEPTO cuando la siguiente
+  // parte empieza con apóstrofo (contracción: 'm, 'd, 've, 's...).
+  function smartJoin(...parts) {
+    return parts.reduce((acc, part) => {
+      if (!part) return acc;
+      if (!acc) return part;
+      const isContraction = /^['’]/.test(part);
+      return acc + (isContraction ? '' : ' ') + part;
+    }, '');
+  }
+
   function buildSentence(molde, verb, complement) {
-    return `${molde.subject} ${molde.fixed} ${verb.en} ${complement.en}`.replace(/\s+/g, ' ').trim();
+    return smartJoin(molde.subject, molde.fixed, verb.en, complement.en).replace(/\s+/g, ' ').trim();
   }
 
   /* ---------- Selector de moldes ---------- */
@@ -381,7 +1034,7 @@
           ? 'bg-necInk text-necPaper dark:bg-necLime dark:text-necInk border-necInk dark:border-necLime'
           : 'bg-white dark:bg-necInkSurface text-necSlate dark:text-necPaper/70 border-necPaperLine dark:border-necInkLine hover:border-necGold'));
       btn.type = 'button';
-      btn.textContent = `${m.subject} ${m.title}`;
+      btn.textContent = m.label;
       btn.addEventListener('click', () => {
         state.moldeId = m.id;
         state.verbId = m.verbs[0].id;
@@ -438,11 +1091,16 @@
   function renderPreview({ animate = true } = {}) {
     const m = currentMolde(), v = currentVerb(), c = currentComplement();
     const preview = $('#sentence-preview');
-    preview.innerHTML =
-      `<span class="text-necPaper/90">${m.subject}</span> ` +
-      `<span class="text-necGold">${m.fixed}</span> ` +
-      `<span class="text-necCoral">${v.en}</span> ` +
-      `<span class="text-necTeal">${c.en}</span>`;
+    const segments = [
+      ['text-necPaper/90', m.subject],
+      ['text-necGold', m.fixed],
+      ['text-necCoral', v.en],
+      ['text-necTeal', c.en],
+    ];
+    preview.innerHTML = segments.map(([cls, text], i) => {
+      const spacer = (i === 0 || /^['’]/.test(text)) ? '' : ' ';
+      return `${spacer}<span class="${cls}">${text}</span>`;
+    }).join('');
 
     $('#context-tag-text').textContent = m.context;
 
