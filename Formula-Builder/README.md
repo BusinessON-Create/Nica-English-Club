@@ -14,11 +14,13 @@ moldes gramaticales fijos con vocabulario dinámico.
 2. Ábrelo en el navegador: el placeholder desaparece y se muestra tu logo.
 3. Si tu archivo tiene otro nombre/formato, cambia el `src="assets/logo.png"` del `<img id="logo-img">` en `index.html`.
 
-## Moldes incluidos (30)
+## Moldes incluidos (34)
 
-La app ya viene con **30 estructuras clave del inglés americano cotidiano**,
+La app ya viene con **34 estructuras clave del inglés americano cotidiano**,
 agrupadas por función comunicativa — el vocabulario es neutro y se entiende
-en cualquier país de habla inglesa:
+en cualquier país de habla inglesa. Cada combinación verbo+complemento fue
+revisada para que suene natural sin importar qué elija el estudiante
+(**1,224 oraciones distintas posibles en total**, todas verificadas):
 
 - **Hábitos:** `'m used to`, `used to`
 - **Arrepentimiento:** `should have`, `shouldn't have`, `wish I had`
@@ -30,9 +32,10 @@ en cualquier país de habla inglesa:
 - **Preferencias:** `'d rather`, `prefer`, `'d love to`
 - **Consejos/hipotéticos:** `If I were you, I'd`, `would`, `guess I'll`
 - **Opinión:** `think it's`
+- **Peticiones y sugerencias (preguntas):** `Would you mind`, `Do you mind if I`, `What if we`, `Have you ever`
 
 Cada uno trae 6 verbos y 6 complementos ya listos (36 combinaciones posibles
-por molde, más de 1,000 oraciones distintas en total).
+por molde).
 
 ## Agregar más moldes (estructuras)
 
@@ -45,6 +48,7 @@ Edita el array `MOLDES` dentro del `<script>` de `index.html`:
   subject: 'I',              // sujeto de la fórmula
   fixed: "'m used to",       // la estructura fija (no cambia)
   context: 'Uso: explica cuándo se usa este molde.',
+  isQuestion: false,         // opcional: pon 'true' si la oración debe terminar en "?"
   verbs: [
     { id: 'v1', en: 'waking up', es: 'despertarme' },
     // agrega tantos como quieras
@@ -60,6 +64,23 @@ Edita el array `MOLDES` dentro del `<script>` de `index.html`:
 `'ve`, `'s`), el código automáticamente pega la palabra al sujeto sin espacio
 (ej: `I` + `'m used to` → `I'm used to`, no `I 'm used to`). Esto lo maneja la
 función `smartJoin()` — no necesitas hacer nada especial al agregar un molde nuevo.
+
+**Nota sobre naturalidad ("que tenga sentido si juegan con él"):** como el
+estudiante puede combinar CUALQUIER verbo con CUALQUIER complemento del mismo
+molde, diseña los `complements` para que sean genéricos (tiempo, lugar o
+modo) y funcionen con los 6 verbos por igual — evita complementos atados a
+un solo verbo específico (ej. no uses "to the meeting" si no todos los
+verbos de la lista tienen sentido yendo "a la reunión"). Si tienes dudas,
+puedes generar todas las combinaciones de un molde nuevo con este snippet en
+la consola del navegador para revisarlas antes de publicar:
+
+```js
+MOLDES.find(m => m.id === 'tu_id').verbs.forEach(v =>
+  MOLDES.find(m => m.id === 'tu_id').complements.forEach(c =>
+    console.log(buildSentence(MOLDES.find(m => m.id === 'tu_id'), v, c))
+  )
+);
+```
 
 No hay límite de moldes, verbos ni complementos — la interfaz, el contador de
 combinaciones y la bitácora se adaptan automáticamente.

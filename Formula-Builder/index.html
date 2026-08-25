@@ -315,7 +315,7 @@
         { id: 'weekend', en: 'every weekend',    es: 'cada fin de semana' },
         { id: 'kid',     en: 'when I was a kid', es: 'cuando era niño/a' },
         { id: 'lot',     en: 'a lot',            es: 'mucho' },
-        { id: 'downtown',en: 'downtown',         es: 'en el centro' },
+        { id: 'backday', en: 'back in the day',  es: 'en esa época' },
         { id: 'school',  en: 'after school',     es: 'después de clases' },
         { id: 'backthen',en: 'back then',        es: 'en aquel entonces' },
       ],
@@ -337,12 +337,12 @@
         { id: 'practiced', en: 'practiced English', es: 'practicado inglés' },
       ],
       complements: [
-        { id: 'exam',      en: 'before the exam',  es: 'antes del examen' },
-        { id: 'lastnight', en: 'last night',       es: 'anoche' },
-        { id: 'thisyear',  en: 'this year',        es: 'este año' },
-        { id: 'trip',      en: 'about the trip',   es: 'sobre el viaje' },
-        { id: 'meeting',   en: 'to the meeting',   es: 'a la reunión' },
-        { id: 'daily',     en: 'every single day', es: 'todos los días' },
+        { id: 'exam',      en: 'before the exam',   es: 'antes del examen' },
+        { id: 'lastnight', en: 'last night',        es: 'anoche' },
+        { id: 'thisyear',  en: 'this year',         es: 'este año' },
+        { id: 'longago',   en: 'a long time ago',   es: 'hace mucho tiempo' },
+        { id: 'backthen',  en: 'back then',         es: 'en aquel entonces' },
+        { id: 'daily',     en: 'every single day',  es: 'todos los días' },
       ],
     },
     {
@@ -622,7 +622,7 @@
         { id: 'younger',  en: 'when I was younger', es: 'cuando era más joven' },
         { id: 'kid',      en: 'as a kid',           es: 'de niño/a' },
         { id: 'school',   en: 'back in school',     es: 'en la escuela' },
-        { id: 'injury',   en: 'before the injury',  es: 'antes de la lesión' },
+        { id: 'longago',  en: 'a long time ago',    es: 'hace mucho tiempo' },
         { id: 'yearsago', en: 'a few years ago',    es: 'hace algunos años' },
         { id: 'highschool',en:'in high school',     es: 'en la secundaria' },
       ],
@@ -637,7 +637,7 @@
         { id: 'party',  en: 'go to the party',   es: 'ir a la fiesta' },
         { id: 'trip',   en: 'take a trip',       es: 'hacer un viaje' },
         { id: 'jobs',   en: 'change jobs',       es: 'cambiar de trabajo' },
-        { id: 'call',   en: 'call you later',    es: 'llamarte más tarde' },
+        { id: 'call',   en: 'call you',          es: 'llamarte' },
         { id: 'home',   en: 'stay home',         es: 'quedarme en casa' },
         { id: 'phone',  en: 'buy a new phone',   es: 'comprar un celular nuevo' },
       ],
@@ -754,7 +754,7 @@
         { id: 'seeing',   en: 'seeing you',           es: 'verte' },
         { id: 'starting', en: 'starting the new job', es: 'empezar el nuevo trabajo' },
         { id: 'visiting', en: 'visiting my family',   es: 'visitar a mi familia' },
-        { id: 'weekend',  en: 'the weekend',          es: 'el fin de semana' },
+        { id: 'trip',     en: 'the trip',             es: 'el viaje' },
         { id: 'traveling',en: 'traveling again',      es: 'volver a viajar' },
         { id: 'meeting',  en: 'meeting the team',     es: 'conocer al equipo' },
       ],
@@ -811,8 +811,8 @@
         { id: 'now',     en: 'right now',         es: 'justo ahora' },
         { id: 'morning', en: 'this morning',      es: 'esta mañana' },
         { id: 'call',    en: 'before you called', es: 'antes de que llamaras' },
-        { id: 'office',  en: 'at the office',     es: 'en la oficina' },
-        { id: 'home',    en: 'home',              es: 'a casa' },
+        { id: 'notlong', en: 'not long ago',      es: 'hace poco' },
+        { id: 'second',  en: 'just a second ago', es: 'hace un segundo' },
       ],
     },
 
@@ -946,7 +946,7 @@
         { id: 'wait',    en: 'wait and see',         es: 'esperar a ver' },
         { id: 'boss',    en: 'ask my boss',          es: 'preguntarle a mi jefe' },
         { id: 'figure',  en: 'figure it out',        es: 'resolverlo' },
-        { id: 'tryagain',en: 'try again tomorrow',   es: 'intentarlo de nuevo mañana' },
+        { id: 'tryagain',en: 'try again',             es: 'intentarlo de nuevo' },
       ],
       complements: [
         { id: 'tonight', en: 'tonight',            es: 'esta noche' },
@@ -980,6 +980,104 @@
         { id: 'honestly',en: 'honestly',           es: 'honestamente' },
         { id: 'point',   en: 'at this point',      es: 'a estas alturas' },
         { id: 'overall', en: 'overall',            es: 'en general' },
+      ],
+    },
+
+    // ---------- PETICIONES Y SUGERENCIAS (preguntas) ----------
+    {
+      id: 'would_you_mind',
+      label: 'Would you mind',
+      subject: 'Would you',
+      fixed: 'mind',
+      isQuestion: true,
+      context: 'Uso: para pedir algo de forma muy educada.',
+      verbs: [
+        { id: 'closing',  en: 'closing the door',       es: 'cerrar la puerta' },
+        { id: 'helping',  en: 'helping me with this',   es: 'ayudarme con esto' },
+        { id: 'turning',  en: 'turning down the music', es: 'bajarle a la música' },
+        { id: 'waiting',  en: 'waiting a moment',       es: 'esperar un momento' },
+        { id: 'repeating',en: 'repeating that',         es: 'repetir eso' },
+        { id: 'opening',  en: 'opening the window',     es: 'abrir la ventana' },
+      ],
+      complements: [
+        { id: 'please',   en: 'please',                       es: 'por favor' },
+        { id: 'second',   en: 'for a second',                 es: 'por un segundo' },
+        { id: 'trouble',  en: "if it's not too much trouble", es: 'si no es mucha molestia' },
+        { id: 'now',      en: 'right now',                    es: 'ahora mismo' },
+        { id: 'start',    en: 'before we start',              es: 'antes de empezar' },
+        { id: 'onemore',  en: 'one more time',                es: 'una vez más' },
+      ],
+    },
+    {
+      id: 'do_you_mind_if',
+      label: 'Do you mind if I',
+      subject: 'Do you',
+      fixed: 'mind if I',
+      isQuestion: true,
+      context: 'Uso: para pedir permiso de forma educada.',
+      verbs: [
+        { id: 'window',  en: 'open the window',    es: 'abrir la ventana' },
+        { id: 'ask',     en: 'ask you something',  es: 'preguntarte algo' },
+        { id: 'sit',     en: 'sit here',           es: 'sentarme aquí' },
+        { id: 'borrow',  en: 'borrow your pen',    es: 'pedirte prestado tu lapicero' },
+        { id: 'leave',   en: 'leave early',        es: 'irme temprano' },
+        { id: 'picture', en: 'take a picture',     es: 'tomar una foto' },
+      ],
+      complements: [
+        { id: 'minute',   en: 'for a minute',      es: 'por un minuto' },
+        { id: 'realquick',en: 'real quick',        es: 'rapidito' },
+        { id: 'please',   en: 'please',            es: 'por favor' },
+        { id: 'okay',     en: "if that's okay",    es: 'si está bien' },
+        { id: 'start',    en: 'before we start',   es: 'antes de empezar' },
+        { id: 'now',      en: 'right now',         es: 'ahora mismo' },
+      ],
+    },
+    {
+      id: 'what_if',
+      label: 'What if we',
+      subject: 'What if',
+      fixed: 'we',
+      isQuestion: true,
+      context: 'Uso: para proponer una idea o sugerencia.',
+      verbs: [
+        { id: 'dinner',  en: 'went out for dinner',    es: 'saliéramos a cenar' },
+        { id: 'new',     en: 'tried something new',    es: 'probáramos algo nuevo' },
+        { id: 'called',  en: 'called them first',      es: 'les llamáramos primero' },
+        { id: 'waited',  en: 'waited until tomorrow',  es: 'esperáramos hasta mañana' },
+        { id: 'split',   en: 'split the cost',         es: 'dividiéramos el costo' },
+        { id: 'asked',   en: 'asked for advice',       es: 'pidiéramos un consejo' },
+      ],
+      complements: [
+        { id: 'tonight', en: 'tonight',           es: 'esta noche' },
+        { id: 'instead', en: 'instead',           es: 'en vez de eso' },
+        { id: 'safe',    en: 'just to be safe',   es: 'solo para estar seguros' },
+        { id: 'thistime',en: 'this time',         es: 'esta vez' },
+        { id: 'together',en: 'together',          es: 'juntos' },
+        { id: 'deciding',en: 'before deciding',   es: 'antes de decidir' },
+      ],
+    },
+    {
+      id: 'have_you_ever',
+      label: 'Have you ever',
+      subject: 'Have you',
+      fixed: 'ever',
+      isQuestion: true,
+      context: 'Uso: para preguntar sobre experiencias de vida.',
+      verbs: [
+        { id: 'sushi',    en: 'tried sushi',              es: 'probado sushi' },
+        { id: 'abroad',   en: 'been abroad',              es: 'estado en el extranjero' },
+        { id: 'marathon', en: 'run a marathon',           es: 'corrido un maratón' },
+        { id: 'lostkeys', en: 'lost your keys',           es: 'perdido tus llaves' },
+        { id: 'forgotten',en: "forgotten someone's name", es: 'olvidado el nombre de alguien' },
+        { id: 'lights',   en: 'seen the northern lights', es: 'visto la aurora boreal' },
+      ],
+      complements: [
+        { id: 'before',   en: 'before',            es: 'antes' },
+        { id: 'life',     en: 'in your life',      es: 'en tu vida' },
+        { id: 'recently', en: 'recently',          es: 'recientemente' },
+        { id: 'once',     en: 'more than once',    es: 'más de una vez' },
+        { id: 'thisyear', en: 'this year',         es: 'este año' },
+        { id: 'vacation', en: 'on vacation',       es: 'de vacaciones' },
       ],
     },
   ];
@@ -1021,7 +1119,8 @@
   }
 
   function buildSentence(molde, verb, complement) {
-    return smartJoin(molde.subject, molde.fixed, verb.en, complement.en).replace(/\s+/g, ' ').trim();
+    const sentence = smartJoin(molde.subject, molde.fixed, verb.en, complement.en).replace(/\s+/g, ' ').trim();
+    return molde.isQuestion ? `${sentence}?` : sentence;
   }
 
   /* ---------- Selector de moldes ---------- */
@@ -1100,7 +1199,7 @@
     preview.innerHTML = segments.map(([cls, text], i) => {
       const spacer = (i === 0 || /^['’]/.test(text)) ? '' : ' ';
       return `${spacer}<span class="${cls}">${text}</span>`;
-    }).join('');
+    }).join('') + (m.isQuestion ? '<span class="text-necPaper/90">?</span>' : '');
 
     $('#context-tag-text').textContent = m.context;
 
