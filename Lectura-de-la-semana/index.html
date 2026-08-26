@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Unexpected Party - Presentation</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #0b0f19;
+    color: #f8fafc;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+  }
+  .slide {
+    width: 100%;
+    max-width: 960px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1e293b;
+    padding-bottom: 12px;
+    gap: 10px;
+  }
+  .slide-num {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #f59e0b;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .slide-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+  .content-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    background: #1e293b;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    overflow: hidden;
+  }
+  .text-col {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .story-text {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #e2e8f0;
+  }
+  .target-hl {
+    color: #38bdf8;
+    font-weight: 700;
+    background: rgba(56, 189, 248, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .visual-col {
+    padding: 24px;
+    background: #090d16;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .scene-card {
+    background: #1e293b;
+    border: 2px solid #f59e0b;
+    padding: 18px 16px;
+    border-radius: 12px;
+    width: 100%;
+  }
+  .scene-img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #334155;
+  }
+  .scene-desc {
+    font-size: 1.15rem;
+    color: #f59e0b;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .scene-sub {
+    font-size: 0.9rem;
+    color: #94a3b8;
+  }
+  .footer-vocab {
+    background: #1e1b4b;
+    border: 1px solid #6366f1;
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .vocab-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #a5b4fc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .vocab-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .vocab-item {
+    font-size: 0.95rem;
+    color: #ffffff;
+  }
+  .vocab-phonetic {
+    color: #f59e0b;
+    font-size: 0.85rem;
+  }
+  .vocab-mean {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  /* Mobile Responsive Breakpoints */
+  @media (max-width: 768px) {
+    body {
+      padding: 12px;
+      gap: 20px;
+    }
+    .slide {
+      padding: 16px 14px;
+      gap: 14px;
+      border-radius: 12px;
+    }
+    .header {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .slide-title {
+      font-size: 1.25rem;
+    }
+    .slide-num {
+      font-size: 0.85rem;
+    }
+    .content-box {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .text-col {
+      padding: 16px;
+    }
+    .story-text {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .visual-col {
+      padding: 14px;
+    }
+    .scene-card {
+      padding: 12px;
+    }
+    .scene-img {
+      height: 170px;
+    }
+    .scene-desc {
+      font-size: 1rem;
+    }
+    .scene-sub {
+      font-size: 0.85rem;
+    }
+    .footer-vocab {
+      padding: 12px;
+    }
+    .vocab-items {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Slide 1 -->
+  <div class="slide">
+    <div class="header">
+      <div class="slide-num">SLIDE 1</div>
+      <div class="slide-title">Scene 1: The Preparations</div>
+    </div>
+    <div class="content-box">
+      <div class="text-col">
+        <div class="story-text">
+          It was 2:00 PM on a warm Saturday. <span class="target-hl">This afternoon</span> was going to be special.<br><br>
+          Sam <span class="target-hl">was baking</span> a delicious chocolate cake in the kitchen, while her dog Toby <span class="target-hl">was sleeping</span> peacefully under <span class="target-hl">that table</span>.<br><br>
+          Outside in the yard, <span class="target-hl">these balloons</span> were floating gently in the breeze.
+        </div>
+      </div>
+      <div class="visual-col">
+        <div class="scene-card">
+          <img class="scene-img" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=600&q=80" alt="Sam Baking in Kitchen Scene" onerror="this.onerror=null; this.src='https://placehold.co/600x350/1e293b/f59e0b?text=Sam+Baking+in+Kitchen';">
+          <div class="scene-desc">Kitchen Preparation Scene</div>
+          <div class="scene-sub">Sam baking a chocolate cake while her dog Toby sleeps under the table</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-vocab">
+      <div class="vocab-title">Vocabulary & Pronunciation Support</div>
+      <div class="vocab-items">
+        <div class="vocab-item"><b>Bake</b> <span class="vocab-phonetic">/beɪk/</span> <span class="vocab-mean">(Hornear)</span></div>
+        <div class="vocab-item"><b>Breeze</b> <span class="vocab-phonetic">/briːz/</span> <span class="vocab-mean">(Brisa fresca)</span></div>
+        <div class="vocab-item"><b>Peacefully</b> <span class="vocab-phonetic">/ˈpiːs.fəl.i/</span> <span class="vocab-mean">(Pacíficamente)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="header">
+      <div class="slide-num">SLIDE 2</div>
+      <div class="slide-title">Scene 2: The Original Plan</div>
+    </div>
+    <div class="content-box">
+      <div class="text-col">
+        <div class="story-text">
+          Sam and her friends <span class="target-hl">were going to host</span> a big outdoor garden party.<br><br>
+          "Look at <span class="target-hl">those decorations</span> over there!" said Sara happily.<br><br>
+          <span class="target-hl">This garden</span> looks incredible today! Everything is ready for our guests.
+        </div>
+      </div>
+      <div class="visual-col">
+        <div class="scene-card">
+          <img class="scene-img" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80" alt="Garden Party Setup" onerror="this.onerror=null; this.src='https://placehold.co/600x350/1e293b/f59e0b?text=Garden+Party+Setup';">
+          <div class="scene-desc">Garden Party Setup</div>
+          <div class="scene-sub">Outdoor garden decorated with colorful balloons and party tables</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-vocab">
+      <div class="vocab-title">Vocabulary & Pronunciation Support</div>
+      <div class="vocab-items">
+        <div class="vocab-item"><b>Host</b> <span class="vocab-phonetic">/hoʊst/</span> <span class="vocab-mean">(Organizar / Ser anfitrión)</span></div>
+        <div class="vocab-item"><b>Outdoor</b> <span class="vocab-phonetic">/ˈaʊt.dɔːr/</span> <span class="vocab-mean">(Al aire libre)</span></div>
+        <div class="vocab-item"><b>Guests</b> <span class="vocab-phonetic">/ɡests/</span> <span class="vocab-mean">(Invitados)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="header">
+      <div class="slide-num">SLIDE 3</div>
+      <div class="slide-title">Scene 3: The Unexpected Weather</div>
+    </div>
+    <div class="content-box">
+      <div class="text-col">
+        <div class="story-text">
+          Suddenly, dark storm clouds <span class="target-hl">were gathering</span> in the sky.<br><br>
+          "Oh no! The cold wind <span class="target-hl">is blowing</span> hard right now!" shouted Tom.<br><br>
+          "Look at <span class="target-hl">that dark cloud</span> over the hill! It <span class="target-hl">is going to rain</span> in five minutes!"
+        </div>
+      </div>
+      <div class="visual-col">
+        <div class="scene-card">
+          <img class="scene-img" src="https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=600&q=80" alt="Approaching Storm" onerror="this.onerror=null; this.src='https://placehold.co/600x350/1e293b/f59e0b?text=Approaching+Storm';">
+          <div class="scene-desc">Approaching Storm</div>
+          <div class="scene-sub">Dark clouds and heavy wind arriving over the garden setup</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-vocab">
+      <div class="vocab-title">Vocabulary & Pronunciation Support</div>
+      <div class="vocab-items">
+        <div class="vocab-item"><b>Gather</b> <span class="vocab-phonetic">/ˈɡæð.ər/</span> <span class="vocab-mean">(Reunirse / Acumularse)</span></div>
+        <div class="vocab-item"><b>Blow</b> <span class="vocab-phonetic">/bloʊ/</span> <span class="vocab-mean">(Soplar)</span></div>
+        <div class="vocab-item"><b>Storm</b> <span class="vocab-phonetic">/stɔːrm/</span> <span class="vocab-mean">(Tormenta)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="header">
+      <div class="slide-num">SLIDE 4</div>
+      <div class="slide-title">Scene 4: Quick Action & Change of Plans</div>
+    </div>
+    <div class="content-box">
+      <div class="text-col">
+        <div class="story-text">
+          "We <span class="target-hl">are going to move</span> everything indoors immediately!" Sam declared.<br><br>
+          "I <span class="target-hl">will carry</span> <span class="target-hl">these heavy chairs</span>," offered Marcos.<br><br>
+          "And I <span class="target-hl">will help</span> you with <span class="target-hl">those food trays</span>!" added Sara as raindrops began to fall.
+        </div>
+      </div>
+      <div class="visual-col">
+        <div class="scene-card">
+          <img class="scene-img" src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=600&q=80" alt="Moving Indoors" onerror="this.onerror=null; this.src='https://placehold.co/600x350/1e293b/f59e0b?text=Moving+Indoors';">
+          <div class="scene-desc">Moving Everything Indoors</div>
+          <div class="scene-sub">Friends helping each other carry chairs and food trays into the house</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-vocab">
+      <div class="vocab-title">Vocabulary & Pronunciation Support</div>
+      <div class="vocab-items">
+        <div class="vocab-item"><b>Indoors</b> <span class="vocab-phonetic">/ˌɪnˈdɔːrz/</span> <span class="vocab-mean">(En el interior / Adentro)</span></div>
+        <div class="vocab-item"><b>Carry</b> <span class="vocab-phonetic">/ˈkæri/</span> <span class="vocab-mean">(Cargar / Llevar)</span></div>
+        <div class="vocab-item"><b>Raindrop</b> <span class="vocab-phonetic">/ˈreɪn.drɑːp/</span> <span class="vocab-mean">(Gota de lluvia)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="header">
+      <div class="slide-num">SLIDE 5</div>
+      <div class="slide-title">Scene 5: The Coziest Party Ever</div>
+    </div>
+    <div class="content-box">
+      <div class="text-col">
+        <div class="story-text">
+          Five minutes later, everyone was warm inside the living room.<br><br>
+          "<span class="target-hl">There will be</span> plenty of fun, music, and hot chocolate for everyone tonight!" Sam smiled.<br><br>
+          Right now, they <span class="target-hl">are laughing</span>, playing board games, and enjoying the cake. <span class="target-hl">This party</span> is even better inside!
+        </div>
+      </div>
+      <div class="visual-col">
+        <div class="scene-card">
+          <img class="scene-img" src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=600&q=80" alt="Cozy Indoor Party" onerror="this.onerror=null; this.src='https://placehold.co/600x350/1e293b/f59e0b?text=Cozy+Indoor+Party';">
+          <div class="scene-desc">Cozy Indoor Party</div>
+          <div class="scene-sub">Friends enjoying hot cocoa, playing board games, and celebrating indoors</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-vocab">
+      <div class="vocab-title">Vocabulary & Pronunciation Support</div>
+      <div class="vocab-items">
+        <div class="vocab-item"><b>Cozy</b> <span class="vocab-phonetic">/ˈkoʊ.zi/</span> <span class="vocab-mean">(Acogedor / Cómodo)</span></div>
+        <div class="vocab-item"><b>Plenty</b> <span class="vocab-phonetic">/ˈplen.ti/</span> <span class="vocab-mean">(Suficiente / Mucho)</span></div>
+        <div class="vocab-item"><b>Laugh</b> <span class="vocab-phonetic">/læf/</span> <span class="vocab-mean">(Reírse)</span></div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
