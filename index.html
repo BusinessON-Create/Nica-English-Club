@@ -40,9 +40,9 @@ a { color: inherit; }
 .spinner { width:30px; height:30px; border:2px solid var(--border2); border-top-color:var(--gold); border-radius:50%; animation:spin .7s linear infinite; }
 
 /* LOGO DINÁMICO — se aplica a loading, login y nav */
-.app-logo { transition: background .3s var(--ease); display:flex; align-items:center; justify-content:center; }
-.app-logo.has-image { background: #0a0a0a; padding: 0; }
-.app-logo img { width:100%; height:100%; object-fit:contain; border-radius:inherit; display:block; }
+.app-logo { transition: background .3s var(--ease), box-shadow .3s var(--ease); display:flex; align-items:center; justify-content:center; background:#0a0a0a; }
+.app-logo.has-image { background: transparent; padding: 6px; box-shadow: none; }
+.app-logo img { width:100%; height:100%; object-fit:contain; border-radius:0; display:block; }
 
 #s-login { align-items:center; justify-content:center; min-height:100vh; padding:24px 20px; background: radial-gradient(120% 90% at 50% -10%, #141118 0%, var(--bg) 55%); }
 .login-wrap { width:100%; max-width:420px; display:flex; flex-direction:column; gap:16px; position:relative; z-index:10; }
@@ -111,7 +111,7 @@ a { color: inherit; }
 .stat-label { font-size:8px; color:var(--muted); margin-top:6px; letter-spacing:.5px; line-height:1.4; }
 
 /* CTA REFERIDOS */
-.referral-card { display:flex; align-items:center; gap:14px; text-decoration:none; background: linear-gradient(120deg, rgba(37,211,102,.10), var(--card) 45%); border:1px solid rgba(37,211,102,.30); border-radius: var(--r-lg); padding:16px 18px; margin-bottom:20px; transition: transform .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease); }
+.referral-card { display:flex; align-items:center; gap:14px; text-decoration:none; width:100%; text-align:left; cursor:pointer; font-family:inherit; background: linear-gradient(120deg, rgba(37,211,102,.10), var(--card) 45%); border:1px solid rgba(37,211,102,.30); border-radius: var(--r-lg); padding:16px 18px; margin-bottom:20px; transition: transform .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease); }
 .referral-card:hover { transform: translateY(-2px); border-color:#25D366; }
 .referral-icon { width:44px; height:44px; border-radius:13px; background:rgba(37,211,102,.14); color:#25D366; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
 .referral-text { flex:1; min-width:0; }
@@ -172,12 +172,45 @@ a { color: inherit; }
 .empty-state { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; background:var(--card); border:1px dashed var(--border2); border-radius:var(--r-lg); }
 .empty-state i { display:block; font-size:22px; color:var(--gold); margin-bottom:10px; }
 
+/* FAVORITOS */
+.res-fav-btn { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; border:1px solid var(--border2); background:rgba(8,8,10,.55); backdrop-filter:blur(6px); color:var(--muted); font-size:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition: color .2s var(--ease), border-color .2s var(--ease), transform .15s var(--ease); z-index:2; }
+.res-fav-btn:hover { transform: scale(1.08); border-color: var(--gold2); }
+.res-fav-btn.active { color: var(--gold); border-color: var(--gold2); background: var(--gold-dim); }
+.res-card:hover .res-arrow { transform: translateX(3px); color:var(--gold); }
+.res-card { padding-top:18px; }
+.res-card .res-arrow { top:18px; }
+.resource-group.favoritos .group-head i { color: var(--gold3); }
+
+/* FORM FIELDS EN MODALES */
+.form-textarea { width:100%; min-height:110px; padding:14px 16px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:var(--r-sm); color:var(--text); outline:none; font-family:inherit; font-size:14px; resize:vertical; transition: border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease); margin-bottom:14px; }
+.form-textarea:focus { border-color: var(--gold2); background:rgba(255,255,255,.07); box-shadow: 0 0 0 3px var(--gold-dim); }
+.form-hint { font-size:12.5px; color:var(--muted); line-height:1.5; margin-bottom:18px; text-align:left; }
+.form-benefit { font-size:12.5px; color:var(--gold3); line-height:1.5; margin-bottom:18px; text-align:left; background:var(--gold-dim); border:1px solid rgba(240,180,41,.25); border-radius:var(--r-sm); padding:12px 14px; }
+.modal-box-form { max-width:400px; text-align:left; }
+.modal-box-form h3 { text-align:center; margin-bottom:6px; }
+.btn-whatsapp { width:100%; padding:15px; background:linear-gradient(135deg, #34e07a, #1fb85f); color:#04220f; font-weight:800; border:none; border-radius:var(--r-sm); cursor:pointer; font-family:inherit; font-size:13.5px; display:flex; align-items:center; justify-content:center; gap:8px; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.btn-whatsapp:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(37,211,102,.3); }
+.modal-close-x { position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%; border:1px solid var(--border2); background:transparent; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition: color .2s var(--ease), border-color .2s var(--ease); }
+.modal-close-x:hover { color:#fff; border-color:var(--border2); }
+
+/* SOPORTE FLOTANTE */
+.support-float-btn { position:fixed; bottom:22px; right:22px; z-index:400; width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg, #34e07a, #1fb85f); color:#04220f; border:none; box-shadow: 0 10px 26px rgba(37,211,102,.4); font-size:22px; align-items:center; justify-content:center; cursor:pointer; transition: transform .2s var(--ease), box-shadow .2s var(--ease); display:none; }
+.support-float-btn.visible { display:flex; }
+.support-float-btn:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 14px 32px rgba(37,211,102,.5); }
+.support-options { display:flex; flex-direction:column; gap:10px; margin:18px 0; }
+.support-opt { display:flex; align-items:center; gap:12px; text-align:left; width:100%; padding:14px 16px; background:rgba(255,255,255,.04); border:1px solid var(--border2); border-radius:var(--r-sm); color:var(--text); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; transition: border-color .2s var(--ease), background .2s var(--ease); }
+.support-opt:hover { border-color: var(--gold2); background:var(--card-hover); }
+.support-opt.selected { border-color: var(--gold2); background:var(--gold-dim); color:#fff; }
+.support-opt i { color:var(--gold); width:16px; text-align:center; }
+@media (max-width:480px) { .support-float-btn { bottom:16px; right:16px; width:52px; height:52px; font-size:20px; } }
+
 /* MENTALIDAD NEC */
 .mindset-card { position:relative; border-radius:var(--r-xl); overflow:hidden; padding:32px 26px; min-height:170px; display:flex; flex-direction:column; justify-content:flex-end; background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.25)), linear-gradient(135deg, #2a2210, #1a1a1a); border:1px solid var(--border); }
 .mindset-badge { display:inline-flex; align-items:center; gap:6px; color:var(--gold3); font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
 .mindset-card h3 { font-family:'Playfair Display'; color:#fff; font-size:21px; margin-bottom:6px; max-width:420px; }
 .mindset-card p { color:rgba(255,255,255,.65); font-size:12.5px; margin-bottom:16px; }
-.btn-ver-mas { display:inline-flex; width:fit-content; background:transparent; border:1px solid var(--gold2); color:var(--gold3); font-weight:700; font-size:11.5px; padding:9px 18px; border-radius:10px; cursor:default; font-family:inherit; }
+.btn-ver-mas { display:inline-flex; align-items:center; gap:7px; width:fit-content; background:transparent; border:1px solid var(--gold2); color:var(--gold3); font-weight:700; font-size:11.5px; padding:9px 18px; border-radius:10px; cursor:pointer; font-family:inherit; transition: background .2s var(--ease), transform .15s var(--ease); }
+.btn-ver-mas:hover { background:var(--gold-dim); transform: translateY(-1px); }
 
 /* ============ ADMIN ============ */
 .admin-wrap { max-width:560px; margin:0 auto; padding:24px 20px; }
@@ -284,15 +317,14 @@ a { color: inherit; }
       </div>
 
       <!-- CTA REFERIR AMIGO -->
-      <a class="referral-card" target="_blank" rel="noopener"
-         href="https://wa.me/50581481862?text=Hola,%20quiero%20recomendar%20a%20un%20amigo%20para%20Nica%20English%20Club">
+      <button type="button" class="referral-card" onclick="abrirModalReferido()">
         <div class="referral-icon"><i class="fa-brands fa-whatsapp"></i></div>
         <div class="referral-text">
           <h3>Refiere a un amigo</h3>
-          <p>Comparte NicaEnglish Club por WhatsApp y ayúdale a empezar.</p>
+          <p>Ambos reciben $10 de descuento cuando tu referido se inscribe.</p>
         </div>
         <i class="fa-solid fa-chevron-right referral-arrow"></i>
-      </a>
+      </button>
 
       <!-- BANNER AREA -->
       <div id="banner-area" class="banner-projection">
@@ -339,7 +371,7 @@ a { color: inherit; }
         <span class="mindset-badge"><i class="fa-solid fa-crown"></i> Mentalidad NEC</span>
         <h3>Entrena tu mente, domina tu inglés.</h3>
         <p>Disciplina hoy, libertad mañana.</p>
-        <button class="btn-ver-mas" type="button">Ver más</button>
+        <button class="btn-ver-mas" type="button" onclick="abrirModalPractica()">Envía una práctica</button>
       </div>
     </div>
   </div>
@@ -398,6 +430,68 @@ a { color: inherit; }
     <button onclick="closeModal()" class="btn-login">Entendido</button>
   </div>
 </div>
+
+<!-- MODAL: ENVIAR PRACTICA -->
+<div class="modal-bg" id="modal-practica-bg">
+  <div class="modal-box modal-box-form" style="position:relative;">
+    <button class="modal-close-x" onclick="cerrarModalPractica()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 style="color:#fff; font-family:'Playfair Display'; font-size:21px;">Envía una práctica</h3>
+    <p class="form-hint" style="margin-top:10px;">Envía una práctica relacionada con lo que estás estudiando actualmente.</p>
+    <div class="input-shell">
+      <i class="fa-solid fa-user input-icon"></i>
+      <input type="text" id="practica-nombre" class="field-input" placeholder="Nombre y apellido">
+    </div>
+    <textarea id="practica-texto" class="form-textarea" placeholder="Escribe tus oraciones, respuestas o texto de práctica..."></textarea>
+    <button class="btn-whatsapp" onclick="enviarPractica()"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</button>
+  </div>
+</div>
+
+<!-- MODAL: REFERIR A UN AMIGO -->
+<div class="modal-bg" id="modal-referido-bg">
+  <div class="modal-box modal-box-form" style="position:relative;">
+    <button class="modal-close-x" onclick="cerrarModalReferido()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 style="color:#fff; font-family:'Playfair Display'; font-size:21px;">Refiere a un amigo</h3>
+    <p class="form-benefit" style="margin-top:10px;"><i class="fa-solid fa-gift" style="margin-right:6px;"></i>Cuando tu referido se convierta en estudiante, ambos reciben $10 de descuento en su factura.</p>
+    <div class="input-shell">
+      <i class="fa-solid fa-user input-icon"></i>
+      <input type="text" id="referido-nombre" class="field-input" placeholder="Nombre del referido">
+    </div>
+    <div class="input-shell">
+      <i class="fa-solid fa-user input-icon"></i>
+      <input type="text" id="referido-apellido" class="field-input" placeholder="Apellido del referido">
+    </div>
+    <div class="input-shell">
+      <i class="fa-brands fa-whatsapp input-icon"></i>
+      <input type="tel" id="referido-whatsapp" class="field-input" placeholder="Número de WhatsApp del referido">
+    </div>
+    <button class="btn-whatsapp" onclick="enviarReferido()"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</button>
+  </div>
+</div>
+
+<!-- MODAL: SOPORTE -->
+<div class="modal-bg" id="modal-soporte-bg">
+  <div class="modal-box modal-box-form" style="position:relative;">
+    <button class="modal-close-x" onclick="cerrarModalSoporte()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 style="color:#fff; font-family:'Playfair Display'; font-size:21px;">Soporte</h3>
+    <p class="form-hint" style="margin-top:10px;">Selecciona el tipo de solicitud y déjanos tu nombre para atenderte.</p>
+    <div class="support-options" id="soporte-opciones">
+      <button type="button" class="support-opt" data-valor="Solicitar factura" onclick="seleccionarSoporte(this)"><i class="fa-solid fa-file-invoice"></i> Solicitar factura</button>
+      <button type="button" class="support-opt" data-valor="Solicitar nuevo horario" onclick="seleccionarSoporte(this)"><i class="fa-solid fa-clock"></i> Solicitar nuevo horario</button>
+      <button type="button" class="support-opt" data-valor="Referir para nuevo ingreso" onclick="seleccionarSoporte(this)"><i class="fa-solid fa-user-plus"></i> Referir para nuevo ingreso</button>
+      <button type="button" class="support-opt" data-valor="Actualizar mi número de WhatsApp" onclick="seleccionarSoporte(this)"><i class="fa-brands fa-whatsapp"></i> Actualizar mi número de WhatsApp</button>
+    </div>
+    <div class="input-shell">
+      <i class="fa-solid fa-user input-icon"></i>
+      <input type="text" id="soporte-nombre" class="field-input" placeholder="Nombre y apellido">
+    </div>
+    <button class="btn-whatsapp" onclick="enviarSoporte()"><i class="fa-brands fa-whatsapp"></i> Enviar solicitud</button>
+  </div>
+</div>
+
+<!-- BOTON FLOTANTE SOPORTE -->
+<button class="support-float-btn" id="btn-soporte-float" onclick="abrirModalSoporte()" title="Soporte por WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -595,44 +689,88 @@ function corregirTitulo(t) {
   return (t || '').replace(/emsamblador/gi, 'Ensamblador');
 }
 
+/* FAVORITOS — se guardan localmente por alumno, no toca Firestore */
+let ultimosRecursos = [];
+function claveFavoritos() {
+  const uid = (sessionActiva && sessionActiva.id) ? sessionActiva.id : 'invitado';
+  return `nec_favoritos_${uid}`;
+}
+function getFavoritos() {
+  try { return JSON.parse(localStorage.getItem(claveFavoritos())) || []; } catch (e) { return []; }
+}
+function esFavorito(id) { return getFavoritos().includes(id); }
+window.toggleFavorito = (id, ev) => {
+  if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+  let favs = getFavoritos();
+  favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
+  localStorage.setItem(claveFavoritos(), JSON.stringify(favs));
+  renderRecursos();
+};
+
+function tarjetaRecurso({id, data, icon, tag}) {
+  const activo = esFavorito(id);
+  return `<a href="${data.url}" target="_blank" class="res-card">
+    <button type="button" class="res-fav-btn ${activo ? 'active' : ''}" onclick="toggleFavorito('${id}', event)" title="${activo ? 'Quitar de favoritos' : 'Marcar como favorito'}">
+      <i class="fa-${activo ? 'solid' : 'regular'} fa-star"></i>
+    </button>
+    <span class="res-pill">${tag}</span>
+    <div class="res-icon"><i class="fa-solid ${icon}"></i></div>
+    <div class="res-title">${corregirTitulo(data.titulo)}</div>
+    <i class="fa-solid fa-chevron-right res-arrow"></i>
+  </a>`;
+}
+
+function renderRecursos() {
+  const cont = document.getElementById('contenedor-galeria');
+  if (!cont) return;
+  if (!ultimosRecursos.length) {
+    cont.innerHTML = `<div class="empty-state"><i class="fa-solid fa-inbox"></i>Aún no hay recursos publicados.</div>`;
+    return;
+  }
+
+  const favoritos = ultimosRecursos.filter(r => esFavorito(r.id));
+  const resto = ultimosRecursos.filter(r => !esFavorito(r.id));
+
+  const buckets = {};
+  resto.forEach(item => {
+    if (!buckets[item.cat.id]) buckets[item.cat.id] = { cat: item.cat, items: [] };
+    buckets[item.cat.id].items.push(item);
+  });
+
+  let html = '';
+  if (favoritos.length) {
+    html += `<div class="resource-group favoritos">
+      <div class="group-head"><i class="fa-solid fa-star"></i><h3>Mis favoritos</h3></div>
+      <div class="resource-grid">`;
+    favoritos.forEach(item => { html += tarjetaRecurso({ id: item.id, data: item.data, icon: item.icon, tag: item.cat.tag }); });
+    html += `</div></div>`;
+  }
+
+  const ordenGrupos = [...CATEGORIAS_RECURSOS, CATEGORIA_DEFECTO];
+  ordenGrupos.forEach(cat => {
+    const grupo = buckets[cat.id];
+    if (!grupo || !grupo.items.length) return;
+    html += `<div class="resource-group">
+      <div class="group-head"><i class="fa-solid ${cat.icon}"></i><h3>${cat.label}</h3></div>
+      <div class="resource-grid">`;
+    grupo.items.forEach(item => { html += tarjetaRecurso({ id: item.id, data: item.data, icon: item.icon, tag: cat.tag }); });
+    html += `</div></div>`;
+  });
+
+  cont.innerHTML = html;
+}
+
 function escucharRecursos() {
   onSnapshot(query(collection(db,'enlaces'), orderBy('fecha','desc')), snap => {
-    const cont = document.getElementById('contenedor-galeria'); cont.innerHTML = '';
-
-    if (snap.empty) {
-      cont.innerHTML = `<div class="empty-state"><i class="fa-solid fa-inbox"></i>Aún no hay recursos publicados.</div>`;
-      return;
-    }
-
-    const buckets = {};
     let idx = 0;
-    snap.forEach(d => {
+    ultimosRecursos = snap.docs.map(d => {
       const data = d.data();
       const cat = clasificarRecurso(data.titulo || '');
-      if (!buckets[cat.id]) buckets[cat.id] = { cat, items: [] };
-      buckets[cat.id].items.push({ data, icon: ICONOS_CICLO[idx % ICONOS_CICLO.length] });
+      const item = { id: d.id, data, cat, icon: ICONOS_CICLO[idx % ICONOS_CICLO.length] };
       idx++;
+      return item;
     });
-
-    const ordenGrupos = [...CATEGORIAS_RECURSOS, CATEGORIA_DEFECTO];
-    let html = '';
-    ordenGrupos.forEach(cat => {
-      const grupo = buckets[cat.id];
-      if (!grupo || !grupo.items.length) return;
-      html += `<div class="resource-group">
-        <div class="group-head"><i class="fa-solid ${cat.icon}"></i><h3>${cat.label}</h3></div>
-        <div class="resource-grid">`;
-      grupo.items.forEach(({data, icon}) => {
-        html += `<a href="${data.url}" target="_blank" class="res-card">
-          <span class="res-pill">${cat.tag}</span>
-          <div class="res-icon"><i class="fa-solid ${icon}"></i></div>
-          <div class="res-title">${corregirTitulo(data.titulo)}</div>
-          <i class="fa-solid fa-chevron-right res-arrow"></i>
-        </a>`;
-      });
-      html += `</div></div>`;
-    });
-    cont.innerHTML = html;
+    renderRecursos();
   });
 }
 
@@ -703,7 +841,73 @@ window.switchTab = (n, b) => {
 };
 window.showModal = (t, d) => { document.getElementById('modal-title').innerText=t; document.getElementById('modal-desc').innerText=d; document.getElementById('modal-bg').classList.add('open'); };
 window.closeModal = () => document.getElementById('modal-bg').classList.remove('open');
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+/* ===== ENVIAR PRACTICA (WhatsApp) ===== */
+const WA_PRACTICA = '50581481862';
+window.abrirModalPractica = () => {
+  document.getElementById('practica-nombre').value = sessionActiva ? sessionActiva.nombre : '';
+  document.getElementById('practica-texto').value = '';
+  document.getElementById('modal-practica-bg').classList.add('open');
+};
+window.cerrarModalPractica = () => document.getElementById('modal-practica-bg').classList.remove('open');
+window.enviarPractica = () => {
+  const nombre = document.getElementById('practica-nombre').value.trim();
+  const texto = document.getElementById('practica-texto').value.trim();
+  if (!nombre || !texto) { showModal('Falta información', 'Escribe tu nombre y tu práctica antes de enviar.'); return; }
+  const mensaje = `Hola, soy ${nombre}. Envío mi práctica de NicaEnglish Club:\n\n${texto}`;
+  window.open(`https://wa.me/${WA_PRACTICA}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  cerrarModalPractica();
+};
+
+/* ===== REFERIR A UN AMIGO (WhatsApp) ===== */
+const WA_REFERIDOS = '50581481862';
+window.abrirModalReferido = () => {
+  document.getElementById('referido-nombre').value = '';
+  document.getElementById('referido-apellido').value = '';
+  document.getElementById('referido-whatsapp').value = '';
+  document.getElementById('modal-referido-bg').classList.add('open');
+};
+window.cerrarModalReferido = () => document.getElementById('modal-referido-bg').classList.remove('open');
+window.enviarReferido = () => {
+  const nombre = document.getElementById('referido-nombre').value.trim();
+  const apellido = document.getElementById('referido-apellido').value.trim();
+  const whatsapp = document.getElementById('referido-whatsapp').value.trim();
+  if (!nombre || !apellido || !whatsapp) { showModal('Falta información', 'Completa nombre, apellido y WhatsApp del referido.'); return; }
+  const quien = sessionActiva ? sessionActiva.nombre : 'un alumno';
+  const mensaje = `Hola, soy ${quien} y quiero referir a un amigo a NicaEnglish Club:\nNombre: ${nombre} ${apellido}\nWhatsApp: ${whatsapp}\n\n(Recordar: $10 de descuento para ambos cuando se inscriba).`;
+  window.open(`https://wa.me/${WA_REFERIDOS}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  cerrarModalReferido();
+};
+
+/* ===== SOPORTE FLOTANTE (WhatsApp) ===== */
+const WA_SOPORTE = '50583267703';
+let solicitudSoporte = '';
+window.abrirModalSoporte = () => {
+  solicitudSoporte = '';
+  document.querySelectorAll('.support-opt').forEach(b => b.classList.remove('selected'));
+  document.getElementById('soporte-nombre').value = sessionActiva ? sessionActiva.nombre : '';
+  document.getElementById('modal-soporte-bg').classList.add('open');
+};
+window.cerrarModalSoporte = () => document.getElementById('modal-soporte-bg').classList.remove('open');
+window.seleccionarSoporte = (btn) => {
+  document.querySelectorAll('.support-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  solicitudSoporte = btn.dataset.valor;
+};
+window.enviarSoporte = () => {
+  const nombre = document.getElementById('soporte-nombre').value.trim();
+  if (!nombre) { showModal('Falta información', 'Escribe tu nombre y apellido.'); return; }
+  if (!solicitudSoporte) { showModal('Falta información', 'Selecciona el tipo de solicitud.'); return; }
+  const mensaje = `Nombre: ${nombre}\nSolicitud: ${solicitudSoporte}`;
+  window.open(`https://wa.me/${WA_SOPORTE}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  cerrarModalSoporte();
+};
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const btnSoporte = document.getElementById('btn-soporte-float');
+  if (btnSoporte) btnSoporte.classList.toggle('visible', id === 's-student');
+}
 function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,".").trim(); }
 </script>
 </body>
