@@ -248,6 +248,12 @@ const categories = [
   { key:'participial', label:'Avanzado', icon:'fa-wand-magic-sparkles' }
 ];
 
+// ============ HELPER: conjugación completa por sujeto ============
+// Evita traducciones incompletas: siempre exige las 6 formas (I/You/He/She/We/They).
+function conj(sub, forms){
+  return forms[sub];
+}
+
 // ============ DATA ============
 const tensesDB = {
   present_simple: {
@@ -256,7 +262,7 @@ const tensesDB = {
     getSentence:(sub)=>{
       const verbs = { I:{verb:'work',comp:'on new software projects every week.'}, You:{verb:'work',comp:'on new software projects every week.'}, He:{verb:'works',comp:'on new software projects every week.'}, She:{verb:'works',comp:'on new software projects every week.'}, We:{verb:'work',comp:'on new software projects every week.'}, They:{verb:'work',comp:'on new software projects every week.'} };
       return { subject:sub, aux:'', verb:verbs[sub].verb, complement:verbs[sub].comp,
-        translation:`${sub==='I'?'Yo trabajo':sub==='He'?'Él trabaja':sub==='She'?'Ella trabaja':'Trabajamos/Trabajan'} en nuevos proyectos de software cada semana.` };
+        translation:`${conj(sub,{I:'Yo trabajo',You:'Tú trabajas',He:'Él trabaja',She:'Ella trabaja',We:'Nosotros trabajamos',They:'Ellos trabajan'})} en nuevos proyectos de software cada semana.` };
     },
     scenario:'Oficina / trabajo diario',
     scenarioDesc:'Imagínate en una entrevista de trabajo, contando lo que haces habitualmente en tu jornada.',
@@ -275,7 +281,7 @@ const tensesDB = {
     getSentence:(sub)=>{
       const auxMap = { I:'am', You:'are', He:'is', She:'is', We:'are', They:'are' };
       return { subject:sub, aux:auxMap[sub], verb:'working', complement:'on a critical bug fix right now.',
-        translation:`${sub==='I'?'Yo estoy':sub==='He'?'Él está':sub==='She'?'Ella está':'Estamos/Están'} trabajando en solucionar un error crítico justo ahora.` };
+        translation:`${conj(sub,{I:'Yo estoy',You:'Tú estás',He:'Él está',She:'Ella está',We:'Nosotros estamos',They:'Ellos están'})} trabajando en solucionar un error crítico justo ahora.` };
     },
     scenario:'Llamada de trabajo urgente',
     scenarioDesc:'Alguien te llama y explicas lo que haces en el instante exacto de la llamada.',
@@ -294,7 +300,7 @@ const tensesDB = {
     getSentence:(sub)=>{
       const hasHave = (sub==='He'||sub==='She') ? 'has' : 'have';
       return { subject:sub, aux:hasHave, verb:'finished', complement:'the entire report already.',
-        translation:`${sub==='I'?'Yo he':sub==='He'?'Él ha':sub==='She'?'Ella ha':'Hemos/Han'} terminado todo el informe ya.` };
+        translation:`${conj(sub,{I:'Yo he',You:'Tú has',He:'Él ha',She:'Ella ha',We:'Nosotros hemos',They:'Ellos han'})} terminado todo el informe ya.` };
     },
     scenario:'Reporte de avance',
     scenarioDesc:'Le confirmas a tu líder de equipo que una tarea ya está lista.',
@@ -313,7 +319,7 @@ const tensesDB = {
     getSentence:(sub)=>{
       const hasHave = (sub==='He'||sub==='She') ? 'has been' : 'have been';
       return { subject:sub, aux:hasHave, verb:'coding', complement:'for over 5 hours straight.',
-        translation:`${sub==='I'?'Llevo / he estado':sub==='He'?'Él lleva / ha estado':'Llevamos / hemos estado'} programando por más de 5 horas seguidas.` };
+        translation:`${conj(sub,{I:'Llevo / he estado',You:'Llevas / has estado',He:'Él lleva / ha estado',She:'Ella lleva / ha estado',We:'Llevamos / hemos estado',They:'Llevan / han estado'})} programando por más de 5 horas seguidas.` };
     },
     scenario:'Cansancio o esfuerzo continuo',
     scenarioDesc:'Explicas el motivo de tu cansancio o el tiempo exacto que llevas enfocado hoy.',
@@ -329,7 +335,7 @@ const tensesDB = {
     category:'past', title:'Past Simple', subtitle:'Acciones completadas en un tiempo definido',
     concept:'Menciona eventos que comenzaron y terminaron completamente en el pasado.',
     getSentence:(sub)=>({ subject:sub, aux:'', verb:'launched', complement:'the new website yesterday afternoon.',
-      translation:`${sub==='I'?'Yo lancé':sub==='He'?'Él lanzó':sub==='She'?'Ella lanzó':'Lanzamos/Lanzaron'} el nuevo sitio web ayer por la tarde.` }),
+      translation:`${conj(sub,{I:'Yo lancé',You:'Tú lanzaste',He:'Él lanzó',She:'Ella lanzó',We:'Nosotros lanzamos',They:'Ellos lanzaron'})} el nuevo sitio web ayer por la tarde.` }),
     scenario:'Resumen de ayer',
     scenarioDesc:'Reunión de balance de la semana anterior donde informas tareas cerradas.',
     realLifeExamples:[
@@ -346,7 +352,7 @@ const tensesDB = {
     getSentence:(sub)=>{
       const wasWere = (sub==='I'||sub==='He'||sub==='She') ? 'was' : 'were';
       return { subject:sub, aux:wasWere, verb:'attending', complement:'a zoom call when the power went out.',
-        translation:`${sub==='I'?'Yo estaba':sub==='He'?'Él estaba':'Estábamos/Estaban'} en una llamada de Zoom cuando se fue la luz.` };
+        translation:`${conj(sub,{I:'Yo estaba',You:'Tú estabas',He:'Él estaba',She:'Ella estaba',We:'Nosotros estábamos',They:'Ellos estaban'})} en una llamada de Zoom cuando se fue la luz.` };
     },
     scenario:'Interrupción de una historia',
     scenarioDesc:'Relatas lo que hacías justo cuando ocurrió un evento inesperado.',
@@ -362,7 +368,7 @@ const tensesDB = {
     category:'past', title:'Past Perfect', subtitle:'El pasado del pasado',
     concept:'Indica cuál de dos eventos pasados ocurrió primero.',
     getSentence:(sub)=>({ subject:sub, aux:'had', verb:'left', complement:'the office before the meeting started.',
-      translation:`${sub==='I'?'Yo ya me había':sub==='He'?'Él ya se había':'Ya nos habíamos'} ido de la oficina antes de que iniciara la reunión.` }),
+      translation:`${conj(sub,{I:'Yo ya me había',You:'Tú ya te habías',He:'Él ya se había',She:'Ella ya se había',We:'Nosotros ya nos habíamos',They:'Ellos ya se habían'})} ido de la oficina antes de que iniciara la reunión.` }),
     scenario:'Secuencia de eventos',
     scenarioDesc:'Aclaras el orden de los hechos para evitar malentendidos.',
     realLifeExamples:[
@@ -377,7 +383,7 @@ const tensesDB = {
     category:'past', title:'Past Perfect Continuous', subtitle:'Duración antes de un hito pasado',
     concept:'Muestra cuánto duró una acción continua hasta que otra la interrumpió en el pasado.',
     getSentence:(sub)=>({ subject:sub, aux:'had been', verb:'waiting', complement:'for 40 minutes before the bus arrived.',
-      translation:`${sub==='I'?'Yo había estado':'Habíamos/Habían estado'} esperando durante 40 minutos antes de que llegara el autobús.` }),
+      translation:`${conj(sub,{I:'Yo había estado',You:'Tú habías estado',He:'Él había estado',She:'Ella había estado',We:'Nosotros habíamos estado',They:'Ellos habían estado'})} esperando durante 40 minutos antes de que llegara el autobús.` }),
     scenario:'Contar una espera pasada',
     scenarioDesc:'Describir la preparación previa a un evento importante en el pasado.',
     realLifeExamples:[ { en:"He had been driving all night when he took a break.", es:"Había estado manejando toda la noche cuando tomó un descanso." } ],
@@ -389,7 +395,7 @@ const tensesDB = {
     category:'future', title:'Future Simple (Will)', subtitle:'Decisiones espontáneas y predicciones',
     concept:'Se usa para decisiones al instante, promesas o predicciones sobre el futuro.',
     getSentence:(sub)=>({ subject:sub, aux:'will', verb:'send', complement:'you the updated files in a minute.',
-      translation:`${sub==='I'?'Yo te enviaré':sub==='He'?'Él te enviará':'Te enviaremos'} los archivos actualizados en un minuto.` }),
+      translation:`${conj(sub,{I:'Yo te enviaré',You:'Tú enviarás',He:'Él te enviará',She:'Ella te enviará',We:'Nosotros te enviaremos',They:'Ellos te enviarán'})} los archivos actualizados en un minuto.` }),
     scenario:'Compromiso rápido en un chat',
     scenarioDesc:'Estás en WhatsApp y le aseguras a un cliente una acción inmediata.',
     realLifeExamples:[ { en:"I'll call you right back.", es:"Te devuelvo la llamada de inmediato." }, { en:"It will rain tomorrow.", es:"Lloverá mañana." } ],
@@ -403,7 +409,7 @@ const tensesDB = {
     getSentence:(sub)=>{
       const amIsAre = { I:'am', You:'are', He:'is', She:'is', We:'are', They:'are' };
       return { subject:sub, aux:`${amIsAre[sub]} going to`, verb:'start', complement:'a new English course next month.',
-        translation:`${sub==='I'?'Yo voy a':sub==='He'?'Él va a':'Vamos a'} iniciar un nuevo curso de inglés el próximo mes.` };
+        translation:`${conj(sub,{I:'Yo voy a',You:'Tú vas a',He:'Él va a',She:'Ella va a',We:'Nosotros vamos a',They:'Ellos van a'})} iniciar un nuevo curso de inglés el próximo mes.` };
     },
     scenario:'Planes personales o de negocios',
     scenarioDesc:'Conversas con un amigo sobre tus metas planificadas para las próximas semanas.',
@@ -416,7 +422,7 @@ const tensesDB = {
     category:'future', title:'Future Continuous', subtitle:'Acciones en proceso en el futuro',
     concept:'Imagina una acción que estará sucediendo a una hora específica en el futuro.',
     getSentence:(sub)=>({ subject:sub, aux:'will be', verb:'working', complement:'from home at this exact time tomorrow.',
-      translation:`${sub==='I'?'Yo estaré':sub==='He'?'Él estará':'Estaremos'} trabajando desde casa a esta misma hora mañana.` }),
+      translation:`${conj(sub,{I:'Yo estaré',You:'Tú estarás',He:'Él estará',She:'Ella estará',We:'Nosotros estaremos',They:'Ellos estarán'})} trabajando desde casa a esta misma hora mañana.` }),
     scenario:'Coordinación de agenda futura',
     scenarioDesc:'Le confirmas tu disponibilidad a alguien para mañana.',
     realLifeExamples:[ { en:"I will be flying to Miami at 10 AM.", es:"Estaré volando a Miami a las 10 AM." } ],
@@ -428,7 +434,7 @@ const tensesDB = {
     category:'future', title:'Future Perfect', subtitle:'Acciones terminadas para cierta fecha',
     concept:'Proyecta un punto del futuro y mira hacia atrás una tarea ya completada.',
     getSentence:(sub)=>({ subject:sub, aux:'will have', verb:'completed', complement:'the training by Friday evening.',
-      translation:`${sub==='I'?'Yo habré':sub==='He'?'Él habrá':'Habremos'} completado el entrenamiento para el viernes por la tarde.` }),
+      translation:`${conj(sub,{I:'Yo habré',You:'Tú habrás',He:'Él habrá',She:'Ella habrá',We:'Nosotros habremos',They:'Ellos habrán'})} completado el entrenamiento para el viernes por la tarde.` }),
     scenario:'Fechas límite profesionales',
     scenarioDesc:'Garantizas el cierre de un proyecto antes de una fecha tope.',
     realLifeExamples:[ { en:"By 2027, I will have graduated from university.", es:"Para el 2027, me habré graduado de la universidad." } ],
@@ -439,8 +445,8 @@ const tensesDB = {
   participial_forms: {
     category:'participial', title:'Participial Adjectives', subtitle:'Uso de participios (-ed / -ing) en la vida real',
     concept:'Los participios también funcionan como adjetivos para describir emociones o causas.',
-    getSentence:(sub)=>({ subject:sub, aux:(sub==='He'||sub==='She')?'is':'am/are', verb:'excited', complement:'about the new job offer in English.',
-      translation:`${sub==='I'?'Yo estoy':sub==='He'?'Él está':'Estamos'} emocionado(s) por la nueva oferta de trabajo en inglés.` }),
+    getSentence:(sub)=>({ subject:sub, aux:conj(sub,{I:'am',You:'are',He:'is',She:'is',We:'are',They:'are'}), verb:'excited', complement:'about the new job offer in English.',
+      translation:`${conj(sub,{I:'Yo estoy',You:'Tú estás',He:'Él está',She:'Ella está',We:'Nosotros estamos',They:'Ellos están'})} emocionado(s) por la nueva oferta de trabajo en inglés.` }),
     scenario:'Expresar estados emocionales',
     scenarioDesc:'Hablar de cómo te sientes respecto a una situación o describir algo interesante.',
     realLifeExamples:[ { en:"I am interested in tech.", es:"Estoy interesado en tecnología." }, { en:"This meeting is boring.", es:"Esta reunión es aburrida." } ],
