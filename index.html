@@ -292,6 +292,8 @@ a { color: inherit; }
 .activity-body { flex:1; min-width:0; }
 .activity-body h4 { color:#fff; font-size:13.5px; margin-bottom:3px; }
 .activity-body p { color:var(--muted); font-size:12px; line-height:1.4; }
+.activity-link-btn { display:inline-flex; align-items:center; gap:6px; margin-top:8px; padding:6px 12px; border-radius:99px; background:var(--gold-dim); border:1px solid rgba(240,180,41,.28); color:var(--gold3); font-size:11px; font-weight:700; text-decoration:none; cursor:pointer; transition: background .18s var(--ease), border-color .18s var(--ease); }
+.activity-link-btn:hover { background:rgba(240,180,41,.2); border-color:var(--gold2); }
 .activity-check-btn { flex-shrink:0; width:26px; height:26px; border-radius:8px; border:1.5px solid var(--border2); background:transparent; color:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition: all .18s var(--ease); }
 .activity-check-btn:hover { border-color: var(--gold2); }
 .activity-check-btn.checked { background:var(--green); border-color:var(--green); color:#04220f; }
@@ -299,9 +301,9 @@ a { color: inherit; }
 
 /* ===== CARRUSELES (RECURSOS / VIDEOS) ===== */
 .carousel-wrap { position:relative; }
-.carousel-track { display:flex; gap:12px; overflow-x:auto; scroll-snap-type: x proximity; scroll-behavior:smooth; padding-bottom:6px; -webkit-overflow-scrolling:touch; }
-.carousel-track::-webkit-scrollbar { height:6px; }
-.carousel-track > * { scroll-snap-align:start; flex:0 0 auto; }
+.carousel-track { display:flex; gap:12px; overflow-x:auto; scroll-behavior:auto; padding:10px 0 6px; -webkit-overflow-scrolling:touch; scrollbar-width:none; -ms-overflow-style:none; }
+.carousel-track::-webkit-scrollbar { display:none; height:0; }
+.carousel-track > * { flex:0 0 auto; transform-origin:center center; will-change:transform, opacity; transition: transform .18s var(--ease), opacity .18s var(--ease); }
 .res-card.carousel-item { width:170px; }
 @media (min-width:680px) { .res-card.carousel-item { width:190px; } }
 .carousel-nav { position:absolute; top:50%; transform:translateY(-50%); width:34px; height:34px; border-radius:50%; background:rgba(8,8,10,.75); backdrop-filter:blur(6px); border:1px solid var(--border2); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; transition: color .2s var(--ease), border-color .2s var(--ease); }
@@ -422,14 +424,6 @@ a { color: inherit; }
             <i class="fa-solid fa-bell"></i>
             <span class="notif-badge" id="notif-badge">0</span>
           </button>
-          <div class="notif-backdrop" id="notif-backdrop" onclick="toggleNotifDropdown(true)"></div>
-          <div class="notif-dropdown" id="notif-dropdown">
-            <div class="notif-dropdown-head">
-              <h4><i class="fa-solid fa-bell"></i> Actividades de la semana</h4>
-              <button class="notif-close-x" onclick="toggleNotifDropdown(true)"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="notif-list"></div>
-          </div>
         </div>
         <button class="btn-salir" onclick="showScreen('s-chat')" title="Chat en inglés"><i class="fa-solid fa-comments"></i></button>
         <button class="btn-salir" onclick="abrirPerfil()" title="Mi perfil"><i class="fa-solid fa-user"></i></button>
@@ -631,6 +625,7 @@ a { color: inherit; }
           <input type="hidden" id="actividad-id-edicion">
           <input type="text" id="actividad-titulo" class="admin-input" placeholder="Título de la actividad">
           <textarea id="actividad-descripcion" class="form-textarea" placeholder="Descripción de la actividad"></textarea>
+          <input type="url" id="actividad-enlace" class="admin-input" placeholder="Enlace (opcional) — ej: https://...">
           <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
           <div class="dest-picker">
             <label class="dest-all-row"><input type="checkbox" id="dest-todos" checked onchange="toggleDestTodos()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
@@ -769,6 +764,19 @@ a { color: inherit; }
 <button class="support-float-btn" id="btn-soporte-float" onclick="abrirModalSoporte()" title="Soporte por WhatsApp">
   <i class="fa-brands fa-whatsapp"></i>
 </button>
+
+<!-- NOTIFICACIONES: vive fuera del <nav> a propósito. El <nav> usa backdrop-filter,
+     y backdrop-filter/transform/filter en un ancestro crea un "containing block" nuevo
+     para los elementos position:fixed, así que un dropdown fixed anidado ahí adentro
+     se posiciona relativo al <nav> (y se corta) en vez de centrarse en la pantalla real. -->
+<div class="notif-backdrop" id="notif-backdrop" onclick="toggleNotifDropdown(true)"></div>
+<div class="notif-dropdown" id="notif-dropdown">
+  <div class="notif-dropdown-head">
+    <h4><i class="fa-solid fa-bell"></i> Actividades de la semana</h4>
+    <button class="notif-close-x" onclick="toggleNotifDropdown(true)"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div id="notif-list"></div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -958,7 +966,6 @@ function extraerIdYoutube(url) {
   return m ? m[1] : null;
 }
 let categoriasVideoCache = [];
-const autoplayIntervals = {};
 function escucharGaleriaVideos() {
   onSnapshot(query(collection(db,'galeria_categorias'), orderBy('fecha','asc')), snap => {
     categoriasVideoCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
@@ -969,7 +976,6 @@ function renderGaleriaVideos() {
   const section = document.getElementById('video-gallery-section');
   const cont = document.getElementById('video-gallery-container');
   if (!section || !cont) return;
-  Object.values(autoplayIntervals).forEach(clearInterval);
   const conVideos = categoriasVideoCache.filter(c => c.videos && c.videos.length);
   if (!conVideos.length) { section.style.display='none'; cont.innerHTML=''; return; }
   section.style.display='block';
@@ -989,21 +995,7 @@ function renderGaleriaVideos() {
     </div>`;
   }).join('');
 
-  conVideos.forEach(cat => {
-    const track = document.getElementById('vcat-track-' + cat.id);
-    if (!track || cat.videos.length < 2) return;
-    let pausado = false;
-    track.addEventListener('mouseenter', () => pausado = true);
-    track.addEventListener('mouseleave', () => pausado = false);
-    track.addEventListener('touchstart', () => pausado = true, { passive:true });
-    track.addEventListener('touchend', () => setTimeout(()=>pausado=false, 2500), { passive:true });
-    autoplayIntervals['vcat-track-' + cat.id] = setInterval(() => {
-      if (pausado) return;
-      const max = track.scrollWidth - track.clientWidth;
-      if (track.scrollLeft >= max - 4) track.scrollTo({ left:0, behavior:'smooth' });
-      else track.scrollBy({ left: 1, behavior:'auto' });
-    }, 22);
-  });
+  conVideos.forEach(cat => iniciarCarruselAvanzado('vcat-track-' + cat.id));
 }
 window.abrirVideoPlayer = (youtubeId, titulo) => {
   document.getElementById('video-player-titulo').innerText = titulo || '';
@@ -1080,7 +1072,8 @@ function itemActividadHTML(a, conCheck) {
   const checks = checksDeAlumno();
   const hecho = !!checks[a.id];
   const checkBtn = conCheck ? `<button type="button" class="activity-check-btn ${hecho?'checked':''}" onclick="toggleCheckActividad('${a.id}', event)" title="${hecho?'Marcar como pendiente':'Marcar como completado'}"><i class="fa-solid fa-check"></i></button>` : '';
-  return `<div class="activity-card ${hecho?'done':''}"><div class="activity-icon"><i class="fa-solid fa-list-check"></i></div><div class="activity-body"><h4>${a.titulo}</h4><p>${a.descripcion || ''}</p></div>${checkBtn}</div>`;
+  const enlaceHtml = a.enlace ? `<a class="activity-link-btn" href="${a.enlace.replace(/"/g,'&quot;')}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir enlace</a>` : '';
+  return `<div class="activity-card ${hecho?'done':''}"><div class="activity-icon"><i class="fa-solid fa-list-check"></i></div><div class="activity-body"><h4>${a.titulo}</h4><p>${a.descripcion || ''}</p>${enlaceHtml}</div>${checkBtn}</div>`;
 }
 function renderActividades() {
   const card = document.getElementById('actividades-card');
@@ -1188,6 +1181,7 @@ function tarjetaRecurso({id, data, icon, tag}) {
 window.scrollCarousel = (trackId, dir) => {
   const track = document.getElementById(trackId);
   if (!track) return;
+  if (track.__necPausarTemporal) track.__necPausarTemporal();
   track.scrollBy({ left: dir * 210, behavior: 'smooth' });
 };
 function carruselHTML(trackId, itemsHtml) {
@@ -1196,6 +1190,75 @@ function carruselHTML(trackId, itemsHtml) {
     <div class="carousel-track" id="${trackId}">${itemsHtml}</div>
     <button type="button" class="carousel-nav next" onclick="scrollCarousel('${trackId}',1)"><i class="fa-solid fa-chevron-right"></i></button>
   </div>`;
+}
+
+/* ===== MOTOR COMPARTIDO DE CARRUSELES =====
+   Pase automático e infinito (loop sin fin, se pausa al tocar/hover),
+   enfoque central (la tarjeta del centro se agranda y las de los lados
+   se ven más pequeñas/opacas), y deslizamiento táctil fluido sin barra
+   de scroll visible. Se usa para Recursos, Clases y Videos. */
+const carruselesActivos = {};
+function iniciarCarruselAvanzado(trackId, velocidad = 0.55) {
+  const track = document.getElementById(trackId);
+  if (!track) return;
+  if (carruselesActivos[trackId]) {
+    cancelAnimationFrame(carruselesActivos[trackId]);
+    delete carruselesActivos[trackId];
+  }
+  const originales = Array.from(track.children);
+  if (!originales.length) return;
+
+  // Clona el set de tarjetas una vez para poder hacer scroll infinito sin
+  // que se note el "salto" cuando llega al final (se resetea a la mitad).
+  if (originales.length > 1 && !track.dataset.clonado) {
+    originales.forEach(it => track.appendChild(it.cloneNode(true)));
+    track.dataset.clonado = '1';
+  }
+  const haceLoop = originales.length > 1 && track.dataset.clonado === '1';
+
+  let pausado = false;
+  let pausaManualTimeout = null;
+  const pausarTemporal = (ms = 2200) => {
+    pausado = true;
+    clearTimeout(pausaManualTimeout);
+    pausaManualTimeout = setTimeout(() => { pausado = false; }, ms);
+  };
+  track.__necPausarTemporal = pausarTemporal;
+
+  track.addEventListener('mouseenter', () => { pausado = true; });
+  track.addEventListener('mouseleave', () => { clearTimeout(pausaManualTimeout); pausado = false; });
+  track.addEventListener('touchstart', () => { pausado = true; }, { passive: true });
+  track.addEventListener('touchend', () => pausarTemporal(2200), { passive: true });
+  track.addEventListener('pointerdown', () => { pausado = true; });
+  track.addEventListener('wheel', () => pausarTemporal(1800), { passive: true });
+
+  function enfocarCentro() {
+    const trackRect = track.getBoundingClientRect();
+    if (!trackRect.width) return;
+    const centro = trackRect.left + trackRect.width / 2;
+    Array.from(track.children).forEach(item => {
+      const r = item.getBoundingClientRect();
+      const itemCentro = r.left + r.width / 2;
+      const dist = Math.abs(centro - itemCentro);
+      const norm = Math.min(dist / (trackRect.width / 2), 1);
+      const escala = 1 - norm * 0.16;
+      const opacidad = 1 - norm * 0.5;
+      item.style.transform = `scale(${escala.toFixed(3)})`;
+      item.style.opacity = opacidad.toFixed(2);
+    });
+  }
+
+  function tick() {
+    if (!track.isConnected) { delete carruselesActivos[trackId]; return; }
+    if (!pausado && haceLoop) {
+      track.scrollLeft += velocidad;
+      const mitad = track.scrollWidth / 2;
+      if (track.scrollLeft >= mitad) track.scrollLeft -= mitad;
+    }
+    enfocarCentro();
+    carruselesActivos[trackId] = requestAnimationFrame(tick);
+  }
+  carruselesActivos[trackId] = requestAnimationFrame(tick);
 }
 
 function renderRecursos() {
@@ -1216,12 +1279,14 @@ function renderRecursos() {
   });
 
   let html = '';
+  const tracksAIniciar = [];
   if (favoritos.length) {
     const itemsHtml = favoritos.map(item => tarjetaRecurso({ id: item.id, data: item.data, icon: item.icon, tag: item.cat.tag })).join('');
     html += `<div class="resource-group favoritos">
       <div class="group-head"><i class="fa-solid fa-star"></i><h3>Mis favoritos</h3></div>
       ${carruselHTML('track-favoritos', itemsHtml)}
     </div>`;
+    tracksAIniciar.push('track-favoritos');
   }
 
   const ordenGrupos = [...CATEGORIAS_RECURSOS, CATEGORIA_DEFECTO];
@@ -1233,9 +1298,11 @@ function renderRecursos() {
       <div class="group-head"><i class="fa-solid ${cat.icon}"></i><h3>${cat.label}</h3></div>
       ${carruselHTML('track-'+cat.id, itemsHtml)}
     </div>`;
+    tracksAIniciar.push('track-'+cat.id);
   });
 
   cont.innerHTML = html;
+  tracksAIniciar.forEach(id => iniciarCarruselAvanzado(id));
 }
 
 function escucharRecursos() {
@@ -1287,7 +1354,7 @@ function cargarDatosAdmin() {
     snap.forEach(d => {
       const data = d.data();
       const destTxt = (!data.destinatarios || !data.destinatarios.length) ? 'Todos' : `${data.destinatarios.length} alumno(s)`;
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:13px;">${data.titulo} <small style="color:var(--muted)">(${data.semana} · ${destTxt})</small></span><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick='prepararEdicionActividad(${JSON.stringify(d.id)}, ${JSON.stringify(data.titulo||"")}, ${JSON.stringify(data.descripcion||"")}, ${JSON.stringify(data.destinatarios||[])})'><i class="fa-solid fa-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('actividades','${d.id}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:13px;">${data.titulo} <small style="color:var(--muted)">(${data.semana} · ${destTxt})</small></span><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick='prepararEdicionActividad(${JSON.stringify(d.id)}, ${JSON.stringify(data.titulo||"")}, ${JSON.stringify(data.descripcion||"")}, ${JSON.stringify(data.destinatarios||[])}, ${JSON.stringify(data.enlace||"")})'><i class="fa-solid fa-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('actividades','${d.id}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
     });
   });
   onSnapshot(query(collection(db,'galeria_categorias'), orderBy('fecha','asc')), snap => {
@@ -1356,10 +1423,17 @@ window.guardarMentalidad = async () => {
 };
 
 /* ===== ADMIN: ACTIVIDADES ===== */
-window.prepararEdicionActividad = (id, titulo, descripcion, destinatarios) => {
+function normalizarUrl(u) {
+  const limpio = (u || '').trim();
+  if (!limpio) return '';
+  if (/^https?:\/\//i.test(limpio)) return limpio;
+  return 'https://' + limpio;
+}
+window.prepararEdicionActividad = (id, titulo, descripcion, destinatarios, enlace) => {
   document.getElementById('actividad-id-edicion').value = id;
   document.getElementById('actividad-titulo').value = titulo;
   document.getElementById('actividad-descripcion').value = descripcion;
+  document.getElementById('actividad-enlace').value = enlace || '';
   const todos = !destinatarios || !destinatarios.length;
   document.getElementById('dest-todos').checked = todos;
   document.getElementById('dest-lista-alumnos').style.display = todos ? 'none' : 'block';
@@ -1369,6 +1443,7 @@ window.prepararEdicionActividad = (id, titulo, descripcion, destinatarios) => {
 window.guardarActividad = async () => {
   const titulo = document.getElementById('actividad-titulo').value.trim();
   const descripcion = document.getElementById('actividad-descripcion').value.trim();
+  const enlace = normalizarUrl(document.getElementById('actividad-enlace').value);
   const id = document.getElementById('actividad-id-edicion').value;
   if (!titulo) return;
   const semana = getLocalDateStr(getMonday(new Date()));
@@ -1376,13 +1451,14 @@ window.guardarActividad = async () => {
   const destinatarios = todos ? [] : Array.from(document.querySelectorAll('.dest-check:checked')).map(c => c.value);
   if (!todos && !destinatarios.length) { showModal('Falta información', 'Selecciona al menos un alumno, o marca "Todos los alumnos".'); return; }
   if (id) {
-    await updateDoc(doc(db,'actividades',id), { titulo, descripcion, destinatarios });
+    await updateDoc(doc(db,'actividades',id), { titulo, descripcion, enlace, destinatarios });
   } else {
-    await addDoc(collection(db,'actividades'), { titulo, descripcion, semana, destinatarios, fecha: Date.now() });
+    await addDoc(collection(db,'actividades'), { titulo, descripcion, enlace, semana, destinatarios, fecha: Date.now() });
   }
   document.getElementById('actividad-id-edicion').value = '';
   document.getElementById('actividad-titulo').value = '';
   document.getElementById('actividad-descripcion').value = '';
+  document.getElementById('actividad-enlace').value = '';
   document.getElementById('dest-todos').checked = true;
   document.getElementById('dest-lista-alumnos').style.display = 'none';
   document.querySelectorAll('.dest-check').forEach(chk => chk.checked = false);
