@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEC Master Board v22 - Extended Colors</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background-color: #000000; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+        }
+        
+        .main-layout { display: flex; width: 100vw; height: 100vh; }
+
+        /* BARRA LATERAL FLOTANTE */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) translateX(-85%);
+            width: 70px;
+            background: rgba(15, 15, 15, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 0;
+            gap: 8px;
+            z-index: 2000;
+            border-radius: 0 20px 20px 0;
+            backdrop-filter: blur(15px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .sidebar:hover {
+            transform: translateY(-50%) translateX(0);
+            background: rgba(15, 15, 15, 0.95);
+        }
+
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 40px;
+            background: rgba(255, 204, 0, 0.3);
+            border-radius: 10px;
+            transition: opacity 0.3s;
+        }
+        .sidebar:hover::after { opacity: 0; }
+
+        .tool-btn {
+            width: 38px; height: 38px; border-radius: 10px; border: none;
+            background: #1a1a1a; color: #777; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .tool-btn svg { width: 18px; height: 18px; }
+        
+        .tool-btn:hover { background: #333; color: #fff; }
+        .tool-btn.active { background: #ffcc00; color: #000; box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
+
+        .canvas-area {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #080808;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 35px 35px;
+        }
+
+        #master-container {
+            position: relative;
+            background: transparent;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            border-radius: 4px;
+        }
+
+        #canvas-wrapper { position: absolute; top: 0; left: 0; z-index: 10; }
+        
+        .textLayer {
+            position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+            overflow: hidden; z-index: 5; pointer-events: none;
+            filter: invert(1) contrast(1.5);
+        }
+
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.8); padding: 8px 20px; border-radius: 40px;
+            display: flex; align-items: center; gap: 15px; z-index: 1100;
+            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transform: translateX(-50%) translateY(100px);
+            transition: transform 0.3s ease;
+        }
+        .bottom-nav.visible { transform: translateX(-50%) translateY(0); }
+
+        /* CUADRICULA DE COLORES EXPANDIDA */
+        .color-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 4px; margin: 2px 0;
+            padding: 5px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .color-dot { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid #222; }
+        .color-dot.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 5px rgba(255,255,255,0.5); }
+
+        .size-control {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            margin-top: 2px; color: #555;
+        }
+        .size-slider {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 4px; height: 60px; padding: 0 5px;
+        }
+
+        #file-input { display: none; }
+        .page-info { font-weight: bold; color: #ffcc00; font-size: 14px; min-width: 60px; text-align: center; }
+        #loader { position: fixed; top: 20px; right: 20px; color: #ffcc00; display: none; z-index: 2000; }
+        
+        .status-text { font-size: 8px; color: #ffcc00; font-weight: bold; margin-top: -2px; text-align: center; opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<div class="main-layout" id="app-root">
+    <div id="loader"><i data-lucide="loader-2" class="animate-spin"></i></div>
+
+    <aside class="sidebar" id="main-sidebar">
+        <!-- Herramienta de Selección -->
+        <button class="tool-btn" id="btn-select" title="Seleccionar/Mover"><i data-lucide="mouse-pointer-2"></i></button>
+        
+        <div style="height: 1px; width: 30px; background: #333; margin: 2px 0;"></div>
+
+        <button class="tool-btn active" id="btn-pencil" title="Lápiz"><i data-lucide="pencil"></i></button>
+        <button class="tool-btn" id="btn-highlighter" title="Subrayador"><i data-lucide="highlighter"></i></button>
+        <button class="tool-btn" id="btn-laser" title="Láser"><i data-lucide="zap"></i></button>
+        <button class="tool-btn" id="btn-text" title="Texto (Doble clic para editar)"><i data-lucide="type"></i></button>
+        
+        <div style="height: 1px; width: 30px; background: #333; margin: 2px 0;"></div>
+        
+        <button class="tool-btn" id="btn-line" title="Línea"><i data-lucide="minus"></i></button>
+        <button class="tool-btn" id="btn-rect" title="Rectángulo"><i data-lucide="square"></i></button>
+        <button class="tool-btn" id="btn-fill" title="Relleno"><i data-lucide="paint-bucket"></i></button>
+        <div class="status-text" id="fill-status">L</div>
+        <button class="tool-btn" id="btn-autoshape" title="Reconocer formas (línea recta, círculo, triángulo, cuadrado) al dibujar con el lápiz"><i data-lucide="wand-2"></i></button>
+
+        <div style="height: 1px; width: 30px; background: #333; margin: 2px 0;"></div>
+        
+        <!-- PALETA DE COLORES AMPLIADA -->
+        <div class="color-grid">
+            <div class="color-dot active" style="background: #ffffff;" data-color="#ffffff" title="Blanco"></div>
+            <div class="color-dot" style="background: #000000;" data-color="#000000" title="Negro"></div>
+            <div class="color-dot" style="background: #ffcc00;" data-color="#ffcc00" title="Amarillo"></div>
+            <div class="color-dot" style="background: #ff9500;" data-color="#ff9500" title="Naranja"></div>
+            <div class="color-dot" style="background: #00ffff;" data-color="#00ffff" title="Cian"></div>
+            <div class="color-dot" style="background: #007aff;" data-color="#007aff" title="Azul"></div>
+            <div class="color-dot" style="background: #44ff44;" data-color="#44ff44" title="Verde"></div>
+            <div class="color-dot" style="background: #ff4444;" data-color="#ff4444" title="Rojo"></div>
+            <div class="color-dot" style="background: #ff00ff;" data-color="#ff00ff" title="Magenta"></div>
+            <div class="color-dot" style="background: #8e8e93;" data-color="#8e8e93" title="Gris"></div>
+        </div>
+
+        <div class="size-control">
+            <input type="range" min="10" max="120" value="32" class="size-slider" id="font-size-slider">
+            <div class="status-text" id="size-val">32</div>
+        </div>
+        
+        <div style="height: 1px; width: 30px; background: #333; margin: 2px 0;"></div>
+        
+        <button class="tool-btn" id="btn-eraser" title="Borrador (mantén presionado y arrastra)"><i data-lucide="eraser"></i></button>
+        <button class="tool-btn" id="btn-undo" title="Deshacer"><i data-lucide="undo-2"></i></button>
+        <button class="tool-btn" id="btn-redo" title="Rehacer"><i data-lucide="redo-2"></i></button>
+        <button class="tool-btn" id="btn-clear" style="color: #ff4444;" title="Limpiar Todo"><i data-lucide="trash-2"></i></button>
+        <button class="tool-btn" id="btn-upload" style="color: #ffcc00;" title="PDF"><i data-lucide="file-up"></i></button>
+        
+        <input type="file" id="file-input" accept="application/pdf">
+    </aside>
+
+    <main class="canvas-area">
+        <div id="master-container">
+            <div id="canvas-wrapper">
+                <canvas id="c"></canvas>
+            </div>
+            <div id="text-layer" class="textLayer"></div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav" id="pdf-nav">
+        <button class="tool-btn" id="btn-prev"><i data-lucide="chevron-left"></i></button>
+        <span class="page-info"><span id="page-num">1</span> / <span id="page-count">0</span></span>
+        <button class="tool-btn" id="btn-next"><i data-lucide="chevron-right"></i></button>
+    </nav>
+</div>
+
+<script>
+    window.onload = function() {
+        lucide.createIcons();
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const canvas = new fabric.Canvas('c', {
+            isDrawingMode: true,
+            backgroundColor: 'transparent',
+            preserveObjectStacking: true,
+            selection: true
+        });
+
+        // Configuración inicial
+        const initW = window.innerWidth * 0.95;
+        const initH = window.innerHeight * 0.95;
+        const master = document.getElementById('master-container');
+        master.style.width = initW + 'px';
+        master.style.height = initH + 'px';
+        canvas.setDimensions({ width: initW, height: initH });
+
+        let pdfDoc = null;
+        let pageNum = 1;
+        let currentMode = 'pencil';
+        let currentColor = '#ffffff';
+        let currentFontSize = 32;
+        let isSolid = false; 
+        let isDrawingShape = false;
+        let shape, origX, origY;
+
+        // --- Estado nuevo para las mejoras ---
+        let isErasing = false;
+        let downPoint = null;
+        let downTarget = null;
+        let autoShape = false;
+        let strokePoints = [];
+
+        // --- Historial (undo/redo) ---
+        let history = [];
+        let historyIndex = -1;
+        let isRestoringHistory = false;
+
+        function snapshotState() {
+            if (isRestoringHistory) return;
+            const json = JSON.stringify(canvas.toJSON());
+            history = history.slice(0, historyIndex + 1);
+            history.push(json);
+            if (history.length > 40) history.shift();
+            historyIndex = history.length - 1;
+        }
+
+        function restoreState(json) {
+            isRestoringHistory = true;
+            const bg = canvas.backgroundImage;
+            canvas.loadFromJSON(json, () => {
+                if (bg && !canvas.backgroundImage) canvas.setBackgroundImage(bg, canvas.renderAll.bind(canvas));
+                canvas.renderAll();
+                isRestoringHistory = false;
+                updateUI();
+            });
+        }
+
+        document.getElementById('btn-undo').onclick = () => {
+            if (historyIndex > 0) {
+                historyIndex--;
+                restoreState(history[historyIndex]);
+            }
+        };
+        document.getElementById('btn-redo').onclick = () => {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                restoreState(history[historyIndex]);
+            }
+        };
+
+        function updateUI() {
+            if (canvas.getActiveObject() && canvas.getActiveObject().isEditing) return;
+
+            canvas.isDrawingMode = false;
+            canvas.selection = false;
+
+            const isSelectMode = currentMode === 'select';
+
+            canvas.forEachObject(obj => {
+                obj.selectable = isSelectMode;
+                obj.evented = true;
+                obj.hasControls = isSelectMode;
+                obj.hasBorders = isSelectMode;
+            });
+
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('btn-' + currentMode);
+            if (btn) btn.classList.add('active');
+            document.getElementById('btn-autoshape').classList.toggle('active', autoShape);
+
+            const fillStatus = document.getElementById('fill-status');
+            fillStatus.textContent = isSolid ? "S" : "L";
+
+            canvas.defaultCursor = currentMode === 'select' ? 'default' : 'crosshair';
+            canvas.hoverCursor = isSelectMode ? 'move' : canvas.defaultCursor;
+            canvas.freeDrawingCursor = 'crosshair';
+
+            if (currentMode === 'pencil') {
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                canvas.freeDrawingBrush.width = 4;
+                canvas.freeDrawingBrush.color = currentColor;
+            } else if (currentMode === 'highlighter') {
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                canvas.freeDrawingBrush.width = 35;
+                canvas.freeDrawingBrush.color = hexToRgba(currentColor, 0.4);
+            } else if (currentMode === 'laser') {
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                canvas.freeDrawingBrush.width = 6;
+                canvas.freeDrawingBrush.color = '#ffcc00';
+                canvas.freeDrawingBrush.shadow = new fabric.Shadow({ blur: 20, color: '#ffcc00' });
+            } else if (isSelectMode) {
+                canvas.selection = true;
+            }
+        }
+
+        function hexToRgba(hex, alpha) {
+            let r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        function angleDiff(a, b) {
+            let d = Math.abs(a - b) % 360;
+            return d > 180 ? 360 - d : d;
+        }
+
+        // --- Selección/edición de texto con un simple toque, sin cambiar de herramienta ---
+        function selectTextForEditing(obj) {
+            canvas.isDrawingMode = false;
+            obj.selectable = true;
+            obj.evented = true;
+            obj.hasControls = true;
+            obj.hasBorders = true;
+            canvas.setActiveObject(obj);
+            canvas.renderAll();
+        }
+
+        canvas.on('selection:cleared', () => { updateUI(); });
+
+        const sizeSlider = document.getElementById('font-size-slider');
+        const sizeVal = document.getElementById('size-val');
+        sizeSlider.oninput = function() {
+            currentFontSize = parseInt(this.value);
+            sizeVal.textContent = currentFontSize;
+            const activeObject = canvas.getActiveObject();
+            if (activeObject && activeObject.type === 'i-text') {
+                activeObject.set('fontSize', currentFontSize);
+                canvas.renderAll();
+            }
+        };
+
+        document.getElementById('btn-select').onclick = () => { currentMode = 'select'; updateUI(); };
+        document.getElementById('btn-pencil').onclick = () => { currentMode = 'pencil'; updateUI(); };
+        document.getElementById('btn-line').onclick = () => { currentMode = 'line'; updateUI(); };
+        document.getElementById('btn-rect').onclick = () => { currentMode = 'rect'; updateUI(); };
+        document.getElementById('btn-fill').onclick = () => { isSolid = !isSolid; updateUI(); };
+        document.getElementById('btn-highlighter').onclick = () => { currentMode = 'highlighter'; updateUI(); };
+        document.getElementById('btn-laser').onclick = () => { currentMode = 'laser'; updateUI(); };
+        document.getElementById('btn-text').onclick = () => { currentMode = 'text'; updateUI(); };
+        document.getElementById('btn-eraser').onclick = () => { currentMode = 'eraser'; updateUI(); };
+        document.getElementById('btn-autoshape').onclick = () => { autoShape = !autoShape; updateUI(); };
+
+        document.getElementById('btn-clear').onclick = () => {
+            const bg = canvas.backgroundImage;
+            canvas.clear();
+            if (bg) canvas.setBackgroundImage(bg, canvas.renderAll.bind(canvas));
+            canvas.renderAll();
+            snapshotState();
+        };
+
+        document.getElementById('btn-upload').onclick = () => document.getElementById('file-input').click();
+
+        document.getElementById('file-input').onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            document.getElementById('loader').style.display = 'block';
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const arr = new Uint8Array(this.result);
+                pdfDoc = await pdfjsLib.getDocument(arr).promise;
+                document.getElementById('page-count').textContent = pdfDoc.numPages;
+                document.getElementById('pdf-nav').classList.add('visible');
+                pageNum = 1;
+                renderPage(pageNum);
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        async function renderPage(num) {
+            if (!pdfDoc) return;
+            document.getElementById('loader').style.display = 'block';
+            canvas.clear();
+            const page = await pdfDoc.getPage(num);
+            const vp = page.getViewport({ scale: 1 });
+            const scale = Math.min((window.innerWidth * 0.9) / vp.width, (window.innerHeight * 0.9) / vp.height);
+            const viewport = page.getViewport({ scale: scale });
+            
+            master.style.width = viewport.width + 'px';
+            master.style.height = viewport.height + 'px';
+            canvas.setDimensions({ width: viewport.width, height: viewport.height });
+
+            const tmpC = document.createElement('canvas');
+            const ctx = tmpC.getContext('2d');
+            tmpC.height = viewport.height;
+            tmpC.width = viewport.width;
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            
+            fabric.Image.fromURL(tmpC.toDataURL(), function(img) {
+                img.set({ selectable: false, evented: false });
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            });
+            
+            const tl = document.getElementById('text-layer');
+            tl.innerHTML = '';
+            const content = await page.getTextContent();
+            pdfjsLib.renderTextLayer({ textContent: content, container: tl, viewport: viewport, textDivs: [] });
+            
+            document.getElementById('page-num').textContent = num;
+            document.getElementById('loader').style.display = 'none';
+            updateUI();
+            history = []; historyIndex = -1;
+            snapshotState();
+        }
+
+        document.getElementById('btn-next').onclick = () => { if (pdfDoc && pageNum < pdfDoc.numPages) renderPage(++pageNum); };
+        document.getElementById('btn-prev').onclick = () => { if (pdfDoc && pageNum > 1) renderPage(--pageNum); };
+
+        document.querySelectorAll('.color-dot').forEach(dot => {
+            dot.onclick = () => {
+                currentColor = dot.dataset.color;
+                document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                const active = canvas.getActiveObject();
+                if (active) {
+                    if (active.type === 'i-text') active.set('fill', currentColor);
+                    else if (active.type === 'rect' || active.type === 'path' || active.type === 'line' || active.type === 'triangle' || active.type === 'ellipse') {
+                        active.set('stroke', currentColor);
+                        if (active.fill && active.fill !== 'transparent') active.set('fill', currentColor);
+                    }
+                    canvas.renderAll();
+                    snapshotState();
+                }
+                updateUI();
+            };
+        });
+
+        // ================= DIBUJO / INTERACCIÓN =================
+
+        canvas.on('mouse:down', (o) => {
+            downPoint = canvas.getPointer(o.e);
+            downTarget = canvas.findTarget(o.e, true) || null;
+
+            if (currentMode === 'select') return;
+
+            if (currentMode === 'eraser') {
+                isErasing = true;
+                if (downTarget) {
+                    canvas.remove(downTarget);
+                    canvas.discardActiveObject();
+                    canvas.renderAll();
+                }
+                return;
+            }
+
+            if (currentMode === 'text') {
+                // Si se toca un texto existente, no se crea uno nuevo: se deja para
+                // que mouse:up lo seleccione/edite en su lugar.
+                if (downTarget && downTarget.type === 'i-text') return;
+                const p = downPoint;
+                const t = new fabric.IText('', {
+                    left: p.x, top: p.y, fill: currentColor, fontSize: currentFontSize,
+                    fontFamily: 'Segoe UI', cursorColor: currentColor
+                });
+                canvas.add(t);
+                canvas.setActiveObject(t);
+                t.enterEditing();
+                return;
+            }
+
+            if (currentMode === 'pencil' && autoShape) {
+                strokePoints = [downPoint];
+            }
+
+            if (['rect', 'line'].includes(currentMode)) {
+                isDrawingShape = true;
+                origX = downPoint.x;
+                origY = downPoint.y;
+                const fill = isSolid ? currentColor : 'transparent';
+
+                if (currentMode === 'rect') {
+                    shape = new fabric.Rect({
+                        left: origX, top: origY, originX: 'left', originY: 'top',
+                        width: 0, height: 0, fill: fill, stroke: currentColor, strokeWidth: 3,
+                        selectable: false
+                    });
+                } else if (currentMode === 'line') {
+                    shape = new fabric.Line([origX, origY, origX, origY], {
+                        stroke: currentColor, strokeWidth: 4, originX: 'left', originY: 'top',
+                        selectable: false
+                    });
+                }
+                canvas.add(shape);
+            }
+        });
+
+        canvas.on('mouse:move', (o) => {
+            // Borrado continuo mientras se mantiene presionado y se arrastra
+            if (isErasing) {
+                const t = canvas.findTarget(o.e, true);
+                if (t) { canvas.remove(t); canvas.renderAll(); }
+                return;
+            }
+
+            // Captura de puntos del trazo a mano alzada (para reconocimiento de formas)
+            if (currentMode === 'pencil' && autoShape && canvas.isDrawingMode) {
+                strokePoints.push(canvas.getPointer(o.e));
+            }
+
+            if (!isDrawingShape) return;
+            const pointer = canvas.getPointer(o.e);
+
+            if (currentMode === 'rect') {
+                let w = pointer.x - origX;
+                let h = pointer.y - origY;
+                // Corrección: si se acerca a un cuadrado perfecto, lo ajusta
+                if (Math.abs(Math.abs(w) - Math.abs(h)) < 12 && Math.abs(w) > 15 && Math.abs(h) > 15) {
+                    const s = Math.min(Math.abs(w), Math.abs(h));
+                    w = (w < 0 ? -1 : 1) * s;
+                    h = (h < 0 ? -1 : 1) * s;
+                }
+                shape.set({
+                    left: w < 0 ? origX + w : origX,
+                    top: h < 0 ? origY + h : origY,
+                    width: Math.abs(w),
+                    height: Math.abs(h)
+                });
+            } else if (currentMode === 'line') {
+                let dx = pointer.x - origX, dy = pointer.y - origY;
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                const nearest = Math.round(angle / 15) * 15;
+                let ex = pointer.x, ey = pointer.y;
+                // Corrección: si el ángulo está cerca de 0/15/30/45..., lo endereza
+                if (angleDiff(angle, nearest) < 6) {
+                    const len = Math.hypot(dx, dy);
+                    const rad = nearest * Math.PI / 180;
+                    ex = origX + Math.cos(rad) * len;
+                    ey = origY + Math.sin(rad) * len;
+                }
+                shape.set({ x2: ex, y2: ey });
+            }
+            canvas.renderAll();
+        });
+
+        canvas.on('mouse:up', (o) => {
+            isErasing = false;
+            isDrawingShape = false;
+
+            if (shape) {
+                shape.setCoords();
+                const tooSmall = currentMode === 'rect'
+                    ? (shape.width < 6 && shape.height < 6)
+                    : (Math.hypot(shape.x2 - shape.x1, shape.y2 - shape.y1) < 6);
+                if (tooSmall) {
+                    canvas.remove(shape);
+                }
+                shape = null;
+            }
+
+            // Detección de "toque" (sin arrastre) sobre un texto existente:
+            // permite moverlo/editarlo/redimensionarlo sin cambiar de herramienta.
+            const pointerUp = canvas.getPointer(o.e);
+            const dist = downPoint ? Math.hypot(pointerUp.x - downPoint.x, pointerUp.y - downPoint.y) : 999;
+
+            if (dist < 6 && downTarget && downTarget.type === 'i-text' && !['select', 'eraser'].includes(currentMode)) {
+                if (currentMode === 'pencil') {
+                    const objs = canvas.getObjects();
+                    const last = objs[objs.length - 1];
+                    if (last && last.type === 'path') {
+                        const bw = last.width * (last.scaleX || 1), bh = last.height * (last.scaleY || 1);
+                        if (bw < 8 && bh < 8) canvas.remove(last);
+                    }
+                }
+                selectTextForEditing(downTarget);
+            }
+
+            downTarget = null;
+            downPoint = null;
+            canvas.renderAll();
+            snapshotState();
+        });
+
+        canvas.on('mouse:dblclick', (o) => {
+            if (o.target && o.target.type === 'i-text') {
+                o.target.enterEditing();
+                o.target.hiddenTextarea.focus();
+            }
+        });
+
+        canvas.on('path:created', (e) => {
+            // El subrayador va DETRÁS de todo (texto, formas, otros trazos)
+            if (currentMode === 'highlighter') {
+                canvas.sendToBack(e.path);
+            }
+            if (currentMode === 'laser') {
+                setTimeout(() => { canvas.remove(e.path); canvas.renderAll(); }, 700);
+            }
+            // Reconocimiento de formas a mano alzada (lápiz + modo "auto-forma" activado)
+            if (currentMode === 'pencil' && autoShape && strokePoints.length > 5) {
+                const recognized = recognizeShape(strokePoints);
+                if (recognized) {
+                    canvas.remove(e.path);
+                    recognized.set({ selectable: false, evented: true });
+                    canvas.add(recognized);
+                }
+                strokePoints = [];
+            }
+            canvas.renderAll();
+        });
+
+        canvas.on('object:modified', () => snapshotState());
+        canvas.on('text:editing:exited', () => {
+            const active = canvas.getActiveObject();
+            if (active && active.text === "") canvas.remove(active);
+            updateUI();
+            snapshotState();
+        });
+
+        // ================= RECONOCIMIENTO DE FORMAS =================
+        // Simplificación de trazo (Ramer–Douglas–Peucker) para detectar esquinas.
+        function perpendicularDistance(pt, a, b) {
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const mag = Math.hypot(dx, dy);
+            if (mag === 0) return Math.hypot(pt.x - a.x, pt.y - a.y);
+            const u = ((pt.x - a.x) * dx + (pt.y - a.y) * dy) / (mag * mag);
+            const cx = a.x + u * dx, cy = a.y + u * dy;
+            return Math.hypot(pt.x - cx, pt.y - cy);
+        }
+
+        function rdp(points, epsilon) {
+            if (points.length < 3) return points;
+            let dmax = 0, index = 0;
+            for (let i = 1; i < points.length - 1; i++) {
+                const d = perpendicularDistance(points[i], points[0], points[points.length - 1]);
+                if (d > dmax) { dmax = d; index = i; }
+            }
+            if (dmax > epsilon) {
+                const left = rdp(points.slice(0, index + 1), epsilon);
+                const right = rdp(points.slice(index), epsilon);
+                return left.slice(0, -1).concat(right);
+            }
+            return [points[0], points[points.length - 1]];
+        }
+
+        function recognizeShape(points) {
+            if (points.length < 6) return null;
+            const xs = points.map(p => p.x), ys = points.map(p => p.y);
+            const minX = Math.min(...xs), maxX = Math.max(...xs);
+            const minY = Math.min(...ys), maxY = Math.max(...ys);
+            const w = maxX - minX, h = maxY - minY;
+            const diag = Math.hypot(w, h);
+            if (diag < 20) return null;
+
+            const start = points[0], end = points[points.length - 1];
+            const closureGap = Math.hypot(end.x - start.x, end.y - start.y);
+            const isClosed = closureGap < diag * 0.25;
+
+            const epsilon = Math.max(6, diag * 0.03);
+            let verts = rdp(points, epsilon);
+            if (isClosed && verts.length > 1 &&
+                Math.hypot(verts[0].x - verts[verts.length - 1].x, verts[0].y - verts[verts.length - 1].y) < diag * 0.15) {
+                verts = verts.slice(0, -1);
+            }
+            const cornerCount = verts.length;
+
+            let perimeter = 0;
+            for (let i = 1; i < points.length; i++) perimeter += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
+            let area = 0;
+            for (let i = 0; i < points.length; i++) {
+                const p1 = points[i], p2 = points[(i + 1) % points.length];
+                area += p1.x * p2.y - p2.x * p1.y;
+            }
+            area = Math.abs(area) / 2;
+            const circularity = perimeter > 0 ? (4 * Math.PI * area) / (perimeter * perimeter) : 0;
+
+            const cx = minX + w / 2, cy = minY + h / 2;
+            const fillVal = isSolid ? currentColor : 'transparent';
+
+            if (!isClosed) {
+                if (cornerCount <= 3) {
+                    let angle = Math.atan2(end.y - start.y, end.x - start.x) * 180 / Math.PI;
+                    const snapped = Math.round(angle / 15) * 15;
+                    const rad = snapped * Math.PI / 180;
+                    const len = Math.hypot(end.x - start.x, end.y - start.y);
+                    if (len < 20) return null;
+                    const ex = start.x + Math.cos(rad) * len;
+                    const ey = start.y + Math.sin(rad) * len;
+                    return new fabric.Line([start.x, start.y, ex, ey], { stroke: currentColor, strokeWidth: 4 });
+                }
+                return null;
+            }
+
+            if (circularity > 0.75) {
+                return new fabric.Ellipse({
+                    left: cx - w / 2, top: cy - h / 2, rx: w / 2, ry: h / 2,
+                    fill: fillVal, stroke: currentColor, strokeWidth: 3
+                });
+            }
+            if (cornerCount === 3) {
+                return new fabric.Triangle({
+                    left: minX, top: minY, width: w, height: h,
+                    fill: fillVal, stroke: currentColor, strokeWidth: 3
+                });
+            }
+            if (cornerCount === 4 || cornerCount === 5) {
+                return new fabric.Rect({
+                    left: minX, top: minY, width: w, height: h,
+                    fill: fillVal, stroke: currentColor, strokeWidth: 3
+                });
+            }
+            return null;
+        }
+
+        updateUI();
+        snapshotState();
+    };
+</script>
+</body>
+</html>
