@@ -246,10 +246,9 @@ a { color: inherit; }
 .notif-bell-btn:hover { color:var(--gold); border-color: var(--gold-dim); background:var(--gold-dim); }
 .notif-badge { position:absolute; top:-3px; right:-3px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:var(--red); color:#fff; font-size:9px; font-weight:800; display:none; align-items:center; justify-content:center; border:2px solid var(--bg); }
 .notif-badge.show { display:flex; }
-.notif-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); z-index:590; display:none; animation: fadeIn .2s var(--ease) both; }
-.notif-backdrop.open { display:block; }
-.notif-dropdown { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:340px; max-width:88vw; max-height:74vh; overflow-y:auto; background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow:var(--shadow-card); padding:14px; z-index:600; display:none; animation: fadeUp .25s var(--ease) both; }
-.notif-dropdown.open { display:block; }
+.notif-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); z-index:590; display:none; align-items:center; justify-content:center; padding:20px; animation: fadeIn .2s var(--ease) both; }
+.notif-backdrop.open { display:flex; }
+.notif-dropdown { position:relative; width:340px; max-width:100%; max-height:100%; overflow-y:auto; background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow:var(--shadow-card); padding:14px; animation: fadeUp .25s var(--ease) both; }
 .notif-dropdown-head { display:flex; align-items:center; justify-content:space-between; padding:4px 4px 10px; }
 .notif-dropdown h4 { color:#fff; font-size:13px; letter-spacing:.5px; display:flex; align-items:center; gap:8px; }
 .notif-close-x { width:28px; height:28px; border-radius:50%; border:1px solid var(--border2); background:transparent; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
@@ -768,14 +767,19 @@ a { color: inherit; }
 <!-- NOTIFICACIONES: vive fuera del <nav> a propósito. El <nav> usa backdrop-filter,
      y backdrop-filter/transform/filter en un ancestro crea un "containing block" nuevo
      para los elementos position:fixed, así que un dropdown fixed anidado ahí adentro
-     se posiciona relativo al <nav> (y se corta) en vez de centrarse en la pantalla real. -->
-<div class="notif-backdrop" id="notif-backdrop" onclick="toggleNotifDropdown(true)"></div>
-<div class="notif-dropdown" id="notif-dropdown">
-  <div class="notif-dropdown-head">
-    <h4><i class="fa-solid fa-bell"></i> Actividades de la semana</h4>
-    <button class="notif-close-x" onclick="toggleNotifDropdown(true)"><i class="fa-solid fa-xmark"></i></button>
+     se posiciona relativo al <nav> (y se corta) en vez de centrarse en la pantalla real.
+     El panel se centra con flexbox (align-items/justify-content) dentro del overlay
+     en vez de top:50%+transform, porque en móvil top:50% se calcula contra el alto
+     "de layout" (que incluye el área tapada por la barra de direcciones) y no contra
+     lo que realmente se ve, lo que lo empujaba hacia abajo y lo cortaba. -->
+<div class="notif-backdrop" id="notif-backdrop" onclick="toggleNotifDropdown(true)">
+  <div class="notif-dropdown" id="notif-dropdown" onclick="event.stopPropagation()">
+    <div class="notif-dropdown-head">
+      <h4><i class="fa-solid fa-bell"></i> Actividades de la semana</h4>
+      <button class="notif-close-x" onclick="toggleNotifDropdown(true)"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="notif-list"></div>
   </div>
-  <div id="notif-list"></div>
 </div>
 
 <script type="module">
@@ -1809,6 +1813,8 @@ function showScreen(id) {
   const btnSoporte = document.getElementById('btn-soporte-float');
   if (btnSoporte) btnSoporte.classList.toggle('visible', id === 's-student');
 }
+window.showScreen = showScreen; // se llama desde onclick="" en el HTML (fuera del módulo),
+                                 // así que necesita estar colgada de window para ser visible ahí.
 function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,".").trim(); }
 </script>
 </body>
