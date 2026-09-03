@@ -36,19 +36,19 @@ a { color: inherit; }
 .screen { display:none; }
 .screen.active { display:flex; flex-direction:column; animation: fadeIn .35s ease; }
 .loading-screen { position:fixed; inset:0; background:var(--bg); z-index:300; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; }
-.load-logo { width:128px; height:82px; border-radius:20px; background:#0a0a0a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px; color:var(--gold); animation: glow 2s ease infinite; overflow:hidden; }
+.load-logo { width:112px; height:112px; border-radius:50%; background:#0a0a0a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px; color:var(--gold); animation: glow 2s ease infinite; overflow:hidden; }
 .spinner { width:30px; height:30px; border:2px solid var(--border2); border-top-color:var(--gold); border-radius:50%; animation:spin .7s linear infinite; }
 
 /* LOGO DINÁMICO — se aplica a loading, login y nav */
 .app-logo { transition: background .3s var(--ease), box-shadow .3s var(--ease); display:flex; align-items:center; justify-content:center; background:#0a0a0a; }
 .app-logo.has-image { background: transparent; padding: 6px; box-shadow: none; }
-.app-logo img { width:100%; height:100%; object-fit:contain; border-radius:0; display:block; }
+.app-logo img { width:100%; height:100%; object-fit:cover; border-radius:0; display:block; }
 
 #s-login { align-items:center; justify-content:center; min-height:100vh; padding:24px 20px; background: radial-gradient(120% 90% at 50% -10%, #141118 0%, var(--bg) 55%); }
 .login-wrap { width:100%; max-width:420px; display:flex; flex-direction:column; gap:16px; position:relative; z-index:10; }
 .login-card { background: var(--card); border:1px solid var(--border2); border-radius: var(--r-xl); padding: 36px 28px 32px; box-shadow: var(--shadow-card); animation: fadeUp .7s both; }
 
-.logo-mark { width:118px; height:76px; border-radius:18px; margin:0 auto 18px; background:#0a0a0a; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); font-size:18px; letter-spacing:.5px; box-shadow: 0 10px 30px var(--gold-glow); }
+.logo-mark { width:104px; height:104px; border-radius:50%; margin:0 auto 18px; background:#0a0a0a; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); font-size:18px; letter-spacing:.5px; box-shadow: 0 10px 30px var(--gold-glow); }
 .brand-title { font-family:'Playfair Display',serif; font-size:26px; color:var(--white); text-align:center; }
 .brand-title span { background:linear-gradient(90deg, var(--gold2), var(--gold3), var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-size:300% auto; animation:shimmer 4s linear infinite; }
 
@@ -228,6 +228,78 @@ a { color: inherit; }
 .ico-btn { width:32px; height:32px; border-radius:8px; border:1px solid; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: 0.2s; }
 .ico-btn:hover { filter: brightness(1.3); transform: translateY(-1px); }
 
+/* ===== NOTIFICACIONES (CAMPANITA) ===== */
+.notif-wrap { position:relative; }
+.notif-bell-btn { background:rgba(255,255,255,.03); backdrop-filter: blur(8px); border:1px solid var(--border2); color:var(--muted); width:38px; height:38px; border-radius:50%; font-size:14px; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease); position:relative; }
+.notif-bell-btn:hover { color:var(--gold); border-color: var(--gold-dim); background:var(--gold-dim); }
+.notif-badge { position:absolute; top:-3px; right:-3px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:var(--red); color:#fff; font-size:9px; font-weight:800; display:none; align-items:center; justify-content:center; border:2px solid var(--bg); }
+.notif-badge.show { display:flex; }
+.notif-dropdown { position:absolute; top:48px; right:0; width:300px; max-width:86vw; max-height:360px; overflow-y:auto; background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow:var(--shadow-card); padding:10px; z-index:120; display:none; animation: fadeUp .2s var(--ease) both; }
+.notif-dropdown.open { display:block; }
+.notif-dropdown h4 { color:#fff; font-size:12px; padding:8px 8px 10px; letter-spacing:.5px; }
+.notif-item { padding:10px 8px; border-bottom:1px solid var(--border); }
+.notif-item:last-child { border-bottom:none; }
+.notif-item b { color:var(--gold3); font-size:12.5px; display:block; margin-bottom:2px; }
+.notif-item p { color:var(--muted); font-size:11.5px; line-height:1.4; }
+.notif-empty { text-align:center; padding:24px 10px; color:var(--muted); font-size:12px; }
+
+/* ===== EN LÍNEA ===== */
+.online-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(0,214,143,.1); border:1px solid rgba(0,214,143,.35); color:var(--green); font-size:10.5px; font-weight:700; padding:6px 12px; border-radius:99px; letter-spacing:.3px; }
+.online-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation: pulseSoft 1.6s ease infinite; }
+.presence-dot { width:8px; height:8px; border-radius:50%; background:var(--muted-dim); display:inline-block; margin-right:6px; flex-shrink:0; }
+.presence-dot.online { background:var(--green); box-shadow:0 0 6px var(--green); }
+
+/* ===== COMPARTIR ===== */
+.share-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px 18px; margin-bottom:20px; flex-wrap:wrap; }
+.share-bar p { color:var(--muted); font-size:12px; }
+.share-bar b { color:#fff; }
+.btn-share { display:inline-flex; align-items:center; gap:8px; background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold3); font-weight:700; font-size:12px; padding:10px 16px; border-radius:99px; cursor:pointer; font-family:inherit; transition: transform .15s var(--ease); white-space:nowrap; }
+.btn-share:hover { transform: translateY(-1px); }
+
+/* ===== TOP 3 SEMANAL ===== */
+.top3-card { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px 18px; margin-bottom:20px; }
+.top3-list { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+.top3-row { display:flex; align-items:center; gap:12px; background:var(--card2); border:1px solid var(--border); border-radius:14px; padding:10px 14px; }
+.top3-rank { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display'; font-weight:700; font-size:13px; flex-shrink:0; }
+.top3-row:nth-child(1) .top3-rank { background:linear-gradient(135deg,#ffe08a,#c8891a); color:#3a2400; }
+.top3-row:nth-child(2) .top3-rank { background:#cfd3d8; color:#2a2a2a; }
+.top3-row:nth-child(3) .top3-rank { background:#d99a63; color:#3a1f00; }
+.top3-avatar { width:34px; height:34px; border-radius:50%; object-fit:cover; background:var(--border2); flex-shrink:0; }
+.top3-avatar-default { width:34px; height:34px; border-radius:50%; background:var(--gold-dim); color:var(--gold); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+.top3-name { color:#fff; font-size:13.5px; font-weight:600; }
+
+/* ===== ACTIVIDADES ===== */
+.activity-card { background: var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; }
+.activity-icon { width:32px; height:32px; border-radius:9px; background:var(--gold-dim); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+.activity-body h4 { color:#fff; font-size:13.5px; margin-bottom:3px; }
+.activity-body p { color:var(--muted); font-size:12px; line-height:1.4; }
+
+/* ===== ACORDEÓN RECURSOS ===== */
+.res-accordion summary { list-style:none; cursor:pointer; }
+.res-accordion summary::-webkit-details-marker { display:none; }
+.res-accordion .group-head { justify-content:space-between; }
+.res-accordion .group-head .chev { color:var(--muted); font-size:11px; transition: transform .2s var(--ease); margin-left:auto; }
+.res-accordion[open] .group-head .chev { transform: rotate(90deg); }
+
+/* ===== PERFIL ===== */
+.profile-avatar-edit { position:relative; width:88px; height:88px; margin:0 auto 18px; }
+.profile-avatar-edit img, .profile-avatar-edit .avatar-default { width:88px; height:88px; border-radius:50%; object-fit:cover; }
+.profile-avatar-edit .avatar-default { display:flex; align-items:center; justify-content:center; background:var(--card2); color:var(--gold); font-size:28px; font-weight:700; }
+.profile-avatar-edit label { position:absolute; bottom:0; right:0; width:30px; height:30px; border-radius:50%; background:var(--gold2); color:#000; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; border:3px solid var(--card); }
+.profile-avatar-edit input[type=file] { display:none; }
+
+/* ===== CHAT ===== */
+.chat-shell { display:flex; flex-direction:column; height:calc(100vh - 62px); max-width:720px; width:100%; margin:0 auto; }
+.chat-messages { flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:10px; }
+.chat-msg { max-width:78%; padding:10px 13px; border-radius:14px; font-size:13px; line-height:1.4; }
+.chat-msg .chat-author { display:block; font-size:10px; color:var(--gold3); font-weight:700; margin-bottom:3px; }
+.chat-msg.mine { align-self:flex-end; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#1a1400; border-bottom-right-radius:4px; }
+.chat-msg.other { align-self:flex-start; background:var(--card2); border:1px solid var(--border); color:var(--text); border-bottom-left-radius:4px; }
+.chat-inputbar { display:flex; gap:10px; padding:12px 16px; border-top:1px solid var(--border); background:rgba(8,8,10,.9); }
+.chat-inputbar input { flex:1; padding:12px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:13.5px; }
+.chat-send-btn { width:44px; height:44px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; cursor:pointer; flex-shrink:0; }
+.chat-hint { text-align:center; font-size:10px; color:var(--muted); padding:6px 16px 0; }
+
 .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(10px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; }
 .modal-bg.open { display:flex; }
 .modal-box { background:var(--card); border:1px solid var(--border2); border-radius:var(--r-xl); padding:32px; text-align:center; max-width:360px; width:100%; box-shadow: var(--shadow-card); animation: fadeUp .3s var(--ease) both; }
@@ -281,6 +353,18 @@ a { color: inherit; }
         <div class="nav-logo-box app-logo">NEC</div>
       </a>
       <div class="nav-actions">
+        <div class="notif-wrap">
+          <button class="notif-bell-btn" onclick="toggleNotifDropdown()" title="Notificaciones">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-badge" id="notif-badge">0</span>
+          </button>
+          <div class="notif-dropdown" id="notif-dropdown">
+            <h4><i class="fa-solid fa-bell"></i> Actividades de la semana</h4>
+            <div id="notif-list"></div>
+          </div>
+        </div>
+        <button class="btn-salir" onclick="showScreen('s-chat')" title="Chat en inglés"><i class="fa-solid fa-comments"></i></button>
+        <button class="btn-salir" onclick="abrirPerfil()" title="Mi perfil"><i class="fa-solid fa-user"></i></button>
         <div class="nav-avatar-chip" id="avatar-mini"></div>
         <button onclick="cerrarSesion()" class="btn-salir" title="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
       </div>
@@ -288,14 +372,23 @@ a { color: inherit; }
 
     <div class="dashboard-shell">
       <div class="hero-banner">
-        <div class="profile-row" style="display:flex; align-items:center; gap:15px;">
-          <div class="avatar-ring" id="avatar-container"></div>
-          <div>
-            <p class="welcome-eyebrow">WELCOME BACK</p>
-            <h2 id="nombre-alumno-ui" class="welcome-name">Estudiante</h2>
-            <p class="welcome-sub">Sigue entrenando tu inglés. Tú puedes.</p>
+        <div class="profile-row" style="display:flex; align-items:center; gap:15px; justify-content:space-between; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:15px;">
+            <div class="avatar-ring" id="avatar-container"></div>
+            <div>
+              <p class="welcome-eyebrow">WELCOME BACK</p>
+              <h2 id="nombre-alumno-ui" class="welcome-name">Estudiante</h2>
+              <p class="welcome-sub">Sigue entrenando tu inglés. Tú puedes.</p>
+            </div>
           </div>
+          <span class="online-pill"><span class="online-dot"></span> En línea</span>
         </div>
+      </div>
+
+      <!-- COMPARTIR -->
+      <div class="share-bar">
+        <p>Invita a tus amigos a <b>NicaEnglishClub</b> 🇬🇧</p>
+        <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
       </div>
 
       <div class="stats-row">
@@ -315,16 +408,6 @@ a { color: inherit; }
           <p class="stat-label">LOGROS<br>OBTENIDOS</p>
         </div>
       </div>
-
-      <!-- CTA REFERIR AMIGO -->
-      <button type="button" class="referral-card" onclick="abrirModalReferido()">
-        <div class="referral-icon"><i class="fa-brands fa-whatsapp"></i></div>
-        <div class="referral-text">
-          <h3>Refiere a un amigo</h3>
-          <p>Ambos reciben $10 de descuento cuando tu referido se inscribe.</p>
-        </div>
-        <i class="fa-solid fa-chevron-right referral-arrow"></i>
-      </button>
 
       <!-- BANNER AREA -->
       <div id="banner-area" class="banner-projection">
@@ -359,6 +442,22 @@ a { color: inherit; }
         <button class="btn-continuar" onclick="document.getElementById('recursos-section').scrollIntoView({behavior:'smooth'})">Continuar <i class="fa-solid fa-arrow-right"></i></button>
       </div>
 
+      <!-- TOP 3 SEMANAL -->
+      <div class="top3-card" id="top3-card" style="display:none;">
+        <div class="section-head" style="margin-bottom:0;">
+          <h2><i class="fa-solid fa-trophy" style="color:var(--gold); margin-right:6px;"></i>Top 3 de la semana</h2>
+        </div>
+        <div class="top3-list" id="top3-list"></div>
+      </div>
+
+      <!-- ACTIVIDADES DE LA SEMANA -->
+      <div id="actividades-card" style="display:none; margin-bottom:24px;">
+        <div class="section-head">
+          <h2>Actividades de la semana</h2>
+        </div>
+        <div id="actividades-list"></div>
+      </div>
+
       <div id="recursos-section">
         <div class="section-head">
           <h2>Recursos y clases</h2>
@@ -369,9 +468,25 @@ a { color: inherit; }
 
       <div class="mindset-card">
         <span class="mindset-badge"><i class="fa-solid fa-crown"></i> Mentalidad NEC</span>
-        <h3>Entrena tu mente, domina tu inglés.</h3>
-        <p>Disciplina hoy, libertad mañana.</p>
+        <h3 id="mindset-titulo">Entrena tu mente, domina tu inglés.</h3>
+        <p id="mindset-frase">Disciplina hoy, libertad mañana.</p>
         <button class="btn-ver-mas" type="button" onclick="abrirModalPractica()">Envía una práctica</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div id="s-chat" class="screen">
+    <nav class="stu-nav">
+      <button class="btn-salir" onclick="showScreen('s-student')" title="Volver"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="nav-actions"><span style="color:#fff; font-weight:700; font-size:13.5px;"><i class="fa-solid fa-comments" style="color:var(--gold); margin-right:6px;"></i>Chat NEC (English only)</span></div>
+    </nav>
+    <div class="chat-shell">
+      <div class="chat-messages" id="chat-messages"></div>
+      <p class="chat-hint">Please write in English 🇬🇧 — messages are cleared periodically.</p>
+      <div class="chat-inputbar">
+        <input type="text" id="chat-input" placeholder="Type a message in English..." maxlength="300" onkeydown="if(event.key==='Enter') enviarMensajeChat();">
+        <button class="chat-send-btn" onclick="enviarMensajeChat()"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
     </div>
   </div>
@@ -387,6 +502,9 @@ a { color: inherit; }
         <div style="display:flex;">
           <button class="tab-btn active" id="btn-tab-enlaces" onclick="switchTab('enlaces',this)">Recursos</button>
           <button class="tab-btn" id="btn-tab-alumnos" onclick="switchTab('alumnos',this)">Alumnos</button>
+          <button class="tab-btn" id="btn-tab-motivacion" onclick="switchTab('motivacion',this)">Motivación</button>
+          <button class="tab-btn" id="btn-tab-actividades" onclick="switchTab('actividades',this)">Actividades</button>
+          <button class="tab-btn" id="btn-tab-chat" onclick="switchTab('chat',this)">Chat</button>
         </div>
         <div id="tab-enlaces" class="tab-content active" style="padding:20px;">
           <!-- BANNER CONFIG -->
@@ -410,6 +528,35 @@ a { color: inherit; }
           <button class="btn-login" id="btn-guardar-alumno" onclick="registrarAlumno()">Crear Alumno</button>
           <button onclick="resetearAsistenciaSemanal()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">RESETEAR SEMANA MANUAL</button>
           <div id="lista-alumnos-ui" style="margin-top:20px;"></div>
+        </div>
+
+        <div id="tab-motivacion" class="tab-content" style="padding:20px; display:none;">
+          <div class="admin-section">
+            <p class="admin-label"><i class="fa-solid fa-crown"></i> Mentalidad NEC (frase de la semana)</p>
+            <input type="text" id="config-mindset-titulo" class="admin-input" placeholder="Título (ej: Entrena tu mente, domina tu inglés.)">
+            <input type="text" id="config-mindset-frase" class="admin-input" placeholder="Frase motivacional de la semana">
+            <button class="btn-login btn-outline-gold" onclick="guardarMentalidad()">Actualizar frase</button>
+          </div>
+          <div class="admin-section" style="border-bottom:none;">
+            <p class="admin-label"><i class="fa-solid fa-trophy"></i> Top 3 de la semana</p>
+            <p class="form-hint">Elige de la lista de alumnos o escribe un nombre manual (para motivar a alguien que aún no está registrado).</p>
+            <div id="top3-admin-slots"></div>
+            <button class="btn-login" onclick="guardarTop3()">Guardar Top 3</button>
+          </div>
+        </div>
+
+        <div id="tab-actividades" class="tab-content" style="padding:20px; display:none;">
+          <input type="hidden" id="actividad-id-edicion">
+          <input type="text" id="actividad-titulo" class="admin-input" placeholder="Título de la actividad">
+          <textarea id="actividad-descripcion" class="form-textarea" placeholder="Descripción de la actividad"></textarea>
+          <button class="btn-login" id="btn-guardar-actividad" onclick="guardarActividad()">Publicar actividad</button>
+          <button onclick="limpiarActividadesAnteriores()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">LIMPIAR ACTIVIDADES DE SEMANAS ANTERIORES</button>
+          <div id="lista-actividades-ui" style="margin-top:20px;"></div>
+        </div>
+
+        <div id="tab-chat" class="tab-content" style="padding:20px; display:none;">
+          <p class="form-hint">El chat se borra automáticamente cada 12 horas para no acumular información. También puedes limpiarlo manualmente aquí en cualquier momento.</p>
+          <button onclick="limpiarChatManual()" style="width:100%; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:14px; border-radius:12px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-broom"></i> LIMPIAR CHAT AHORA</button>
         </div>
       </div>
     </div>
@@ -472,12 +619,38 @@ a { color: inherit; }
       <button type="button" class="support-opt" data-valor="Solicitar nuevo horario" onclick="seleccionarSoporte(this)"><i class="fa-solid fa-clock"></i> Solicitar nuevo horario</button>
       <button type="button" class="support-opt" data-valor="Referir para nuevo ingreso" onclick="seleccionarSoporte(this)"><i class="fa-solid fa-user-plus"></i> Referir para nuevo ingreso</button>
       <button type="button" class="support-opt" data-valor="Actualizar mi número de WhatsApp" onclick="seleccionarSoporte(this)"><i class="fa-brands fa-whatsapp"></i> Actualizar mi número de WhatsApp</button>
+      <button type="button" class="support-opt" data-valor="Otro" onclick="seleccionarSoporte(this)"><i class="fa-solid fa-ellipsis"></i> Otro</button>
     </div>
+    <textarea id="soporte-otro-texto" class="form-textarea" placeholder="Escribe tu mensaje..." style="display:none;"></textarea>
     <div class="input-shell">
       <i class="fa-solid fa-user input-icon"></i>
       <input type="text" id="soporte-nombre" class="field-input" placeholder="Nombre y apellido">
     </div>
     <button class="btn-whatsapp" onclick="enviarSoporte()"><i class="fa-brands fa-whatsapp"></i> Enviar solicitud</button>
+  </div>
+</div>
+
+<!-- MODAL: PERFIL -->
+<div class="modal-bg" id="modal-perfil-bg">
+  <div class="modal-box modal-box-form" style="position:relative;">
+    <button class="modal-close-x" onclick="cerrarPerfil()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 style="color:#fff; font-family:'Playfair Display'; font-size:21px;">Mi perfil</h3>
+    <div class="profile-avatar-edit">
+      <div id="perfil-avatar-preview"></div>
+      <label for="perfil-foto-input"><i class="fa-solid fa-camera"></i></label>
+      <input type="file" id="perfil-foto-input" accept="image/*" onchange="subirFotoPerfil(event)">
+    </div>
+    <p class="form-hint" style="text-align:center;" id="perfil-nombre-txt"></p>
+    <p class="form-hint">Nueva contraseña</p>
+    <div class="input-shell">
+      <i class="fa-solid fa-lock input-icon"></i>
+      <input type="password" id="perfil-pass-nueva" class="field-input" placeholder="Nueva contraseña">
+    </div>
+    <div class="input-shell">
+      <i class="fa-solid fa-lock input-icon"></i>
+      <input type="password" id="perfil-pass-confirmar" class="field-input" placeholder="Confirmar contraseña">
+    </div>
+    <button class="btn-login" onclick="guardarPassPerfil()">Guardar contraseña</button>
   </div>
 </div>
 
@@ -489,7 +662,8 @@ a { color: inherit; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
@@ -503,8 +677,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 const CORREO_ADMIN = "95gusmg@gmail.com";
 let sessionActiva = null;
+let latidoInterval = null;
+let ultimasActividades = [];
+let unsubChat = null;
 
 // Logo por defecto (incrustado en base64 — no depende de archivos externos)
 const LOGO_DEFAULT = "data:image/png;base64,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";
@@ -575,6 +753,11 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
       showScreen('s-student');
       escucharRecursos();
       escucharBanner();
+      escucharMentalidad();
+      escucharTop3();
+      escucharActividades();
+      escucharChat();
+      iniciarLatido(found.id);
     } else { errEl.style.display='block'; await signOut(auth); }
   } catch(e) { console.error(e); }
 });
@@ -628,7 +811,7 @@ function renderGraph(diasSemana) {
   if(!container) return; // Seguridad
   const lunes = getMonday(new Date());
   const hoyStr = getLocalDateStr(new Date());
-  const dias = ['L','M','X','J','V','S','D'];
+  const dias = ['L','M','M','J','V','S','D'];
   let bars = '', labels = '';
   for (let i = 0; i < 7; i++) {
     const d = new Date(lunes);
@@ -654,6 +837,98 @@ function escucharBanner() {
         }
     });
 }
+
+/* ===== PRESENCIA / EN LÍNEA (heartbeat sobre Firestore, sin activar Realtime Database) ===== */
+function iniciarLatido(alumnoId) {
+  const marcar = () => updateDoc(doc(db,'alumnos',alumnoId), { ultimoLatido: Date.now() }).catch(()=>{});
+  marcar();
+  latidoInterval = setInterval(marcar, 45000);
+}
+
+/* ===== MENTALIDAD NEC (frase editable desde el panel) ===== */
+function escucharMentalidad() {
+  onSnapshot(doc(db,'config','mentalidad'), d => {
+    if (!d.exists()) return;
+    const data = d.data();
+    const tEl = document.getElementById('mindset-titulo');
+    const fEl = document.getElementById('mindset-frase');
+    if (data.titulo && tEl) tEl.innerText = data.titulo;
+    if (data.frase && fEl) fEl.innerText = data.frase;
+  });
+}
+
+/* ===== TOP 3 SEMANAL ===== */
+function escucharTop3() {
+  onSnapshot(doc(db,'config','top3'), d => {
+    const card = document.getElementById('top3-card');
+    const list = document.getElementById('top3-list');
+    if (!d.exists() || !d.data().items || !d.data().items.length) { card.style.display='none'; return; }
+    const items = d.data().items;
+    card.style.display='block';
+    list.innerHTML = items.map((it,i) => {
+      const foto = resolverUrlDrive(it.foto || '');
+      const avatar = foto ? `<img src="${foto}" class="top3-avatar">` : `<div class="top3-avatar-default">${(it.nombre||'?').charAt(0).toUpperCase()}</div>`;
+      return `<div class="top3-row"><div class="top3-rank">${i+1}</div>${avatar}<div class="top3-name">${it.nombre}</div></div>`;
+    }).join('');
+  });
+}
+
+/* ===== ACTIVIDADES DE LA SEMANA + NOTIFICACIONES (campanita) ===== */
+function escucharActividades() {
+  const lunesStr = getLocalDateStr(getMonday(new Date()));
+  onSnapshot(query(collection(db,'actividades'), orderBy('fecha','desc')), snap => {
+    ultimasActividades = snap.docs
+      .map(d => ({id:d.id, ...d.data()}))
+      .filter(a => a.semana === lunesStr);
+    renderActividades();
+    renderNotifBadge();
+  });
+}
+function renderActividades() {
+  const card = document.getElementById('actividades-card');
+  const list = document.getElementById('actividades-list');
+  if (!ultimasActividades.length) { card.style.display='none'; return; }
+  card.style.display='block';
+  list.innerHTML = ultimasActividades.map(a => `<div class="activity-card"><div class="activity-icon"><i class="fa-solid fa-list-check"></i></div><div class="activity-body"><h4>${a.titulo}</h4><p>${a.descripcion || ''}</p></div></div>`).join('');
+}
+function renderNotifBadge() {
+  const badge = document.getElementById('notif-badge');
+  if (!badge || !sessionActiva) return;
+  const visto = sessionActiva.notif_visto || 0;
+  const pendientes = ultimasActividades.filter(a => (a.fecha||0) > visto).length;
+  badge.innerText = pendientes;
+  badge.classList.toggle('show', pendientes > 0);
+}
+window.toggleNotifDropdown = () => {
+  const dd = document.getElementById('notif-dropdown');
+  dd.classList.toggle('open');
+  if (dd.classList.contains('open')) {
+    const list = document.getElementById('notif-list');
+    list.innerHTML = ultimasActividades.length
+      ? ultimasActividades.map(a => `<div class="notif-item"><b>${a.titulo}</b><p>${a.descripcion || ''}</p></div>`).join('')
+      : `<div class="notif-empty">No hay actividades nuevas.</div>`;
+    if (sessionActiva) {
+      const ahora = Date.now();
+      sessionActiva.notif_visto = ahora;
+      updateDoc(doc(db,'alumnos',sessionActiva.id), { notif_visto: ahora }).catch(()=>{});
+      document.getElementById('notif-badge').classList.remove('show');
+    }
+  }
+};
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.notif-wrap');
+  if (wrap && !wrap.contains(e.target)) document.getElementById('notif-dropdown')?.classList.remove('open');
+});
+
+/* ===== COMPARTIR ===== */
+window.compartirWeb = () => {
+  const url = 'https://www.nicaenglishclub.com';
+  if (navigator.share) {
+    navigator.share({ title:'NicaEnglish Club', text:'Aprende inglés con NicaEnglish Club 🇬🇧', url }).catch(()=>{});
+  } else {
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Aprende inglés con NicaEnglish Club 🇬🇧 ' + url)}`, '_blank');
+  }
+};
 
 /* Categorización visual de recursos — no altera la consulta/orden de Firestore, solo agrupa lo ya recibido */
 const CATEGORIAS_RECURSOS = [
@@ -730,14 +1005,14 @@ function renderRecursos() {
   }
 
   const ordenGrupos = [...CATEGORIAS_RECURSOS, CATEGORIA_DEFECTO];
-  ordenGrupos.forEach(cat => {
+  ordenGrupos.forEach((cat, gi) => {
     const grupo = buckets[cat.id];
     if (!grupo || !grupo.items.length) return;
-    html += `<div class="resource-group">
-      <div class="group-head"><i class="fa-solid ${cat.icon}"></i><h3>${cat.label}</h3></div>
+    html += `<details class="res-accordion resource-group" ${gi === 0 ? 'open' : ''}>
+      <summary class="group-head"><i class="fa-solid ${cat.icon}"></i><h3>${cat.label}</h3><i class="fa-solid fa-chevron-right chev"></i></summary>
       <div class="resource-grid">`;
     grupo.items.forEach(item => { html += tarjetaRecurso({ id: item.id, data: item.data, icon: item.icon, tag: cat.tag }); });
-    html += `</div></div>`;
+    html += `</div></details>`;
   });
 
   cont.innerHTML = html;
@@ -757,8 +1032,15 @@ function escucharRecursos() {
   });
 }
 
+let alumnosCacheAdmin = [];
 function cargarDatosAdmin() {
   getDoc(doc(db, 'config', 'banner')).then(d => { if(d.exists()) document.getElementById('config-banner-url').value = d.data().url; });
+  getDoc(doc(db, 'config', 'mentalidad')).then(d => {
+    if(d.exists()) {
+      document.getElementById('config-mindset-titulo').value = d.data().titulo || '';
+      document.getElementById('config-mindset-frase').value = d.data().frase || '';
+    }
+  });
   onSnapshot(collection(db,'enlaces'), snap => {
     const list = document.getElementById('lista-enlaces-ui'); list.innerHTML = '';
     snap.forEach(d => {
@@ -768,12 +1050,113 @@ function cargarDatosAdmin() {
   });
   onSnapshot(collection(db,'alumnos'), snap => {
     const list = document.getElementById('lista-alumnos-ui'); list.innerHTML = '';
+    alumnosCacheAdmin = [];
+    const ahora = Date.now();
     snap.forEach(d => {
       const data = d.data();
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;">${data.nombre}<br><small style="color:var(--muted)">P: ${data.pass}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}','${data.nombre}','${data.pass}','${data.foto}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
+      alumnosCacheAdmin.push({ id:d.id, nombre:data.nombre, foto:data.foto || '' });
+      const enLinea = data.ultimoLatido && (ahora - data.ultimoLatido) < 120000;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}<br><small style="color:var(--muted)">P: ${data.pass}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}','${data.nombre}','${data.pass}','${data.foto}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
+    });
+    renderTop3AdminSlots();
+  });
+  getDoc(doc(db,'config','top3')).then(d => { top3ActualAdmin = d.exists() ? (d.data().items || []) : []; renderTop3AdminSlots(); });
+  onSnapshot(query(collection(db,'actividades'), orderBy('fecha','desc')), snap => {
+    const list = document.getElementById('lista-actividades-ui'); list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:13px;">${data.titulo} <small style="color:var(--muted)">(${data.semana})</small></span><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionActividad('${d.id}','${(data.titulo||'').replace(/'/g,"\\'")}','${(data.descripcion||'').replace(/'/g,"\\'")}')"><i class="fa-solid fa-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('actividades','${d.id}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
     });
   });
 }
+
+/* ===== ADMIN: TOP 3 SEMANAL ===== */
+let top3ActualAdmin = [];
+function renderTop3AdminSlots() {
+  const cont = document.getElementById('top3-admin-slots');
+  if (!cont || !alumnosCacheAdmin.length && !cont.dataset) {} // noop guard
+  if (!cont) return;
+  let html = '';
+  for (let i = 0; i < 3; i++) {
+    const actual = top3ActualAdmin[i] || {};
+    const opciones = alumnosCacheAdmin.map(a => `<option value="${a.id}" ${actual.alumnoId===a.id?'selected':''}>${a.nombre}</option>`).join('');
+    html += `<div style="margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--border2);">
+      <p class="admin-label" style="margin-bottom:8px;">Puesto ${i+1}</p>
+      <select id="top3-select-${i}" class="admin-input" onchange="document.getElementById('top3-manual-${i}').style.display = this.value==='manual' ? 'block' : 'none';">
+        <option value="">-- Vacío --</option>
+        ${opciones}
+        <option value="manual" ${actual.manual ? 'selected':''}>Otro (escribir nombre)</option>
+      </select>
+      <input type="text" id="top3-manual-${i}" class="admin-input" placeholder="Nombre manual" value="${actual.manual ? actual.nombre : ''}" style="display:${actual.manual ? 'block':'none'};">
+    </div>`;
+  }
+  cont.innerHTML = html;
+}
+window.guardarTop3 = async () => {
+  const items = [];
+  for (let i = 0; i < 3; i++) {
+    const sel = document.getElementById('top3-select-'+i).value;
+    if (!sel) continue;
+    if (sel === 'manual') {
+      const nombre = document.getElementById('top3-manual-'+i).value.trim();
+      if (nombre) items.push({ nombre, manual:true });
+    } else {
+      const alumno = alumnosCacheAdmin.find(a => a.id === sel);
+      if (alumno) items.push({ nombre: alumno.nombre, foto: alumno.foto, alumnoId: alumno.id });
+    }
+  }
+  await setDoc(doc(db,'config','top3'), { items });
+  showModal("Éxito", "Top 3 actualizado.");
+};
+
+/* ===== ADMIN: MENTALIDAD NEC ===== */
+window.guardarMentalidad = async () => {
+  const titulo = document.getElementById('config-mindset-titulo').value.trim();
+  const frase = document.getElementById('config-mindset-frase').value.trim();
+  await setDoc(doc(db,'config','mentalidad'), { titulo, frase });
+  showModal("Éxito", "Frase de la semana actualizada.");
+};
+
+/* ===== ADMIN: ACTIVIDADES ===== */
+window.prepararEdicionActividad = (id, titulo, descripcion) => {
+  document.getElementById('actividad-id-edicion').value = id;
+  document.getElementById('actividad-titulo').value = titulo;
+  document.getElementById('actividad-descripcion').value = descripcion;
+  document.getElementById('btn-guardar-actividad').innerText = "Actualizar actividad";
+};
+window.guardarActividad = async () => {
+  const titulo = document.getElementById('actividad-titulo').value.trim();
+  const descripcion = document.getElementById('actividad-descripcion').value.trim();
+  const id = document.getElementById('actividad-id-edicion').value;
+  if (!titulo) return;
+  const semana = getLocalDateStr(getMonday(new Date()));
+  if (id) {
+    await updateDoc(doc(db,'actividades',id), { titulo, descripcion });
+  } else {
+    await addDoc(collection(db,'actividades'), { titulo, descripcion, semana, fecha: Date.now() });
+  }
+  document.getElementById('actividad-id-edicion').value = '';
+  document.getElementById('actividad-titulo').value = '';
+  document.getElementById('actividad-descripcion').value = '';
+  document.getElementById('btn-guardar-actividad').innerText = "Publicar actividad";
+};
+window.limpiarActividadesAnteriores = async () => {
+  if (!confirm("¿Borrar actividades de semanas anteriores? Las de esta semana se conservan.")) return;
+  const semanaActual = getLocalDateStr(getMonday(new Date()));
+  const snap = await getDocs(collection(db,'actividades'));
+  const borrar = [];
+  snap.forEach(d => { if (d.data().semana !== semanaActual) borrar.push(d.id); });
+  for (const id of borrar) await deleteDoc(doc(db,'actividades',id));
+  showModal("Hecho", `${borrar.length} actividad(es) anterior(es) eliminada(s).`);
+};
+
+/* ===== ADMIN: LIMPIAR CHAT MANUALMENTE ===== */
+window.limpiarChatManual = async () => {
+  if (!confirm("¿Borrar todos los mensajes del chat de alumnos?")) return;
+  const snap = await getDocs(collection(db,'chat_global'));
+  for (const d of snap.docs) await deleteDoc(doc(db,'chat_global',d.id));
+  showModal("Hecho", "Chat limpiado.");
+};
 
 window.guardarBanner = async () => {
     const url = document.getElementById('config-banner-url').value.trim();
@@ -809,7 +1192,7 @@ window.resetearAsistenciaSemanal = async () => {
     showModal("Hecho", "Semana reiniciada.");
   }
 };
-window.cerrarSesion = () => { signOut(auth).then(() => location.reload()); };
+window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); signOut(auth).then(() => location.reload()); };
 window.switchTab = (n, b) => {
   document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
@@ -833,6 +1216,69 @@ window.enviarPractica = () => {
   const mensaje = `Hola, soy ${nombre}. Envío mi práctica de NicaEnglish Club:\n\n${texto}`;
   window.open(`https://wa.me/${WA_PRACTICA}?text=${encodeURIComponent(mensaje)}`, '_blank');
   cerrarModalPractica();
+};
+
+/* ===== PERFIL DEL ALUMNO ===== */
+window.abrirPerfil = () => {
+  if (!sessionActiva) return;
+  const preview = document.getElementById('perfil-avatar-preview');
+  const foto = resolverUrlDrive(sessionActiva.foto || '');
+  preview.innerHTML = foto ? `<img src="${foto}">` : `<div class="avatar-default">${sessionActiva.nombre.charAt(0).toUpperCase()}</div>`;
+  document.getElementById('perfil-nombre-txt').innerText = sessionActiva.nombre;
+  document.getElementById('perfil-pass-nueva').value = '';
+  document.getElementById('perfil-pass-confirmar').value = '';
+  document.getElementById('modal-perfil-bg').classList.add('open');
+};
+window.cerrarPerfil = () => document.getElementById('modal-perfil-bg').classList.remove('open');
+window.subirFotoPerfil = async (ev) => {
+  const file = ev.target.files[0];
+  if (!file || !sessionActiva) return;
+  try {
+    const path = `perfiles/${sessionActiva.id}_${Date.now()}`;
+    const ref = storageRef(storage, path);
+    await uploadBytes(ref, file);
+    const url = await getDownloadURL(ref);
+    await updateDoc(doc(db,'alumnos',sessionActiva.id), { foto: url });
+    sessionActiva.foto = url;
+    document.getElementById('perfil-avatar-preview').innerHTML = `<img src="${url}">`;
+    renderUI(sessionActiva);
+    showModal("Éxito", "Foto de perfil actualizada.");
+  } catch (e) {
+    console.error(e);
+    showModal("Error", "No se pudo subir la foto. Intenta de nuevo.");
+  }
+};
+window.guardarPassPerfil = async () => {
+  const p1 = document.getElementById('perfil-pass-nueva').value;
+  const p2 = document.getElementById('perfil-pass-confirmar').value;
+  if (!p1 || p1.length < 4) { showModal('Atención', 'La contraseña debe tener al menos 4 caracteres.'); return; }
+  if (p1 !== p2) { showModal('Atención', 'Las contraseñas no coinciden.'); return; }
+  await updateDoc(doc(db,'alumnos',sessionActiva.id), { pass: p1 });
+  sessionActiva.pass = p1;
+  cerrarPerfil();
+  showModal("Éxito", "Contraseña actualizada.");
+};
+
+/* ===== CHAT EN TIEMPO REAL (SOLO INGLÉS) ===== */
+function escucharChat() {
+  if (unsubChat) unsubChat();
+  unsubChat = onSnapshot(query(collection(db,'chat_global'), orderBy('fecha','asc'), limit(200)), snap => {
+    const cont = document.getElementById('chat-messages');
+    if (!cont) return;
+    cont.innerHTML = snap.docs.map(d => {
+      const m = d.data();
+      const mio = sessionActiva && m.uid === sessionActiva.id;
+      return `<div class="chat-msg ${mio ? 'mine' : 'other'}"><span class="chat-author">${m.autor || 'Alumno'}</span>${(m.texto||'').replace(/</g,'&lt;')}</div>`;
+    }).join('');
+    cont.scrollTop = cont.scrollHeight;
+  });
+}
+window.enviarMensajeChat = async () => {
+  const input = document.getElementById('chat-input');
+  const texto = input.value.trim();
+  if (!texto || !sessionActiva) return;
+  input.value = '';
+  await addDoc(collection(db,'chat_global'), { autor: sessionActiva.nombre, texto, uid: sessionActiva.id, fecha: Date.now() });
 };
 
 /* ===== REFERIR A UN AMIGO (WhatsApp) ===== */
@@ -862,19 +1308,34 @@ window.abrirModalSoporte = () => {
   solicitudSoporte = '';
   document.querySelectorAll('.support-opt').forEach(b => b.classList.remove('selected'));
   document.getElementById('soporte-nombre').value = sessionActiva ? sessionActiva.nombre : '';
+  document.getElementById('soporte-otro-texto').style.display = 'none';
+  document.getElementById('soporte-otro-texto').value = '';
+  document.getElementById('modal-perfil-bg')?.classList.remove('open');
   document.getElementById('modal-soporte-bg').classList.add('open');
 };
 window.cerrarModalSoporte = () => document.getElementById('modal-soporte-bg').classList.remove('open');
 window.seleccionarSoporte = (btn) => {
+  if (btn.dataset.valor === 'Referir para nuevo ingreso') {
+    cerrarModalSoporte();
+    abrirModalReferido();
+    return;
+  }
   document.querySelectorAll('.support-opt').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   solicitudSoporte = btn.dataset.valor;
+  document.getElementById('soporte-otro-texto').style.display = (solicitudSoporte === 'Otro') ? 'block' : 'none';
 };
 window.enviarSoporte = () => {
   const nombre = document.getElementById('soporte-nombre').value.trim();
   if (!nombre) { showModal('Falta información', 'Escribe tu nombre y apellido.'); return; }
   if (!solicitudSoporte) { showModal('Falta información', 'Selecciona el tipo de solicitud.'); return; }
-  const mensaje = `Nombre: ${nombre}\nSolicitud: ${solicitudSoporte}`;
+  let detalle = solicitudSoporte;
+  if (solicitudSoporte === 'Otro') {
+    const texto = document.getElementById('soporte-otro-texto').value.trim();
+    if (!texto) { showModal('Falta información', 'Escribe tu mensaje.'); return; }
+    detalle = `Otro: ${texto}`;
+  }
+  const mensaje = `Nombre: ${nombre}\nSolicitud: ${detalle}`;
   window.open(`https://wa.me/${WA_SOPORTE}?text=${encodeURIComponent(mensaje)}`, '_blank');
   cerrarModalSoporte();
 };
