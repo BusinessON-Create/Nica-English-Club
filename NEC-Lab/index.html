@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Laboratorio de Inglés · English Lab</title>
+<meta name="description" content="Arma oraciones naturales de inglés combinando ingredientes en un universo holográfico.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<header>
+  <div class="brand">
+    <span class="dot"></span>
+    <div>
+      <h1>ENGLISH&nbsp;LAB</h1>
+      <p>laboratorio de ingredientes · inglés natural</p>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="iconbtn" id="btn-fullscreen" title="Pantalla completa" aria-label="Pantalla completa">⛶</button>
+  </div>
+</header>
+
+<div id="hint">Toca un ingrediente para añadirlo · doble toque para traducirlo · arrastra el fondo para girar</div>
+
+<div id="universe">
+  <div id="core"></div>
+</div>
+
+<div id="legend"></div>
+
+<div id="translate-card">
+  <div class="en"></div>
+  <div class="es"></div>
+</div>
+
+<div id="tray-wrap">
+  <div id="tray"></div>
+  <div id="sentence-preview"></div>
+  <div id="sentence-translation"></div>
+  <div id="tray-actions">
+    <button class="pill-btn ghost" id="btn-clear">↺ Limpiar</button>
+    <button class="pill-btn ghost" id="btn-random">🎲 Ejemplo</button>
+    <button class="pill-btn primary" id="btn-translate">🌐 Ver traducción</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
