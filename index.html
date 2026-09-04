@@ -237,6 +237,42 @@ a { color: inherit; }
 .admin-subtab-btn { padding:8px 14px; border-radius:99px; border:1px solid var(--border2); background:var(--card2); color:var(--muted); font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit; }
 .admin-subtab-btn.active { color:var(--gold); border-color:var(--gold2); background:var(--gold-dim); }
 
+/* ===== ADMIN: MENÚ DE TARJETAS ===== */
+.admin-menu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:18px; }
+@media (max-width:420px) { .admin-menu-grid { grid-template-columns:repeat(2,1fr); } }
+.admin-menu-card { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:var(--card2); border:1px solid var(--border2); border-radius:var(--r-lg); padding:18px 8px; cursor:pointer; font-family:inherit; color:var(--muted); transition: border-color .2s var(--ease), background .2s var(--ease), transform .15s var(--ease); text-align:center; }
+.admin-menu-card:hover { transform: translateY(-2px); border-color:var(--gold2); background:var(--card-hover); }
+.admin-menu-card.active { color:var(--gold); border-color:var(--gold2); background:var(--gold-dim); }
+.admin-menu-card i { font-size:19px; color:var(--gold); }
+.admin-menu-card span { font-size:11px; font-weight:700; }
+.admin-back-row { display:flex; align-items:center; gap:10px; padding:14px 18px 0; }
+.admin-back-btn { background:transparent; border:1px solid var(--border2); color:var(--muted); width:34px; height:34px; border-radius:50%; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; }
+.admin-back-btn:hover { color:var(--gold); border-color:var(--gold2); }
+.admin-section-title { color:#fff; font-weight:700; font-size:14px; }
+
+/* ===== BOTÓN FLOTANTE GOOGLE MEET ===== */
+.meet-float-btn { position:fixed; bottom:22px; left:22px; z-index:400; width:58px; height:58px; border-radius:50%; background:#1a1a1f; border:2px solid #34a853; box-shadow: 0 10px 26px rgba(0,0,0,.5); align-items:center; justify-content:center; cursor:pointer; transition: transform .2s var(--ease), box-shadow .2s var(--ease); display:none; padding:10px; }
+.meet-float-btn.visible { display:flex; animation: pulseSoft 2s ease infinite; }
+.meet-float-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 14px 32px rgba(52,168,83,.4); }
+.meet-float-btn svg { width:100%; height:100%; }
+@media (max-width:480px) { .meet-float-btn { bottom:16px; left:16px; width:52px; height:52px; } }
+
+/* ===== HORARIO / PLAN / ID DE ESTUDIANTE ===== */
+.student-id-badge { font-family:'DM Mono', monospace; font-size:10.5px; color:var(--gold3); letter-spacing:.5px; margin-top:2px; }
+.info-badges-row { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px; }
+.info-pill { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:700; padding:6px 12px; border-radius:99px; border:1px solid var(--border2); background:var(--card2); color:var(--muted); }
+.info-pill.plan-pill { color:var(--gold3); border-color:rgba(240,180,41,.3); background:var(--gold-dim); }
+.info-pill.horario-pill.activo { color:var(--green); border-color:rgba(0,214,143,.35); background:rgba(0,214,143,.1); }
+.info-pill .dot { width:7px; height:7px; border-radius:50%; background:var(--muted-dim); }
+.info-pill.horario-pill.activo .dot { background:var(--green); box-shadow:0 0 6px var(--green); animation: pulseSoft 1.6s ease infinite; }
+
+/* ===== RETOS RELÁMPAGO ===== */
+.reto-card { background:linear-gradient(120deg, rgba(240,180,41,.10), var(--card) 55%); border:1px solid rgba(240,180,41,.35); border-radius:14px; padding:14px 16px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; }
+.reto-icon { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,var(--gold3),var(--gold2)); color:#1a1400; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; position:relative; }
+.reto-icon .fa-bolt { position:absolute; top:-6px; right:-6px; font-size:11px; color:var(--gold3); background:var(--bg); border-radius:50%; padding:2px; }
+.reto-body h4 { color:#fff; font-size:13.5px; margin-bottom:3px; }
+.reto-body p { color:var(--muted); font-size:12px; line-height:1.4; }
+
 /* ===== NOTIFICACIONES (CAMPANITA) ===== */
 .notif-wrap { position:relative; }
 .notif-bell-btn { background:rgba(255,255,255,.03); backdrop-filter: blur(8px); border:1px solid var(--border2); color:var(--muted); width:38px; height:38px; border-radius:50%; font-size:14px; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease); position:relative; }
@@ -444,11 +480,13 @@ a { color: inherit; }
             <div>
               <p class="welcome-eyebrow">WELCOME BACK</p>
               <h2 id="nombre-alumno-ui" class="welcome-name">Estudiante</h2>
+              <p class="student-id-badge" id="student-id-badge"></p>
               <p class="welcome-sub">Sigue entrenando tu inglés. Tú puedes.</p>
             </div>
           </div>
           <span class="online-pill"><span class="online-dot"></span> En línea</span>
         </div>
+        <div class="info-badges-row" id="info-badges-row"></div>
       </div>
 
       <!-- COMPARTIR -->
@@ -517,6 +555,13 @@ a { color: inherit; }
       </div>
 
       <!-- ACTIVIDADES DE LA SEMANA -->
+      <div id="retos-card" style="display:none; margin-bottom:24px;">
+        <div class="section-head">
+          <h2><i class="fa-solid fa-bolt" style="color:var(--gold); margin-right:6px;"></i>Retos relámpago</h2>
+        </div>
+        <div id="retos-list"></div>
+      </div>
+
       <div id="actividades-card" style="display:none; margin-bottom:24px;">
         <div class="section-head">
           <h2>Actividades de la semana</h2>
@@ -561,7 +606,13 @@ a { color: inherit; }
         <button class="chat-tab-btn active" id="chat-tab-grupo" onclick="cambiarTabChat('grupo')"><i class="fa-solid fa-people-group"></i> Grupo (Todos)</button>
         <button class="chat-tab-btn" id="chat-tab-privado" onclick="cambiarTabChat('privado')"><i class="fa-solid fa-user"></i> Privado</button>
       </div>
-      <div class="chat-contacts" id="chat-contacts"></div>
+      <div class="chat-contacts" id="chat-contacts" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; gap:8px; padding:0 0 10px;">
+          <input type="text" id="chat-buscar-codigo" placeholder="Buscar compañero por su ID de estudiante (ej: NEC260001GM)" style="flex:1; padding:10px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:12.5px;" onkeydown="if(event.key==='Enter') buscarAlumnoPorCodigo();">
+          <button class="chat-send-btn" style="width:40px; height:40px;" onclick="buscarAlumnoPorCodigo()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div style="display:flex; gap:8px; overflow-x:auto;" id="chat-contacts-online"></div>
+      </div>
       <div class="chat-messages" id="chat-messages"></div>
       <p class="chat-hint" id="chat-hint-txt">Please write in English 🇬🇧 — messages are cleared periodically.</p>
       <div class="chat-inputbar">
@@ -579,13 +630,14 @@ a { color: inherit; }
         <button onclick="cerrarSesion()" style="color:var(--red); background:transparent; border:none; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit;">SALIR</button>
       </div>
       <div class="admin-card">
-        <div style="display:flex;">
-          <button class="tab-btn active" id="btn-tab-enlaces" onclick="switchTab('enlaces',this)">Recursos</button>
-          <button class="tab-btn" id="btn-tab-alumnos" onclick="switchTab('alumnos',this)">Alumnos</button>
-          <button class="tab-btn" id="btn-tab-motivacion" onclick="switchTab('motivacion',this)">Motivación</button>
-          <button class="tab-btn" id="btn-tab-actividades" onclick="switchTab('actividades',this)">Actividades</button>
-          <button class="tab-btn" id="btn-tab-videos" onclick="switchTab('videos',this)">Videos</button>
-          <button class="tab-btn" id="btn-tab-chat" onclick="switchTab('chat',this)">Chat</button>
+        <div class="admin-menu-grid" id="admin-menu-grid">
+          <button class="admin-menu-card active" id="btn-tab-enlaces" onclick="switchTab('enlaces',this)"><i class="fa-solid fa-link"></i><span>Recursos</span></button>
+          <button class="admin-menu-card" id="btn-tab-alumnos" onclick="switchTab('alumnos',this)"><i class="fa-solid fa-user-graduate"></i><span>Alumnos</span></button>
+          <button class="admin-menu-card" id="btn-tab-motivacion" onclick="switchTab('motivacion',this)"><i class="fa-solid fa-crown"></i><span>Motivación</span></button>
+          <button class="admin-menu-card" id="btn-tab-actividades" onclick="switchTab('actividades',this)"><i class="fa-solid fa-list-check"></i><span>Actividades</span></button>
+          <button class="admin-menu-card" id="btn-tab-videos" onclick="switchTab('videos',this)"><i class="fa-solid fa-clapperboard"></i><span>Videos</span></button>
+          <button class="admin-menu-card" id="btn-tab-chat" onclick="switchTab('chat',this)"><i class="fa-solid fa-comments"></i><span>Chat</span></button>
+          <button class="admin-menu-card" id="btn-tab-meet" onclick="switchTab('meet',this)"><i class="fa-solid fa-video"></i><span>Reunión Meet</span></button>
         </div>
         <div id="tab-enlaces" class="tab-content active" style="padding:20px;">
           <!-- BANNER CONFIG -->
@@ -603,9 +655,31 @@ a { color: inherit; }
         </div>
         <div id="tab-alumnos" class="tab-content" style="padding:20px; display:none;">
           <input type="hidden" id="alumno-id-edicion">
+          <input type="hidden" id="alumno-identidad-edicion">
           <input type="text" id="alumno-nombre" class="admin-input" placeholder="Nombre completo del alumno">
           <input type="text" id="alumno-pass" class="admin-input" placeholder="Contraseña">
           <input type="url" id="alumno-foto" class="admin-input" placeholder="URL Foto Perfil">
+          <p class="admin-label"><i class="fa-solid fa-gem"></i> Plan de suscripción</p>
+          <select id="alumno-plan" class="admin-input">
+            <option value="">-- Sin plan asignado --</option>
+            <option value="Plan Solo Elite">Plan Solo Elite</option>
+            <option value="Plan Duo Dinámico">Plan Duo Dinámico</option>
+            <option value="Plan VIP 1 a 1">Plan VIP 1 a 1</option>
+          </select>
+          <p class="admin-label"><i class="fa-solid fa-clock"></i> Horario asignado</p>
+          <select id="alumno-horario-dias" class="admin-input">
+            <option value="">-- Sin horario asignado --</option>
+            <option value="Lunes a miércoles">Lunes a miércoles</option>
+            <option value="Sábado y domingo">Sábado y domingo</option>
+          </select>
+          <select id="alumno-horario-franja" class="admin-input">
+            <option value="">-- Selecciona franja --</option>
+            <option value="8:15 - 9:45 AM">8:15 - 9:45 AM</option>
+            <option value="10:15 - 11:45 AM">10:15 - 11:45 AM</option>
+            <option value="1:15 - 2:45 PM">1:15 - 2:45 PM</option>
+            <option value="3:15 - 4:45 PM">3:15 - 4:45 PM</option>
+            <option value="6:15 - 7:15 PM">6:15 - 7:15 PM</option>
+          </select>
           <button class="btn-login" id="btn-guardar-alumno" onclick="registrarAlumno()">Crear Alumno</button>
           <button onclick="resetearAsistenciaSemanal()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">RESETEAR SEMANA MANUAL</button>
           <div id="lista-alumnos-ui" style="margin-top:20px;"></div>
@@ -639,6 +713,21 @@ a { color: inherit; }
           <button class="btn-login" id="btn-guardar-actividad" onclick="guardarActividad()">Publicar actividad</button>
           <button onclick="limpiarActividadesAnteriores()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">LIMPIAR ACTIVIDADES DE SEMANAS ANTERIORES</button>
           <div id="lista-actividades-ui" style="margin-top:20px;"></div>
+
+          <div class="admin-section" style="border-top:1px solid var(--border2); margin-top:28px; padding-top:22px; border-bottom:none;">
+            <p class="admin-label"><i class="fa-solid fa-bolt"></i> Reto relámpago</p>
+            <p class="form-hint">Un reto corto y motivador (⚡ + 💪) que suena con un "ding" y llega en el momento a los alumnos elegidos.</p>
+            <input type="hidden" id="reto-id-edicion">
+            <input type="text" id="reto-titulo" class="admin-input" placeholder="Título del reto (ej: ¡Reto de 5 minutos!)">
+            <textarea id="reto-instruccion" class="form-textarea" placeholder="¿Qué deben hacer? (instrucciones del reto)"></textarea>
+            <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
+            <div class="dest-picker">
+              <label class="dest-all-row"><input type="checkbox" id="reto-dest-todos" checked onchange="toggleRetoDestTodos()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
+              <div id="reto-dest-lista-alumnos"></div>
+            </div>
+            <button class="btn-login" id="btn-guardar-reto" onclick="guardarReto()">Enviar reto relámpago</button>
+            <div id="lista-retos-ui" style="margin-top:16px;"></div>
+          </div>
         </div>
 
         <div id="tab-videos" class="tab-content" style="padding:20px; display:none;">
@@ -659,6 +748,17 @@ a { color: inherit; }
         <div id="tab-chat" class="tab-content" style="padding:20px; display:none;">
           <p class="form-hint">El chat se borra automáticamente cada 12 horas para no acumular información. También puedes limpiarlo manualmente aquí en cualquier momento.</p>
           <button onclick="limpiarChatManual()" style="width:100%; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:14px; border-radius:12px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-broom"></i> LIMPIAR CHAT AHORA</button>
+        </div>
+        <div id="tab-meet" class="tab-content" style="padding:20px; display:none;">
+          <p class="form-hint">El enlace de Google Meet aparece como botón flotante para los alumnos elegidos y se elimina solo pasadas 3 horas (o al instante si lo borras aquí manualmente).</p>
+          <input type="url" id="meet-url" class="admin-input" placeholder="https://meet.google.com/xxx-xxxx-xxx">
+          <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
+          <div class="dest-picker">
+            <label class="dest-all-row"><input type="checkbox" id="meet-dest-todos" checked onchange="toggleMeetDestTodos()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
+            <div id="meet-dest-lista-alumnos"></div>
+          </div>
+          <button class="btn-login" id="btn-enviar-meet" onclick="enviarMeet()"><i class="fa-solid fa-video"></i> Enviar enlace de Meet</button>
+          <div id="lista-reuniones-ui" style="margin-top:20px;"></div>
         </div>
       </div>
     </div>
@@ -743,6 +843,14 @@ a { color: inherit; }
       <input type="file" id="perfil-foto-input" accept="image/*" onchange="subirFotoPerfil(event)">
     </div>
     <p class="form-hint" style="text-align:center;" id="perfil-nombre-txt"></p>
+    <p class="student-id-badge" style="text-align:center; margin-bottom:14px;" id="perfil-id-txt"></p>
+    <div class="info-badges-row" id="perfil-info-badges" style="justify-content:center; margin-bottom:16px;"></div>
+    <p class="form-hint">Número de WhatsApp (con código de país, ej: +505...)</p>
+    <div class="input-shell">
+      <i class="fa-brands fa-whatsapp input-icon"></i>
+      <input type="tel" id="perfil-whatsapp" class="field-input" placeholder="+505 8888 8888">
+    </div>
+    <button class="btn-login btn-outline-gold" style="margin-bottom:20px;" onclick="guardarWhatsappPerfil()">Guardar WhatsApp</button>
     <p class="form-hint">Nueva contraseña</p>
     <div class="input-shell">
       <i class="fa-solid fa-lock input-icon"></i>
@@ -770,6 +878,20 @@ a { color: inherit; }
   <i class="fa-brands fa-whatsapp"></i>
 </button>
 
+<!-- BOTON FLOTANTE GOOGLE MEET (aparece solo si hay una reunión activa para el alumno) -->
+<button class="meet-float-btn" id="btn-meet-float" onclick="unirseAMeet()" title="Unirse a la clase en Google Meet">
+  <svg viewBox="0 0 87 72" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#00832d" d="M49.5 36 61 24.5V47z"/>
+    <path fill="#0066da" d="M0 51v14a6 6 0 0 0 6 6h14l3-10.5-3-9.5-10.5-3z"/>
+    <path fill="#e94235" d="M20 0 0 20l10.5 3L20 20l3-9.5z"/>
+    <path fill="#2684fc" d="M20 20H0v31h20z"/>
+    <path fill="#00ac47" d="M83 8.5 68 20v32l15.1 11.6a4.5 4.5 0 0 0 7.4-3.4V11.8A4.5 4.5 0 0 0 83 8.5z"/>
+    <path fill="#ffba00" d="M49.5 36 20 20v31l29.5-1.6z" opacity="0"/>
+    <rect x="20" y="20" width="48" height="32" rx="6" fill="#00ac47"/>
+    <path fill="#00ac47" d="M20 20h29.5c5 0 9 4 9 9v14c0 5-4 9-9 9H20z"/>
+  </svg>
+</button>
+
 <!-- NOTIFICACIONES: vive fuera del <nav> a propósito. El <nav> usa backdrop-filter,
      y backdrop-filter/transform/filter en un ancestro crea un "containing block" nuevo
      para los elementos position:fixed, así que un dropdown fixed anidado ahí adentro
@@ -791,7 +913,7 @@ a { color: inherit; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
 const firebaseConfig = {
@@ -811,7 +933,34 @@ const CORREO_ADMIN = "95gusmg@gmail.com";
 let sessionActiva = null;
 let latidoInterval = null;
 let ultimasActividades = [];
+let ultimosRetos = [];
+let reunionesCache = [];
 let unsubChat = null;
+let primeraCargaRetos = true;
+let primeraCargaReuniones = true;
+
+const MENSAJES_MOTIVACIONALES = [
+  "¡Han pasado más de 24 horas! Tu inglés te está esperando. 💪",
+  "Un poco cada día te lleva lejos. ¡Vuelve a entrenar hoy! 🚀",
+  "Extrañamos verte practicar. ¡Hoy es un buen día para seguir! 🇬🇧",
+  "La constancia es la clave del dominio. ¡No rompas tu progreso! 🔥",
+  "Tu mejor versión en inglés se construye día a día. ¡Sigue así! ⭐",
+  "No dejes que pase otro día sin practicar. ¡Tú puedes! 💪",
+  "Cada sesión cuenta. ¡Regresa y suma un día más a tu racha! 📈",
+  "El inglés se aprende con hábito, no con perfección. ¡Vamos hoy! 🎯",
+  "Pequeños pasos diarios = grandes resultados. ¡No te detengas! 🏆",
+  "¡Tu disciplina de hoy es tu fluidez de mañana! Sigue entrenando. 🧠",
+  "Recuerda por qué empezaste. ¡Hoy es un gran día para continuar! ✨",
+  "Un día sin practicar es un día de ventaja perdida. ¡Retómalo ya! ⏳",
+  "¡Tu meta semanal te está esperando! No la dejes ir. 📅",
+  "La práctica constante vence al talento. ¡Vuelve a entrenar! 🥇",
+  "Nadie mejora sin repetir. ¡Hoy toca otra ronda de inglés! 🔁",
+  "El progreso no se detiene solo porque tú lo hagas. ¡Sigue tú también! 🚴",
+  "Estás más cerca de tu meta de lo que crees. ¡No abandones ahora! 🎯",
+  "El inglés se te va olvidando si no lo usas. ¡Practícalo hoy! 🗣️",
+  "¡Tu racha te necesita! Vuelve a entrenar tu inglés ahora mismo. 🔥",
+  "Disciplina hoy, libertad mañana. ¡No dejes pasar otro día! 🕊️"
+];
 
 // Logo por defecto (incrustado en base64 — no depende de archivos externos)
 const LOGO_DEFAULT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAU8AAAFgCAMAAAAM6QsjAAAA/1BMVEUAAADnqTw1Jg3PlzWqfCxJNRJmShoaEwYlGwl1Vh6SayW6iDCIYyNaQhfdoTixgi2ccihwURzCjTJTPRXZnjh9WyChdSnFkDOBXiFALhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnNnKoAAAAQHRSTlMA/w3OixkyAwZBZ6dZJ+qXdDu0IeJLfbtPEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgdcSbAAAFoxJREFUeNrtXeeWqjAQNh1Cb5b3f9GlWFASDCGQrGR+3HOuqyIf00vmdPLkyZMnT548efLkyZMnT548efLkyZMnT548efogQsOCeRhMUQBaSjwOxqjD0/OnOYoAuHgUzFEIAPcomDFFvBV0AkBxOkHs4ViPJwAxgy1/squXeTN4AlCCnjyehvAEHk9TBHskEULtv5GHYzUxANKG5ehEEcg9HAYEvmr/QQC2rOpdekPUAHD2KJjVocTjYIiCzhaB2ku7Ie6sB2+p9IAagTN9up8eUAPCPvLnSw/HarqM8PQO6GoKwRtBj8g6qt/gxB7PZcpS8FqcDVjWXOiBehs157dPsvD0jT+jT0gZqj3LSukKACN9rhM/qpnZu/5Ej6A+zhBA9MTbt3rc5MYnfXmb+YPxYFWELRUJhMNLLEQPeIsUVB63B1D04/+wIGN+zDrpJjQcqKCkh5Px0Vs6pfqhdGlwVDzRoC4fbFeACUUkeH8Bh3j6ruz+NCAMui89bBa/032QdwJ+7bjqKcQYR2ARBbfq/jQihp469nCUI5IPgKQRqNFIyFtua+YwRRFPWj1A7x8nACTx4+OAHhFLhgGKw3Isyv2/FHYYRXESnFgSizBNzwmD1/4vFwL7pwABaKqHigCtCi4PhWnATk/hHqAkBYh7BoPxiwd5Z7lJiMvXey95AQkfhfS8z43SKgpOzVsoVR3H0W+5ibzc9CjuDTJseu48EUjxi+K7/86Cztr0CPHRn3GTDPXk4u4v8OjlbYH6IIa+lczm7hY93fYh7aFVDx50xrO8RAc2LStwFEUagHRoUuBsZOoH9pQo2xPrypviP97drNcLg38aZIepOJE+vqnHtzsALAGA0FZFJFEu/utt4PTRK8nguh4ksIeDjkvfb5fPZDfDvJnRBoPHD+E0iVIeAtG7tSZveZCCzOAZp1XnB5UzeBaojQk+Rf4Qnv3QjwTid4jRHJ4c5GFWz+GZBR8Nt3c7z46CZ/qewsA0ntGf9yhoTt4TjshUCfx+eYSSwZQXHyAPApro4Dk8oOvHq9fByCe/nc1rYavSqSDedYDMX+KgggmS4XlvEL1AgZWqfnzMpvW9E/TMsE3wDCX2KIcInWV4FuLSZ69B6Y/jmbQmt+NPPnl9cPAleF45mD6ED1tefH5owPPHW3BJ0PNNI2YyCWJNREAaygpFfbxZTmL13geNft4gZSLBDjELp1b/9WcQwyqXdYAOlqzKhWo1/3U8hYqyk/QZ/4bONdsMuFXo87PJITwmJvDmOzyH+Ehi4Omcdh0SpnGUBsIP/brAIxGrweCEJ1mNRV+IJunj6zEizkrimoO5ALF199OMzGRDBKFVBo7RJJ59ZCvHVnrq9YxVYTijC9DEvqeHMEcE3iR8Q5FMPuFcs+KQ+GgkZooUvx1vwhawWmhbIA1qiYBGM920vX2rSVyJY34qkISfYs/2/rBIUXY8mL7VgT5dAqGWGHi3KzEHIn2Mfh3PU0jvnHOd4oLDHAtOXRm1Kwk8JhLHpLPxUORFRSf++91iodCS0671ODnzTzxZz86YkV69RhOzw7pCB0FXoco9xJkO8ns9v+dA+7I8es5pR09D9gI16NBGUOJEHKSVMZN4jHfXJx7gapFMHu+9vTxN1JmaO4JBLBmLr45TPjo9xgend/vsRCyrYYorZWxsh4aPEXL/bMClUx/3CxymE3zwNbnEzezj+J4xi7di04DS0EgH385twAJjlB2nJaxoAUOfEj9wLQ77Zq96QJeeRvz3KLH1qdJg4Fx0b68lkwdTxIc5YagDhgXlu95j6G6M7u0JfT7jYYQ6yWWDKq37ibnz4CWk7M6M6EM/170PdZTGb9xHOvyNrV5h/YPhUCfGj65OdHmV7GCHVPzQGMFnoq9VBOce5+NMe1ZteAlP8G7JC3R+BEHBA0/YdzE8HfNeIaJ7GJB0QNPHfCy7e+4t/w4CDhPGQpwcai4hfjV294aF3PHM4NBQW/f820tx0DnsaGy9hjEGdDdEj/Y6/Ay6SJyCY53PNuqm7UeyHvb82ZrcGaD6lcYPxs55PqjLwdNPs4erOcALc3TA0dlxszfhfdqTvV6r47sT8GCyqn7lP4f4s0+TNunoW3o8q7ETdaDzRvIhFO8d8hgOUAWXKOxnEYaI8z4nV+dN3y6f8b6jvsnTEVi9Y8QhTAjr88doeFD0FOTgWFMzNEUPPOKOE/lb5FSGYf4+HpNMBjlzQrO3MOvprsaDC3HAMdmHWkT3s2tIK9c8f41unJK4H0oYNCcZfFFc3VVn/574kXOCfRhVPPBkRzxdiN1bQlpGuySwn+3iz/7lu0fZzXXAWxKGQ5NyStnLoJ2DwVPAlBTp4D2F4LjjcZ2Mhk8P/nXgSp/ouGAkm43reLazUDH7sG13M3Y7LJ79CDvLxnOEi+Y2S9yMR+xab7Tr3jvuAHc8g9Ul6/jwHIefdO1en+CO488jB45I2RTGc1hBxgJIEhrGvEUuuiBUSyRfwM6HPv9iPPIe8YIQQq959qk5cQJbeMM8FYk8L99foMdFM8iepyxUkIS5RHlWo8yRkHAG0PMIDFAe1h4NEJx5Uzyj7jRsWTF8A/YqjlNbLwnCKhpzag0OMyUjT4ugsRRn7JEhFR5CnU65lkyZOj6swN8+NGV+fz15NzuPoe23IPQ5TEg/4Dz03hT+BkXYsyeLp4b82ky1Kx8CzffXcXA6NBH0cX5NyFNlfz4K43frXvvDmKDYtWy9ed6EU2een9u/REiCuT9j+d3IDOeGhLQ7w+oac57jCeVx0x9uRZvpSUypR3PEn60bmfKFJy8h/qYvPJyPRu8LB9kblikqI5zz9/g9bjm2jT/fmZLTsIhm2sUPZuBRHBdjhNA5TOA3K90F+AUf5/SuGcJ+yVwbQmblKISnS7MZQfU89Apl4Dg9IRLCr2OYEv3EEKRnf2L1KCKPivVslWBv4vsEaGasMaaDFB0bz5Ph7K9f6ePJkydPnjx58jQffZIQY3ycIJ5ECKTZdYO0LyPNq25/WeLVsltFC1r9y+NCo2eOzWDeAiZX/NFAorq7DzajT6L8vzH2uCEhNPKFoaQNL1cJTwUNJ7j6j+xpYLzyVvAMzSTuv3055LKMP/2X7NkJvaYaJa92EjllX/T4XA0l+Y/sqdO7xaTyvajUCb8VqfB/ZM+FvRww4WhJpU7KoAFWKPPd/iN7qhbMx3sP1El2WLjap92XeWHjQvRNwFV0pZiEA4ewVP2482YpW6blluhKIdWCLy0WfL74h+yZLXQrl22ZmnwvXvR5tzkUK+k4mIRnA1AK8QwuC78g+W/smX/mMlJgjj71J1n+5Q63l0Vz7AmTODMJJSj5TcFb++42OVvdE95N2dlvjhEwSlEMVX/A5weTrjzKrv/AsRe6KcgwkqA+y/p1vsKZ0RcvcudVKAGbU7/CT/P66fVNsJN5p8tV9jRG6FsbGZz/OJ15e+MinHQ7LEuefDUaMF2C5utMZleHmVi6DZaKhZNgTk2L0trM8Wmm3DyUda7cKcpm4BTntJnLPfkwNm3FU1wsSe1Hi/OczNWwk5HwYljEGxIYEw7ZkVfveDrSAUlCXtpky+8ZJSnjsWWlqO3Zsooj4ACW846n3JYFDiXugoVlCQPe5dyvqbXqS45Uk5hxLFuPaJX/F2mljqALU3ckNqsuUU5XKy658qyWKIndXXpGsVEso5iYuIdAM/WeAJsGidHMJFueqbGfH2mWhsIlzGyYKmySLROT423SyvD1ywe5rUISC5Fth0gjqfT15FpsB09iSM5LnmwxdRlpN9MgK5Xj3AhbhlvVvGQ5QoUFpyo5KOPEbfrp+jlChRIbtFKIX6U5s2brUizW7AsVcfYuRSTtxFFOd/DnyIoWhdxKGV7XT9on/YU0Tbvws7vgqVsT2kW5h9q2SBRV7RMfGevS2sAYSbyJQI9R9nE/z3rOpkXfI9FTZDsl6KEWnoW9X3bWlLtoHzznHHp0JYE4vbNH7itbYwiJnhHb0Ihm91A80bUI2/hKRFdX7JYOEfVdcDLLJnv8totm2D5QarEL9FNRRfSbkd1B3BOxbWfazL1jeh6ORB41wVcHNbOmhVQFI7cUgLyrmxqHUCVftoO4U31PXuxV713eJFSYvhRad2vsCfWfRnhygkJg5VEX+nF7RyWwFG1q8UliiT1VjZEoEnCkvw7aEXe6bjKL21efErrqB3zG2VPZQjNLAbLmjW1fxybrxrJi4Kr6JHbEPVrlK52spb+1ciW5pcSSMoc1azyDbcnONGQOVmnt1NkRTlEMvb3jwdYVBK6WIhDNDOT2kiMEJF/1NNzwlpgdca9Xac8YWMov6nnVqRUlo649xc2ibkzHidyW7efMylXsudLV2pICYMMvhqv0X2KteqiXWtreL87XPMUgfa8zEHaCNHNkewWyIe5CG5jpSDu+9WuoWyzdOCUMWhH3Yo1PMbLt3SmFw39TRw5di62IO1rRjFKNfmjwSto5EruL3MDGilAo5q9HdW98CkrHZt+JFXHnK4QCjbzVW+qa+ym6s8vmV031g5vrKDYl7tXiahtNnyL3sV6qKfBEtqKjinum/xCjl3qADmaTrYj7ila+1/MPpieNOIBnakPcC/0IInppW2ylP0hD3DcP2yLti5KX8qQW3DytKHrzHm8mzoSw4ntFNXu2PIgmwOzH71aSsoUw1OzU4belAfDFiU72MiRWkrKR0JfvX60DJeuZCk2a/do7tpGUFbd1NComGj2NV2yln0Unaba5uIvKKy9JVjp5BQr8ktp+tEldEXf+Moyxwu+9iBSVA6tmMhs93kyo+ZSMCn9aI+xiqZitSJoZFYpopMmxAmeTk270v7+427CBycgTPiuYIxY42WiDrXRYyGr99PsU7APPaVjnRCrZirgTaWtPQPtlKiX7jmfiXOAuc+ZtJLRGfngQopkg6SFQn5rKjcoRttLjXX+rc9BUKr2hmD9TN+ruiw/eM0Hwe1aIcRmLPnRF8PYtqRs93naaPmOVsBtG4CwCKXgqeeRcD63wwIbtmz6RWnowQSCqpHhmoxI8dkPYLbVLQ+V8AUUgzd8ghRS9vJD70sOzM5v4iH6J0WzqU+oeJd1kPMI87KjfEFQ2tzuOnTboe5acodiKuEeLAogg4a/TBqJmUKkMQreQlCmyReIeJDHG58W5PY0AIrglBa1uzu6KkioyVesejNZzoWqtknEcp43FHdLPXeP5uqtGvwGnhrgz0uC1TevI1fnVLcR9xroHdGYtpHp9OXCxxGuEwgXiTr4d+68c9FNX51d3E3e1Y/9VjdIZOJm33Me6t2ZcdU2KagNZ6uppH2up+TI5CemyPdlE8ynWPyzu1dOML1/+quY0ha6Oq28h7uDWi7jmOctKl81crJlvJe4gW7E57qp02Z8NjsyuPcJUVyouPyzumsd/c/UcSvGr6jM2BGZZLIpuzr+qPk2Ie9ks3iFV/6b6DFbvmUnPVAOJ4CeDzdWrzjLdzUfJ7wWbVb7alOuLKLdxfuOGRFaCGa1cyYV+SH3CcN0GWJTTtTfPfkZ9Bg1aKeQmkr7EwfkBHTDDVXtLzW2SCl096XgB3VYtc0+5yXaRs6Nn9ykzJj2na4Tc9EJI9J9LR2TVpuco3CBt7urJ0Rt7mWm+jVcIHRyuVnKM1kSTONmsnkP/YXQEw8sKF5Nvmu2JrUZH8EFL4uMVKrO8bl1ojCyWNtnIZcSKl2UrAqA9jjVI7R3NC5FGVLaCOfcwtBaTdSTVuG64xgrtcVPW5leplhlcs+65sHBXu9WOGr0oolmB5x6GIbbUqBhremm3FXjucV/YTi2Oa2ttFXuEhVnQXeKUixWpOOtfNfmCZX1OJO/a5RAoK1KB18Rkc/4neiQ4qI0ZrpMoOb+Dk7Zu92GAFOo+jSX1CS3MIUzhXDaHLAQ05XBeoezTQ5RodjgaFfalJpB9ppbqSYIdATt+YLN7dinTbQIcUzEKrZAoxWHjgAux7IW7c6dOQMbiAdEovqmpsZ2qDtnOp5BxYCxfQEJ55YfaSYaIdp+QneHcxN+NgaW0BNrVnc/3UmsCH3WfIviuaibfbRLdkje/b+c83y2mhpa8edHc5mbXEm2l2yh3Xe12pa8PcrNBrkIU1AS7Pbp8FzzJblFZAnbUaRjs7AbK7zLbTQI3vMfaTm5e5PfineRgy8iW2TJHAqW2iZ6B+qOlhp7eTkXbfQZh121MNGL6bBUZtxBCWK86i8NI3LDTftrrDngK07+bnqFe2jJHgrxBswuc296fNXO0A55iODetSQf7apf5kDrcA85ttRmxZo42x1MM58YlldCaOdq63CGG87z7TYHbT/CnGM7N214ie4edbWqPGALAhmlIrZl3gappNoZzh8DPWrS57XCHcAQDbT+6DC111m2Mp3A6dY8T6St77pLg2qYuHQFgqShW2KptCl1fQ1k08fDaLi0vsT33U6Br8IZw7sMmZ1u14tNmw5vio2V2mmOMrGWXRJWBcjM4853uCdlz5wW+GtoKTmztlvY8XwaZDyXEcGb2RG7HCUqBstkGzv1Osw+s4nk2LRtiOHc8gUgQHu14eHFs2BaegaUoc8al3vNpUrO+mgTOPQ94SSxNdsieZmIczn3XyFGbylugbVYEMdjeWO9eeBJepvUliylU9da4aTh3Ph2r2NJXG5VSUMOU0mqZYTj3Pvsy3DCUiL6nWXJTxlACJz39DJ7TcliuIh4mM0oWjhYstsJTVL+Z3t7NTPJAMkRt4WgsuhGewnIYVzBI5F/DuRWe7KJoa8v1Go9JTjK1shUg2QZP5WJtvBoF2YC/nSULZAs8JYeS3VSuv9T7FbbL7pg//p4PWe1/SjimUMsXruYHm3CK8nVr8ZRwjMQ6lKsMfOIYnKL8/Mp4s1l22li4ptm1kMBp8YhwxcXryvInsQ6VssJZ4OXEFk/eUw/UVuQ/iSROQVD9gWYrfrp9OAXPWBtP6YaaiC2JeFWvVjqnO8UOveZRF4F0HVW8zCKqJSxvEj/J9nIvaKYeB6X7ftA3fDKdJIbMElnflcZM4BmcpWe6fT/dqNLwL86uwmliQYFc0kEJNX7B13IkRPpPb3PiKysuUL4mIFVLbtCFOXUqvaALm6iSVSkzOLMnLWd6IjLv7zDpZoLUiU0qbEWRgMxsXcjU2bxaoMAT6TYX5MgiFaQboZCZs0XLRbySKT9QueFzZu/HVa+hoZpBEy1UZIFiREHlxxe7s1M20GnKKmYOZkbLc+xURYPPbc6gJ3coWmomg7lj7ZHWrWVfGZTNWL4aOgTn1MLPyw6ZW32aap4fz+r5ObnZRxg5tmEyXdCxOGeEQK1f8CZzEg9nV2E5t447VPXoWYiMS7pESl7fxYrZQ/SRg/v7kNJY6jyXIGpW7fRLwQISf1k45OS2zkohBUpnl3yVyQZ6/DshR5dLRl9CTjK/fjszc1tkIZo1PTlKn+0xbzkzGNdzd5XGxgI9uGj9lcub+6CMQeGXXbKlWR5RX9iUub33tBAlF5L8C8Nw4470TY1Fz/DkOH0mhRH+dmflNuqL1t/ANKhhNqRlu7xQsx2HhLMbllFx+h9ElcFM+cbiJk0kofh2+jdE1HQX3sPpS/CEeEH+0e5tRZnHycnTgmTobEyJqUdosWsvSz9klHl09HxA/mlgS048LKu4FCbxYAViSjxfevLkyZMnT548efLkyZMnT548efLkyZMnT552oj9s/c7/9p9udgAAAABJRU5ErkJggg==";
@@ -877,6 +1026,7 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
     });
     if (found) {
       sessionActiva = found;
+      const inactivo24h = huboInactividad24h(found);
       await registrarAcceso(found);
       renderUI(found);
       showScreen('s-student');
@@ -885,20 +1035,32 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
       escucharMentalidad();
       escucharTop3();
       escucharActividades();
+      escucharRetos();
+      escucharReuniones();
       escucharGaleriaVideos();
       escucharChat();
       escucharPresenciaAlumnos();
       iniciarLatido(found.id);
+      if (inactivo24h) {
+        const frase = MENSAJES_MOTIVACIONALES[Math.floor(Math.random()*MENSAJES_MOTIVACIONALES.length)];
+        setTimeout(() => showModal('¡Bienvenido de nuevo! 👋', frase), 900);
+      }
     } else { errEl.style.display='block'; await signOut(auth); }
   } catch(e) { console.error(e); }
 });
+
+function huboInactividad24h(alumno) {
+  const previo = alumno.ultimoAccesoTS || 0;
+  if (!previo) return false;
+  return (Date.now() - previo) > (24 * 60 * 60 * 1000);
+}
 
 async function registrarAcceso(alumno) {
   const hoyStr = getLocalDateStr(new Date());
   const lunesActualStr = getLocalDateStr(getMonday(new Date()));
   let dias = (alumno.dias_semana || []).filter(d => d >= lunesActualStr);
   if (!dias.includes(hoyStr)) dias.push(hoyStr);
-  const upd = { total_logins: (alumno.total_logins || 0) + 1, dias_semana: dias, logins: dias.length, ultimo_acceso: hoyStr };
+  const upd = { total_logins: (alumno.total_logins || 0) + 1, dias_semana: dias, logins: dias.length, ultimo_acceso: hoyStr, ultimoAccesoTS: Date.now() };
   await updateDoc(doc(db,'alumnos',alumno.id), upd);
   sessionActiva.dias_semana = dias;
   sessionActiva.total_logins = upd.total_logins;
@@ -913,6 +1075,9 @@ function renderUI(alumno) {
   let fotoFinal = resolverUrlDrive(alumno.foto || '');
   container.innerHTML = fotoFinal ? `<img src="${fotoFinal}" class="avatar-img" onerror="this.outerHTML='<div class=\\'avatar-default\\'>${initial}</div>'">` : `<div class="avatar-default">${initial}</div>`;
   document.getElementById('nombre-alumno-ui').innerText = alumno.nombre;
+  const idBadge = document.getElementById('student-id-badge');
+  if (idBadge) idBadge.innerText = alumno.identidad ? `ID: ${alumno.identidad}` : '';
+  renderInfoBadges(alumno);
   document.getElementById('stat-dias').innerText = diasLogueados;
   document.getElementById('stat-total').innerText = alumno.total_logins || 0;
   document.getElementById('stat-semanas').innerText = Math.floor((alumno.total_logins||0)/7);
@@ -955,7 +1120,48 @@ function renderGraph(diasSemana) {
   container.innerHTML = `<div class="bar-chart">${bars}</div><div class="graph-labels-row">${labels}</div>`;
 }
 
-function escucharBanner() {
+function horarioEstaActivoAhora(horario) {
+  if (!horario || !horario.dias || !horario.franja) return false;
+  const ahora = new Date(new Date().toLocaleString("en-US", {timeZone:"America/Managua"}));
+  const diaSemana = ahora.getDay(); // 0=Dom,1=Lun,...6=Sab
+  const diasValidos = horario.dias === 'Lunes a miércoles' ? [1,2,3] : [6,0];
+  if (!diasValidos.includes(diaSemana)) return false;
+  const m = horario.franja.match(/(\d+):(\d+)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return false;
+  const to24 = (h,mi,ap) => { h=parseInt(h,10); if(/PM/i.test(ap) && h!==12) h+=12; if(/AM/i.test(ap) && h===12) h=0; return h*60+parseInt(mi,10); };
+  const inicio = to24(m[1],m[2],m[5]);
+  const fin = to24(m[3],m[4],m[5]);
+  const actual = ahora.getHours()*60 + ahora.getMinutes();
+  return actual >= inicio && actual <= fin;
+}
+function renderInfoBadges(alumno) {
+  const cont = document.getElementById('info-badges-row');
+  if (!cont) return;
+  let html = '';
+  if (alumno.plan) html += `<span class="info-pill plan-pill"><i class="fa-solid fa-gem"></i> ${alumno.plan}</span>`;
+  if (alumno.horario && alumno.horario.dias && alumno.horario.franja) {
+    const activo = horarioEstaActivoAhora(alumno.horario);
+    html += `<span class="info-pill horario-pill ${activo?'activo':''}"><span class="dot"></span> ${alumno.horario.dias} · ${alumno.horario.franja}</span>`;
+  }
+  cont.innerHTML = html;
+}
+
+/* ===== ID DE ESTUDIANTE ÚNICO (NEC + año + 4 dígitos random + iniciales) ===== */
+function generarIdentidadUnica(nombreCompleto, idsExistentes) {
+  const year = new Date().getFullYear().toString().slice(-2);
+  const partes = (nombreCompleto || '').trim().split(/\s+/).filter(Boolean);
+  const ini1 = (partes[0] || 'X').charAt(0).toUpperCase();
+  const ini2 = (partes[1] || partes[0] || 'X').charAt(0).toUpperCase();
+  let codigo, intentos = 0;
+  do {
+    let digitos;
+    do { digitos = String(Math.floor(1000 + Math.random()*9000)); }
+    while (/^(\d)\1{3}$/.test(digitos)); // evita 0000, 1111, 2222...
+    codigo = `NEC${year}${digitos}${ini1}${ini2}`;
+    intentos++;
+  } while (idsExistentes.includes(codigo) && intentos < 50);
+  return codigo;
+}
     onSnapshot(doc(db, 'config', 'banner'), (d) => {
         const area = document.getElementById('banner-area');
         if (!d.exists() || !d.data().url) return;
@@ -1092,6 +1298,88 @@ function renderActividades() {
   card.style.display='block';
   list.innerHTML = ultimasActividades.map(a => itemActividadHTML(a, true)).join('');
 }
+
+/* ===== SONIDO "DING" DE NOTIFICACIÓN (generado con WebAudio, no depende de archivos) ===== */
+let audioCtxDing = null;
+function reproducirDing() {
+  try {
+    if (!audioCtxDing) audioCtxDing = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = audioCtxDing;
+    const t0 = ctx.currentTime;
+    [880, 1320].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = t0 + i * 0.13;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.22, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.4);
+    });
+  } catch (e) { /* silencioso si el navegador bloquea audio sin interacción */ }
+}
+
+/* ===== RETOS RELÁMPAGO (⚡ + 💪) ===== */
+function escucharRetos() {
+  onSnapshot(query(collection(db,'retos'), orderBy('fecha','desc'), limit(20)), snap => {
+    const miId = sessionActiva ? sessionActiva.id : null;
+    const anteriorMax = ultimosRetos.length ? Math.max(...ultimosRetos.map(r=>r.fecha||0)) : 0;
+    ultimosRetos = snap.docs
+      .map(d => ({id:d.id, ...d.data()}))
+      .filter(r => !r.destinatarios || !r.destinatarios.length || (miId && r.destinatarios.includes(miId)));
+    renderRetos();
+    if (!primeraCargaRetos) {
+      const nuevoMax = ultimosRetos.length ? Math.max(...ultimosRetos.map(r=>r.fecha||0)) : 0;
+      if (nuevoMax > anteriorMax) reproducirDing();
+    }
+    primeraCargaRetos = false;
+  });
+}
+function renderRetos() {
+  const card = document.getElementById('retos-card');
+  const list = document.getElementById('retos-list');
+  if (!card || !list) return;
+  if (!ultimosRetos.length) { card.style.display='none'; return; }
+  card.style.display='block';
+  list.innerHTML = ultimosRetos.map(r => `<div class="reto-card"><div class="reto-icon"><i class="fa-solid fa-dumbbell"></i><i class="fa-solid fa-bolt"></i></div><div class="reto-body"><h4>${r.titulo}</h4><p>${r.instruccion||''}</p></div></div>`).join('');
+}
+
+/* ===== REUNIÓN DE GOOGLE MEET (botón flotante, expira en 3h) ===== */
+function escucharReuniones() {
+  onSnapshot(collection(db,'reuniones'), snap => {
+    const anteriorIds = reunionesCache.map(r=>r.id);
+    reunionesCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    renderMeetFloat();
+    if (!primeraCargaReuniones) {
+      const hayNueva = reunionesCache.some(r => !anteriorIds.includes(r.id));
+      if (hayNueva) reproducirDing();
+    }
+    primeraCargaReuniones = false;
+  });
+}
+function reunionActivaParaMi() {
+  const miId = sessionActiva ? sessionActiva.id : null;
+  const ahoraMs = Date.now();
+  return reunionesCache.find(r => {
+    const expiraMs = r.expiraEn && r.expiraEn.toMillis ? r.expiraEn.toMillis() : (r.expiraEn || 0);
+    if (expiraMs && expiraMs < ahoraMs) return false;
+    return !r.destinatarios || !r.destinatarios.length || (miId && r.destinatarios.includes(miId));
+  });
+}
+function renderMeetFloat() {
+  const btn = document.getElementById('btn-meet-float');
+  if (!btn) return;
+  const activa = reunionActivaParaMi();
+  btn.classList.toggle('visible', !!activa && document.getElementById('s-student').classList.contains('active'));
+}
+window.unirseAMeet = () => {
+  const activa = reunionActivaParaMi();
+  if (activa && activa.url) window.open(activa.url, '_blank');
+};
+setInterval(renderMeetFloat, 30000);
 function renderNotifBadge() {
   const badge = document.getElementById('notif-badge');
   if (!badge || !sessionActiva) return;
@@ -1366,9 +1654,11 @@ function cargarDatosAdmin() {
     const ahora = Date.now();
     snap.forEach(d => {
       const data = d.data();
-      alumnosCacheAdmin.push({ id:d.id, nombre:data.nombre, foto:data.foto || '' });
+      alumnosCacheAdmin.push({ id:d.id, ...data });
       const enLinea = data.ultimoLatido && (ahora - data.ultimoLatido) < 120000;
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}<br><small style="color:var(--muted)">P: ${data.pass}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}','${data.nombre}','${data.pass}','${data.foto}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
+      const horarioTxt = (data.horario && data.horario.dias) ? `${data.horario.dias} · ${data.horario.franja}` : 'Sin horario';
+      const planTxt = data.plan || 'Sin plan';
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}<br><small style="color:var(--gold3); font-family:'DM Mono',monospace;">${data.identidad || 'Sin ID'}</small><br><small style="color:var(--muted)">P: ${data.pass} · ${planTxt} · ${horarioTxt}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
     });
     renderTop3AdminSlots();
     renderDestPicker();
@@ -1387,6 +1677,8 @@ function cargarDatosAdmin() {
     renderVideoCatSelect();
     renderListaCategoriasVideosAdmin();
   });
+  escucharRetosAdmin();
+  escucharReunionesAdmin();
 }
 
 /* ===== ADMIN: NOTIFICACIONES DIRIGIDAS (a quién se envía cada actividad) ===== */
@@ -1395,10 +1687,23 @@ window.toggleDestTodos = () => {
   document.getElementById('dest-lista-alumnos').style.display = todos ? 'none' : 'block';
 };
 function renderDestPicker() {
-  const cont = document.getElementById('dest-lista-alumnos');
-  if (!cont) return;
-  cont.innerHTML = alumnosCacheAdmin.map(a => `<label class="dest-row"><input type="checkbox" class="dest-check" value="${a.id}"> ${a.nombre}</label>`).join('') || `<p class="form-hint" style="margin:6px 0 0;">Aún no hay alumnos registrados.</p>`;
+  renderDestPickerEn('dest-lista-alumnos', 'dest-check');
+  renderDestPickerEn('reto-dest-lista-alumnos', 'reto-dest-check');
+  renderDestPickerEn('meet-dest-lista-alumnos', 'meet-dest-check');
 }
+function renderDestPickerEn(contId, claseCheck) {
+  const cont = document.getElementById(contId);
+  if (!cont) return;
+  cont.innerHTML = alumnosCacheAdmin.map(a => `<label class="dest-row"><input type="checkbox" class="${claseCheck}" value="${a.id}"> ${a.nombre}${a.identidad ? ` <small style="color:var(--muted)">(${a.identidad})</small>` : ''}</label>`).join('') || `<p class="form-hint" style="margin:6px 0 0;">Aún no hay alumnos registrados.</p>`;
+}
+window.toggleRetoDestTodos = () => {
+  const todos = document.getElementById('reto-dest-todos').checked;
+  document.getElementById('reto-dest-lista-alumnos').style.display = todos ? 'none' : 'block';
+};
+window.toggleMeetDestTodos = () => {
+  const todos = document.getElementById('meet-dest-todos').checked;
+  document.getElementById('meet-dest-lista-alumnos').style.display = todos ? 'none' : 'block';
+};
 
 /* ===== ADMIN: TOP 3 SEMANAL ===== */
 let top3ActualAdmin = [];
@@ -1490,6 +1795,66 @@ window.guardarActividad = async () => {
   document.getElementById('btn-guardar-actividad').innerText = "Publicar actividad";
 };
 
+/* ===== ADMIN: RETOS RELÁMPAGO ===== */
+function escucharRetosAdmin() {
+  onSnapshot(query(collection(db,'retos'), orderBy('fecha','desc'), limit(30)), snap => {
+    const list = document.getElementById('lista-retos-ui');
+    if (!list) return;
+    list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      const destTxt = (!data.destinatarios || !data.destinatarios.length) ? 'Todos' : `${data.destinatarios.length} alumno(s)`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:13px;"><i class="fa-solid fa-bolt" style="color:var(--gold); margin-right:4px;"></i>${data.titulo} <small style="color:var(--muted)">(${destTxt})</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('retos','${d.id}')"><i class="fa-solid fa-trash"></i></button></div>`;
+    });
+  });
+}
+window.guardarReto = async () => {
+  const titulo = document.getElementById('reto-titulo').value.trim();
+  const instruccion = document.getElementById('reto-instruccion').value.trim();
+  if (!titulo || !instruccion) { showModal('Falta información', 'Escribe el título y la instrucción del reto.'); return; }
+  const todos = document.getElementById('reto-dest-todos').checked;
+  const destinatarios = todos ? [] : Array.from(document.querySelectorAll('.reto-dest-check:checked')).map(c => c.value);
+  if (!todos && !destinatarios.length) { showModal('Falta información', 'Selecciona al menos un alumno, o marca "Todos los alumnos".'); return; }
+  await addDoc(collection(db,'retos'), { titulo, instruccion, destinatarios, fecha: Date.now() });
+  document.getElementById('reto-titulo').value = '';
+  document.getElementById('reto-instruccion').value = '';
+  document.getElementById('reto-dest-todos').checked = true;
+  document.getElementById('reto-dest-lista-alumnos').style.display = 'none';
+  document.querySelectorAll('.reto-dest-check').forEach(chk => chk.checked = false);
+  showModal('Éxito', 'Reto relámpago enviado.');
+};
+
+/* ===== ADMIN: REUNIÓN DE GOOGLE MEET (envío por grupo/individual, expira en 3h) ===== */
+function escucharReunionesAdmin() {
+  onSnapshot(collection(db,'reuniones'), snap => {
+    const list = document.getElementById('lista-reuniones-ui');
+    if (!list) return;
+    list.innerHTML = '';
+    const ahora = Date.now();
+    snap.forEach(d => {
+      const data = d.data();
+      const expiraMs = data.expiraEn && data.expiraEn.toMillis ? data.expiraEn.toMillis() : (data.expiraEn || 0);
+      const minsRestantes = Math.max(0, Math.round((expiraMs - ahora)/60000));
+      const destTxt = (!data.destinatarios || !data.destinatarios.length) ? 'Todos' : `${data.destinatarios.length} alumno(s)`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid fa-video" style="color:#34a853; margin-right:4px;"></i>${destTxt} <small style="color:var(--muted)">· expira en ${minsRestantes} min</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('reuniones','${d.id}')"><i class="fa-solid fa-trash"></i></button></div>`;
+    });
+  });
+}
+window.enviarMeet = async () => {
+  const url = document.getElementById('meet-url').value.trim();
+  if (!url || !/^https?:\/\//i.test(url)) { showModal('Falta información', 'Escribe un enlace válido de Google Meet.'); return; }
+  const todos = document.getElementById('meet-dest-todos').checked;
+  const destinatarios = todos ? [] : Array.from(document.querySelectorAll('.meet-dest-check:checked')).map(c => c.value);
+  if (!todos && !destinatarios.length) { showModal('Falta información', 'Selecciona al menos un alumno, o marca "Todos los alumnos".'); return; }
+  const expiraEn = Timestamp.fromMillis(Date.now() + 3*60*60*1000);
+  await addDoc(collection(db,'reuniones'), { url, destinatarios, creadoEn: Date.now(), expiraEn });
+  document.getElementById('meet-url').value = '';
+  document.getElementById('meet-dest-todos').checked = true;
+  document.getElementById('meet-dest-lista-alumnos').style.display = 'none';
+  document.querySelectorAll('.meet-dest-check').forEach(chk => chk.checked = false);
+  showModal('Éxito', 'Enlace de Google Meet enviado. Se eliminará solo en 3 horas.');
+};
+
 /* ===== ADMIN: GALERÍA DE VIDEOS ===== */
 let categoriasVideoCacheAdmin = [];
 function renderVideoCatSelect() {
@@ -1569,14 +1934,33 @@ window.guardarBanner = async () => {
 };
 
 window.borrarDoc = async (coll, id) => { if(confirm('¿Borrar registro?')) await deleteDoc(doc(db, coll, id)); };
-window.prepararEdicionAlumno = (id, nombre, pass, foto) => {
-  document.getElementById('alumno-id-edicion').value = id; document.getElementById('alumno-nombre').value = nombre; document.getElementById('alumno-pass').value = pass; document.getElementById('alumno-foto').value = foto || ''; document.getElementById('btn-guardar-alumno').innerText = "Actualizar Alumno";
+window.prepararEdicionAlumno = (id) => {
+  const a = alumnosCacheAdmin.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('alumno-id-edicion').value = id;
+  document.getElementById('alumno-identidad-edicion').value = a.identidad || '';
+  document.getElementById('alumno-nombre').value = a.nombre || '';
+  document.getElementById('alumno-pass').value = a.pass || '';
+  document.getElementById('alumno-foto').value = a.foto || '';
+  document.getElementById('alumno-plan').value = a.plan || '';
+  document.getElementById('alumno-horario-dias').value = (a.horario && a.horario.dias) || '';
+  document.getElementById('alumno-horario-franja').value = (a.horario && a.horario.franja) || '';
+  document.getElementById('btn-guardar-alumno').innerText = "Actualizar Alumno";
 };
 window.registrarAlumno = async () => {
   const n = document.getElementById('alumno-nombre').value, p = document.getElementById('alumno-pass').value, f = document.getElementById('alumno-foto').value, id = document.getElementById('alumno-id-edicion').value;
+  const plan = document.getElementById('alumno-plan').value;
+  const diasH = document.getElementById('alumno-horario-dias').value;
+  const franjaH = document.getElementById('alumno-horario-franja').value;
+  const horario = (diasH && franjaH) ? { dias: diasH, franja: franjaH } : null;
   if(!n || !p) return;
-  if(id) await updateDoc(doc(db, 'alumnos', id), { nombre:n, pass:p, foto:f, usuario:norm(n) });
-  else await addDoc(collection(db,'alumnos'), { nombre:n, pass:p, foto:f, usuario:norm(n), logins:0, total_logins:0, dias_semana:[] });
+  if(id) {
+    await updateDoc(doc(db, 'alumnos', id), { nombre:n, pass:p, foto:f, usuario:norm(n), plan, horario });
+  } else {
+    const idsExistentes = alumnosCacheAdmin.map(a => a.identidad).filter(Boolean);
+    const identidad = generarIdentidadUnica(n, idsExistentes);
+    await addDoc(collection(db,'alumnos'), { nombre:n, pass:p, foto:f, usuario:norm(n), plan, horario, identidad, logins:0, total_logins:0, dias_semana:[] });
+  }
   location.reload();
 };
 window.prepararEdicionEnlace = (id, t, u) => {
@@ -1598,7 +1982,7 @@ window.resetearAsistenciaSemanal = async () => {
 };
 window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); signOut(auth).then(() => location.reload()); };
 window.switchTab = (n, b) => {
-  document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.admin-menu-card').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
   b.classList.add('active'); document.getElementById('tab-'+n).style.display='block';
 };
@@ -1629,11 +2013,30 @@ window.abrirPerfil = () => {
   const foto = resolverUrlDrive(sessionActiva.foto || '');
   preview.innerHTML = foto ? `<img src="${foto}">` : `<div class="avatar-default">${sessionActiva.nombre.charAt(0).toUpperCase()}</div>`;
   document.getElementById('perfil-nombre-txt').innerText = sessionActiva.nombre;
+  document.getElementById('perfil-id-txt').innerText = sessionActiva.identidad ? `ID: ${sessionActiva.identidad}` : '';
+  const badgesEl = document.getElementById('perfil-info-badges');
+  if (badgesEl) {
+    let html = '';
+    if (sessionActiva.plan) html += `<span class="info-pill plan-pill"><i class="fa-solid fa-gem"></i> ${sessionActiva.plan}</span>`;
+    if (sessionActiva.horario && sessionActiva.horario.dias) {
+      const activo = horarioEstaActivoAhora(sessionActiva.horario);
+      html += `<span class="info-pill horario-pill ${activo?'activo':''}"><span class="dot"></span> ${sessionActiva.horario.dias} · ${sessionActiva.horario.franja}</span>`;
+    }
+    badgesEl.innerHTML = html;
+  }
+  document.getElementById('perfil-whatsapp').value = sessionActiva.whatsapp || '';
   document.getElementById('perfil-pass-nueva').value = '';
   document.getElementById('perfil-pass-confirmar').value = '';
   document.getElementById('modal-perfil-bg').classList.add('open');
 };
 window.cerrarPerfil = () => document.getElementById('modal-perfil-bg').classList.remove('open');
+window.guardarWhatsappPerfil = async () => {
+  const wa = document.getElementById('perfil-whatsapp').value.trim();
+  if (wa && !/^\+\d{6,15}$/.test(wa.replace(/\s+/g,''))) { showModal('Atención', 'Escribe el WhatsApp con código de país, ej: +50588888888'); return; }
+  await updateDoc(doc(db,'alumnos',sessionActiva.id), { whatsapp: wa });
+  sessionActiva.whatsapp = wa;
+  showModal('Éxito', 'Número de WhatsApp actualizado.');
+};
 window.subirFotoPerfil = async (ev) => {
   const file = ev.target.files[0];
   if (!file || !sessionActiva) return;
@@ -1718,10 +2121,11 @@ function renderPresencia() {
   num.innerText = enLinea;
 }
 function renderContactosChat() {
-  const cont = document.getElementById('chat-contacts');
+  const cont = document.getElementById('chat-contacts-online');
   if (!cont) return;
   // Solo mostramos a quienes están conectados ahora mismo — así los alumnos no ven
-  // (ni pueden contar) la lista completa de compañeros registrados.
+  // (ni pueden contar) la lista completa de compañeros registrados. Para hablar con
+  // alguien que no está en línea, deben buscarlo por su ID de estudiante.
   const conectados = alumnosPresenciaCache.filter(estaEnLinea);
   cont.innerHTML = conectados.map(a => {
     const foto = resolverUrlDrive(a.foto || '');
@@ -1734,6 +2138,15 @@ function renderContactosChat() {
     </div>`;
   }).join('') || `<div class="notif-empty" style="padding:8px;">No hay compañeros conectados en este momento.</div>`;
 }
+window.buscarAlumnoPorCodigo = () => {
+  const input = document.getElementById('chat-buscar-codigo');
+  const codigo = (input.value || '').trim().toUpperCase();
+  if (!codigo) return;
+  const encontrado = alumnosPresenciaCache.find(a => (a.identidad || '').toUpperCase() === codigo);
+  if (!encontrado) { showModal('No encontrado', 'No se encontró ningún compañero con ese ID de estudiante.'); return; }
+  input.value = '';
+  abrirChatPrivado(encontrado.id, encontrado.nombre || 'Compañero');
+};
 window.cambiarTabChat = (tab) => {
   chatTabActual = tab;
   document.getElementById('chat-tab-grupo').classList.toggle('active', tab==='grupo');
@@ -1855,6 +2268,7 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
   const btnSoporte = document.getElementById('btn-soporte-float');
   if (btnSoporte) btnSoporte.classList.toggle('visible', id === 's-student');
+  renderMeetFloat();
   if (id === 's-chat') marcarChatVisto();
 }
 window.showScreen = showScreen; // se llama desde onclick="" en el HTML (fuera del módulo),
