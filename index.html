@@ -1162,6 +1162,7 @@ function generarIdentidadUnica(nombreCompleto, idsExistentes) {
   } while (idsExistentes.includes(codigo) && intentos < 50);
   return codigo;
 }
+function escucharBanner() {
     onSnapshot(doc(db, 'config', 'banner'), (d) => {
         const area = document.getElementById('banner-area');
         if (!d.exists() || !d.data().url) return;
