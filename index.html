@@ -754,8 +754,11 @@ a { color: inherit; }
           <input type="url" id="meet-url" class="admin-input" placeholder="https://meet.google.com/xxx-xxxx-xxx">
           <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
           <div class="dest-picker">
-            <label class="dest-all-row"><input type="checkbox" id="meet-dest-todos" checked onchange="toggleMeetDestTodos()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
-            <div id="meet-dest-lista-alumnos"></div>
+            <label class="dest-all-row"><input type="radio" name="meet-dest-modo" id="meet-dest-todos" value="todos" checked onchange="toggleMeetDestModo()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
+            <label class="dest-all-row"><input type="radio" name="meet-dest-modo" id="meet-dest-modo-grupo" value="grupo" onchange="toggleMeetDestModo()"> <span style="color:#fff; font-weight:700;">Por grupo (horario)</span></label>
+            <label class="dest-all-row" style="border-bottom:none; margin-bottom:0; padding-bottom:6px;"><input type="radio" name="meet-dest-modo" id="meet-dest-modo-individual" value="individual" onchange="toggleMeetDestModo()"> <span style="color:#fff; font-weight:700;">Alumnos específicos</span></label>
+            <select id="meet-dest-grupo-select" class="admin-input" style="display:none; margin-top:8px;"></select>
+            <div id="meet-dest-lista-alumnos" style="display:none;"></div>
           </div>
           <button class="btn-login" id="btn-enviar-meet" onclick="enviarMeet()"><i class="fa-solid fa-video"></i> Enviar enlace de Meet</button>
           <div id="lista-reuniones-ui" style="margin-top:20px;"></div>
@@ -1691,6 +1694,7 @@ function renderDestPicker() {
   renderDestPickerEn('dest-lista-alumnos', 'dest-check');
   renderDestPickerEn('reto-dest-lista-alumnos', 'reto-dest-check');
   renderDestPickerEn('meet-dest-lista-alumnos', 'meet-dest-check');
+  renderMeetGrupoSelect();
 }
 function renderDestPickerEn(contId, claseCheck) {
   const cont = document.getElementById(contId);
@@ -1701,10 +1705,30 @@ window.toggleRetoDestTodos = () => {
   const todos = document.getElementById('reto-dest-todos').checked;
   document.getElementById('reto-dest-lista-alumnos').style.display = todos ? 'none' : 'block';
 };
-window.toggleMeetDestTodos = () => {
-  const todos = document.getElementById('meet-dest-todos').checked;
-  document.getElementById('meet-dest-lista-alumnos').style.display = todos ? 'none' : 'block';
+window.toggleMeetDestModo = () => {
+  const modoEl = document.querySelector('input[name="meet-dest-modo"]:checked');
+  const modo = modoEl ? modoEl.value : 'todos';
+  document.getElementById('meet-dest-grupo-select').style.display = modo === 'grupo' ? 'block' : 'none';
+  document.getElementById('meet-dest-lista-alumnos').style.display = modo === 'individual' ? 'block' : 'none';
 };
+function renderMeetGrupoSelect() {
+  const sel = document.getElementById('meet-dest-grupo-select');
+  if (!sel) return;
+  const actual = sel.value;
+  const vistos = new Set();
+  const grupos = [];
+  alumnosCacheAdmin.forEach(a => {
+    if (a.horario && a.horario.dias && a.horario.franja) {
+      const clave = `${a.horario.dias}||${a.horario.franja}`;
+      if (!vistos.has(clave)) { vistos.add(clave); grupos.push({ dias: a.horario.dias, franja: a.horario.franja }); }
+    }
+  });
+  grupos.sort((a, b) => (a.dias + a.franja).localeCompare(b.dias + b.franja));
+  sel.innerHTML = grupos.length
+    ? grupos.map(g => `<option value="${g.dias}||${g.franja}">${g.dias} · ${g.franja}</option>`).join('')
+    : `<option value="">-- No hay grupos con horario asignado --</option>`;
+  if (grupos.some(g => `${g.dias}||${g.franja}` === actual)) sel.value = actual;
+}
 
 /* ===== ADMIN: TOP 3 SEMANAL ===== */
 let top3ActualAdmin = [];
@@ -1844,13 +1868,24 @@ function escucharReunionesAdmin() {
 window.enviarMeet = async () => {
   const url = document.getElementById('meet-url').value.trim();
   if (!url || !/^https?:\/\//i.test(url)) { showModal('Falta información', 'Escribe un enlace válido de Google Meet.'); return; }
-  const todos = document.getElementById('meet-dest-todos').checked;
-  const destinatarios = todos ? [] : Array.from(document.querySelectorAll('.meet-dest-check:checked')).map(c => c.value);
-  if (!todos && !destinatarios.length) { showModal('Falta información', 'Selecciona al menos un alumno, o marca "Todos los alumnos".'); return; }
+  const modoEl = document.querySelector('input[name="meet-dest-modo"]:checked');
+  const modo = modoEl ? modoEl.value : 'todos';
+  let destinatarios = [];
+  if (modo === 'grupo') {
+    const grupoVal = document.getElementById('meet-dest-grupo-select').value;
+    if (!grupoVal) { showModal('Falta información', 'Selecciona un grupo (horario) para enviar el enlace.'); return; }
+    const [dias, franja] = grupoVal.split('||');
+    destinatarios = alumnosCacheAdmin.filter(a => a.horario && a.horario.dias === dias && a.horario.franja === franja).map(a => a.id);
+    if (!destinatarios.length) { showModal('Falta información', 'No hay alumnos asignados a ese grupo.'); return; }
+  } else if (modo === 'individual') {
+    destinatarios = Array.from(document.querySelectorAll('.meet-dest-check:checked')).map(c => c.value);
+    if (!destinatarios.length) { showModal('Falta información', 'Selecciona al menos un alumno, o marca "Todos los alumnos".'); return; }
+  }
   const expiraEn = Timestamp.fromMillis(Date.now() + 3*60*60*1000);
   await addDoc(collection(db,'reuniones'), { url, destinatarios, creadoEn: Date.now(), expiraEn });
   document.getElementById('meet-url').value = '';
   document.getElementById('meet-dest-todos').checked = true;
+  document.getElementById('meet-dest-grupo-select').style.display = 'none';
   document.getElementById('meet-dest-lista-alumnos').style.display = 'none';
   document.querySelectorAll('.meet-dest-check').forEach(chk => chk.checked = false);
   showModal('Éxito', 'Enlace de Google Meet enviado. Se eliminará solo en 3 horas.');
