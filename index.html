@@ -916,7 +916,7 @@ a { color: inherit; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
@@ -969,11 +969,62 @@ const MENSAJES_MOTIVACIONALES = [
 // Logo por defecto (incrustado en base64 — no depende de archivos externos)
 const LOGO_DEFAULT = "data:image/png;base64,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";
 
-setTimeout(() => { document.getElementById('loading').style.display='none'; showScreen('s-login'); }, 1500);
-
 // Aplica el logo (el que está incrustado en el código) a todos los puntos de marca: splash, login y nav estudiante.
 // Ya no se lee desde Firestore para evitar que un enlace viejo sobrescriba el logo oficial.
 aplicarLogo();
+
+// ===== RESTAURAR SESIÓN (evita pedir login otra vez si ya había una sesión activa) =====
+let sesionYaResuelta = false;
+onAuthStateChanged(auth, async (user) => {
+  if (sesionYaResuelta) return;
+  sesionYaResuelta = true;
+  await restaurarSesion(user);
+});
+
+async function restaurarSesion(user) {
+  const esperaMinima = new Promise(res => setTimeout(res, 1500));
+  const sesionGuardada = localStorage.getItem('nica_sesion_activa') === 'true';
+  const alumnoIdGuardado = localStorage.getItem('nica_alumno_id');
+  let destino = null;
+
+  if (sesionGuardada && user) {
+    if (user.email && user.email.toLowerCase() === CORREO_ADMIN) {
+      destino = { screen: 's-admin' };
+    } else if (alumnoIdGuardado) {
+      try {
+        const snap = await getDoc(doc(db, 'alumnos', alumnoIdGuardado));
+        if (snap.exists()) destino = { screen: 's-student', alumno: { id: snap.id, ...snap.data() } };
+      } catch (e) { console.error('No se pudo restaurar la sesión del alumno:', e); }
+    }
+  }
+
+  await esperaMinima;
+  document.getElementById('loading').style.display = 'none';
+
+  if (destino && destino.screen === 's-admin') {
+    showScreen('s-admin');
+    cargarDatosAdmin();
+  } else if (destino && destino.screen === 's-student') {
+    sessionActiva = destino.alumno;
+    renderUI(sessionActiva);
+    showScreen('s-student');
+    escucharRecursos();
+    escucharBanner();
+    escucharMentalidad();
+    escucharTop3();
+    escucharActividades();
+    escucharRetos();
+    escucharReuniones();
+    escucharGaleriaVideos();
+    escucharChat();
+    escucharPresenciaAlumnos();
+    iniciarLatido(sessionActiva.id);
+  } else {
+    localStorage.removeItem('nica_sesion_activa');
+    localStorage.removeItem('nica_alumno_id');
+    showScreen('s-login');
+  }
+}
 
 function getLocalDateStr(d) {
   const t = new Date(d.toLocaleString("en-US", {timeZone: "America/Managua"}));
@@ -1031,6 +1082,7 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
     });
     if (found) {
       localStorage.setItem('nica_sesion_activa', 'true');
+      localStorage.setItem('nica_alumno_id', found.id);
       sessionActiva = found;
       const inactivo24h = huboInactividad24h(found);
       await registrarAcceso(found);
@@ -2019,7 +2071,7 @@ window.resetearAsistenciaSemanal = async () => {
     showModal("Hecho", "Semana reiniciada.");
   }
 };
-window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); signOut(auth).then(() => location.reload()); };
+window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); localStorage.removeItem('nica_sesion_activa'); localStorage.removeItem('nica_alumno_id'); signOut(auth).then(() => location.reload()); };
 window.switchTab = (n, b) => {
   document.querySelectorAll('.admin-menu-card').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
