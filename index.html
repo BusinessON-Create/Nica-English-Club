@@ -251,12 +251,33 @@ a { color: inherit; }
 .admin-back-btn:hover { color:var(--gold); border-color:var(--gold2); }
 .admin-section-title { color:#fff; font-weight:700; font-size:14px; }
 
+/* ===== RETO RELÁMPAGO — PANTALLA COMPLETA ===== */
+.reto-fs-overlay { position:fixed; inset:0; z-index:900; display:none; align-items:center; justify-content:center; padding:24px; background:radial-gradient(circle at 50% 55%, rgba(90,20,0,.55), rgba(5,3,2,.94) 70%); backdrop-filter: blur(6px); }
+.reto-fs-overlay.visible { display:flex; }
+.reto-fs-close { position:absolute; top:22px; right:22px; width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); color:#fff; font-size:17px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background .2s var(--ease), transform .2s var(--ease); }
+.reto-fs-close:hover { background:rgba(255,255,255,.18); transform: scale(1.08); }
+.reto-fs-card { position:relative; max-width:420px; width:100%; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px; }
+.reto-fireball-wrap { position:relative; width:150px; height:150px; margin-bottom:6px; display:flex; align-items:center; justify-content:center; }
+.reto-fireball { width:104px; height:104px; border-radius:50%; background: radial-gradient(circle at 38% 32%, #fff6c8 0%, #ffd966 18%, #ffb020 42%, #ff6a1a 66%, #d92c0e 88%); box-shadow: 0 0 40px 12px rgba(255,110,20,.55), 0 0 90px 30px rgba(255,60,0,.35); animation: retoFirePulse 1.4s ease-in-out infinite; position:relative; z-index:2; }
+.reto-fireball::before, .reto-fireball::after { content:''; position:absolute; border-radius:50%; filter: blur(2px); opacity:.85; }
+.reto-fireball::before { width:36px; height:52px; background: radial-gradient(circle, #fff6c8, #ffb020 60%, transparent 75%); top:-26px; left:34px; animation: retoFlameFlicker 1s ease-in-out infinite alternate; }
+.reto-fireball::after { width:22px; height:34px; background: radial-gradient(circle, #fff6c8, #ff6a1a 55%, transparent 75%); top:-16px; left:58px; animation: retoFlameFlicker 0.8s ease-in-out infinite alternate-reverse; }
+.reto-fireball-ring { position:absolute; inset:0; border-radius:50%; border:2px solid rgba(255,150,40,.4); animation: retoRingExpand 1.6s ease-out infinite; }
+@keyframes retoFirePulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.06); } }
+@keyframes retoFlameFlicker { 0% { transform: translateY(0) scaleY(1); opacity:.85; } 100% { transform: translateY(-6px) scaleY(1.15); opacity:1; } }
+@keyframes retoRingExpand { 0% { transform:scale(.9); opacity:.7; } 100% { transform:scale(1.9); opacity:0; } }
+.reto-fs-badge { color:var(--gold3); font-weight:700; font-size:12.5px; letter-spacing:1px; text-transform:uppercase; }
+.reto-fs-titulo { color:#fff; font-family:'Playfair Display'; font-size:24px; line-height:1.25; }
+.reto-fs-instruccion { color:var(--muted); font-size:14px; line-height:1.5; max-width:360px; }
+.reto-fs-ok { margin-top:10px; }
+@media (max-width:480px) { .reto-fireball-wrap { width:120px; height:120px; } .reto-fireball { width:86px; height:86px; } .reto-fs-titulo { font-size:20px; } }
+
 /* ===== BOTÓN FLOTANTE GOOGLE MEET ===== */
-.meet-float-btn { position:fixed; bottom:22px; left:22px; z-index:400; width:58px; height:58px; border-radius:50%; background:#1a1a1f; border:2px solid #34a853; box-shadow: 0 10px 26px rgba(0,0,0,.5); align-items:center; justify-content:center; cursor:pointer; transition: transform .2s var(--ease), box-shadow .2s var(--ease); display:none; padding:10px; }
+.meet-float-btn { position:fixed; bottom:22px; left:22px; z-index:400; width:150px; height:50px; border-radius:999px; background:#ffffff; border:2px solid #34a853; box-shadow: 0 10px 26px rgba(0,0,0,.5); align-items:center; justify-content:center; cursor:pointer; transition: transform .2s var(--ease), box-shadow .2s var(--ease); display:none; padding:10px 16px; }
 .meet-float-btn.visible { display:flex; animation: pulseSoft 2s ease infinite; }
 .meet-float-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 14px 32px rgba(52,168,83,.4); }
-.meet-float-btn svg { width:100%; height:100%; }
-@media (max-width:480px) { .meet-float-btn { bottom:16px; left:16px; width:52px; height:52px; } }
+.meet-float-btn img { width:100%; height:100%; object-fit:contain; display:block; }
+@media (max-width:480px) { .meet-float-btn { bottom:16px; left:16px; width:132px; height:44px; } }
 
 /* ===== HORARIO / PLAN / ID DE ESTUDIANTE ===== */
 .student-id-badge { font-family:'DM Mono', monospace; font-size:10.5px; color:var(--gold3); letter-spacing:.5px; margin-top:2px; }
@@ -708,8 +729,11 @@ a { color: inherit; }
           <input type="url" id="actividad-enlace" class="admin-input" placeholder="Enlace (opcional) — ej: https://...">
           <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
           <div class="dest-picker">
-            <label class="dest-all-row"><input type="checkbox" id="dest-todos" checked onchange="toggleDestTodos()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
-            <div id="dest-lista-alumnos"></div>
+            <label class="dest-all-row"><input type="radio" name="dest-modo" id="dest-todos" value="todos" checked onchange="toggleDestModo()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
+            <label class="dest-all-row"><input type="radio" name="dest-modo" id="dest-modo-grupo" value="grupo" onchange="toggleDestModo()"> <span style="color:#fff; font-weight:700;">Por grupo (horario)</span></label>
+            <label class="dest-all-row" style="border-bottom:none; margin-bottom:0; padding-bottom:6px;"><input type="radio" name="dest-modo" id="dest-modo-individual" value="individual" onchange="toggleDestModo()"> <span style="color:#fff; font-weight:700;">Alumnos específicos</span></label>
+            <select id="dest-grupo-select" class="admin-input" style="display:none; margin-top:8px;"></select>
+            <div id="dest-lista-alumnos" style="display:none;"></div>
           </div>
           <button class="btn-login" id="btn-guardar-actividad" onclick="guardarActividad()">Publicar actividad</button>
           <button onclick="limpiarActividadesAnteriores()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">LIMPIAR ACTIVIDADES DE SEMANAS ANTERIORES</button>
@@ -723,8 +747,11 @@ a { color: inherit; }
             <textarea id="reto-instruccion" class="form-textarea" placeholder="¿Qué deben hacer? (instrucciones del reto)"></textarea>
             <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
             <div class="dest-picker">
-              <label class="dest-all-row"><input type="checkbox" id="reto-dest-todos" checked onchange="toggleRetoDestTodos()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
-              <div id="reto-dest-lista-alumnos"></div>
+              <label class="dest-all-row"><input type="radio" name="reto-dest-modo" id="reto-dest-todos" value="todos" checked onchange="toggleRetoDestModo()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
+              <label class="dest-all-row"><input type="radio" name="reto-dest-modo" id="reto-dest-modo-grupo" value="grupo" onchange="toggleRetoDestModo()"> <span style="color:#fff; font-weight:700;">Por grupo (horario)</span></label>
+              <label class="dest-all-row" style="border-bottom:none; margin-bottom:0; padding-bottom:6px;"><input type="radio" name="reto-dest-modo" id="reto-dest-modo-individual" value="individual" onchange="toggleRetoDestModo()"> <span style="color:#fff; font-weight:700;">Alumnos específicos</span></label>
+              <select id="reto-dest-grupo-select" class="admin-input" style="display:none; margin-top:8px;"></select>
+              <div id="reto-dest-lista-alumnos" style="display:none;"></div>
             </div>
             <button class="btn-login" id="btn-guardar-reto" onclick="guardarReto()">Enviar reto relámpago</button>
             <div id="lista-retos-ui" style="margin-top:16px;"></div>
@@ -884,17 +911,23 @@ a { color: inherit; }
 
 <!-- BOTON FLOTANTE GOOGLE MEET (aparece solo si hay una reunión activa para el alumno) -->
 <button class="meet-float-btn" id="btn-meet-float" onclick="unirseAMeet()" title="Unirse a la clase en Google Meet">
-  <svg viewBox="0 0 87 72" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#00832d" d="M49.5 36 61 24.5V47z"/>
-    <path fill="#0066da" d="M0 51v14a6 6 0 0 0 6 6h14l3-10.5-3-9.5-10.5-3z"/>
-    <path fill="#e94235" d="M20 0 0 20l10.5 3L20 20l3-9.5z"/>
-    <path fill="#2684fc" d="M20 20H0v31h20z"/>
-    <path fill="#00ac47" d="M83 8.5 68 20v32l15.1 11.6a4.5 4.5 0 0 0 7.4-3.4V11.8A4.5 4.5 0 0 0 83 8.5z"/>
-    <path fill="#ffba00" d="M49.5 36 20 20v31l29.5-1.6z" opacity="0"/>
-    <rect x="20" y="20" width="48" height="32" rx="6" fill="#00ac47"/>
-    <path fill="#00ac47" d="M20 20h29.5c5 0 9 4 9 9v14c0 5-4 9-9 9H20z"/>
-  </svg>
+  <img src="data:image/png;base64,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" alt="Google Meet">
 </button>
+
+<!-- RETO RELÁMPAGO — OVERLAY DE PANTALLA COMPLETA -->
+<div class="reto-fs-overlay" id="reto-fs-overlay">
+  <button class="reto-fs-close" id="reto-fs-close-btn" onclick="cerrarRetoFullscreen()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+  <div class="reto-fs-card">
+    <div class="reto-fireball-wrap">
+      <div class="reto-fireball-ring"></div>
+      <div class="reto-fireball"></div>
+    </div>
+    <span class="reto-fs-badge"><i class="fa-solid fa-bolt"></i> Reto relámpago</span>
+    <h3 class="reto-fs-titulo" id="reto-fs-titulo"></h3>
+    <p class="reto-fs-instruccion" id="reto-fs-instruccion"></p>
+    <button class="btn-login reto-fs-ok" onclick="cerrarRetoFullscreen()">¡Acepto el reto! <i class="fa-solid fa-fire"></i></button>
+  </div>
+</div>
 
 <!-- NOTIFICACIONES: vive fuera del <nav> a propósito. El <nav> usa backdrop-filter,
      y backdrop-filter/transform/filter en un ancestro crea un "containing block" nuevo
@@ -1395,6 +1428,7 @@ function escucharRetos() {
       if (nuevoMax > anteriorMax) reproducirDing();
     }
     primeraCargaRetos = false;
+    encolarRetosFullscreenNoVistos();
   });
 }
 function renderRetos() {
@@ -1405,6 +1439,48 @@ function renderRetos() {
   card.style.display='block';
   list.innerHTML = ultimosRetos.map(r => `<div class="reto-card"><div class="reto-icon"><i class="fa-solid fa-dumbbell"></i><i class="fa-solid fa-bolt"></i></div><div class="reto-body"><h4>${r.titulo}</h4><p>${r.instruccion||''}</p></div></div>`).join('');
 }
+
+/* ===== RETO RELÁMPAGO — POPUP DE PANTALLA COMPLETA ===== */
+let colaRetosFullscreen = [];
+let mostrandoRetoFullscreen = false;
+function getRetosVistos() {
+  try { return JSON.parse(localStorage.getItem('nec_retos_vistos') || '[]'); } catch (e) { return []; }
+}
+function marcarRetoVisto(id) {
+  if (!id) return;
+  const vistos = getRetosVistos();
+  if (!vistos.includes(id)) {
+    vistos.push(id);
+    try { localStorage.setItem('nec_retos_vistos', JSON.stringify(vistos.slice(-200))); } catch (e) {}
+  }
+}
+function encolarRetosFullscreenNoVistos() {
+  const vistos = getRetosVistos();
+  ultimosRetos.forEach(r => {
+    if (!vistos.includes(r.id) && !colaRetosFullscreen.some(x => x.id === r.id) && !(mostrandoRetoFullscreen && document.getElementById('reto-fs-overlay').dataset.retoId === r.id)) {
+      colaRetosFullscreen.push(r);
+    }
+  });
+  procesarColaRetosFullscreen();
+}
+function procesarColaRetosFullscreen() {
+  if (mostrandoRetoFullscreen || !colaRetosFullscreen.length) return;
+  const reto = colaRetosFullscreen.shift();
+  mostrandoRetoFullscreen = true;
+  const overlay = document.getElementById('reto-fs-overlay');
+  document.getElementById('reto-fs-titulo').textContent = reto.titulo || '';
+  document.getElementById('reto-fs-instruccion').textContent = reto.instruccion || '';
+  overlay.dataset.retoId = reto.id;
+  overlay.classList.add('visible');
+}
+window.cerrarRetoFullscreen = () => {
+  const overlay = document.getElementById('reto-fs-overlay');
+  marcarRetoVisto(overlay.dataset.retoId);
+  overlay.classList.remove('visible');
+  overlay.dataset.retoId = '';
+  mostrandoRetoFullscreen = false;
+  setTimeout(procesarColaRetosFullscreen, 350);
+};
 
 /* ===== REUNIÓN DE GOOGLE MEET (botón flotante, expira en 3h) ===== */
 function escucharReuniones() {
@@ -1741,24 +1817,30 @@ function cargarDatosAdmin() {
 }
 
 /* ===== ADMIN: NOTIFICACIONES DIRIGIDAS (a quién se envía cada actividad) ===== */
-window.toggleDestTodos = () => {
-  const todos = document.getElementById('dest-todos').checked;
-  document.getElementById('dest-lista-alumnos').style.display = todos ? 'none' : 'block';
+window.toggleDestModo = () => {
+  const modoEl = document.querySelector('input[name="dest-modo"]:checked');
+  const modo = modoEl ? modoEl.value : 'todos';
+  document.getElementById('dest-grupo-select').style.display = modo === 'grupo' ? 'block' : 'none';
+  document.getElementById('dest-lista-alumnos').style.display = modo === 'individual' ? 'block' : 'none';
 };
 function renderDestPicker() {
   renderDestPickerEn('dest-lista-alumnos', 'dest-check');
   renderDestPickerEn('reto-dest-lista-alumnos', 'reto-dest-check');
   renderDestPickerEn('meet-dest-lista-alumnos', 'meet-dest-check');
-  renderMeetGrupoSelect();
+  renderGrupoSelect('dest-grupo-select');
+  renderGrupoSelect('reto-dest-grupo-select');
+  renderGrupoSelect('meet-dest-grupo-select');
 }
 function renderDestPickerEn(contId, claseCheck) {
   const cont = document.getElementById(contId);
   if (!cont) return;
   cont.innerHTML = alumnosCacheAdmin.map(a => `<label class="dest-row"><input type="checkbox" class="${claseCheck}" value="${a.id}"> ${a.nombre}${a.identidad ? ` <small style="color:var(--muted)">(${a.identidad})</small>` : ''}</label>`).join('') || `<p class="form-hint" style="margin:6px 0 0;">Aún no hay alumnos registrados.</p>`;
 }
-window.toggleRetoDestTodos = () => {
-  const todos = document.getElementById('reto-dest-todos').checked;
-  document.getElementById('reto-dest-lista-alumnos').style.display = todos ? 'none' : 'block';
+window.toggleRetoDestModo = () => {
+  const modoEl = document.querySelector('input[name="reto-dest-modo"]:checked');
+  const modo = modoEl ? modoEl.value : 'todos';
+  document.getElementById('reto-dest-grupo-select').style.display = modo === 'grupo' ? 'block' : 'none';
+  document.getElementById('reto-dest-lista-alumnos').style.display = modo === 'individual' ? 'block' : 'none';
 };
 window.toggleMeetDestModo = () => {
   const modoEl = document.querySelector('input[name="meet-dest-modo"]:checked');
@@ -1766,8 +1848,8 @@ window.toggleMeetDestModo = () => {
   document.getElementById('meet-dest-grupo-select').style.display = modo === 'grupo' ? 'block' : 'none';
   document.getElementById('meet-dest-lista-alumnos').style.display = modo === 'individual' ? 'block' : 'none';
 };
-function renderMeetGrupoSelect() {
-  const sel = document.getElementById('meet-dest-grupo-select');
+function renderGrupoSelect(selId) {
+  const sel = document.getElementById(selId);
   if (!sel) return;
   const actual = sel.value;
   const vistos = new Set();
@@ -1783,6 +1865,22 @@ function renderMeetGrupoSelect() {
     ? grupos.map(g => `<option value="${g.dias}||${g.franja}">${g.dias} · ${g.franja}</option>`).join('')
     : `<option value="">-- No hay grupos con horario asignado --</option>`;
   if (grupos.some(g => `${g.dias}||${g.franja}` === actual)) sel.value = actual;
+}
+function obtenerDestinatariosPorModo(nombreRadio, grupoSelId, listaClase) {
+  const modoEl = document.querySelector(`input[name="${nombreRadio}"]:checked`);
+  const modo = modoEl ? modoEl.value : 'todos';
+  if (modo === 'todos') return { ok: true, destinatarios: [] };
+  if (modo === 'grupo') {
+    const grupoVal = document.getElementById(grupoSelId).value;
+    if (!grupoVal) return { ok: false, msg: 'Selecciona un grupo (horario) para enviar.' };
+    const [dias, franja] = grupoVal.split('||');
+    const destinatarios = alumnosCacheAdmin.filter(a => a.horario && a.horario.dias === dias && a.horario.franja === franja).map(a => a.id);
+    if (!destinatarios.length) return { ok: false, msg: 'No hay alumnos asignados a ese grupo.' };
+    return { ok: true, destinatarios };
+  }
+  const destinatarios = Array.from(document.querySelectorAll(`.${listaClase}:checked`)).map(c => c.value);
+  if (!destinatarios.length) return { ok: false, msg: 'Selecciona al menos un alumno, o marca "Todos los alumnos".' };
+  return { ok: true, destinatarios };
 }
 
 /* ===== ADMIN: TOP 3 SEMANAL ===== */
@@ -1846,6 +1944,9 @@ window.prepararEdicionActividad = (id, titulo, descripcion, destinatarios, enlac
   document.getElementById('actividad-enlace').value = enlace || '';
   const todos = !destinatarios || !destinatarios.length;
   document.getElementById('dest-todos').checked = todos;
+  document.getElementById('dest-modo-grupo').checked = false;
+  document.getElementById('dest-modo-individual').checked = !todos;
+  document.getElementById('dest-grupo-select').style.display = 'none';
   document.getElementById('dest-lista-alumnos').style.display = todos ? 'none' : 'block';
   document.querySelectorAll('.dest-check').forEach(chk => { chk.checked = !todos && destinatarios.includes(chk.value); });
   document.getElementById('btn-guardar-actividad').innerText = "Actualizar actividad";
@@ -1857,9 +1958,9 @@ window.guardarActividad = async () => {
   const id = document.getElementById('actividad-id-edicion').value;
   if (!titulo) return;
   const semana = getLocalDateStr(getMonday(new Date()));
-  const todos = document.getElementById('dest-todos').checked;
-  const destinatarios = todos ? [] : Array.from(document.querySelectorAll('.dest-check:checked')).map(c => c.value);
-  if (!todos && !destinatarios.length) { showModal('Falta información', 'Selecciona al menos un alumno, o marca "Todos los alumnos".'); return; }
+  const res = obtenerDestinatariosPorModo('dest-modo', 'dest-grupo-select', 'dest-check');
+  if (!res.ok) { showModal('Falta información', res.msg); return; }
+  const destinatarios = res.destinatarios;
   if (id) {
     await updateDoc(doc(db,'actividades',id), { titulo, descripcion, enlace, destinatarios });
   } else {
@@ -1870,6 +1971,7 @@ window.guardarActividad = async () => {
   document.getElementById('actividad-descripcion').value = '';
   document.getElementById('actividad-enlace').value = '';
   document.getElementById('dest-todos').checked = true;
+  document.getElementById('dest-grupo-select').style.display = 'none';
   document.getElementById('dest-lista-alumnos').style.display = 'none';
   document.querySelectorAll('.dest-check').forEach(chk => chk.checked = false);
   document.getElementById('btn-guardar-actividad').innerText = "Publicar actividad";
@@ -1892,13 +1994,14 @@ window.guardarReto = async () => {
   const titulo = document.getElementById('reto-titulo').value.trim();
   const instruccion = document.getElementById('reto-instruccion').value.trim();
   if (!titulo || !instruccion) { showModal('Falta información', 'Escribe el título y la instrucción del reto.'); return; }
-  const todos = document.getElementById('reto-dest-todos').checked;
-  const destinatarios = todos ? [] : Array.from(document.querySelectorAll('.reto-dest-check:checked')).map(c => c.value);
-  if (!todos && !destinatarios.length) { showModal('Falta información', 'Selecciona al menos un alumno, o marca "Todos los alumnos".'); return; }
+  const res = obtenerDestinatariosPorModo('reto-dest-modo', 'reto-dest-grupo-select', 'reto-dest-check');
+  if (!res.ok) { showModal('Falta información', res.msg); return; }
+  const destinatarios = res.destinatarios;
   await addDoc(collection(db,'retos'), { titulo, instruccion, destinatarios, fecha: Date.now() });
   document.getElementById('reto-titulo').value = '';
   document.getElementById('reto-instruccion').value = '';
   document.getElementById('reto-dest-todos').checked = true;
+  document.getElementById('reto-dest-grupo-select').style.display = 'none';
   document.getElementById('reto-dest-lista-alumnos').style.display = 'none';
   document.querySelectorAll('.reto-dest-check').forEach(chk => chk.checked = false);
   showModal('Éxito', 'Reto relámpago enviado.');
