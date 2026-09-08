@@ -276,18 +276,22 @@ a { color: inherit; }
 /* ===== NECLUB — MINI RED SOCIAL INTERNA ===== */
 .neclub-launch-btn { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:700; font-size:10.5px; padding:6px 12px; border-radius:99px; border:none; cursor:pointer; font-family:inherit; letter-spacing:.3px; margin-top:8px; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
 .neclub-launch-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(240,180,41,.25); }
-.neclub-shell { max-width:560px; margin:0 auto; padding:16px 14px 90px; }
-.neclub-composer { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; margin-bottom:18px; }
-.neclub-composer-row { display:flex; gap:12px; align-items:flex-start; }
+.neclub-shell { width:100%; max-width:560px; margin:0 auto; padding:16px 14px 90px; box-sizing:border-box; }
+.neclub-composer { width:100%; max-width:100%; background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; margin-bottom:18px; box-sizing:border-box; overflow:hidden; }
+.neclub-composer-row { display:flex; gap:12px; align-items:flex-start; width:100%; max-width:100%; }
 .neclub-avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-weight:700; font-size:14px; }
 .neclub-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-.neclub-composer textarea { flex:1; width:100%; min-height:44px; max-height:160px; padding:10px 0; background:transparent; border:none; color:var(--text); outline:none; font-family:inherit; font-size:14px; resize:none; line-height:1.4; }
-.neclub-composer-hint { font-size:11px; color:var(--muted-dim); margin:2px 0 10px 52px; }
-.neclub-preview-wrap { margin:0 0 12px 52px; position:relative; display:inline-block; }
+.neclub-composer textarea { flex:1 1 auto; width:100%; min-width:0; max-width:100%; min-height:44px; max-height:160px; padding:10px 0; background:transparent; border:none; color:var(--text); outline:none; font-family:inherit; font-size:14px; resize:none; line-height:1.4; box-sizing:border-box; word-break:break-word; }
+.neclub-composer-hint { font-size:11px; color:var(--muted-dim); margin:2px 0 10px 52px; max-width:calc(100% - 52px); box-sizing:border-box; }
+.neclub-preview-wrap { width:100%; max-width:calc(100% - 52px); margin:0 0 12px 52px; position:relative; display:block; box-sizing:border-box; }
 .neclub-preview-wrap img, .neclub-preview-wrap video { max-width:100%; max-height:220px; border-radius:14px; display:block; border:1px solid var(--border2); }
-.neclub-preview-wrap audio { width:260px; max-width:100%; }
+.neclub-preview-wrap audio { width:100%; max-width:260px; }
 .neclub-preview-remove { position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; background:#000; border:1px solid var(--border2); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; }
-.neclub-composer-actions { display:flex; align-items:center; justify-content:space-between; margin-left:52px; border-top:1px solid var(--border); padding-top:12px; flex-wrap:wrap; gap:10px; }
+.neclub-composer-actions { display:flex; align-items:center; justify-content:space-between; max-width:calc(100% - 52px); margin-left:52px; border-top:1px solid var(--border); padding-top:12px; flex-wrap:wrap; gap:10px; box-sizing:border-box; }
+@media (max-width:420px) {
+  .neclub-composer-hint, .neclub-preview-wrap, .neclub-composer-actions { margin-left:0; max-width:100%; }
+  .neclub-composer-row { flex-wrap:wrap; }
+}
 .neclub-media-btns { display:flex; gap:6px; }
 .neclub-media-btn { width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.04); border:1px solid var(--border2); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; transition: color .18s var(--ease), border-color .18s var(--ease); }
 .neclub-media-btn:hover { color:var(--gold); border-color:var(--gold2); }
@@ -308,6 +312,22 @@ a { color: inherit; }
 .neclub-post-texto { color:var(--text); font-size:14px; line-height:1.5; margin-bottom:10px; white-space:pre-wrap; word-break:break-word; }
 .neclub-post-media img, .neclub-post-media video { width:100%; max-height:420px; object-fit:cover; border-radius:14px; display:block; margin-bottom:10px; background:#000; }
 .neclub-post-media audio { width:100%; margin-bottom:10px; }
+
+/* Formato uniforme estilo Instagram para fotos/videos del muro */
+.neclub-media-tap { width:100%; aspect-ratio:4/5; max-height:520px; border-radius:14px; overflow:hidden; background:#000; margin-bottom:10px; }
+.neclub-media-tap img, .neclub-media-tap video { width:100%; height:100%; object-fit:cover; display:block; border-radius:14px; }
+@media (max-width:420px) { .neclub-media-tap { aspect-ratio:4/5; max-height:70vh; } }
+
+/* Lupa para indicar que se puede ampliar */
+.neclub-expand-hint { position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; pointer-events:none; }
+
+/* Visor de imagen/video en pantalla completa (bien ajustado en celular, sin exagerar tamaño) */
+.neclub-lightbox { position:fixed; inset:0; z-index:960; display:none; flex-direction:column; background:rgba(0,0,0,.94); }
+.neclub-lightbox.open { display:flex; }
+.neclub-lightbox-topbar { display:flex; align-items:center; justify-content:flex-end; padding:12px 14px; flex-shrink:0; }
+.neclub-lightbox-close { background:rgba(255,255,255,.08); border:1px solid var(--border2); color:#fff; width:38px; height:38px; border-radius:50%; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.neclub-lightbox-stage { flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:10px 14px; min-height:0; }
+.neclub-lightbox-stage img, .neclub-lightbox-stage video { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; border-radius:8px; display:block; }
 .neclub-post-badge { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--gold3); background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); padding:3px 9px; border-radius:99px; margin-bottom:10px; }
 .neclub-post-actions { display:flex; align-items:center; gap:18px; padding-top:10px; border-top:1px solid var(--border); }
 .neclub-action-btn { background:transparent; border:none; color:var(--muted); display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; transition: color .18s var(--ease); }
@@ -1138,6 +1158,14 @@ a { color: inherit; }
   </div>
 </div>
 
+<!-- NECLUB: visor de foto/video en pantalla completa -->
+<div class="neclub-lightbox" id="neclub-lightbox">
+  <div class="neclub-lightbox-topbar">
+    <button class="neclub-lightbox-close" onclick="cerrarLightboxNeclub()" title="Close"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="neclub-lightbox-stage" id="neclub-lightbox-stage" onclick="if(event.target===this) cerrarLightboxNeclub()"></div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -1226,12 +1254,15 @@ async function restaurarSesion(user) {
   document.getElementById('loading').style.display = 'none';
 
   if (destino && destino.screen === 's-admin') {
-    showScreen('s-admin');
+    nicaHomeScreen = 's-admin';
+    showScreen('s-admin', { replace: true });
     cargarDatosAdmin();
+    restaurarPantallaGuardada('s-admin');
   } else if (destino && destino.screen === 's-student') {
     sessionActiva = destino.alumno;
     renderUI(sessionActiva);
-    showScreen('s-student');
+    nicaHomeScreen = 's-student';
+    showScreen('s-student', { replace: true });
     escucharRecursos();
     escucharBanner();
     escucharMentalidad();
@@ -1244,10 +1275,13 @@ async function restaurarSesion(user) {
     escucharChat();
     escucharPresenciaAlumnos();
     iniciarLatido(sessionActiva.id);
+    restaurarPantallaGuardada('s-student');
   } else {
     localStorage.removeItem('nica_sesion_activa');
     localStorage.removeItem('nica_alumno_id');
-    showScreen('s-login');
+    localStorage.removeItem('nica_ultima_pantalla');
+    nicaHomeScreen = 's-login';
+    showScreen('s-login', { replace: true });
   }
 }
 
@@ -1289,7 +1323,9 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
       await signOut(auth);
       await signInWithEmailAndPassword(auth, entrada, pass);
       localStorage.setItem('nica_sesion_activa', 'true');
-      showScreen('s-admin'); cargarDatosAdmin();
+      localStorage.removeItem('nica_ultima_pantalla');
+      nicaHomeScreen = 's-admin';
+      showScreen('s-admin', { replace: true }); cargarDatosAdmin();
     } catch(e) { errEl.style.display='block'; }
     return;
   }
@@ -1308,11 +1344,13 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
     if (found) {
       localStorage.setItem('nica_sesion_activa', 'true');
       localStorage.setItem('nica_alumno_id', found.id);
+      localStorage.removeItem('nica_ultima_pantalla');
       sessionActiva = found;
       const inactivo24h = huboInactividad24h(found);
       await registrarAcceso(found);
       renderUI(found);
-      showScreen('s-student');
+      nicaHomeScreen = 's-student';
+      showScreen('s-student', { replace: true });
       escucharRecursos();
       escucharBanner();
       escucharMentalidad();
@@ -1740,14 +1778,15 @@ function renderFeedNeclub() {
     const esHistoria = p.tipo === 'pdf';
     let mediaHtml = '';
     if (p.tipo === 'foto' && p.archivoUrl) {
-      mediaHtml = `<div class="neclub-media-tap" onclick="manejarTapMedia('${p.id}')"><img src="${p.archivoUrl}" loading="lazy" oncontextmenu="return false" draggable="false"><div class="neclub-heart-pop"><i class="fa-solid fa-heart"></i></div></div>`;
+      mediaHtml = `<div class="neclub-media-tap" style="position:relative;" onclick="manejarTapMedia('${p.id}','${p.archivoUrl}','foto')"><img src="${p.archivoUrl}" loading="lazy" oncontextmenu="return false" draggable="false"><div class="neclub-expand-hint"><i class="fa-solid fa-expand"></i></div><div class="neclub-heart-pop"><i class="fa-solid fa-heart"></i></div></div>`;
     } else if (p.tipo === 'video' && p.archivoUrl) {
-      mediaHtml = `<div class="neclub-media-tap" onclick="manejarTapMedia('${p.id}')"><video src="${p.archivoUrl}" controls preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false"></video><div class="neclub-heart-pop"><i class="fa-solid fa-heart"></i></div></div>`;
+      mediaHtml = `<div class="neclub-media-tap" style="position:relative;"><video src="${p.archivoUrl}" controls preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false"></video><div class="neclub-expand-hint" style="pointer-events:auto; cursor:pointer;" onclick="event.stopPropagation(); abrirLightboxNeclub('${p.archivoUrl}','video')"><i class="fa-solid fa-expand"></i></div></div>`;
     } else if (p.tipo === 'audio' && p.archivoUrl) {
       mediaHtml = `<div class="neclub-post-media"><audio src="${p.archivoUrl}" controls controlsList="nodownload" oncontextmenu="return false"></audio></div>`;
     } else if (esHistoria) {
       mediaHtml = `<div class="neclub-story-cover" onclick="abrirLectorPdfNeclub('${p.archivoUrl}','${escNeclub(p.texto).replace(/'/g,"\\'")}','${p.id}',${!!p.descargable})">
         ${p.coverUrl ? `<img src="${p.coverUrl}" oncontextmenu="return false" draggable="false">` : ''}
+        <div class="neclub-expand-hint"><i class="fa-solid fa-expand"></i></div>
         <div class="neclub-story-open"><i class="fa-solid fa-book-open"></i><b>${escNeclub(p.texto || 'Story')}</b><span>Tap to read like a book</span></div>
       </div>`;
     }
@@ -1779,18 +1818,40 @@ function renderFeedNeclub() {
   }).join('');
 }
 
-/* ===== NECLUB: doble tap = like (como Instagram) ===== */
-window.manejarTapMedia = (postId) => {
+/* ===== NECLUB: doble tap = like (como Instagram) / tap simple = ampliar ===== */
+window.manejarTapMedia = (postId, url, tipo) => {
   const ahora = Date.now();
   const anterior = neclubUltimoTap[postId] || 0;
   if (ahora - anterior < 350) {
+    if (neclubTapSimpleTimer) { clearTimeout(neclubTapSimpleTimer); neclubTapSimpleTimer = null; }
     agregarLikePost(postId);
     const heart = document.querySelector(`#neclub-post-${postId} .neclub-heart-pop`);
     if (heart) { heart.classList.remove('pop'); void heart.offsetWidth; heart.classList.add('pop'); }
     neclubUltimoTap[postId] = 0;
   } else {
     neclubUltimoTap[postId] = ahora;
+    if (url) {
+      neclubTapSimpleTimer = setTimeout(() => {
+        if (neclubUltimoTap[postId] === ahora) abrirLightboxNeclub(url, tipo);
+      }, 300);
+    }
   }
+};
+let neclubTapSimpleTimer = null;
+
+/* ===== NECLUB: visor de foto/video en pantalla completa (ajustado, sin exagerar en celular) ===== */
+window.abrirLightboxNeclub = (url, tipo) => {
+  const overlay = document.getElementById('neclub-lightbox');
+  const stage = document.getElementById('neclub-lightbox-stage');
+  stage.innerHTML = tipo === 'video'
+    ? `<video src="${url}" controls autoplay playsinline controlsList="nodownload noremoteplayback" oncontextmenu="return false"></video>`
+    : `<img src="${url}" oncontextmenu="return false" draggable="false">`;
+  overlay.classList.add('open');
+};
+window.cerrarLightboxNeclub = () => {
+  const overlay = document.getElementById('neclub-lightbox');
+  document.getElementById('neclub-lightbox-stage').innerHTML = '';
+  overlay.classList.remove('open');
 };
 
 /* ===== NECLUB: lector de historias en PDF, con efecto de pasar página ===== */
@@ -2888,7 +2949,7 @@ window.resetearAsistenciaSemanal = async () => {
     showModal("Hecho", "Semana reiniciada.");
   }
 };
-window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); localStorage.removeItem('nica_sesion_activa'); localStorage.removeItem('nica_alumno_id'); signOut(auth).then(() => location.reload()); };
+window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); localStorage.removeItem('nica_sesion_activa'); localStorage.removeItem('nica_alumno_id'); localStorage.removeItem('nica_ultima_pantalla'); signOut(auth).then(() => location.reload()); };
 window.switchTab = (n, b) => {
   document.querySelectorAll('.admin-menu-card').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
@@ -3173,16 +3234,49 @@ window.enviarSoporte = () => {
   window.open(`https://wa.me/${WA_SOPORTE}?text=${encodeURIComponent(mensaje)}`, '_blank');
   cerrarModalSoporte();
 };
-function showScreen(id) {
+/* ===== Navegación con History API =====
+   Objetivo: al presionar F5 dentro de una sección, la app se queda en esa misma sección
+   (no regresa al index). Solo el botón "atrás"/flecha del navegador debe volver al index. */
+let nicaHomeScreen = 's-login'; // pantalla "index" según el tipo de sesión activa (se actualiza al iniciar sesión)
+
+function showScreen(id, opciones = {}) {
+  const el = document.getElementById(id);
+  if (!el) return;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
   const btnSoporte = document.getElementById('btn-soporte-float');
   if (btnSoporte) btnSoporte.classList.toggle('visible', id === 's-student');
   renderMeetFloat();
   if (id === 's-chat') marcarChatVisto();
+
+  if (!opciones.noHistory) {
+    try {
+      localStorage.setItem('nica_ultima_pantalla', id);
+      const estado = { screen: id };
+      if (opciones.replace) history.replaceState(estado, '', '#' + id);
+      else history.pushState(estado, '', '#' + id);
+    } catch (e) { /* localStorage/history no disponible: no bloquea la navegación */ }
+  }
 }
 window.showScreen = showScreen; // se llama desde onclick="" en el HTML (fuera del módulo),
                                  // así que necesita estar colgada de window para ser visible ahí.
+
+// Restaura la sección guardada (si hay una) tras resolver la sesión al cargar/recargar la página.
+function restaurarPantallaGuardada(home) {
+  try {
+    const guardada = localStorage.getItem('nica_ultima_pantalla');
+    if (guardada && guardada !== home && document.getElementById(guardada)) {
+      showScreen(guardada);
+    }
+  } catch (e) {}
+}
+
+// Botón "atrás" / flecha superior del navegador: vuelve a la sección anterior en el historial,
+// o al index de la sesión activa si no hay un estado guardado.
+window.addEventListener('popstate', (ev) => {
+  const destino = (ev.state && ev.state.screen) ? ev.state.screen : nicaHomeScreen;
+  if (document.getElementById(destino)) showScreen(destino, { noHistory: true });
+});
 function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,".").trim(); }
 </script>
 </body>
