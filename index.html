@@ -289,7 +289,7 @@ a { color: inherit; }
 .neclub-preview-remove { position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; background:#000; border:1px solid var(--border2); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; }
 .neclub-composer-actions { display:flex; align-items:center; justify-content:space-between; max-width:calc(100% - 52px); margin-left:52px; border-top:1px solid var(--border); padding-top:12px; flex-wrap:wrap; gap:10px; box-sizing:border-box; }
 @media (max-width:420px) {
-  .neclub-composer-hint, .neclub-preview-wrap, .neclub-composer-actions { margin-left:0; max-width:100%; }
+  .neclub-composer-hint, .neclub-preview-wrap, .neclub-composer-actions, #neclub-post-progreso-wrap { margin-left:0; max-width:100%; }
   .neclub-composer-row { flex-wrap:wrap; }
 }
 .neclub-media-btns { display:flex; gap:6px; }
@@ -806,6 +806,12 @@ a { color: inherit; }
             <label class="neclub-media-btn audio" for="neclub-file-audio" title="Audio (max 2 min)"><i class="fa-solid fa-microphone"></i></label>
           </div>
           <button class="neclub-publish-btn" id="neclub-publish-btn" disabled onclick="publicarNeclub()">Post</button>
+        </div>
+        <div id="neclub-post-progreso-wrap" style="display:none; margin-top:10px; max-width:calc(100% - 52px); margin-left:52px;">
+          <div style="background:rgba(255,255,255,.08); border-radius:99px; height:6px; overflow:hidden;">
+            <div id="neclub-post-progreso-bar" style="background:linear-gradient(135deg, var(--gold3), var(--gold2)); height:100%; width:0%; transition:width .2s linear;"></div>
+          </div>
+          <p id="neclub-post-progreso-texto" style="font-size:11px; color:var(--muted-dim); margin-top:5px;">Subiendo... 0%</p>
         </div>
       </div>
 
@@ -1853,6 +1859,7 @@ function aplicarCambiosFeedNeclub(cambios) {
     if (cambio.type === 'removed') {
       const nodo = document.getElementById('neclub-post-'+p.id);
       if (nodo) nodo.remove();
+      if (neclubComentariosSubs[p.id]) { neclubComentariosSubs[p.id](); delete neclubComentariosSubs[p.id]; }
       return;
     }
     if (cambio.type === 'added') {
@@ -1933,7 +1940,7 @@ window.manejarTapMedia = (postId, url, tipo) => {
   const ahora = Date.now();
   const anterior = neclubUltimoTap[postId] || 0;
   if (ahora - anterior < 350) {
-    if (neclubTapSimpleTimer) { clearTimeout(neclubTapSimpleTimer); neclubTapSimpleTimer = null; }
+    if (neclubTapSimpleTimers[postId]) { clearTimeout(neclubTapSimpleTimers[postId]); delete neclubTapSimpleTimers[postId]; }
     agregarLikePost(postId);
     const heart = document.querySelector(`#neclub-post-${postId} .neclub-heart-pop`);
     if (heart) { heart.classList.remove('pop'); void heart.offsetWidth; heart.classList.add('pop'); }
@@ -1941,13 +1948,14 @@ window.manejarTapMedia = (postId, url, tipo) => {
   } else {
     neclubUltimoTap[postId] = ahora;
     if (url) {
-      neclubTapSimpleTimer = setTimeout(() => {
+      neclubTapSimpleTimers[postId] = setTimeout(() => {
+        delete neclubTapSimpleTimers[postId];
         if (neclubUltimoTap[postId] === ahora) abrirLightboxNeclub(url, tipo);
       }, 300);
     }
   }
 };
-let neclubTapSimpleTimer = null;
+let neclubTapSimpleTimers = {}; // postId -> temporizador (uno por publicación, no compartido)
 
 /* ===== NECLUB: visor de foto/video en pantalla completa (ajustado, sin exagerar en celular) ===== */
 window.abrirLightboxNeclub = (url, tipo) => {
@@ -1963,12 +1971,14 @@ window.cerrarLightboxNeclub = () => {
   const overlay = document.getElementById('neclub-lightbox');
   document.getElementById('neclub-lightbox-stage').innerHTML = '';
   overlay.classList.remove('open');
+  inicializarAutoplayVideosNeclub(); // reanuda el video que esté centrado en el muro, si lo hay
 };
 
 /* ===== NECLUB: lector de historias en PDF, con efecto de pasar página ===== */
 let pdfLectorActual = null; // { pdfDoc, paginaActual, totalPaginas }
 window.abrirLectorPdfNeclub = async (url, titulo, postId, descargable) => {
   if (!asegurarPdfWorker()) { showModal('Error', 'No se pudo cargar el lector de PDF. Revisa tu conexión e intenta de nuevo.'); return; }
+  pausarTodosLosVideosNeclub();
   const overlay = document.getElementById('neclub-pdf-overlay');
   document.getElementById('neclub-pdf-titulo').innerText = titulo;
   const linkDescarga = document.getElementById('neclub-pdf-download-link');
@@ -2014,6 +2024,7 @@ function cambiarPaginaPdfNeclub(direccion) {
 window.cerrarLectorPdfNeclub = () => {
   document.getElementById('neclub-pdf-overlay').classList.remove('open');
   pdfLectorActual = null;
+  inicializarAutoplayVideosNeclub(); // reanuda el video que esté centrado en el muro, si lo hay
 };
 
 /* ===== NECLUB: composer / publicar ===== */
@@ -2069,15 +2080,37 @@ window.publicarNeclub = async () => {
   const texto = document.getElementById('neclub-texto').value.trim();
   if (!texto && !neclubArchivoSeleccionado) return;
   const btn = document.getElementById('neclub-publish-btn');
+  const progresoWrap = document.getElementById('neclub-post-progreso-wrap');
+  const progresoBar = document.getElementById('neclub-post-progreso-bar');
+  const progresoTexto = document.getElementById('neclub-post-progreso-texto');
   btn.disabled = true; btn.innerText = 'Posting...';
+
+  let avisoLento = null;
+  if (neclubArchivoSeleccionado) {
+    progresoWrap.style.display = 'block';
+    progresoBar.style.width = '0%';
+    progresoTexto.innerText = 'Preparando subida...';
+    avisoLento = setTimeout(() => {
+      if (progresoWrap.style.display === 'block') progresoTexto.innerText += ' (tu conexión está lenta, sigue esperando...)';
+    }, 12000);
+  }
+
   try {
     let archivoUrl = '', archivoPath = '', tipo = 'texto';
     if (neclubArchivoSeleccionado) {
       tipo = neclubArchivoSeleccionado.tipo;
       archivoPath = `neclub/${sessionActiva.id}_${Date.now()}_${neclubArchivoSeleccionado.file.name}`;
       const ref = storageRef(storage, archivoPath);
-      await uploadBytes(ref, neclubArchivoSeleccionado.file);
-      archivoUrl = await getDownloadURL(ref);
+      archivoUrl = await new Promise((resolve, reject) => {
+        const task = uploadBytesResumable(ref, neclubArchivoSeleccionado.file);
+        task.on('state_changed', (snap) => {
+          const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+          progresoBar.style.width = pct + '%';
+          progresoTexto.innerText = `Subiendo... ${pct}%`;
+        }, (err) => reject(err), async () => {
+          try { resolve(await getDownloadURL(task.snapshot.ref)); } catch (e) { reject(e); }
+        });
+      });
     }
     const ahora = Date.now();
     await addDoc(collection(db,'neclub_posts'), {
@@ -2094,9 +2127,16 @@ window.publicarNeclub = async () => {
     document.getElementById('neclub-texto').style.height = 'auto';
     quitarArchivoNeclub();
   } catch (e) {
-    console.error(e);
-    showModal('Error', 'No se pudo publicar. Intenta de nuevo.');
+    console.error('Error al publicar en NECLUB:', e);
+    const codigo = e && e.code ? e.code : '';
+    let detalle = e && e.message ? e.message : 'Error desconocido.';
+    if (codigo === 'storage/unauthorized') detalle = 'No tienes permiso para subir archivos (revisa las reglas de Storage).';
+    else if (codigo === 'storage/canceled') detalle = 'La subida fue cancelada.';
+    else if (codigo === 'storage/retry-limit-exceeded' || codigo === 'storage/unknown') detalle = 'Se perdió la conexión durante la subida. Revisa tu internet e intenta de nuevo.';
+    showModal('No se pudo publicar', `${detalle}${codigo ? ` (código: ${codigo})` : ''}`);
   }
+  if (avisoLento) clearTimeout(avisoLento);
+  progresoWrap.style.display = 'none';
   btn.innerText = 'Post';
   actualizarEstadoPublicarNeclub();
 };
