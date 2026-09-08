@@ -321,6 +321,9 @@ a { color: inherit; }
 /* Lupa para indicar que se puede ampliar */
 .neclub-expand-hint { position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; pointer-events:none; }
 
+/* Botón de silenciar/activar sonido en los videos del muro (empiezan mudos, como Instagram) */
+.neclub-mute-toggle { position:absolute; bottom:10px; left:10px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); border:none; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; z-index:2; }
+
 /* Visor de imagen/video en pantalla completa (bien ajustado en celular, sin exagerar tamaño) */
 .neclub-lightbox { position:fixed; inset:0; z-index:960; display:none; flex-direction:column; background:rgba(0,0,0,.94); }
 .neclub-lightbox.open { display:flex; }
@@ -961,10 +964,16 @@ a { color: inherit; }
         <div id="tab-neclub" class="tab-content" style="padding:20px; display:none;">
           <p class="admin-label"><i class="fa-solid fa-book-open"></i> Publicar historia (PDF, se ve como libro)</p>
           <input type="text" id="neclub-historia-titulo" class="admin-input" placeholder="Título de la historia">
-          <input type="file" id="neclub-historia-pdf" class="admin-input" accept="application/pdf" onchange="prepararHistoriaPdfAdmin(event)">
+          <input type="file" id="neclub-historia-pdf" class="admin-input" accept=".pdf,application/pdf" onchange="prepararHistoriaPdfAdmin(event)">
           <div id="neclub-historia-cover-preview" style="display:none; margin-bottom:10px;"><img id="neclub-historia-cover-img" style="width:90px; border-radius:8px; border:1px solid var(--border2);"></div>
           <label class="dest-all-row" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;"><input type="checkbox" id="neclub-historia-descargable"> <span style="color:#fff; font-weight:700;">Permitir que los alumnos la descarguen</span></label>
           <button class="btn-login" id="btn-publicar-historia" onclick="publicarHistoriaPdfAdmin()" disabled>Publicar historia</button>
+          <div id="neclub-historia-progreso-wrap" style="display:none; margin-top:10px;">
+            <div style="background:rgba(255,255,255,.08); border-radius:99px; height:8px; overflow:hidden;">
+              <div id="neclub-historia-progreso-bar" style="background:linear-gradient(135deg, var(--gold3), var(--gold2)); height:100%; width:0%; transition:width .2s linear;"></div>
+            </div>
+            <p id="neclub-historia-progreso-texto" style="font-size:11.5px; color:var(--muted-dim); margin-top:6px;">Subiendo... 0%</p>
+          </div>
           <p class="form-hint">Aparece en NECLUB marcada como <b>NicaEnglish Club ✔️ Verificado</b> y no se autoborra a los 7 días como los posts normales.</p>
           <hr style="border-color:var(--border); margin:20px 0;">
           <p class="form-hint">Moderación de NECLUB: aquí puedes borrar cualquier publicación de cualquier alumno. Las publicaciones se autoborran solas a los 7 días de creadas (las historias en PDF no).</p>
@@ -1170,7 +1179,7 @@ a { color: inherit; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+import { getStorage, ref as storageRef, uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
@@ -1741,6 +1750,7 @@ function tiempoRelativoNeclub(fechaMs) {
 
 let neclubUltimoTopId = null;
 let neclubUltimoTap = {};
+let neclubFeedPintadoAlMenosUnaVez = false;
 
 function escucharNeclub() {
   if (neclubFeedYaEscuchado) return;
@@ -1748,13 +1758,14 @@ function escucharNeclub() {
   const avCont = document.getElementById('neclub-avatar-composer');
   if (avCont && sessionActiva) avCont.innerHTML = avatarHtmlNeclub(sessionActiva.foto, sessionActiva.nombre);
   onSnapshot(query(collection(db,'neclub_posts'), where('expiraEn','>', Timestamp.now()), orderBy('expiraEn','desc'), limit(50)), snap => {
+    const cambios = snap.docChanges();
     neclubPostsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
     const topId = neclubPostsCache.length ? neclubPostsCache[0].id : null;
     if (neclubUltimoTopId && topId && topId !== neclubUltimoTopId && window.scrollY > 160) {
       document.getElementById('neclub-new-posts-bar').style.display = 'flex';
     }
     neclubUltimoTopId = topId;
-    renderFeedNeclub();
+    aplicarCambiosFeedNeclub(cambios);
   });
   limpiarNeclubExpirados();
   escucharNeclubNotifs();
@@ -1764,34 +1775,27 @@ window.irArribaFeedNeclub = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-function renderFeedNeclub() {
-  const cont = document.getElementById('neclub-feed');
-  if (!cont) return;
-  if (!neclubPostsCache.length) {
-    cont.innerHTML = `<div class="neclub-empty"><i class="fa-solid fa-hashtag"></i>No posts yet. Be the first to share something in English! 🇬🇧</div>`;
-    return;
+// Arma el HTML de UN solo post (se usa tanto en el pintado completo como al insertar posts nuevos)
+function renderNeclubPostHTML(p, miId) {
+  const esMio = miId && p.autorId === miId;
+  const yaLike = miId && (p.likes||[]).includes(miId);
+  const esHistoria = p.tipo === 'pdf';
+  let mediaHtml = '';
+  if (p.tipo === 'foto' && p.archivoUrl) {
+    mediaHtml = `<div class="neclub-media-tap" style="position:relative;" onclick="manejarTapMedia('${p.id}','${p.archivoUrl}','foto')"><img src="${p.archivoUrl}" loading="lazy" oncontextmenu="return false" draggable="false"><div class="neclub-expand-hint"><i class="fa-solid fa-expand"></i></div><div class="neclub-heart-pop"><i class="fa-solid fa-heart"></i></div></div>`;
+  } else if (p.tipo === 'video' && p.archivoUrl) {
+    mediaHtml = `<div class="neclub-media-tap" style="position:relative;"><video src="${p.archivoUrl}" controls muted playsinline webkit-playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false"></video><button class="neclub-mute-toggle" onclick="event.stopPropagation(); toggleMuteNeclubVideo(this)" title="Sound"><i class="fa-solid fa-volume-xmark"></i></button><div class="neclub-expand-hint" style="pointer-events:auto; cursor:pointer;" onclick="event.stopPropagation(); abrirLightboxNeclub('${p.archivoUrl}','video')"><i class="fa-solid fa-expand"></i></div></div>`;
+  } else if (p.tipo === 'audio' && p.archivoUrl) {
+    mediaHtml = `<div class="neclub-post-media"><audio src="${p.archivoUrl}" controls controlsList="nodownload" oncontextmenu="return false"></audio></div>`;
+  } else if (esHistoria) {
+    mediaHtml = `<div class="neclub-story-cover" onclick="abrirLectorPdfNeclub('${p.archivoUrl}','${escNeclub(p.texto).replace(/'/g,"\\'")}','${p.id}',${!!p.descargable})">
+      ${p.coverUrl ? `<img src="${p.coverUrl}" oncontextmenu="return false" draggable="false">` : ''}
+      <div class="neclub-expand-hint"><i class="fa-solid fa-expand"></i></div>
+      <div class="neclub-story-open"><i class="fa-solid fa-book-open"></i><b>${escNeclub(p.texto || 'Story')}</b><span>Tap to read like a book</span></div>
+    </div>`;
   }
-  const miId = sessionActiva ? sessionActiva.id : null;
-  cont.innerHTML = neclubPostsCache.map(p => {
-    const esMio = miId && p.autorId === miId;
-    const yaLike = miId && (p.likes||[]).includes(miId);
-    const esHistoria = p.tipo === 'pdf';
-    let mediaHtml = '';
-    if (p.tipo === 'foto' && p.archivoUrl) {
-      mediaHtml = `<div class="neclub-media-tap" style="position:relative;" onclick="manejarTapMedia('${p.id}','${p.archivoUrl}','foto')"><img src="${p.archivoUrl}" loading="lazy" oncontextmenu="return false" draggable="false"><div class="neclub-expand-hint"><i class="fa-solid fa-expand"></i></div><div class="neclub-heart-pop"><i class="fa-solid fa-heart"></i></div></div>`;
-    } else if (p.tipo === 'video' && p.archivoUrl) {
-      mediaHtml = `<div class="neclub-media-tap" style="position:relative;"><video src="${p.archivoUrl}" controls preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false"></video><div class="neclub-expand-hint" style="pointer-events:auto; cursor:pointer;" onclick="event.stopPropagation(); abrirLightboxNeclub('${p.archivoUrl}','video')"><i class="fa-solid fa-expand"></i></div></div>`;
-    } else if (p.tipo === 'audio' && p.archivoUrl) {
-      mediaHtml = `<div class="neclub-post-media"><audio src="${p.archivoUrl}" controls controlsList="nodownload" oncontextmenu="return false"></audio></div>`;
-    } else if (esHistoria) {
-      mediaHtml = `<div class="neclub-story-cover" onclick="abrirLectorPdfNeclub('${p.archivoUrl}','${escNeclub(p.texto).replace(/'/g,"\\'")}','${p.id}',${!!p.descargable})">
-        ${p.coverUrl ? `<img src="${p.coverUrl}" oncontextmenu="return false" draggable="false">` : ''}
-        <div class="neclub-expand-hint"><i class="fa-solid fa-expand"></i></div>
-        <div class="neclub-story-open"><i class="fa-solid fa-book-open"></i><b>${escNeclub(p.texto || 'Story')}</b><span>Tap to read like a book</span></div>
-      </div>`;
-    }
-    const badgeMap = { foto:'<i class="fa-solid fa-image"></i> Photo', video:'<i class="fa-solid fa-video"></i> Video', audio:'<i class="fa-solid fa-microphone"></i> Audio', pdf:'<i class="fa-solid fa-book-open"></i> Story' };
-    return `<div class="neclub-post" id="neclub-post-${p.id}">
+  const badgeMap = { foto:'<i class="fa-solid fa-image"></i> Photo', video:'<i class="fa-solid fa-video"></i> Video', audio:'<i class="fa-solid fa-microphone"></i> Audio', pdf:'<i class="fa-solid fa-book-open"></i> Story' };
+  return `<div class="neclub-post" id="neclub-post-${p.id}">
       <div class="neclub-post-head">
         <div class="neclub-avatar">${avatarHtmlNeclub(p.autorFoto, p.autorNombre)}</div>
         <div class="neclub-post-headtext">
@@ -1815,7 +1819,113 @@ function renderFeedNeclub() {
         </div>
       </div>
     </div>`;
-  }).join('');
+}
+
+// Pintado completo del muro (solo se usa la primera vez, o si el muro estaba vacío)
+function renderFeedNeclub() {
+  const cont = document.getElementById('neclub-feed');
+  if (!cont) return;
+  if (!neclubPostsCache.length) {
+    cont.innerHTML = `<div class="neclub-empty"><i class="fa-solid fa-hashtag"></i>No posts yet. Be the first to share something in English! 🇬🇧</div>`;
+    neclubFeedPintadoAlMenosUnaVez = false;
+    return;
+  }
+  const miId = sessionActiva ? sessionActiva.id : null;
+  cont.innerHTML = neclubPostsCache.map(p => renderNeclubPostHTML(p, miId)).join('');
+  inicializarAutoplayVideosNeclub();
+  neclubFeedPintadoAlMenosUnaVez = true;
+}
+
+// Aplica SOLO lo que cambió en Firestore (nuevo post, post borrado, o like/comentario en uno existente)
+// en vez de volver a dibujar el muro completo. Así los videos que ya se estaban reproduciendo no se reinician.
+function aplicarCambiosFeedNeclub(cambios) {
+  const cont = document.getElementById('neclub-feed');
+  if (!cont) return;
+  // Si el muro nunca se ha pintado, o estaba mostrando el mensaje de "vacío", hacemos un pintado completo normal.
+  if (!neclubFeedPintadoAlMenosUnaVez || cont.querySelector('.neclub-empty')) {
+    renderFeedNeclub();
+    return;
+  }
+  const miId = sessionActiva ? sessionActiva.id : null;
+  let hayPostsNuevos = false;
+  cambios.forEach(cambio => {
+    const p = { id: cambio.doc.id, ...cambio.doc.data() };
+    if (cambio.type === 'removed') {
+      const nodo = document.getElementById('neclub-post-'+p.id);
+      if (nodo) nodo.remove();
+      return;
+    }
+    if (cambio.type === 'added') {
+      if (!document.getElementById('neclub-post-'+p.id)) hayPostsNuevos = true;
+      return;
+    }
+    // 'modified': solo actualizamos los números de likes/comentarios, sin tocar la foto/video/PDF del post.
+    const nodoExistente = document.getElementById('neclub-post-'+p.id);
+    if (nodoExistente) actualizarLikesYComentariosNeclub(nodoExistente, p, miId);
+  });
+  if (hayPostsNuevos) {
+    // Insertamos cada post nuevo en su posición correcta según el orden actual, sin tocar los demás.
+    neclubPostsCache.forEach((p, idx) => {
+      if (document.getElementById('neclub-post-'+p.id)) return;
+      const envoltorio = document.createElement('div');
+      envoltorio.innerHTML = renderNeclubPostHTML(p, miId);
+      const nodoNuevo = envoltorio.firstElementChild;
+      const siguiente = idx + 1 < neclubPostsCache.length ? document.getElementById('neclub-post-'+neclubPostsCache[idx+1].id) : null;
+      if (siguiente) cont.insertBefore(nodoNuevo, siguiente);
+      else cont.appendChild(nodoNuevo);
+    });
+    inicializarAutoplayVideosNeclub(); // re-observa (incluye los nuevos); no reinicia los videos que ya estaban
+  }
+}
+function actualizarLikesYComentariosNeclub(nodo, p, miId) {
+  const yaLike = miId && (p.likes||[]).includes(miId);
+  const botones = nodo.querySelectorAll('.neclub-action-btn');
+  const btnLike = botones[0];
+  if (btnLike) {
+    btnLike.classList.toggle('liked', !!yaLike);
+    const span = btnLike.querySelector('span');
+    if (span) span.innerText = (p.likes||[]).length;
+  }
+  const btnComentarios = botones[1];
+  if (btnComentarios) {
+    const span = btnComentarios.querySelector('span');
+    if (span) span.innerText = p.comentariosCount || 0;
+  }
+}
+
+/* ===== NECLUB: solo reproducir el video que está centrado en la pantalla (como Reels/TikTok) ===== */
+let neclubVideoObserver = null;
+function inicializarAutoplayVideosNeclub() {
+  if (!('IntersectionObserver' in window)) return; // navegador muy viejo: se queda con el comportamiento manual normal
+  if (neclubVideoObserver) neclubVideoObserver.disconnect();
+  neclubVideoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const video = entry.target;
+      if (entry.isIntersecting) reproducirVideoNeclub(video);
+      else video.pause();
+    });
+  }, { threshold: 0, rootMargin: '-40% 0px -40% 0px' }); // banda angosta en el centro vertical de la pantalla
+  document.querySelectorAll('#neclub-feed .neclub-media-tap video').forEach(v => neclubVideoObserver.observe(v));
+}
+function reproducirVideoNeclub(video) {
+  // Pausa cualquier otro video del muro para que nunca suenen dos a la vez
+  document.querySelectorAll('#neclub-feed .neclub-media-tap video').forEach(v => { if (v !== video) v.pause(); });
+  video.play().catch(() => {}); // si el navegador bloquea el autoplay, no pasa nada: sigue mudo y con controles
+}
+// Si el usuario le da play manualmente (con los controles nativos) a un video, pausa los demás también.
+document.addEventListener('play', (ev) => {
+  if (ev.target.tagName === 'VIDEO' && ev.target.closest('#neclub-feed .neclub-media-tap')) {
+    document.querySelectorAll('#neclub-feed .neclub-media-tap video').forEach(v => { if (v !== ev.target) v.pause(); });
+  }
+}, true); // fase de captura: el evento 'play' de <video> no burbujea
+window.toggleMuteNeclubVideo = (btn) => {
+  const video = btn.closest('.neclub-media-tap').querySelector('video');
+  video.muted = !video.muted;
+  btn.querySelector('i').className = video.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+};
+// Pausa todos los videos del muro (al salir de NECLUB o al abrir el visor de pantalla completa)
+function pausarTodosLosVideosNeclub() {
+  document.querySelectorAll('#neclub-feed .neclub-media-tap video').forEach(v => v.pause());
 }
 
 /* ===== NECLUB: doble tap = like (como Instagram) / tap simple = ampliar ===== */
@@ -1841,6 +1951,7 @@ let neclubTapSimpleTimer = null;
 
 /* ===== NECLUB: visor de foto/video en pantalla completa (ajustado, sin exagerar en celular) ===== */
 window.abrirLightboxNeclub = (url, tipo) => {
+  pausarTodosLosVideosNeclub();
   const overlay = document.getElementById('neclub-lightbox');
   const stage = document.getElementById('neclub-lightbox-stage');
   stage.innerHTML = tipo === 'video'
@@ -2760,12 +2871,25 @@ function asegurarPdfWorker() {
   }
   return true;
 }
+// Espera un poco a que pdf.js termine de cargar desde el CDN (útil en conexiones lentas)
+// antes de rendirse y avisar que no se pudo cargar.
+function esperarPdfWorker(intentos = 10) {
+  return new Promise((resolve) => {
+    (function intentar(n) {
+      if (asegurarPdfWorker()) return resolve(true);
+      if (n <= 0) return resolve(false);
+      setTimeout(() => intentar(n - 1), 400);
+    })(intentos);
+  });
+}
 window.prepararHistoriaPdfAdmin = async (ev) => {
   const file = ev.target.files[0];
   const btn = document.getElementById('btn-publicar-historia');
   if (!file) { historiaPdfSeleccionada = null; btn.disabled = true; return; }
-  if (!asegurarPdfWorker()) { showModal('Error', 'No se pudo cargar el lector de PDF. Revisa tu conexión e intenta de nuevo.'); return; }
-  btn.disabled = true; btn.innerText = 'Generando portada...';
+  btn.disabled = true; btn.innerText = 'Cargando lector de PDF...';
+  const listo = await esperarPdfWorker();
+  if (!listo) { showModal('Error', 'No se pudo cargar el lector de PDF (revisa tu conexión a internet e intenta de nuevo). Si el problema sigue, puede que tu red esté bloqueando cdnjs.cloudflare.com.'); btn.innerText = 'Publicar historia'; return; }
+  btn.innerText = 'Generando portada...';
   try {
     const buf = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
@@ -2793,17 +2917,46 @@ window.publicarHistoriaPdfAdmin = async () => {
   if (!titulo || !historiaPdfSeleccionada) { showModal('Falta información', 'Ponle un título y selecciona el archivo PDF.'); return; }
   const descargable = document.getElementById('neclub-historia-descargable').checked;
   const btn = document.getElementById('btn-publicar-historia');
+  const progresoWrap = document.getElementById('neclub-historia-progreso-wrap');
+  const progresoBar = document.getElementById('neclub-historia-progreso-bar');
+  const progresoTexto = document.getElementById('neclub-historia-progreso-texto');
   btn.disabled = true; btn.innerText = 'Publicando...';
+  progresoWrap.style.display = 'block';
+  progresoBar.style.width = '0%';
+  progresoTexto.innerText = 'Preparando subida...';
+
+  // Aviso si la subida está tardando demasiado, para que no "se sienta desconectado" sin explicación.
+  const avisoLento = setTimeout(() => {
+    if (progresoWrap.style.display === 'block') {
+      progresoTexto.innerText += ' (tu conexión está lenta, sigue esperando...)';
+    }
+  }, 12000);
+
   try {
     const base = `neclub/historia_${Date.now()}`;
     const pdfPath = `${base}.pdf`;
     const coverPath = `${base}_cover.png`;
-    const pdfRef = storageRef(storage, pdfPath);
-    await uploadBytes(pdfRef, historiaPdfSeleccionada.file);
-    const archivoUrl = await getDownloadURL(pdfRef);
+
+    // Subida de la portada (rápida, es solo una imagen)
+    progresoTexto.innerText = 'Subiendo portada...';
     const coverRef = storageRef(storage, coverPath);
     await uploadBytes(coverRef, historiaPdfSeleccionada.coverBlob);
     const coverUrl = await getDownloadURL(coverRef);
+
+    // Subida del PDF con progreso real (esto es lo que puede tardar)
+    const pdfRef = storageRef(storage, pdfPath);
+    const archivoUrl = await new Promise((resolve, reject) => {
+      const task = uploadBytesResumable(pdfRef, historiaPdfSeleccionada.file);
+      task.on('state_changed', (snap) => {
+        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+        progresoBar.style.width = pct + '%';
+        progresoTexto.innerText = `Subiendo PDF... ${pct}%`;
+      }, (err) => reject(err), async () => {
+        try { resolve(await getDownloadURL(task.snapshot.ref)); } catch (e) { reject(e); }
+      });
+    });
+
+    progresoTexto.innerText = 'Guardando publicación...';
     const ahora = Date.now();
     await addDoc(collection(db,'neclub_posts'), {
       autorId: 'admin', autorNombre: 'NicaEnglish Club', autorFoto: '', verificado: true,
@@ -2818,10 +2971,18 @@ window.publicarHistoriaPdfAdmin = async () => {
     historiaPdfSeleccionada = null;
     showModal('Éxito', 'Historia publicada en NECLUB.');
   } catch (e) {
-    console.error(e);
-    showModal('Error', 'No se pudo publicar la historia. Revisa las reglas de Storage/Firestore.');
+    console.error('Error al publicar historia PDF:', e);
+    const codigo = e && e.code ? e.code : '';
+    let detalle = e && e.message ? e.message : 'Error desconocido.';
+    if (codigo === 'storage/unauthorized') detalle = 'Firebase Storage rechazó la subida (permisos). Revisa las reglas de Storage para permitir escritura en la carpeta "neclub/".';
+    else if (codigo === 'storage/canceled') detalle = 'La subida fue cancelada.';
+    else if (codigo === 'storage/retry-limit-exceeded' || codigo === 'storage/unknown') detalle = 'Se perdió la conexión durante la subida. Revisa tu internet e intenta de nuevo.';
+    showModal('No se pudo publicar', `${detalle}${codigo ? ` (código: ${codigo})` : ''}`);
+  } finally {
+    clearTimeout(avisoLento);
+    progresoWrap.style.display = 'none';
+    btn.disabled = false; btn.innerText = 'Publicar historia';
   }
-  btn.disabled = false; btn.innerText = 'Publicar historia';
 };
 
 /* ===== ADMIN: GALERÍA DE VIDEOS ===== */
@@ -3242,6 +3403,10 @@ let nicaHomeScreen = 's-login'; // pantalla "index" según el tipo de sesión ac
 function showScreen(id, opciones = {}) {
   const el = document.getElementById(id);
   if (!el) return;
+  const pantallaAnterior = document.querySelector('.screen.active');
+  if (pantallaAnterior && pantallaAnterior.id === 's-neclub' && id !== 's-neclub' && typeof pausarTodosLosVideosNeclub === 'function') {
+    pausarTodosLosVideosNeclub();
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   el.classList.add('active');
   const btnSoporte = document.getElementById('btn-soporte-float');
