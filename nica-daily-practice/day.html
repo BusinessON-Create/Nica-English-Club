@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Practice — Nica English Club</title>
+
+<script src="../seguridad.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="page">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">EC</div>
+      <div class="brand-text">
+        <div class="club">NICA ENGLISH CLUB</div>
+        <div class="name">Daily Practice</div>
+      </div>
+    </div>
+    <a href="index.html" class="btn-salir">← Dashboard</a>
+  </div>
+
+  <div id="day-content">
+    <div class="empty-state">Loading today's practice…</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/settings.js"></script>
+<script src="content/week1.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/activities.js"></script>
+<script src="js/day.js"></script>
+</body>
+</html>
