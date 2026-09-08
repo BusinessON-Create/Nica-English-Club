@@ -272,6 +272,60 @@ a { color: inherit; }
 .reto-fs-ok { margin-top:10px; }
 @media (max-width:480px) { .reto-fireball-wrap { width:120px; height:120px; } .reto-fireball { width:86px; height:86px; } .reto-fs-titulo { font-size:20px; } }
 
+/* ===== NECLUB — MINI RED SOCIAL INTERNA ===== */
+.neclub-launch-btn { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:700; font-size:10.5px; padding:6px 12px; border-radius:99px; border:none; cursor:pointer; font-family:inherit; letter-spacing:.3px; margin-top:8px; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.neclub-launch-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(240,180,41,.25); }
+.neclub-shell { max-width:560px; margin:0 auto; padding:16px 14px 90px; }
+.neclub-composer { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; margin-bottom:18px; }
+.neclub-composer-row { display:flex; gap:12px; align-items:flex-start; }
+.neclub-avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-weight:700; font-size:14px; }
+.neclub-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+.neclub-composer textarea { flex:1; width:100%; min-height:44px; max-height:160px; padding:10px 0; background:transparent; border:none; color:var(--text); outline:none; font-family:inherit; font-size:14px; resize:none; line-height:1.4; }
+.neclub-composer-hint { font-size:11px; color:var(--muted-dim); margin:2px 0 10px 52px; }
+.neclub-preview-wrap { margin:0 0 12px 52px; position:relative; display:inline-block; }
+.neclub-preview-wrap img, .neclub-preview-wrap video { max-width:100%; max-height:220px; border-radius:14px; display:block; border:1px solid var(--border2); }
+.neclub-preview-wrap audio { width:260px; max-width:100%; }
+.neclub-preview-remove { position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; background:#000; border:1px solid var(--border2); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; }
+.neclub-composer-actions { display:flex; align-items:center; justify-content:space-between; margin-left:52px; border-top:1px solid var(--border); padding-top:12px; flex-wrap:wrap; gap:10px; }
+.neclub-media-btns { display:flex; gap:6px; }
+.neclub-media-btn { width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.04); border:1px solid var(--border2); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; transition: color .18s var(--ease), border-color .18s var(--ease); }
+.neclub-media-btn:hover { color:var(--gold); border-color:var(--gold2); }
+.neclub-media-btn.foto:hover { color:#4d9fff; border-color:#4d9fff; }
+.neclub-media-btn.video:hover { color:#ff5c5c; border-color:#ff5c5c; }
+.neclub-media-btn.audio:hover { color:#00d68f; border-color:#00d68f; }
+.neclub-publish-btn { background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:700; font-size:12.5px; border:none; padding:9px 18px; border-radius:99px; cursor:pointer; font-family:inherit; transition: transform .15s var(--ease), opacity .15s var(--ease); }
+.neclub-publish-btn:disabled { opacity:.4; cursor:default; }
+.neclub-empty { text-align:center; padding:50px 20px; color:var(--muted); }
+.neclub-empty i { font-size:30px; color:var(--gold2); margin-bottom:10px; display:block; }
+.neclub-post { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; margin-bottom:14px; animation: fadeUp .4s var(--ease) both; }
+.neclub-post-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.neclub-post-headtext { flex:1; min-width:0; }
+.neclub-post-nombre { color:#fff; font-weight:700; font-size:13.5px; }
+.neclub-post-meta { color:var(--muted-dim); font-size:11px; }
+.neclub-post-del { background:transparent; border:none; color:var(--muted-dim); cursor:pointer; font-size:13px; padding:6px; }
+.neclub-post-del:hover { color:var(--red); }
+.neclub-post-texto { color:var(--text); font-size:14px; line-height:1.5; margin-bottom:10px; white-space:pre-wrap; word-break:break-word; }
+.neclub-post-media img, .neclub-post-media video { width:100%; max-height:420px; object-fit:cover; border-radius:14px; display:block; margin-bottom:10px; background:#000; }
+.neclub-post-media audio { width:100%; margin-bottom:10px; }
+.neclub-post-badge { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--gold3); background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); padding:3px 9px; border-radius:99px; margin-bottom:10px; }
+.neclub-post-actions { display:flex; align-items:center; gap:18px; padding-top:10px; border-top:1px solid var(--border); }
+.neclub-action-btn { background:transparent; border:none; color:var(--muted); display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; transition: color .18s var(--ease); }
+.neclub-action-btn:hover { color:var(--text); }
+.neclub-action-btn.liked { color:var(--red); }
+.neclub-action-btn.liked i { font-weight:900; }
+.neclub-comments { margin-top:12px; padding-top:12px; border-top:1px solid var(--border); display:none; }
+.neclub-comments.open { display:block; }
+.neclub-comment-row { display:flex; gap:9px; margin-bottom:10px; }
+.neclub-comment-bubble { background:rgba(255,255,255,.04); border-radius:14px; padding:8px 12px; flex:1; min-width:0; }
+.neclub-comment-nombre { color:#fff; font-weight:700; font-size:12px; }
+.neclub-comment-texto { color:var(--text); font-size:12.5px; line-height:1.4; word-break:break-word; }
+.neclub-comment-foot { display:flex; align-items:center; gap:12px; margin-top:3px; }
+.neclub-comment-foot span, .neclub-comment-foot button { font-size:10.5px; color:var(--muted-dim); background:transparent; border:none; cursor:pointer; font-family:inherit; padding:0; }
+.neclub-comment-foot button:hover, .neclub-comment-foot .liked { color:var(--red); }
+.neclub-comment-input-row { display:flex; gap:9px; align-items:center; margin-top:4px; }
+.neclub-comment-input-row input { flex:1; padding:9px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:12.5px; }
+.neclub-comment-send { width:32px; height:32px; border-radius:50%; background:var(--gold); border:none; color:#000; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+
 /* ===== BOTÓN FLOTANTE GOOGLE MEET ===== */
 .meet-float-btn { position:fixed; bottom:22px; left:22px; z-index:400; width:150px; height:50px; border-radius:999px; background:#ffffff; border:2px solid #34a853; box-shadow: 0 10px 26px rgba(0,0,0,.5); align-items:center; justify-content:center; cursor:pointer; transition: transform .2s var(--ease), box-shadow .2s var(--ease); display:none; padding:10px 16px; }
 .meet-float-btn.visible { display:flex; animation: pulseSoft 2s ease infinite; }
@@ -506,7 +560,10 @@ a { color: inherit; }
               <p class="welcome-sub">Sigue entrenando tu inglés. Tú puedes.</p>
             </div>
           </div>
-          <span class="online-pill"><span class="online-dot"></span> En línea</span>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+            <span class="online-pill"><span class="online-dot"></span> En línea</span>
+            <button class="neclub-launch-btn" onclick="showScreen('s-neclub')" title="Ir a NECLUB"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
+          </div>
         </div>
         <div class="info-badges-row" id="info-badges-row"></div>
       </div>
@@ -644,6 +701,40 @@ a { color: inherit; }
     </div>
   </div>
 
+  <!-- NECLUB SCREEN — mini red social interna (feed, estilo Instagram/Facebook) -->
+  <div id="s-neclub" class="screen">
+    <nav class="stu-nav">
+      <button class="btn-salir" onclick="showScreen('s-student')" title="Volver"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="nav-actions"><span style="color:#fff; font-weight:700; font-size:13.5px;"><i class="fa-solid fa-hashtag" style="color:var(--gold); margin-right:6px;"></i>NECLUB</span></div>
+    </nav>
+    <div class="neclub-shell">
+      <div class="neclub-composer">
+        <div class="neclub-composer-row">
+          <div class="neclub-avatar" id="neclub-avatar-composer"></div>
+          <textarea id="neclub-texto" placeholder="Ask a question, start a debate, share your story... in English! 🇬🇧" maxlength="500" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; actualizarEstadoPublicarNeclub();"></textarea>
+        </div>
+        <p class="neclub-composer-hint">Posts, photos, videos and audios disappear automatically after 7 days.</p>
+        <div class="neclub-preview-wrap" id="neclub-preview-wrap" style="display:none;">
+          <button class="neclub-preview-remove" onclick="quitarArchivoNeclub()"><i class="fa-solid fa-xmark"></i></button>
+          <div id="neclub-preview-inner"></div>
+        </div>
+        <input type="file" id="neclub-file-foto" accept="image/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'foto')">
+        <input type="file" id="neclub-file-video" accept="video/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'video')">
+        <input type="file" id="neclub-file-audio" accept="audio/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'audio')">
+        <div class="neclub-composer-actions">
+          <div class="neclub-media-btns">
+            <label class="neclub-media-btn foto" for="neclub-file-foto" title="Photo"><i class="fa-solid fa-image"></i></label>
+            <label class="neclub-media-btn video" for="neclub-file-video" title="Video (max 1 min)"><i class="fa-solid fa-video"></i></label>
+            <label class="neclub-media-btn audio" for="neclub-file-audio" title="Audio (max 2 min)"><i class="fa-solid fa-microphone"></i></label>
+          </div>
+          <button class="neclub-publish-btn" id="neclub-publish-btn" disabled onclick="publicarNeclub()">Post</button>
+        </div>
+      </div>
+
+      <div id="neclub-feed"></div>
+    </div>
+  </div>
+
   <!-- ADMIN SCREEN -->
   <div id="s-admin" class="screen">
     <div class="admin-wrap">
@@ -660,6 +751,7 @@ a { color: inherit; }
           <button class="admin-menu-card" id="btn-tab-videos" onclick="switchTab('videos',this)"><i class="fa-solid fa-clapperboard"></i><span>Videos</span></button>
           <button class="admin-menu-card" id="btn-tab-chat" onclick="switchTab('chat',this)"><i class="fa-solid fa-comments"></i><span>Chat</span></button>
           <button class="admin-menu-card" id="btn-tab-meet" onclick="switchTab('meet',this)"><i class="fa-solid fa-video"></i><span>Reunión Meet</span></button>
+          <button class="admin-menu-card" id="btn-tab-neclub" onclick="switchTab('neclub',this)"><i class="fa-solid fa-hashtag"></i><span>NECLUB</span></button>
         </div>
         <div id="tab-enlaces" class="tab-content active" style="padding:20px;">
           <!-- BANNER CONFIG -->
@@ -790,6 +882,10 @@ a { color: inherit; }
           </div>
           <button class="btn-login" id="btn-enviar-meet" onclick="enviarMeet()"><i class="fa-solid fa-video"></i> Enviar enlace de Meet</button>
           <div id="lista-reuniones-ui" style="margin-top:20px;"></div>
+        </div>
+        <div id="tab-neclub" class="tab-content" style="padding:20px; display:none;">
+          <p class="form-hint">Moderación de NECLUB: aquí puedes borrar cualquier publicación de cualquier alumno. Las publicaciones se autoborran solas a los 7 días de creadas.</p>
+          <div id="lista-neclub-ui"></div>
         </div>
       </div>
     </div>
@@ -950,8 +1046,8 @@ a { color: inherit; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
@@ -1048,6 +1144,7 @@ async function restaurarSesion(user) {
     escucharActividades();
     escucharRetos();
     escucharReuniones();
+    escucharNeclub();
     escucharGaleriaVideos();
     escucharChat();
     escucharPresenciaAlumnos();
@@ -1128,6 +1225,7 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
       escucharActividades();
       escucharRetos();
       escucharReuniones();
+      escucharNeclub();
       escucharGaleriaVideos();
       escucharChat();
       escucharPresenciaAlumnos();
@@ -1482,6 +1580,263 @@ window.cerrarRetoFullscreen = () => {
   setTimeout(procesarColaRetosFullscreen, 350);
 };
 
+/* ===== NECLUB — MINI RED SOCIAL INTERNA (feed, likes, comentarios, autoborrado 7 días) ===== */
+let neclubPostsCache = [];
+let neclubArchivoSeleccionado = null; // { file, tipo, objectUrl }
+let neclubComentariosSubs = {}; // postId -> función para cancelar el listener de comentarios
+let neclubFeedYaEscuchado = false;
+const NECLUB_DIAS_VIDA = 7;
+const NECLUB_MAX_VIDEO_SEG = 60;
+const NECLUB_MAX_AUDIO_SEG = 120;
+
+function escNeclub(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function avatarHtmlNeclub(foto, nombre) {
+  const inicial = (nombre || '?').charAt(0).toUpperCase();
+  const url = resolverUrlDrive(foto || '');
+  return url
+    ? `<img src="${url}" alt="${escNeclub(nombre)}" onerror="this.parentElement.innerHTML='${inicial}'">`
+    : inicial;
+}
+function tiempoRelativoNeclub(fechaMs) {
+  const seg = Math.max(0, Math.floor((Date.now() - (fechaMs||0)) / 1000));
+  if (seg < 60) return 'just now';
+  if (seg < 3600) return Math.floor(seg/60) + 'm';
+  if (seg < 86400) return Math.floor(seg/3600) + 'h';
+  return Math.floor(seg/86400) + 'd';
+}
+
+function escucharNeclub() {
+  if (neclubFeedYaEscuchado) return;
+  neclubFeedYaEscuchado = true;
+  const avCont = document.getElementById('neclub-avatar-composer');
+  if (avCont && sessionActiva) avCont.innerHTML = avatarHtmlNeclub(sessionActiva.foto, sessionActiva.nombre);
+  onSnapshot(query(collection(db,'neclub_posts'), where('expiraEn','>', Timestamp.now()), orderBy('expiraEn','desc'), limit(50)), snap => {
+    neclubPostsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    renderFeedNeclub();
+  });
+  limpiarNeclubExpirados();
+}
+
+function renderFeedNeclub() {
+  const cont = document.getElementById('neclub-feed');
+  if (!cont) return;
+  if (!neclubPostsCache.length) {
+    cont.innerHTML = `<div class="neclub-empty"><i class="fa-solid fa-hashtag"></i>No posts yet. Be the first to share something in English! 🇬🇧</div>`;
+    return;
+  }
+  const miId = sessionActiva ? sessionActiva.id : null;
+  cont.innerHTML = neclubPostsCache.map(p => {
+    const esMio = miId && p.autorId === miId;
+    const yaLike = miId && (p.likes||[]).includes(miId);
+    let mediaHtml = '';
+    if (p.tipo === 'foto' && p.archivoUrl) mediaHtml = `<div class="neclub-post-media"><img src="${p.archivoUrl}" loading="lazy"></div>`;
+    else if (p.tipo === 'video' && p.archivoUrl) mediaHtml = `<div class="neclub-post-media"><video src="${p.archivoUrl}" controls preload="metadata"></video></div>`;
+    else if (p.tipo === 'audio' && p.archivoUrl) mediaHtml = `<div class="neclub-post-media"><audio src="${p.archivoUrl}" controls></audio></div>`;
+    const badgeMap = { foto:'<i class="fa-solid fa-image"></i> Photo', video:'<i class="fa-solid fa-video"></i> Video', audio:'<i class="fa-solid fa-microphone"></i> Audio' };
+    return `<div class="neclub-post" id="neclub-post-${p.id}">
+      <div class="neclub-post-head">
+        <div class="neclub-avatar">${avatarHtmlNeclub(p.autorFoto, p.autorNombre)}</div>
+        <div class="neclub-post-headtext">
+          <div class="neclub-post-nombre">${escNeclub(p.autorNombre || 'Student')}</div>
+          <div class="neclub-post-meta">${tiempoRelativoNeclub(p.fecha)} · disappears in ${Math.max(0, NECLUB_DIAS_VIDA - Math.floor((Date.now()-(p.fecha||0))/86400000))}d</div>
+        </div>
+        ${esMio ? `<button class="neclub-post-del" title="Delete" onclick="borrarPostNeclub('${p.id}','${(p.archivoPath||'').replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i></button>` : ''}
+      </div>
+      ${badgeMap[p.tipo] ? `<span class="neclub-post-badge">${badgeMap[p.tipo]}</span>` : ''}
+      ${p.texto ? `<p class="neclub-post-texto">${escNeclub(p.texto)}</p>` : ''}
+      ${mediaHtml}
+      <div class="neclub-post-actions">
+        <button class="neclub-action-btn ${yaLike?'liked':''}" onclick="toggleLikeNeclub('${p.id}')"><i class="fa-solid fa-heart"></i> <span>${(p.likes||[]).length}</span></button>
+        <button class="neclub-action-btn" onclick="toggleComentariosNeclub('${p.id}')"><i class="fa-solid fa-comment"></i> <span>${p.comentariosCount||0}</span></button>
+      </div>
+      <div class="neclub-comments" id="neclub-comments-${p.id}">
+        <div id="neclub-comments-list-${p.id}"></div>
+        <div class="neclub-comment-input-row">
+          <input type="text" id="neclub-comment-input-${p.id}" placeholder="Write a comment in English..." maxlength="300" onkeydown="if(event.key==='Enter') enviarComentarioNeclub('${p.id}');">
+          <button class="neclub-comment-send" onclick="enviarComentarioNeclub('${p.id}')"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== NECLUB: composer / publicar ===== */
+window.actualizarEstadoPublicarNeclub = () => {
+  const texto = document.getElementById('neclub-texto').value.trim();
+  document.getElementById('neclub-publish-btn').disabled = !texto && !neclubArchivoSeleccionado;
+};
+window.seleccionarArchivoNeclub = (ev, tipo) => {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const limites = { video: NECLUB_MAX_VIDEO_SEG, audio: NECLUB_MAX_AUDIO_SEG };
+  const finalizarSeleccion = () => {
+    if (neclubArchivoSeleccionado && neclubArchivoSeleccionado.objectUrl) URL.revokeObjectURL(neclubArchivoSeleccionado.objectUrl);
+    const objectUrl = URL.createObjectURL(file);
+    neclubArchivoSeleccionado = { file, tipo, objectUrl };
+    const inner = document.getElementById('neclub-preview-inner');
+    if (tipo === 'foto') inner.innerHTML = `<img src="${objectUrl}">`;
+    else if (tipo === 'video') inner.innerHTML = `<video src="${objectUrl}" controls></video>`;
+    else inner.innerHTML = `<audio src="${objectUrl}" controls></audio>`;
+    document.getElementById('neclub-preview-wrap').style.display = 'inline-block';
+    actualizarEstadoPublicarNeclub();
+  };
+  if (limites[tipo]) {
+    const probeUrl = URL.createObjectURL(file);
+    const probe = document.createElement(tipo === 'video' ? 'video' : 'audio');
+    probe.preload = 'metadata';
+    probe.src = probeUrl;
+    probe.onloadedmetadata = () => {
+      const dur = probe.duration;
+      URL.revokeObjectURL(probeUrl);
+      if (dur > limites[tipo] + 0.5) {
+        showModal('Archivo muy largo', `El ${tipo === 'video' ? 'video' : 'audio'} debe durar máximo ${tipo === 'video' ? '1 minuto' : '2 minutos'}. El que elegiste dura ${Math.ceil(dur)}s.`);
+        ev.target.value = '';
+        return;
+      }
+      finalizarSeleccion();
+    };
+    probe.onerror = () => { URL.revokeObjectURL(probeUrl); finalizarSeleccion(); };
+  } else {
+    finalizarSeleccion();
+  }
+};
+window.quitarArchivoNeclub = () => {
+  if (neclubArchivoSeleccionado && neclubArchivoSeleccionado.objectUrl) URL.revokeObjectURL(neclubArchivoSeleccionado.objectUrl);
+  neclubArchivoSeleccionado = null;
+  document.getElementById('neclub-preview-wrap').style.display = 'none';
+  document.getElementById('neclub-preview-inner').innerHTML = '';
+  ['neclub-file-foto','neclub-file-video','neclub-file-audio'].forEach(id => document.getElementById(id).value = '');
+  actualizarEstadoPublicarNeclub();
+};
+window.publicarNeclub = async () => {
+  if (!sessionActiva) return;
+  const texto = document.getElementById('neclub-texto').value.trim();
+  if (!texto && !neclubArchivoSeleccionado) return;
+  const btn = document.getElementById('neclub-publish-btn');
+  btn.disabled = true; btn.innerText = 'Posting...';
+  try {
+    let archivoUrl = '', archivoPath = '', tipo = 'texto';
+    if (neclubArchivoSeleccionado) {
+      tipo = neclubArchivoSeleccionado.tipo;
+      archivoPath = `neclub/${sessionActiva.id}_${Date.now()}_${neclubArchivoSeleccionado.file.name}`;
+      const ref = storageRef(storage, archivoPath);
+      await uploadBytes(ref, neclubArchivoSeleccionado.file);
+      archivoUrl = await getDownloadURL(ref);
+    }
+    const ahora = Date.now();
+    await addDoc(collection(db,'neclub_posts'), {
+      autorId: sessionActiva.id,
+      autorNombre: sessionActiva.nombre,
+      autorFoto: sessionActiva.foto || '',
+      tipo, texto, archivoUrl, archivoPath,
+      likes: [],
+      comentariosCount: 0,
+      fecha: ahora,
+      expiraEn: Timestamp.fromMillis(ahora + NECLUB_DIAS_VIDA*24*60*60*1000)
+    });
+    document.getElementById('neclub-texto').value = '';
+    document.getElementById('neclub-texto').style.height = 'auto';
+    quitarArchivoNeclub();
+  } catch (e) {
+    console.error(e);
+    showModal('Error', 'No se pudo publicar. Intenta de nuevo.');
+  }
+  btn.innerText = 'Post';
+  actualizarEstadoPublicarNeclub();
+};
+
+/* ===== NECLUB: likes y comentarios ===== */
+window.toggleLikeNeclub = async (postId) => {
+  if (!sessionActiva) return;
+  const post = neclubPostsCache.find(p => p.id === postId);
+  if (!post) return;
+  const yaLike = (post.likes||[]).includes(sessionActiva.id);
+  await updateDoc(doc(db,'neclub_posts',postId), { likes: yaLike ? arrayRemove(sessionActiva.id) : arrayUnion(sessionActiva.id) });
+};
+window.toggleComentariosNeclub = (postId) => {
+  const panel = document.getElementById('neclub-comments-'+postId);
+  if (!panel) return;
+  const abierto = panel.classList.toggle('open');
+  if (abierto && !neclubComentariosSubs[postId]) {
+    const unsub = onSnapshot(query(collection(db,'neclub_posts',postId,'comentarios'), orderBy('fecha','asc')), snap => {
+      renderComentariosNeclub(postId, snap.docs.map(d => ({ id:d.id, ...d.data() })));
+    });
+    neclubComentariosSubs[postId] = unsub;
+  } else if (!abierto && neclubComentariosSubs[postId]) {
+    neclubComentariosSubs[postId](); delete neclubComentariosSubs[postId];
+  }
+};
+function renderComentariosNeclub(postId, comentarios) {
+  const cont = document.getElementById('neclub-comments-list-'+postId);
+  if (!cont) return;
+  const miId = sessionActiva ? sessionActiva.id : null;
+  cont.innerHTML = comentarios.map(c => {
+    const esMio = miId && c.autorId === miId;
+    const yaLike = miId && (c.likes||[]).includes(miId);
+    return `<div class="neclub-comment-row">
+      <div class="neclub-avatar" style="width:30px; height:30px; font-size:11px;">${avatarHtmlNeclub(c.autorFoto, c.autorNombre)}</div>
+      <div class="neclub-comment-bubble">
+        <div class="neclub-comment-nombre">${escNeclub(c.autorNombre || 'Student')}</div>
+        <div class="neclub-comment-texto">${escNeclub(c.texto)}</div>
+        <div class="neclub-comment-foot">
+          <span>${tiempoRelativoNeclub(c.fecha)}</span>
+          <button class="${yaLike?'liked':''}" onclick="toggleLikeComentarioNeclub('${postId}','${c.id}')"><i class="fa-solid fa-heart"></i> ${(c.likes||[]).length||''}</button>
+          ${esMio ? `<button onclick="borrarComentarioNeclub('${postId}','${c.id}')">Delete</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('') || `<p class="form-hint" style="margin:0 0 8px;">No comments yet. Say something!</p>`;
+}
+window.enviarComentarioNeclub = async (postId) => {
+  if (!sessionActiva) return;
+  const input = document.getElementById('neclub-comment-input-'+postId);
+  const texto = input.value.trim();
+  if (!texto) return;
+  input.value = '';
+  await addDoc(collection(db,'neclub_posts',postId,'comentarios'), {
+    autorId: sessionActiva.id, autorNombre: sessionActiva.nombre, autorFoto: sessionActiva.foto || '',
+    texto, likes: [], fecha: Date.now()
+  });
+  await updateDoc(doc(db,'neclub_posts',postId), { comentariosCount: increment(1) });
+};
+window.borrarComentarioNeclub = async (postId, comentarioId) => {
+  if (!confirm('¿Borrar tu comentario?')) return;
+  await deleteDoc(doc(db,'neclub_posts',postId,'comentarios',comentarioId));
+  await updateDoc(doc(db,'neclub_posts',postId), { comentariosCount: increment(-1) });
+};
+window.toggleLikeComentarioNeclub = async (postId, comentarioId) => {
+  if (!sessionActiva) return;
+  const snap = await getDoc(doc(db,'neclub_posts',postId,'comentarios',comentarioId));
+  if (!snap.exists()) return;
+  const likes = snap.data().likes || [];
+  const yaLike = likes.includes(sessionActiva.id);
+  await updateDoc(doc(db,'neclub_posts',postId,'comentarios',comentarioId), { likes: yaLike ? arrayRemove(sessionActiva.id) : arrayUnion(sessionActiva.id) });
+};
+
+/* ===== NECLUB: borrado (propio alumno o admin) y autoborrado a los 7 días ===== */
+async function borrarPostNeclubCompleto(postId, archivoPath) {
+  try {
+    const comSnap = await getDocs(collection(db,'neclub_posts',postId,'comentarios'));
+    for (const c of comSnap.docs) await deleteDoc(c.ref);
+  } catch (e) { console.error('No se pudieron borrar comentarios:', e); }
+  if (archivoPath) {
+    try { await deleteObject(storageRef(storage, archivoPath)); } catch (e) { /* puede que ya no exista */ }
+  }
+  try { await deleteDoc(doc(db,'neclub_posts',postId)); } catch (e) { console.error(e); }
+}
+window.borrarPostNeclub = async (postId, archivoPath) => {
+  if (!confirm('¿Borrar tu publicación?')) return;
+  await borrarPostNeclubCompleto(postId, archivoPath);
+};
+async function limpiarNeclubExpirados() {
+  try {
+    const snap = await getDocs(query(collection(db,'neclub_posts'), where('expiraEn','<=', Timestamp.now()), limit(20)));
+    for (const d of snap.docs) await borrarPostNeclubCompleto(d.id, d.data().archivoPath);
+  } catch (e) { /* limpieza oportunista: si falla, se reintenta en la próxima visita */ }
+}
+
 /* ===== REUNIÓN DE GOOGLE MEET (botón flotante, expira en 3h) ===== */
 function escucharReuniones() {
   onSnapshot(collection(db,'reuniones'), snap => {
@@ -1814,6 +2169,7 @@ function cargarDatosAdmin() {
   });
   escucharRetosAdmin();
   escucharReunionesAdmin();
+  escucharNeclubAdmin();
 }
 
 /* ===== ADMIN: NOTIFICACIONES DIRIGIDAS (a quién se envía cada actividad) ===== */
@@ -2047,6 +2403,27 @@ window.enviarMeet = async () => {
   document.getElementById('meet-dest-lista-alumnos').style.display = 'none';
   document.querySelectorAll('.meet-dest-check').forEach(chk => chk.checked = false);
   showModal('Éxito', 'Enlace de Google Meet enviado. Se eliminará solo en 3 horas.');
+};
+
+/* ===== ADMIN: MODERACIÓN DE NECLUB ===== */
+function escucharNeclubAdmin() {
+  onSnapshot(query(collection(db,'neclub_posts'), orderBy('fecha','desc'), limit(60)), snap => {
+    const list = document.getElementById('lista-neclub-ui');
+    if (!list) return;
+    if (snap.empty) { list.innerHTML = `<p class="form-hint">Aún no hay publicaciones en NECLUB.</p>`; return; }
+    list.innerHTML = '';
+    const iconoTipo = { foto:'fa-image', video:'fa-video', audio:'fa-microphone', texto:'fa-comment' };
+    snap.forEach(d => {
+      const data = d.data();
+      const preview = (data.texto || '').slice(0, 60) || `[${data.tipo}]`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid ${iconoTipo[data.tipo]||'fa-comment'}" style="color:var(--gold); margin-right:6px;"></i><b>${data.autorNombre||'Alumno'}</b>: ${preview}${preview.length>=60?'…':''} <small style="color:var(--muted)">· ${(data.comentariosCount||0)} coment. · ${(data.likes||[]).length} likes</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarPostNeclubAdmin('${d.id}','${(data.archivoPath||'').replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i></button></div>`;
+    });
+  });
+}
+window.borrarPostNeclubAdmin = async (postId, archivoPath) => {
+  if (!confirm('¿Borrar esta publicación de NECLUB? Esto también borra sus comentarios.')) return;
+  await borrarPostNeclubCompleto(postId, archivoPath);
+  showModal('Hecho', 'Publicación eliminada.');
 };
 
 /* ===== ADMIN: GALERÍA DE VIDEOS ===== */
