@@ -1977,7 +1977,8 @@ window.cerrarLightboxNeclub = () => {
 /* ===== NECLUB: lector de historias en PDF, con efecto de pasar página ===== */
 let pdfLectorActual = null; // { pdfDoc, paginaActual, totalPaginas }
 window.abrirLectorPdfNeclub = async (url, titulo, postId, descargable) => {
-  if (!asegurarPdfWorker()) { showModal('Error', 'No se pudo cargar el lector de PDF. Revisa tu conexión e intenta de nuevo.'); return; }
+  const listo = await esperarPdfWorker();
+  if (!listo) { showModal('Error', 'No se pudo cargar el lector de PDF (revisa tu conexión a internet e intenta de nuevo). Si el problema sigue, puede que tu red esté bloqueando cdnjs.cloudflare.com.'); return; }
   pausarTodosLosVideosNeclub();
   const overlay = document.getElementById('neclub-pdf-overlay');
   document.getElementById('neclub-pdf-titulo').innerText = titulo;
@@ -1991,8 +1992,9 @@ window.abrirLectorPdfNeclub = async (url, titulo, postId, descargable) => {
     pdfLectorActual = { pdfDoc: pdf, paginaActual: 1, totalPaginas: pdf.numPages };
     await renderPaginaPdfNeclub();
   } catch (e) {
-    console.error(e);
+    console.error('Error al leer el PDF (posible falta de CORS en el bucket de Storage):', e);
     document.getElementById('neclub-pdf-pagina-actual').innerText = 'Error loading PDF';
+    showModal('No se pudo abrir el PDF', 'No se pudo leer el archivo. Esto casi siempre pasa porque el bucket de Firebase Storage no tiene CORS configurado para permitir que pdf.js descargue el archivo. Pide al administrador que configure CORS en el Storage (gsutil cors set).');
   }
 };
 async function renderPaginaPdfNeclub() {
