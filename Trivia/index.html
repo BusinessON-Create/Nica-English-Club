@@ -298,14 +298,20 @@
       document.getElementById('appSection').classList.add('active');
     }
 
-    // Base de datos de 50 preguntas + Vocabulario de preparación para cada día
+    // Base de datos completa con 10 palabras/expresiones de vocabulario por cada día + 10 preguntas de trivia
     const bancoDias = {
       1: {
         vocabulario: [
           { term: "Catch up", def: "Actualizarse, ponerse al día con alguien o con lo que ha pasado.", example: "It's great to finally catch up with you after so long!" },
           { term: "Dead tired / Beat", def: "Estar sumamente cansado o agotado físicamente.", example: "After working all day, I am totally beat." },
           { term: "Piece of cake", def: "Algo sumamente fácil de hacer.", example: "Don't worry about the English test, it's a piece of cake." },
-          { term: "Call it a day", def: "Decidir terminar de trabajar o hacer una actividad por hoy.", example: "We've done enough for today, let's call it a day." }
+          { term: "Call it a day", def: "Decidir terminar de trabajar o hacer una actividad por hoy.", example: "We've done enough for today, let's call it a day." },
+          { term: "Hang on", def: "Esperar un momento (usado frecuentemente en llamadas o en persona).", example: "Hang on a second, I need to check my notes." },
+          { term: "Up to you", def: "Depende de ti, la decisión está en tus manos.", example: "Where should we go for dinner? It's up to you." },
+          { term: "Look forward to", def: "Anhelar o esperar con ilusión que ocurra algo.", example: "I am looking forward to seeing you soon." },
+          { term: "Break a leg", def: "Buena suerte (especialmente antes de una presentación o actuación).", example: "Break a leg on your speech tonight!" },
+          { term: "Put off", def: "Posponer o retrasar algo para más tarde.", example: "Don't put off until tomorrow what you can do today." },
+          { term: "No way", def: "¡No me digas! / ¡De ninguna manera!", example: "You won the lottery? No way!" }
         ],
         preguntas: [
           { q: "What does the phrasal verb 'catch up' mean in casual conversation?", opciones: ["To run very fast", "To update someone or talk after a while", "To catch a cold", "To miss a bus"], correcta: 1 },
@@ -326,7 +332,13 @@
           { term: "Spill the beans", def: "Revelar un secreto o contar algo que estaba oculto.", example: "Come on, spill the beans! Who planned the surprise party?" },
           { term: "Hit the hay", def: "Irse a la cama a dormir.", example: "I have an early meeting tomorrow, so I'm going to hit the hay." },
           { term: "Put up with", def: "Tolerar o soportar una situación o persona difícil.", example: "I don't know how she puts up with that noisy neighbor." },
-          { term: "Under the weather", def: "Sentirse enfermo, indispuesto o con poca energía.", example: "I'm feeling a bit under the weather today, so I'll rest." }
+          { term: "Under the weather", def: "Sentirse enfermo, indispuesto o con poca energía.", example: "I'm feeling a bit under the weather today, so I'll rest." },
+          { term: "I couldn't agree more", def: "Estar totalmente de acuerdo con alguien.", example: "You are totally right, I couldn't agree more." },
+          { term: "Cost an arm and a leg", def: "Costar una fortuna, ser extremadamente caro.", example: "I'd love to buy that car, but it costs an arm and a leg." },
+          { term: "Run out of", def: "Quedarse sin existencias de algo.", example: "We ran out of coffee this morning." },
+          { term: "Keep it real", def: "Ser auténtico, decir la verdad sin rodeos.", example: "Always keep it real with your friends." },
+          { term: "Bite the dust", def: "Fracasar estrepitosamente o morir/dañarse.", example: "My old phone finally bit the dust." },
+          { term: "Catch someone's eye", def: "Llamar la atención de alguien.", example: "That beautiful painting caught my eye across the room." }
         ],
         preguntas: [
           { q: "What does 'spill the beans' mean?", opciones: ["Cook dinner", "Reveal a secret", "Clean the kitchen", "Make a mistake"], correcta: 1 },
@@ -347,7 +359,13 @@
           { term: "Burning the midnight oil", def: "Trabajar o estudiar hasta altas horas de la noche.", example: "She is burning the midnight oil preparing for her final exam." },
           { term: "A blessing in disguise", def: "Algo malo que al principio parece negativo pero que al final trae buenos resultados.", example: "Losing that job was a blessing in disguise; it led me to this amazing career." },
           { term: "Call off", def: "Cancelar un evento o reunión programada.", example: "They had to call off the outdoor meeting because of the rain." },
-          { term: "Once in a blue moon", def: "Muy rara vez, casi nunca.", example: "I eat fast food once in a blue moon, I prefer healthy meals." }
+          { term: "Once in a blue moon", def: "Muy rara vez, casi nunca.", example: "I eat fast food once in a blue moon, I prefer healthy meals." },
+          { term: "No worries / Anytime", def: "Respuesta moderna y natural para decir 'de nada'.", example: "Thanks for your help! - No worries, anytime." },
+          { term: "Break the ice", def: "Romper el hielo, iniciar una conversación social.", example: "He told a funny joke to break the ice at the meeting." },
+          { term: "Take your time", def: "Tómate tu tiempo, sin prisas.", example: "Take your time, there is no need to rush." },
+          { term: "I'm all ears", def: "Soy todo oídos, te estoy escuchando con atención.", example: "Go ahead and tell me your idea, I'm all ears." },
+          { term: "Give someone a hand", def: "Echarle una mano o ayudar a alguien.", example: "Could you give me a hand moving this heavy table?" },
+          { term: "Look up to", def: "Admirar o respetar profundamente a alguien.", example: "I really look up to my parents for their hard work." }
         ],
         preguntas: [
           { q: "What does 'burning the midnight oil' mean?", opciones: ["Starting a fire", "Working or studying late into the night", "Wasting gasoline", "Cooking dinner late"], correcta: 1 },
@@ -368,7 +386,13 @@
           { term: "Pull someone's leg", def: "Tomarle el pelo a alguien, bromear con él haciéndole creer algo falso.", example: "Are you serious or are you just pulling my leg?" },
           { term: "Make up", def: "Inventar una historia, excusa o reconciliarse.", example: "Don't make up excuses, just tell me the real reason." },
           { term: "Hit the nail on the head", def: "Dar en el clavo, acertar exactamente en algo.", example: "You hit the nail on the head with that analysis." },
-          { term: "So far, so good", def: "Hasta ahora todo va bien.", example: "How is your new project going? So far, so good!" }
+          { term: "So far, so good", def: "Hasta ahora todo va bien.", example: "How is your new project going? So far, so good!" },
+          { term: "Speak of the devil", def: "Hablando del rey de Roma (la persona de quien hablábamos aparece).", example: "Speak of the devil, John just walked in!" },
+          { term: "Are you kidding me?", def: "¿Estás bromeando? / ¿En serio?", example: "You won the trip? Are you kidding me?" },
+          { term: "Fingers crossed", def: "Cruzar los dedos esperando que algo salga bien.", example: "Fingers crossed we get the contract!" },
+          { term: "Cut to the chase", def: "Ir al grano sin rodeos.", example: "Let's cut to the chase and discuss the main issue." },
+          { term: "Sleep on it", def: "Consultarlo con la almohada (pensarlo hasta el día siguiente).", example: "Don't make a decision now, sleep on it." },
+          { term: "Out of the blue", def: "De la nada, de forma completamente inesperada.", example: "She called me out of the blue after five years." }
         ],
         preguntas: [
           { q: "What does 'pull someone's leg' mean?", opciones: ["Help them walk", "Tease or joke with someone", "Stretch before exercise", "Trip someone over"], correcta: 1 },
@@ -389,7 +413,13 @@
           { term: "Miss the boat", def: "Perder una oportunidad valiosa.", example: "If you don't register now, you'll miss the boat on this promotion." },
           { term: "Look into", def: "Investigar o examinar un asunto a fondo.", example: "I will look into your request and get back to you tomorrow." },
           { term: "Don't sweat it", def: "No te preocupes, no te estreses por eso.", example: "You made a small mistake? Don't sweat it, everyone does." },
-          { term: "The best of both worlds", def: "Disfrutar de las ventajas de dos situaciones distintas a la vez.", example: "Working remotely gives you the best of both worlds: freedom and steady income." }
+          { term: "The best of both worlds", def: "Disfrutar de las ventajas de dos situaciones distintas a la vez.", example: "Working remotely gives you the best of both worlds: freedom and steady income." },
+          { term: "A penny for your thoughts", def: "Preguntarle a alguien en qué está pensando.", example: "You've been quiet for an hour—a penny for your thoughts." },
+          { term: "Actions speak louder than words", def: "Las acciones valen más que las palabras.", example: "Don't just promise to help; actions speak louder than words." },
+          { term: "Cry over spilled milk", def: "Llorar sobre la leche derramada (lamentarse por algo que ya pasó y no se puede cambiar).", example: "It's no use crying over spilled milk, let's fix it." },
+          { term: "Ball is in your court", def: "Es tu turno de tomar una decisión o actuar.", example: "I've made my offer, now the ball is in your court." },
+          { term: "In the dark", def: "Estar desinformado o confundido sobre algo.", example: "Don't keep me in the dark, tell me what happened." },
+          { term: "Piece of cake", def: "Algo sumamente sencillo.", example: "The test was a piece of cake." }
         ],
         preguntas: [
           { q: "What does 'miss the boat' mean?", opciones: ["Miss a cruise", "Miss an opportunity", "Be late for work", "Forget something"], correcta: 1 },
