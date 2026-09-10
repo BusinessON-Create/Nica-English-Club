@@ -1837,6 +1837,10 @@ function renderNeclubPostHTML(p, miId) {
   const esMio = miId && p.autorId === miId;
   const yaLike = miId && (p.likes||[]).includes(miId);
   const esHistoria = p.tipo === 'pdf';
+  // El check de verificado se calcula en vivo desde el perfil del alumno (colección "alumnos"),
+  // así si el admin lo verifica o quita la verificación, se refleja al instante en TODOS sus posts.
+  // p.verificado se mantiene como respaldo (lo usan las "historias" oficiales, autorId 'admin').
+  const estaVerificado = p.autorId === 'admin' ? true : (esAlumnoVerificado(p.autorId) || !!p.verificado);
   let mediaHtml = '';
   if (p.tipo === 'foto' && p.archivoUrl) {
     mediaHtml = `<div class="neclub-media-tap" style="position:relative;" onclick="manejarTapMedia('${p.id}','${p.archivoUrl}','foto')"><img src="${p.archivoUrl}" loading="lazy" oncontextmenu="return false" draggable="false"><div class="neclub-expand-hint"><i class="fa-solid fa-expand"></i></div><div class="neclub-heart-pop"><i class="fa-solid fa-heart"></i></div></div>`;
@@ -1856,7 +1860,7 @@ function renderNeclubPostHTML(p, miId) {
       <div class="neclub-post-head">
         <div class="neclub-avatar">${avatarHtmlNeclub(p.autorFoto, p.autorNombre)}</div>
         <div class="neclub-post-headtext">
-          <div class="neclub-post-nombre">${escNeclub(p.autorNombre || 'Student')}${p.verificado ? `<i class="fa-solid fa-circle-check neclub-verified" title="Verified"></i>` : ''}</div>
+          <div class="neclub-post-nombre">${escNeclub(p.autorNombre || 'Student')}<i class="fa-solid fa-circle-check neclub-verified" id="neclub-verified-${p.id}" title="Verified" style="${estaVerificado ? '' : 'display:none;'}"></i></div>
           <div class="neclub-post-meta">${tiempoRelativoNeclub(p.fecha)}${esHistoria ? '' : ` · disappears in ${Math.max(0, NECLUB_DIAS_VIDA - Math.floor((Date.now()-(p.fecha||0))/86400000))}d`}</div>
         </div>
         ${esMio ? `<button class="neclub-post-del" title="Delete" onclick="borrarPostNeclub('${p.id}','${(p.archivoPath||'').replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i></button>` : ''}
@@ -1876,6 +1880,18 @@ function renderNeclubPostHTML(p, miId) {
         </div>
       </div>
     </div>`;
+}
+
+// Recorre el muro ya pintado y prende/apaga el check ✔️ de cada post según el estado
+// actual de verificado del alumno (sin re-renderizar todo, para no cortar videos en reproducción)
+function repintarChecksVerificadoNeclub() {
+  if (!neclubPostsCache || !neclubPostsCache.length) return;
+  neclubPostsCache.forEach(p => {
+    const el = document.getElementById(`neclub-verified-${p.id}`);
+    if (!el) return;
+    const estaVerificado = p.autorId === 'admin' ? true : (esAlumnoVerificado(p.autorId) || !!p.verificado);
+    el.style.display = estaVerificado ? '' : 'none';
+  });
 }
 
 // Pintado completo del muro (solo se usa la primera vez, o si el muro estaba vacío)
@@ -2674,6 +2690,7 @@ function cargarDatosAdmin() {
   onSnapshot(collection(db,'alumnos'), snap => {
     const list = document.getElementById('lista-alumnos-ui'); list.innerHTML = '';
     alumnosCacheAdmin = [];
+    alumnosTodosCache = snap.docs.map(d => ({ id:d.id, ...d.data() })); // para el check ✔️ en vivo (esAlumnoVerificado)
     const ahora = Date.now();
     snap.forEach(d => {
       const data = d.data();
@@ -2681,7 +2698,8 @@ function cargarDatosAdmin() {
       const enLinea = data.ultimoLatido && (ahora - data.ultimoLatido) < 120000;
       const horarioTxt = (data.horario && data.horario.dias) ? `${data.horario.dias} · ${data.horario.franja}` : 'Sin horario';
       const planTxt = data.plan || 'Sin plan';
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}<br><small style="color:var(--gold3); font-family:'DM Mono',monospace;">${data.identidad || 'Sin ID'}</small><br><small style="color:var(--muted)">P: ${data.pass} · ${planTxt} · ${horarioTxt}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
+      const estaVerificado = !!data.verificado;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}${estaVerificado ? ' <i class="fa-solid fa-circle-check" style="color:#4d9fff; font-size:12px;" title="Verificado en NECLUB"></i>' : ''}<br><small style="color:var(--gold3); font-family:'DM Mono',monospace;">${data.identidad || 'Sin ID'}</small><br><small style="color:var(--muted)">P: ${data.pass} · ${planTxt} · ${horarioTxt}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:${estaVerificado ? 'var(--blue)' : 'var(--muted)'}; border-color:${estaVerificado ? 'rgba(77,159,255,0.2)' : 'var(--border2)'}" title="${estaVerificado ? 'Quitar verificado de NECLUB' : 'Dar verificado en NECLUB'}" onclick="toggleVerificadoAlumno('${d.id}', ${estaVerificado})"><i class="fa-solid fa-circle-check"></i></button><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
     });
     renderTop3AdminSlots();
     renderDestPicker();
@@ -2951,7 +2969,8 @@ function escucharNeclubAdmin() {
       const preview = (data.texto || '').slice(0, 60) || `[${data.tipo}]`;
       const archivoPathSafe = (data.archivoPath||'').replace(/'/g,"\\'");
       const coverPathSafe = (data.coverPath||'').replace(/'/g,"\\'");
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid ${iconoTipo[data.tipo]||'fa-comment'}" style="color:var(--gold); margin-right:6px;"></i><b>${data.autorNombre||'Alumno'}</b>${data.verificado?' ✔️':''}: ${preview}${preview.length>=60?'…':''} <small style="color:var(--muted)">· ${(data.comentariosCount||0)} coment. · ${(data.likes||[]).length} likes</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarPostNeclubAdmin('${d.id}','${archivoPathSafe}','${coverPathSafe}')"><i class="fa-solid fa-trash"></i></button></div>`;
+      const estaVerificado = data.autorId === 'admin' ? true : (esAlumnoVerificado(data.autorId) || !!data.verificado);
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid ${iconoTipo[data.tipo]||'fa-comment'}" style="color:var(--gold); margin-right:6px;"></i><b>${data.autorNombre||'Alumno'}</b>${estaVerificado?' ✔️':''}: ${preview}${preview.length>=60?'…':''} <small style="color:var(--muted)">· ${(data.comentariosCount||0)} coment. · ${(data.likes||[]).length} likes</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarPostNeclubAdmin('${d.id}','${archivoPathSafe}','${coverPathSafe}')"><i class="fa-solid fa-trash"></i></button></div>`;
     });
   });
 }
@@ -3058,7 +3077,7 @@ window.publicarHistoriaPdfAdmin = async () => {
     progresoTexto.innerText = 'Guardando publicación...';
     const ahora = Date.now();
     await addDoc(collection(db,'neclub_posts'), {
-      autorId: 'admin', autorNombre: 'NicaEnglish Club', autorFoto: '', verificado: true,
+      autorId: 'admin', autorNombre: 'NicaEnglish Club', autorFoto: LOGO_DEFAULT, verificado: true,
       tipo: 'pdf', texto: titulo, archivoUrl, archivoPath: pdfPath, coverUrl, coverPath, descargable,
       likes: [], comentariosCount: 0, fecha: ahora,
       expiraEn: Timestamp.fromMillis(ahora + 100*365*24*60*60*1000) // las historias oficiales no se autoborran
@@ -3163,6 +3182,17 @@ window.guardarBanner = async () => {
 };
 
 window.borrarDoc = async (coll, id) => { if(confirm('¿Borrar registro?')) await deleteDoc(doc(db, coll, id)); };
+
+// Da o quita el check de verificado (✔️) a un alumno. Se refleja al instante en NECLUB
+// en todos sus posts (pasados y futuros), porque el check se lee en vivo del documento del alumno.
+window.toggleVerificadoAlumno = async (id, estaVerificadoActualmente) => {
+  try {
+    await updateDoc(doc(db, 'alumnos', id), { verificado: !estaVerificadoActualmente });
+  } catch (e) {
+    console.error('Error al cambiar verificado:', e);
+    showModal('No se pudo actualizar', 'No se pudo cambiar el estado de verificado. Intenta de nuevo.');
+  }
+};
 window.prepararEdicionAlumno = (id) => {
   const a = alumnosCacheAdmin.find(x => x.id === id);
   if (!a) return;
@@ -3300,6 +3330,12 @@ let todosLosMensajesChat = [];
 let chatTabActual = 'grupo';
 let chatContactoActual = null; // {id, nombre}
 let alumnosPresenciaCache = [];
+let alumnosTodosCache = []; // igual que alumnosPresenciaCache pero SIN excluir al usuario actual (para el check de verificado)
+function esAlumnoVerificado(autorId) {
+  if (!autorId) return false;
+  const a = alumnosTodosCache.find(x => x.id === autorId);
+  return !!(a && a.verificado);
+}
 
 function escucharChat() {
   if (unsubChat) unsubChat();
@@ -3336,9 +3372,11 @@ function marcarChatVisto() {
 
 function escucharPresenciaAlumnos() {
   onSnapshot(collection(db,'alumnos'), snap => {
-    alumnosPresenciaCache = snap.docs.map(d => ({ id:d.id, ...d.data() })).filter(a => !sessionActiva || a.id !== sessionActiva.id);
+    alumnosTodosCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    alumnosPresenciaCache = alumnosTodosCache.filter(a => !sessionActiva || a.id !== sessionActiva.id);
     renderPresencia();
     renderContactosChat();
+    if (typeof repintarChecksVerificadoNeclub === 'function') repintarChecksVerificadoNeclub();
   });
   setInterval(renderPresencia, 30000); // recalcula "en línea" aunque no haya cambios nuevos
 }
