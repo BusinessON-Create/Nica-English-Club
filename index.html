@@ -521,7 +521,7 @@ a { color: inherit; }
 .profile-avatar-edit label { position:absolute; bottom:0; right:0; width:30px; height:30px; border-radius:50%; background:var(--gold2); color:#000; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; border:3px solid var(--card); }
 .profile-avatar-edit input[type=file] { display:none; }
 
-/* ===== CHAT ===== */
+/* ===== CHAT (estilo WhatsApp) ===== */
 .chat-shell { display:flex; flex-direction:column; height:calc(100vh - 62px); max-width:720px; width:100%; margin:0 auto; }
 .chat-online-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(0,214,143,.1); border:1px solid rgba(0,214,143,.3); color:var(--green); font-size:10.5px; font-weight:700; padding:5px 11px; border-radius:99px; margin-left:8px; }
 .chat-tabs { display:flex; gap:8px; padding:10px 16px 0; }
@@ -534,11 +534,39 @@ a { color: inherit; }
 .chat-contact-chip .contact-avatar { width:22px; height:22px; border-radius:50%; overflow:hidden; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--gold); flex-shrink:0; position:relative; }
 .chat-contact-chip .contact-avatar img { width:100%; height:100%; object-fit:cover; }
 .chat-contact-chip .presence-dot { position:absolute; bottom:-1px; right:-1px; margin:0; width:7px; height:7px; border:1.5px solid var(--card); }
-.chat-messages { flex:1; overflow-y:auto; padding:12px 18px 16px; display:flex; flex-direction:column; gap:10px; }
-.chat-msg { max-width:78%; padding:10px 13px; border-radius:14px; font-size:13px; line-height:1.4; }
-.chat-msg .chat-author { display:block; font-size:10px; color:var(--gold3); font-weight:700; margin-bottom:3px; }
-.chat-msg.mine { align-self:flex-end; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#1a1400; border-bottom-right-radius:4px; }
-.chat-msg.other { align-self:flex-start; background:var(--card2); border:1px solid var(--border); color:var(--text); border-bottom-left-radius:4px; }
+
+/* Fondo tipo "wallpaper" de WhatsApp: patrón sutil sobre el fondo oscuro de la app */
+.chat-messages {
+  flex:1; overflow-y:auto; padding:14px 14px 16px; display:flex; flex-direction:column;
+  background-color:#0b141a;
+  background-image:
+    radial-gradient(circle at 12px 12px, rgba(255,255,255,.035) 1.4px, transparent 1.5px),
+    radial-gradient(circle at 32px 34px, rgba(255,255,255,.03) 1.2px, transparent 1.3px);
+  background-size: 44px 44px;
+}
+.chat-msg-row { display:flex; align-items:flex-end; gap:7px; max-width:100%; margin-top:2px; }
+.chat-msg-row.mine { flex-direction:row-reverse; }
+.chat-msg-row.grouped { margin-top:2px; }
+.chat-msg-row.new-group { margin-top:10px; }
+.chat-msg-avatar { width:26px; height:26px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:var(--gold); }
+.chat-msg-avatar img { width:100%; height:100%; object-fit:cover; }
+.chat-msg-avatar.spacer { visibility:hidden; }
+.chat-msg { position:relative; max-width:74%; padding:7px 9px 9px 11px; border-radius:9px; font-size:13.5px; line-height:1.35; box-shadow:0 1px 1px rgba(0,0,0,.3); word-wrap:break-word; }
+.chat-msg .chat-author { display:block; font-size:11.5px; font-weight:700; margin-bottom:2px; }
+.chat-msg .chat-time { display:inline-block; float:right; margin:4px 0 -3px 8px; font-size:10px; opacity:.65; }
+.chat-msg .chat-text { white-space:pre-wrap; }
+.chat-msg-row.mine .chat-msg { background:#005c4b; color:#e9edef; border-bottom-right-radius:2px; }
+.chat-msg-row.other .chat-msg { background:#202c33; color:#e9edef; border-bottom-left-radius:2px; }
+.chat-msg-row.other .chat-msg .chat-author { color:var(--gold3); }
+/* Colita de la burbuja, solo en el primer mensaje de cada racha (como WhatsApp) */
+.chat-msg-row.mine.new-group .chat-msg::after {
+  content:""; position:absolute; top:0; right:-7px; width:10px; height:13px;
+  background:#005c4b; clip-path:polygon(0 0, 0% 100%, 100% 0);
+}
+.chat-msg-row.other.new-group .chat-msg::after {
+  content:""; position:absolute; top:0; left:-7px; width:10px; height:13px;
+  background:#202c33; clip-path:polygon(100% 0, 0% 0, 100% 100%);
+}
 .chat-inputbar { display:flex; gap:10px; padding:12px 16px; border-top:1px solid var(--border); background:rgba(8,8,10,.9); }
 .chat-inputbar input { flex:1; padding:12px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:13.5px; }
 .chat-send-btn { width:44px; height:44px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; cursor:pointer; flex-shrink:0; }
@@ -579,6 +607,7 @@ a { color: inherit; }
           </div>
           <button class="btn-login" id="btn-entrar">Ingresar al Portal</button>
           <div id="login-error" style="color:var(--red); font-size:12px; margin-top:10px; text-align:center; display:none;">Credenciales incorrectas.</div>
+          <p style="text-align:center; margin-top:14px;"><a href="#" onclick="abrirModalOlvide(); return false;" style="color:var(--gold3); font-size:12.5px; text-decoration:none; font-weight:600;">¿Olvidaste tu contraseña?</a></p>
         </div>
       </div>
       <div class="cta-card">
@@ -1010,6 +1039,28 @@ a { color: inherit; }
     </div>
     <textarea id="practica-texto" class="form-textarea" placeholder="Escribe tus oraciones, respuestas o texto de práctica..."></textarea>
     <button class="btn-whatsapp" onclick="enviarPractica()"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</button>
+  </div>
+</div>
+
+<!-- MODAL: OLVIDÉ MI CONTRASEÑA -->
+<div class="modal-bg" id="modal-olvide-bg">
+  <div class="modal-box modal-box-form" style="position:relative;">
+    <button class="modal-close-x" onclick="cerrarModalOlvide()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 style="color:#fff; font-family:'Playfair Display'; font-size:21px;">Restablecer contraseña</h3>
+    <p class="form-hint" style="margin-top:10px;">Completa tus datos y te enviaremos la solicitud por WhatsApp para restablecer tu contraseña.</p>
+    <div class="input-shell">
+      <i class="fa-solid fa-user input-icon"></i>
+      <input type="text" id="olvide-nombre" class="field-input" placeholder="Nombre y apellido">
+    </div>
+    <div class="input-shell">
+      <i class="fa-solid fa-id-card input-icon"></i>
+      <input type="text" id="olvide-id" class="field-input" placeholder="Número de ID de estudiante (ej: NEC260001GM)">
+    </div>
+    <div class="input-shell">
+      <i class="fa-brands fa-whatsapp input-icon"></i>
+      <input type="tel" id="olvide-whatsapp" class="field-input" placeholder="Tu WhatsApp con código de país (ej: +505 8888 8888)">
+    </div>
+    <button class="btn-whatsapp" onclick="enviarOlvide()"><i class="fa-brands fa-whatsapp"></i> Solicitar restablecimiento</button>
   </div>
 </div>
 
@@ -2244,7 +2295,13 @@ function escucharNeclubNotifs() {
     neclubNotifsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
     renderNeclubNotifBadge();
     if (document.getElementById('neclub-notif-dropdown')?.classList.contains('open')) renderNeclubNotifList();
-  }, err => console.error('No se pudo escuchar neclub_notificaciones (revisa el índice/reglas):', err));
+  }, err => {
+    // Esto suele fallar por falta del índice compuesto (destinatarioId + fecha) en Firestore,
+    // o por reglas de seguridad. Antes fallaba en silencio; ahora lo mostramos para poder detectarlo.
+    console.error('No se pudo escuchar neclub_notificaciones (revisa el índice/reglas). Si el error de Firebase trae un link "create it here", ábrelo para crear el índice automáticamente:', err);
+    const list = document.getElementById('neclub-notif-list');
+    if (list) list.innerHTML = `<div class="notif-empty">No se pudieron cargar las notificaciones.<br>Revisa la consola del navegador (F12) — probablemente falta un índice en Firestore.</div>`;
+  });
 }
 function renderNeclubNotifBadge() {
   const badge = document.getElementById('neclub-notif-badge');
@@ -3344,11 +3401,23 @@ window.abrirChatPrivado = (id, nombre) => {
   renderContactosChat();
   renderChatMensajes();
 };
+// Resuelve nombre/foto de un alumno por su uid, usando la sesión activa y la caché de presencia
+// (no requiere guardar la foto en cada mensaje del chat).
+function datosAlumnoPorUid(uid) {
+  if (sessionActiva && uid === sessionActiva.id) return { nombre: sessionActiva.nombre, foto: sessionActiva.foto || '' };
+  const a = alumnosPresenciaCache.find(x => x.id === uid);
+  return a ? { nombre: a.nombre, foto: a.foto || '' } : { nombre: null, foto: '' };
+}
+function horaChat(ms) {
+  if (!ms) return '';
+  return new Date(ms).toLocaleTimeString('es-NI', { hour:'2-digit', minute:'2-digit' });
+}
 function renderChatMensajes() {
   const cont = document.getElementById('chat-messages');
   if (!cont || !sessionActiva) return;
   let visibles;
-  if (chatTabActual === 'grupo') {
+  const esGrupo = chatTabActual === 'grupo';
+  if (esGrupo) {
     visibles = todosLosMensajesChat.filter(m => !m.destinatario);
   } else if (chatContactoActual) {
     const yo = sessionActiva.id, otro = chatContactoActual.id;
@@ -3357,9 +3426,25 @@ function renderChatMensajes() {
     cont.innerHTML = `<div class="notif-empty">Selecciona un compañero para iniciar un chat privado.</div>`;
     return;
   }
-  cont.innerHTML = visibles.length ? visibles.map(m => {
+  cont.innerHTML = visibles.length ? visibles.map((m, i) => {
     const mio = m.uid === sessionActiva.id;
-    return `<div class="chat-msg ${mio ? 'mine' : 'other'}"><span class="chat-author">${m.autor || 'Alumno'}</span>${(m.texto||'').replace(/</g,'&lt;')}</div>`;
+    // Un mensaje inicia una nueva "racha" (grupo visual) si cambia el autor respecto al anterior.
+    const anterior = i > 0 ? visibles[i-1] : null;
+    const nuevaRacha = !anterior || anterior.uid !== m.uid;
+    const claseFila = `chat-msg-row ${mio ? 'mine' : 'other'} ${nuevaRacha ? 'new-group' : 'grouped'}`;
+    // La foto de cada persona solo se muestra en el chat de grupo, junto a los mensajes de los demás
+    // (igual que en un grupo de WhatsApp). En privado no hace falta, ya se sabe quién es quién.
+    let avatarHtml = '';
+    if (esGrupo && !mio) {
+      if (nuevaRacha) {
+        const datos = datosAlumnoPorUid(m.uid);
+        avatarHtml = `<div class="chat-msg-avatar">${avatarHtmlNeclub(datos.foto, datos.nombre || m.autor)}</div>`;
+      } else {
+        avatarHtml = `<div class="chat-msg-avatar spacer"></div>`;
+      }
+    }
+    const nombreHtml = (esGrupo && !mio && nuevaRacha) ? `<span class="chat-author">${(m.autor || 'Alumno').replace(/</g,'&lt;')}</span>` : '';
+    return `<div class="${claseFila}">${avatarHtml}<div class="chat-msg">${nombreHtml}<span class="chat-text">${(m.texto||'').replace(/</g,'&lt;')}</span><span class="chat-time">${horaChat(m.fecha)}</span></div></div>`;
   }).join('') : `<div class="notif-empty">Aún no hay mensajes. ¡Escribe el primero!</div>`;
   cont.scrollTop = cont.scrollHeight;
 }
@@ -3377,6 +3462,24 @@ window.enviarMensajeChat = async () => {
     console.error('No se pudo enviar el mensaje:', e);
     showModal('Error', 'No se pudo enviar el mensaje. Revisa tu conexión e intenta de nuevo.');
   }
+};
+
+/* ===== OLVIDÉ MI CONTRASEÑA (WhatsApp) ===== */
+window.abrirModalOlvide = () => {
+  document.getElementById('olvide-nombre').value = '';
+  document.getElementById('olvide-id').value = '';
+  document.getElementById('olvide-whatsapp').value = '';
+  document.getElementById('modal-olvide-bg').classList.add('open');
+};
+window.cerrarModalOlvide = () => document.getElementById('modal-olvide-bg').classList.remove('open');
+window.enviarOlvide = () => {
+  const nombre = document.getElementById('olvide-nombre').value.trim();
+  const idAlumno = document.getElementById('olvide-id').value.trim();
+  const whatsapp = document.getElementById('olvide-whatsapp').value.trim();
+  if (!nombre || !idAlumno || !whatsapp) { showModal('Falta información', 'Completa tu nombre, tu ID de estudiante y tu WhatsApp con código de país.'); return; }
+  const mensaje = `Hola, olvidé mi contraseña de NicaEnglish Club y necesito restablecerla.\nNombre: ${nombre}\nID de estudiante: ${idAlumno}\nWhatsApp: ${whatsapp}`;
+  window.open(`https://wa.me/${WA_SOPORTE}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  cerrarModalOlvide();
 };
 
 /* ===== REFERIR A UN AMIGO (WhatsApp) ===== */
