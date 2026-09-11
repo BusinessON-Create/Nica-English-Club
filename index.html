@@ -208,6 +208,57 @@ a { color: inherit; }
 .support-opt i { color:var(--gold); width:16px; text-align:center; }
 @media (max-width:480px) { .support-float-btn { bottom:16px; right:16px; width:52px; height:52px; font-size:20px; } }
 
+/* ===== NEC COACH (Asistente IA) ===== */
+.nec-coach-float-btn { position:fixed; bottom:94px; right:22px; z-index:401; width:58px; height:58px; border-radius:50%; border:2px solid var(--gold2); box-shadow: 0 10px 26px rgba(240,180,41,.35); cursor:pointer; overflow:hidden; padding:0; background:var(--card2); display:none; align-items:center; justify-content:center; transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.nec-coach-float-btn.visible { display:flex; }
+.nec-coach-float-btn img { width:100%; height:100%; object-fit:cover; }
+.nec-coach-float-btn:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 14px 32px rgba(240,180,41,.5); }
+@media (max-width:480px) { .nec-coach-float-btn { bottom:80px; right:16px; width:52px; height:52px; } }
+
+.nec-coach-panel { position:fixed; bottom:22px; right:22px; z-index:500; width:360px; max-width:92vw; height:min(600px, 78vh); background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow: var(--shadow-card); display:none; flex-direction:column; overflow:hidden; }
+.nec-coach-panel.open { display:flex; animation: fadeUp .25s var(--ease) both; }
+@media (max-width:480px) { .nec-coach-panel { bottom:0; right:0; width:100%; max-width:100%; height:100%; border-radius:0; } }
+
+.nec-coach-header { display:flex; align-items:center; gap:10px; padding:14px; background:linear-gradient(135deg, rgba(240,180,41,.14), rgba(200,137,26,.08)); border-bottom:1px solid var(--border2); flex-shrink:0; }
+.nec-coach-header img { width:38px; height:38px; border-radius:50%; object-fit:cover; border:1.5px solid var(--gold2); flex-shrink:0; }
+.nec-coach-header .nec-info { flex:1; min-width:0; }
+.nec-coach-header .nec-name { font-weight:800; font-size:14px; color:var(--text); }
+.nec-coach-header .nec-status { font-size:10.5px; color:var(--green); display:flex; align-items:center; gap:5px; }
+.nec-coach-header .nec-status::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--green); display:inline-block; }
+.nec-coach-close { width:30px; height:30px; border-radius:50%; border:1px solid var(--border2); background:transparent; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; transition: color .2s var(--ease), border-color .2s var(--ease); }
+.nec-coach-close:hover { color:#fff; border-color:var(--gold2); }
+
+.nec-coach-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px;
+  background-color:#0b141a;
+  background-image:
+    radial-gradient(circle at 12px 12px, rgba(255,255,255,.035) 1.4px, transparent 1.5px),
+    radial-gradient(circle at 32px 34px, rgba(255,255,255,.03) 1.2px, transparent 1.3px);
+  background-size: 44px 44px;
+}
+.nec-msg-row { display:flex; align-items:flex-end; gap:7px; max-width:100%; }
+.nec-msg-row.mine { flex-direction:row-reverse; }
+.nec-msg-avatar { width:24px; height:24px; border-radius:50%; overflow:hidden; flex-shrink:0; }
+.nec-msg-avatar img { width:100%; height:100%; object-fit:cover; }
+.nec-msg { position:relative; max-width:78%; padding:8px 10px; border-radius:9px; font-size:13.5px; line-height:1.4; box-shadow:0 1px 1px rgba(0,0,0,.3); white-space:pre-wrap; word-wrap:break-word; }
+.nec-msg-row.mine .nec-msg { background:#005c4b; color:#e9edef; border-bottom-right-radius:2px; }
+.nec-msg-row.other .nec-msg { background:#202c33; color:#e9edef; border-bottom-left-radius:2px; }
+
+.nec-quick-replies { display:flex; flex-direction:column; gap:6px; padding:2px 0 4px 31px; }
+.nec-quick-btn { text-align:left; background:rgba(240,180,41,.08); border:1px solid var(--gold2); color:var(--gold3); font-family:inherit; font-size:12.5px; font-weight:600; padding:9px 12px; border-radius:12px; cursor:pointer; transition: background .18s var(--ease); }
+.nec-quick-btn:hover { background:rgba(240,180,41,.18); }
+
+.nec-typing-row { display:flex; align-items:flex-end; gap:7px; }
+.nec-typing { display:flex; gap:4px; padding:10px 12px; background:#202c33; border-radius:9px; width:fit-content; }
+.nec-typing span { width:6px; height:6px; border-radius:50%; background:var(--muted); animation: necBlink 1.1s infinite ease-in-out; }
+.nec-typing span:nth-child(2){ animation-delay:.15s; }
+.nec-typing span:nth-child(3){ animation-delay:.3s; }
+@keyframes necBlink { 0%,80%,100%{ opacity:.3; transform:scale(.85);} 40%{ opacity:1; transform:scale(1);} }
+
+.nec-coach-inputbar { display:flex; gap:8px; padding:10px 12px; border-top:1px solid var(--border); background:rgba(8,8,10,.9); flex-shrink:0; }
+.nec-coach-inputbar input { flex:1; padding:11px 13px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:13px; }
+.nec-coach-send { width:40px; height:40px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; }
+.nec-coach-send:disabled { opacity:.5; cursor:default; }
+
 /* MENTALIDAD NEC */
 .mindset-card { position:relative; border-radius:var(--r-xl); overflow:hidden; padding:32px 26px; min-height:170px; display:flex; flex-direction:column; justify-content:flex-end; background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.25)), linear-gradient(135deg, #2a2210, #1a1a1a); border:1px solid var(--border); }
 .mindset-badge { display:inline-flex; align-items:center; gap:6px; color:var(--gold3); font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
@@ -1355,6 +1406,28 @@ a { color: inherit; }
   <i class="fa-brands fa-whatsapp"></i>
 </button>
 
+<!-- NEC COACH: botón flotante (arriba del botón de WhatsApp) -->
+<button class="nec-coach-float-btn" id="btn-nec-coach-float" onclick="necCoachOpen()" title="Habla con NEC Coach">
+  <img src="avatar-nec-coach.jpg" alt="NEC Coach">
+</button>
+
+<!-- NEC COACH: panel de chat -->
+<div class="nec-coach-panel" id="nec-coach-panel">
+  <div class="nec-coach-header">
+    <img src="avatar-nec-coach.jpg" alt="NEC Coach">
+    <div class="nec-info">
+      <div class="nec-name">NEC Coach</div>
+      <div class="nec-status">En línea</div>
+    </div>
+    <button class="nec-coach-close" onclick="necCoachClose()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="nec-coach-messages" id="nec-coach-messages"></div>
+  <div class="nec-coach-inputbar">
+    <input type="text" id="nec-coach-input" placeholder="Escribe tu mensaje..." autocomplete="off">
+    <button class="nec-coach-send" id="nec-coach-send-btn" onclick="necCoachSendTyped()" title="Enviar"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+
 <!-- BOTON FLOTANTE GOOGLE MEET (aparece solo si hay una reunión activa para el alumno) -->
 <button class="meet-float-btn" id="btn-meet-float" onclick="unirseAMeet()" title="Unirse a la clase en Google Meet">
   <img src="data:image/png;base64,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" alt="Google Meet">
@@ -1454,6 +1527,7 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const CORREO_ADMIN = "95gusmg@gmail.com";
 let sessionActiva = null;
+window.getSessionActiva = () => sessionActiva; // permite que el widget NEC Coach (fuera del módulo) lea el nombre del alumno
 let latidoInterval = null;
 let ultimasActividades = [];
 let ultimosRetos = [];
@@ -4507,6 +4581,7 @@ function showScreen(id, opciones = {}) {
   el.classList.add('active');
   const btnSoporte = document.getElementById('btn-soporte-float');
   if (btnSoporte) btnSoporte.classList.toggle('visible', id === 's-student');
+  if (typeof window.necUpdateFloatVisibility === 'function') window.necUpdateFloatVisibility(id === 's-student');
   renderMeetFloat();
   if (id === 's-chat') marcarChatVisto();
 
@@ -4539,6 +4614,257 @@ window.addEventListener('popstate', (ev) => {
   if (document.getElementById(destino)) showScreen(destino, { noHistory: true });
 });
 function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,".").trim(); }
+</script>
+
+<!-- ============================================================
+     NEC COACH — Asistente de inglés con IA (Gemini)
+     ============================================================
+     ADVERTENCIA DE SEGURIDAD: la API key de Gemini queda visible
+     para cualquiera que abra "Ver código fuente" en el navegador.
+     Esto es distinto a la config de Firebase de arriba (esa sí
+     está pensada para ser pública y se protege con Reglas de
+     Seguridad de Firestore). Una API key de Gemini expuesta puede
+     ser copiada y usada por terceros, generando cargos a tu cuenta
+     de Google Cloud. Recomendado: mover esta llamada a una Cloud
+     Function / endpoint propio que guarde la key en el servidor.
+     Lo dejo tal como lo pediste en la especificación, pero avísame
+     si quieres que te arme esa versión más segura.
+     ============================================================ -->
+<script>
+(function () {
+  const GEMINI_API_KEY = 'AIzaSyDY-U_zpzP--FDjsxdXJuWisbZysCf3PBk';
+  const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+  const SYSTEM_PROMPT = `
+You are the "Nica English Coach", the personal AI English trainer for Nica English Club (app.nicaenglishclub.com).
+
+CORE PHILOSOPHY:
+"We don't want students to translate English. We want them to think in English."
+Your goal: THINK -> UNDERSTAND -> RESPOND -> SPEAK IN ENGLISH.
+
+ROLE & PERSONALITY:
+- You are a natural, patient, demanding, direct, and encouraging coach—NOT a robotic teacher, grammar encyclopedia, or translation tool.
+- Proportions: 20% concise explanation / 80% active student practice.
+- Language ratio: Use English as much as possible. Only use brief Spanish for complete absolute beginners or to resolve severe blockages.
+- ALWAYS ask for the student's name if not provided, and address them by name to build rapport.
+
+METHODOLOGY & RULES:
+1. THINK IN ENGLISH THROUGH SITUATIONS: Never teach isolated vocabulary. Always associate words/phrases with concrete real-life situations (home, work, daily issues, shopping, travel).
+2. GUIDED DISCOVERY: Never give away the correct answer or grammar rule immediately. Ask guiding questions so the student figures it out ("Think about this: Do we HAVE an age or ARE we an age?").
+3. NATURAL CORRECTION:
+   - Small errors: Correct naturally in your response and keep moving.
+   - Conceptual errors: Ask a question to help them discover the mistake.
+   - Recurring errors: Pause and run a quick 2-step drill.
+4. NATURAL AMERICAN ENGLISH: Prioritize daily, casual, and neutral American English over literal translations or overly formal textbook grammar.
+5. ACTIVE RECALL & SHADOWING: Constantly ask follow-up questions ("Why?", "What happened next?", "How did you feel?"). Ask them to repeat, personalize, and modify sentences.
+6. ADAPTABILITY:
+   - Beginners: Short sentences, high frequency words, simple situations.
+   - Intermediate: Broader contexts, phrasal verbs, open-ended questions.
+   - Advanced: Opinions, debates, storytelling, nuances.
+7. "NO SPANISH ALLOWED" MODE: If requested or if the student reaches intermediate level, converse 100% in English using simplified language if they get stuck.
+
+PRACTICE SESSION STRUCTURE (When user triggers practice or quick replies):
+- Step 1: Warm-up (2 quick questions using student's name).
+- Step 2: Present a real situation.
+- Step 3: Elicit student production.
+- Step 4: Smart correction & quick challenge.
+- Step 5: Review (Brief feedback: what went well, 1-3 key chunks, next steps).
+
+Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI experience.
+`;
+
+  const QUICK_REPLIES = [
+    '🎯 Quiero practicar inglés hoy',
+    '💡 ¿Cómo digo una expresión natural?',
+    '❓ Tengo una duda de gramática/pronunciación'
+  ];
+
+  const AVATAR_SRC = 'avatar-nec-coach.jpg';
+
+  let necHistory = [];       // historial en formato Gemini: [{role:'user'|'model', parts:[{text}]}]
+  let necGreeted = false;    // si ya se mostró el saludo inicial en esta sesión de página
+  let necBusy = false;       // evita envíos simultáneos
+
+  const $panel   = () => document.getElementById('nec-coach-panel');
+  const $float   = () => document.getElementById('btn-nec-coach-float');
+  const $msgs    = () => document.getElementById('nec-coach-messages');
+  const $input   = () => document.getElementById('nec-coach-input');
+  const $sendBtn = () => document.getElementById('nec-coach-send-btn');
+
+  function getStudentName() {
+    try {
+      if (typeof window.getSessionActiva === 'function') {
+        const s = window.getSessionActiva();
+        if (s && s.nombre) return String(s.nombre).trim().split(/\s+/)[0];
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function necScrollBottom() {
+    const el = $msgs();
+    if (el) el.scrollTop = el.scrollHeight;
+  }
+
+  function necAppendMessage(role, text) {
+    const row = document.createElement('div');
+    row.className = 'nec-msg-row ' + (role === 'user' ? 'mine' : 'other');
+    let avatarHtml = '';
+    if (role !== 'user') {
+      avatarHtml = `<div class="nec-msg-avatar"><img src="${AVATAR_SRC}" alt="NEC Coach"></div>`;
+    }
+    const bubble = document.createElement('div');
+    bubble.className = 'nec-msg';
+    bubble.textContent = text;
+    row.innerHTML = avatarHtml;
+    row.appendChild(bubble);
+    $msgs().appendChild(row);
+    necScrollBottom();
+  }
+
+  function necShowTyping() {
+    const row = document.createElement('div');
+    row.className = 'nec-typing-row';
+    row.id = 'nec-typing-row';
+    row.innerHTML = `<div class="nec-msg-avatar"><img src="${AVATAR_SRC}" alt="NEC Coach"></div>
+      <div class="nec-typing"><span></span><span></span><span></span></div>`;
+    $msgs().appendChild(row);
+    necScrollBottom();
+  }
+
+  function necHideTyping() {
+    const row = document.getElementById('nec-typing-row');
+    if (row) row.remove();
+  }
+
+  function necShowQuickReplies() {
+    const wrap = document.createElement('div');
+    wrap.className = 'nec-quick-replies';
+    wrap.id = 'nec-quick-replies';
+    QUICK_REPLIES.forEach(text => {
+      const btn = document.createElement('button');
+      btn.className = 'nec-quick-btn';
+      btn.textContent = text;
+      btn.onclick = () => {
+        necRemoveQuickReplies();
+        necUserSend(text.replace(/^[^\s]+\s/, '')); // quita el emoji al enviarlo como mensaje real
+      };
+      wrap.appendChild(btn);
+    });
+    $msgs().appendChild(wrap);
+    necScrollBottom();
+  }
+
+  function necRemoveQuickReplies() {
+    const el = document.getElementById('nec-quick-replies');
+    if (el) el.remove();
+  }
+
+  function necGreet() {
+    const name = getStudentName();
+    const text = name
+      ? `¡Hola, ${name}! 👋 Soy tu NEC Coach. Aquí no traducimos inglés, aquí PENSAMOS en inglés. ¿Qué te gustaría practicar hoy?`
+      : `¡Hola! 👋 Soy tu NEC Coach, tu entrenador personal de inglés de Nica English Club. Antes de arrancar, cuéntame... ¿cómo te llamas?`;
+    necAppendMessage('coach', text);
+    necHistory.push({ role: 'model', parts: [{ text }] });
+    necShowQuickReplies();
+  }
+
+  async function callGemini(userText) {
+    necHistory.push({ role: 'user', parts: [{ text: userText }] });
+    const name = getStudentName();
+    const sysText = name
+      ? `${SYSTEM_PROMPT}\n\nThe student's name is "${name}". Address them by this name from now on.`
+      : SYSTEM_PROMPT;
+
+    const body = {
+      system_instruction: { parts: [{ text: sysText }] },
+      contents: necHistory,
+      generationConfig: { temperature: 0.8, maxOutputTokens: 400 }
+    };
+
+    const res = await fetch(GEMINI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const parts = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
+    const reply = (parts || []).map(p => p.text || '').join('').trim()
+      || "Sorry, I couldn't think of a reply. Can you say that again?";
+    necHistory.push({ role: 'model', parts: [{ text: reply }] });
+    return reply;
+  }
+
+  async function necUserSend(text) {
+    text = (text || '').trim();
+    if (!text || necBusy) return;
+    necRemoveQuickReplies();
+    necAppendMessage('user', text);
+    necBusy = true;
+    $sendBtn().disabled = true;
+    necShowTyping();
+    try {
+      const reply = await callGemini(text);
+      necHideTyping();
+      necAppendMessage('coach', reply);
+    } catch (err) {
+      necHideTyping();
+      necAppendMessage('coach', 'Oops, tuve un problema para conectarme. ¿Puedes intentar de nuevo en un momento?');
+      console.error('NEC Coach / Gemini error:', err);
+    } finally {
+      necBusy = false;
+      $sendBtn().disabled = false;
+    }
+  }
+
+  window.necCoachSendTyped = function () {
+    const input = $input();
+    const text = input.value;
+    input.value = '';
+    necUserSend(text);
+  };
+
+  window.necCoachOpen = function () {
+    $panel().classList.add('open');
+    window.necUpdateFloatVisibility();
+    if (!necGreeted) {
+      necGreeted = true;
+      necGreet();
+    }
+    setTimeout(() => $input() && $input().focus(), 150);
+  };
+
+  window.necCoachClose = function () {
+    $panel().classList.remove('open');
+    window.necUpdateFloatVisibility();
+  };
+
+  // Se llama desde showScreen() (fuera de este script) para que el botón
+  // del Coach aparezca/desaparezca junto con el botón de WhatsApp,
+  // y se oculte mientras el panel de chat está abierto.
+  window.necUpdateFloatVisibility = function (shouldShowOnThisScreen) {
+    const btn = $float();
+    if (!btn) return;
+    if (typeof shouldShowOnThisScreen === 'boolean') {
+      btn.dataset.screenOk = shouldShowOnThisScreen ? '1' : '0';
+    }
+    const screenOk = btn.dataset.screenOk === '1';
+    const panelOpen = $panel() && $panel().classList.contains('open');
+    btn.classList.toggle('visible', screenOk && !panelOpen);
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const input = $input();
+    if (input) {
+      input.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') window.necCoachSendTyped();
+      });
+    }
+  });
+})();
 </script>
 </body>
 </html>
