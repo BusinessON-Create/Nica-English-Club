@@ -2687,20 +2687,20 @@ function renderPasoTrain(dia) {
     <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Train</span>
     <p class="tr-tot-progress">Pick the correct one — ${trJuegoIndex+1} / ${pares.length}</p>
     <div class="tr-tot-pair" id="tr-tot-pair">
-      <button class="tr-tot-opt" onclick="responderTrainOption(this,'${escNeclub(opA).replace(/'/g,"\\'")}', '${escNeclub(par.correcta).replace(/'/g,"\\'")}')">${escNeclub(opA)}</button>
-      <button class="tr-tot-opt" onclick="responderTrainOption(this,'${escNeclub(opB).replace(/'/g,"\\'")}', '${escNeclub(par.correcta).replace(/'/g,"\\'")}')">${escNeclub(opB)}</button>
+      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '1':'0'}" onclick="responderTrainOption(this)">${escNeclub(opA)}</button>
+      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '0':'1'}" onclick="responderTrainOption(this)">${escNeclub(opB)}</button>
     </div>
   </div>`;
 }
-window.responderTrainOption = (btn, texto, correcta) => {
+window.responderTrainOption = (btn) => {
   const wrap = document.getElementById('tr-tot-pair');
   if (!wrap || wrap.dataset.bloqueado) return;
   wrap.dataset.bloqueado = '1';
   wrap.querySelectorAll('.tr-tot-opt').forEach(b => {
     b.disabled = true;
-    if (b.innerText === correcta) b.classList.add('correct');
+    if (b.dataset.correcta === '1') b.classList.add('correct');
   });
-  if (texto !== correcta) btn.classList.add('incorrect');
+  if (btn.dataset.correcta !== '1') btn.classList.add('incorrect');
   setTimeout(async () => {
     trJuegoIndex++;
     const dia = trSemanaActual.dias[trProgresoActual.diaActual - 1];
@@ -2724,11 +2724,13 @@ function renderPasoProduce(dia) {
   return `<div class="tr-step-card">
     <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Speak</span>
     <div class="tr-reto-box"><p>${escNeclub(dia.retoPregunta||'')}</p></div>
-    <button class="tr-wa-btn" onclick="enviarRetoTrainingWA('${escNeclub(dia.retoPregunta||'').replace(/'/g,"\\'")}')"><i class="fa-brands fa-whatsapp"></i> Record & Send</button>
+    <button class="tr-wa-btn" onclick="enviarRetoTrainingWA()"><i class="fa-brands fa-whatsapp"></i> Record & Send</button>
     <button class="tr-confirm-btn" id="tr-confirm-btn" onclick="completarDiaTraining()"><i class="fa-solid fa-circle-check"></i> I already sent it</button>
   </div>`;
 }
-window.enviarRetoTrainingWA = (pregunta) => {
+window.enviarRetoTrainingWA = () => {
+  const dia = trSemanaActual && trSemanaActual.dias ? trSemanaActual.dias[trProgresoActual.diaActual - 1] : null;
+  const pregunta = dia ? (dia.retoPregunta || '') : '';
   const nombre = sessionActiva ? sessionActiva.nombre : '';
   const mensaje = `Hi! I'm ${nombre}. This is my Training Room voice challenge (Day ${trProgresoActual.diaActual}):\n"${pregunta}"\n(sending my voice note now)`;
   window.open(`https://wa.me/${WA_TRAINING}?text=${encodeURIComponent(mensaje)}`, '_blank');
