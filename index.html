@@ -458,6 +458,59 @@ a { color: inherit; }
 .tr-progress-table th { text-align:left; color:var(--muted-dim); font-size:10.5px; text-transform:uppercase; padding:8px 6px; border-bottom:1px solid var(--border); }
 .tr-progress-table td { padding:9px 6px; border-bottom:1px solid var(--border); color:var(--text); }
 
+/* ===== TRAINING ROOM — herramientas superiores (Journey + Traductor) ===== */
+.tr-toolbar { display:flex; gap:8px; margin:14px 0 6px; }
+.tr-journey-btn { flex-shrink:0; display:flex; align-items:center; gap:7px; background:linear-gradient(135deg, var(--gold-dim), rgba(240,180,41,.04)); border:1px solid var(--gold2); color:var(--gold3); font-weight:700; font-size:11.5px; padding:0 14px; border-radius:12px; cursor:pointer; font-family:inherit; white-space:nowrap; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.tr-journey-btn:hover { transform:translateY(-1px); box-shadow:0 8px 18px rgba(240,180,41,.15); }
+.tr-journey-btn i { font-size:13px; }
+.tr-search-wrap { flex:1; position:relative; display:flex; align-items:center; }
+.tr-search-input { width:100%; height:100%; background:var(--card2); border:1px solid var(--border2); border-radius:12px; color:var(--text); padding:0 40px 0 14px; font-size:13px; font-family:inherit; }
+.tr-search-input:focus { outline:none; border-color:var(--gold2); }
+.tr-search-input::placeholder { color:var(--muted-dim); }
+.tr-search-btn { position:absolute; right:6px; width:28px; height:28px; border-radius:8px; background:var(--gold); border:none; color:#000; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; }
+.tr-search-btn:disabled { opacity:.5; cursor:default; }
+.tr-translate-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:16px; margin:10px 0 16px; animation: fadeUp .3s var(--ease); }
+.tr-translate-row { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:8px 0; }
+.tr-translate-row + .tr-translate-row { border-top:1px solid var(--border); }
+.tr-translate-text { flex:1; }
+.tr-translate-lang { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--gold3); margin-bottom:3px; display:block; }
+.tr-translate-word { color:#fff; font-size:15px; line-height:1.4; }
+.tr-translate-note { color:var(--muted); font-size:11.5px; text-align:center; padding:6px 0; }
+.tr-speak-btn { flex-shrink:0; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid var(--border2); color:var(--gold2); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:12.5px; transition: background .15s, transform .15s; }
+.tr-speak-btn:hover { background:var(--gold-dim); transform:scale(1.06); }
+.tr-speak-btn.playing { color:#000; background:var(--gold); animation: pulseSoft 1s ease infinite; }
+.tr-inline-speak { margin-left:8px; }
+
+/* ===== ENGLISH JOURNEY — camino estilo Duolingo ===== */
+.tr-journey-shell { max-width:420px; margin:0 auto; padding:24px 14px 100px; }
+.tr-journey-stage-head { text-align:center; margin:26px 0 18px; }
+.tr-journey-stage-head span { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gold3); background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); padding:6px 16px; border-radius:99px; }
+.tr-journey-path { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.tr-journey-node-row { display:flex; justify-content:center; width:100%; margin:6px 0; }
+.tr-journey-node-row.pos-0 { justify-content:center; }
+.tr-journey-node-row.pos-1 { justify-content:flex-end; padding-right:14%; }
+.tr-journey-node-row.pos-2 { justify-content:flex-start; padding-left:22%; }
+.tr-journey-node-row.pos-3 { justify-content:flex-end; padding-right:22%; }
+.tr-journey-node-row.pos-4 { justify-content:flex-start; padding-left:14%; }
+.tr-journey-node { position:relative; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none; font-family:inherit; }
+.tr-journey-node .core { width:100%; height:100%; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow: 0 6px 0 rgba(0,0,0,.25); transition: transform .12s var(--ease); }
+.tr-journey-node:active .core { transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.25); }
+.tr-journey-node.done .core { background:linear-gradient(160deg, var(--gold), var(--gold2)); color:#000; }
+.tr-journey-node.current .core { background:linear-gradient(160deg, var(--gold-dim), rgba(240,180,41,.15)); color:var(--gold2); border:2px solid var(--gold2); box-shadow:0 6px 0 rgba(0,0,0,.25), 0 0 0 6px rgba(240,180,41,.12); animation: pulseSoft 1.8s ease infinite; }
+.tr-journey-node.locked { cursor:default; }
+.tr-journey-node.locked .core { background:var(--card2); color:var(--muted-dim); border:2px dashed var(--border2); box-shadow:none; opacity:.55; }
+.tr-journey-node-label { position:absolute; top:70px; left:50%; transform:translateX(-50%); font-size:9px; color:var(--muted-dim); white-space:nowrap; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
+.tr-journey-node.done .tr-journey-node-label, .tr-journey-node.current .tr-journey-node-label { color:var(--gold3); }
+.tr-journey-node-wrap { position:relative; margin-bottom:36px; }
+.tr-journey-lock-icon { position:absolute; bottom:-4px; right:-2px; width:20px; height:20px; border-radius:50%; background:var(--card2); border:1px solid var(--border2); color:var(--muted-dim); display:flex; align-items:center; justify-content:center; font-size:9px; }
+
+/* Modal de repaso (historial) */
+.tr-review-box { background:rgba(255,255,255,.04); border-radius:14px; padding:16px; margin:12px 0; text-align:left; }
+.tr-review-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--gold3); display:block; margin-bottom:8px; }
+.tr-review-phrase { color:#fff; font-size:17px; line-height:1.4; font-family:'Playfair Display'; margin-bottom:6px; }
+.tr-review-trans { color:var(--muted); font-size:12.5px; }
+.tr-review-head-row { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+
 /* ===== BOTÓN FLOTANTE GOOGLE MEET ===== */
 .meet-float-btn { position:fixed; bottom:22px; left:22px; z-index:400; width:150px; height:50px; border-radius:999px; background:#ffffff; border:2px solid #34a853; box-shadow: 0 10px 26px rgba(0,0,0,.5); align-items:center; justify-content:center; cursor:pointer; transition: transform .2s var(--ease), box-shadow .2s var(--ease); display:none; padding:10px 16px; }
 .meet-float-btn.visible { display:flex; animation: pulseSoft 2s ease infinite; }
@@ -926,10 +979,29 @@ a { color: inherit; }
       <div class="nav-actions"><span style="color:#fff; font-weight:700; font-size:13.5px;"><i class="fa-solid fa-brain" style="color:var(--gold); margin-right:6px;"></i>Training Room</span></div>
     </nav>
     <div class="tr-shell" id="tr-shell">
+      <div class="tr-toolbar">
+        <button class="tr-journey-btn" onclick="abrirEnglishJourney()"><i class="fa-solid fa-route"></i> English Journey</button>
+        <div class="tr-search-wrap">
+          <input type="text" id="tr-search-input" class="tr-search-input" placeholder="Escribe una palabra o frase para traducir..." onkeydown="if(event.key==='Enter'){event.preventDefault(); trBuscarTraduccion();}">
+          <button class="tr-search-btn" id="tr-search-btn" onclick="trBuscarTraduccion()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+      </div>
+      <div id="tr-translate-result"></div>
       <div class="tr-stagepath" id="tr-stagepath"></div>
       <div id="tr-content"><p class="tr-lock-msg">Loading your progress...</p></div>
       <div class="tr-metric-grid" id="tr-metric-grid"></div>
       <div class="tr-badges-row" id="tr-badges-row"></div>
+    </div>
+  </div>
+
+  <!-- ENGLISH JOURNEY — camino de progreso estilo Duolingo + historial de repaso -->
+  <div id="s-tr-journey" class="screen">
+    <nav class="stu-nav">
+      <button class="btn-salir" onclick="showScreen('s-training')" title="Volver"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="nav-actions"><span style="color:#fff; font-weight:700; font-size:13.5px;"><i class="fa-solid fa-route" style="color:var(--gold); margin-right:6px;"></i>English Journey</span></div>
+    </nav>
+    <div class="tr-journey-shell" id="tr-journey-shell">
+      <p class="tr-lock-msg">Loading your journey...</p>
     </div>
   </div>
 
@@ -1135,6 +1207,15 @@ a { color: inherit; }
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: REPASO DE DÍA (English Journey / Historial) -->
+<div class="modal-bg" id="modal-tr-review-bg">
+  <div class="modal-box modal-box-form" style="position:relative; text-align:left;">
+    <button class="modal-close-x" onclick="cerrarModalRepaso()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 style="color:#fff; font-family:'Playfair Display'; font-size:20px;" id="tr-review-titulo">Review</h3>
+    <div id="tr-review-body" style="margin-top:10px;"></div>
   </div>
 </div>
 
@@ -2536,7 +2617,7 @@ async function inicializarProgresoTraining() {
     etapaActual: 'foundations', semanaIdActual: primera ? primera.id : null,
     diaActual: 1, pasoActual: 'prime',
     semanasCompletadas: 0, rachaSemanas: 0, ultimaSemanaCompletadaFecha: 0,
-    retosEnviados: 0, palabrasPracticadas: 0, etapasCompletadas: []
+    retosEnviados: 0, palabrasPracticadas: 0, etapasCompletadas: [], historialSemanas: []
   });
 }
 let trReparacionEnCurso = false;
@@ -2653,13 +2734,14 @@ function renderBadgesTraining() {
 function renderPasoPrime(dia) {
   return `<div class="tr-step-card">
     <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Mindset</span>
-    <p class="tr-prime-phrase">"${escNeclub(dia.prime||'')}"</p>
+    <p class="tr-prime-phrase">"${escNeclub(dia.prime||'')}" ${trBotonSonido(dia.prime||'', 'en-US', 'tr-inline-speak')}</p>
     <p class="tr-prime-trans">${escNeclub(dia.primeTraduccion||'')}</p>
     <button class="btn-login" onclick="avanzarPasoTraining('absorb', this)">I'm ready <i class="fa-solid fa-arrow-right"></i></button>
   </div>`;
 }
 function renderPasoAbsorb(dia) {
   let media = '';
+  let botonSonidoAbsorb = '';
   if (dia.absorbTipo === 'video') {
     const yid = extraerYoutubeId(dia.absorbContenido);
     media = yid ? `<iframe src="https://www.youtube.com/embed/${yid}" frameborder="0" allowfullscreen></iframe>` : `<p>${escNeclub(dia.absorbContenido||'')}</p>`;
@@ -2667,10 +2749,12 @@ function renderPasoAbsorb(dia) {
     media = `<audio src="${dia.absorbContenido||''}" controls style="width:100%;"></audio>`;
   } else {
     media = `${escNeclub(dia.absorbContenido||'')}`;
+    botonSonidoAbsorb = trBotonSonido(dia.absorbContenido||'', 'en-US');
   }
   return `<div class="tr-step-card">
     <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Absorb</span>
     <div class="tr-absorb-content">${media}</div>
+    ${botonSonidoAbsorb ? `<div style="margin:-8px 0 14px;">${botonSonidoAbsorb}</div>` : ''}
     <button class="btn-login" onclick="avanzarPasoTraining('train', this)">Continue <i class="fa-solid fa-arrow-right"></i></button>
   </div>`;
 }
@@ -2780,13 +2864,222 @@ window.completarDiaTraining = async () => {
       etapasCompletadas: nuevasEtapasCompletadas,
       semanaIdActual: siguiente ? siguiente.id : null,
       diaActual: 1,
-      pasoActual: 'prime'
+      pasoActual: 'prime',
+      // Guardamos la semana recién terminada en el historial para que el alumno
+      // pueda repasarla después desde English Journey (Mindset/Absorb + audio).
+      ...(trSemanaActual ? { historialSemanas: arrayUnion(trSemanaActual.id) } : {})
     });
   } catch (e) {
     console.error('No se pudo completar el día de Training Room:', e);
     showModal('No se pudo guardar tu progreso', 'Revisa tu conexión a internet e intenta de nuevo. Tu reto de voz ya fue enviado, solo falta guardar el avance del día.');
     if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.textoOriginal; }
   }
+};
+
+/* ===== TRAINING ROOM — Pronunciación (texto a voz) ===== */
+// Se usa en Mindset, Absorb, el traductor y English Journey. Un solo botón reutilizable.
+function trBotonSonido(texto, lang, claseExtra) {
+  const limpio = String(texto || '').trim();
+  if (!limpio) return '';
+  return `<button type="button" class="tr-speak-btn ${claseExtra||''}" data-speak="${escNeclub(limpio)}" data-lang="${lang||'en-US'}" onclick="trHablar(this)" title="Escuchar pronunciación"><i class="fa-solid fa-volume-high"></i></button>`;
+}
+let trUtteranceActual = null;
+window.trHablar = (origen) => {
+  if (!('speechSynthesis' in window)) {
+    showModal('Audio no disponible', 'Tu navegador no soporta la pronunciación por voz. Prueba con Chrome o Safari actualizados.');
+    return;
+  }
+  // 'origen' puede ser el botón (lee data-speak/data-lang) o directamente un texto plano.
+  let texto, lang, btn;
+  if (typeof origen === 'string') { texto = origen; lang = 'en-US'; }
+  else { btn = origen; texto = btn.dataset.speak; lang = btn.dataset.lang || 'en-US'; }
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.tr-speak-btn.playing').forEach(b => b.classList.remove('playing'));
+  if (!texto) return;
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang = lang;
+  u.rate = 0.92;
+  if (btn) {
+    btn.classList.add('playing');
+    u.onend = () => btn.classList.remove('playing');
+    u.onerror = () => btn.classList.remove('playing');
+  }
+  trUtteranceActual = u;
+  window.speechSynthesis.speak(u);
+};
+
+/* ===== TRAINING ROOM — Traductor (solo dentro del Training Room) ===== */
+const TR_TRANSLATE_API_KEY = 'AIzaSyC3dxkhRo1OWA7RpFRpqmmJseo9KtV1HA8';
+let trTraduccionEnCurso = false;
+async function trLlamarGoogleTranslate(texto, target, source) {
+  const params = new URLSearchParams({ key: TR_TRANSLATE_API_KEY, q: texto, target, format: 'text' });
+  if (source) params.append('source', source);
+  const resp = await fetch(`https://translation.googleapis.com/language/translate/v2?${params.toString()}`, { method: 'POST' });
+  const data = await resp.json();
+  if (!resp.ok || !data || !data.data) {
+    const msg = (data && data.error && data.error.message) ? data.error.message : 'Error desconocido';
+    throw new Error(msg);
+  }
+  return data.data.translations[0];
+}
+window.trBuscarTraduccion = async () => {
+  if (trTraduccionEnCurso) return;
+  const input = document.getElementById('tr-search-input');
+  const cont = document.getElementById('tr-translate-result');
+  const btn = document.getElementById('tr-search-btn');
+  const texto = (input.value || '').trim();
+  if (!texto) return;
+  trTraduccionEnCurso = true;
+  btn.disabled = true;
+  const iconoOriginal = btn.innerHTML;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+  cont.innerHTML = `<div class="tr-translate-card"><p class="tr-translate-note"><i class="fa-solid fa-spinner fa-spin"></i> Translating...</p></div>`;
+  try {
+    // 1) Primero probamos traducir hacia inglés (nos dice el idioma detectado).
+    const primero = await trLlamarGoogleTranslate(texto, 'en');
+    const idiomaDetectado = (primero.detectedSourceLanguage || '').toLowerCase();
+    let filaOriginal, filaTraduccion;
+    if (idiomaDetectado === 'en') {
+      // El alumno escribió en inglés → mostramos también la traducción al español.
+      const segundo = await trLlamarGoogleTranslate(texto, 'es', 'en');
+      filaOriginal = { texto, lang: 'en-US', etiqueta: 'English' };
+      filaTraduccion = { texto: segundo.translatedText, lang: 'es-ES', etiqueta: 'Español' };
+    } else {
+      // El alumno escribió en español (u otro idioma) → ya tenemos el inglés.
+      filaOriginal = { texto, lang: 'es-ES', etiqueta: idiomaDetectado === 'es' ? 'Español' : idiomaDetectado.toUpperCase() };
+      filaTraduccion = { texto: primero.translatedText, lang: 'en-US', etiqueta: 'English' };
+    }
+    cont.innerHTML = `<div class="tr-translate-card">
+      <div class="tr-translate-row">
+        <div class="tr-translate-text"><span class="tr-translate-lang">${escNeclub(filaOriginal.etiqueta)}</span><span class="tr-translate-word">${escNeclub(filaOriginal.texto)}</span></div>
+        ${trBotonSonido(filaOriginal.texto, filaOriginal.lang)}
+      </div>
+      <div class="tr-translate-row">
+        <div class="tr-translate-text"><span class="tr-translate-lang">${escNeclub(filaTraduccion.etiqueta)}</span><span class="tr-translate-word">${escNeclub(filaTraduccion.texto)}</span></div>
+        ${trBotonSonido(filaTraduccion.texto, filaTraduccion.lang)}
+      </div>
+    </div>`;
+  } catch (e) {
+    console.error('Error al traducir:', e);
+    cont.innerHTML = `<div class="tr-translate-card"><p class="tr-translate-note" style="color:var(--red);">No se pudo traducir. Revisa tu conexión e intenta de nuevo.</p></div>`;
+  } finally {
+    trTraduccionEnCurso = false;
+    btn.disabled = false;
+    btn.innerHTML = iconoOriginal;
+  }
+};
+
+/* ===== ENGLISH JOURNEY — camino de progreso + historial de repaso ===== */
+let trHistorialSemanasCache = {}; // semanaId -> datos de la semana
+async function trObtenerSemanaPorId(id) {
+  if (!id) return null;
+  if (trHistorialSemanasCache[id]) return trHistorialSemanasCache[id];
+  try {
+    const snap = await getDoc(doc(db, 'entrenamiento_semanas', id));
+    if (!snap.exists()) return null;
+    const data = { id: snap.id, ...snap.data() };
+    trHistorialSemanasCache[id] = data;
+    return data;
+  } catch (e) {
+    console.error('No se pudo cargar una semana del historial:', e);
+    return null;
+  }
+}
+window.abrirEnglishJourney = async () => {
+  showScreen('s-tr-journey');
+  await renderEnglishJourney();
+};
+async function renderEnglishJourney() {
+  const cont = document.getElementById('tr-journey-shell');
+  if (!cont || !trProgresoActual) return;
+  cont.innerHTML = `<p class="tr-lock-msg"><i class="fa-solid fa-spinner fa-spin"></i> Loading your journey...</p>`;
+
+  // 1) Semanas ya completadas (historial) — todos sus 5 días cuentan como "done".
+  const idsHistorial = trProgresoActual.historialSemanas || [];
+  const semanasHistorial = (await Promise.all(idsHistorial.map(trObtenerSemanaPorId))).filter(Boolean);
+
+  let nodos = [];
+  semanasHistorial.forEach(sem => {
+    (sem.dias || []).forEach((dia, i) => {
+      nodos.push({ estado: 'done', semana: sem, dia, numDia: i + 1 });
+    });
+  });
+
+  // 2) Semana actual — días antes de diaActual = done, el actual = current, resto = locked.
+  if (trSemanaActual) {
+    (trSemanaActual.dias || []).forEach((dia, i) => {
+      const numDia = i + 1;
+      let estado = 'locked';
+      if (numDia < trProgresoActual.diaActual) estado = 'done';
+      else if (numDia === trProgresoActual.diaActual) estado = 'current';
+      nodos.push({ estado, semana: trSemanaActual, dia, numDia });
+    });
+  }
+
+  if (!nodos.length) {
+    cont.innerHTML = `<div class="tr-week-card" style="text-align:center;"><p class="tr-lock-msg">Tu camino aparecerá aquí en cuanto empieces tu primera semana.</p></div>`;
+    return;
+  }
+
+  const filas = nodos.map((n, i) => {
+    const pos = i % 5;
+    const icono = n.estado === 'done' ? 'fa-check' : n.estado === 'current' ? 'fa-star' : 'fa-lock';
+    const candado = n.estado === 'locked' ? `<div class="tr-journey-lock-icon"><i class="fa-solid fa-lock"></i></div>` : '';
+    let onclick = '';
+    if (n.estado === 'current') onclick = `onclick="showScreen('s-training')"`;
+    else if (n.estado === 'done') onclick = `onclick="abrirRepasoDia(${i})"`;
+    return `<div class="tr-journey-node-row pos-${pos}">
+      <div class="tr-journey-node-wrap">
+        <button type="button" class="tr-journey-node ${n.estado}" ${onclick}>
+          <span class="core"><i class="fa-solid ${icono}"></i></span>
+          ${candado}
+        </button>
+        <span class="tr-journey-node-label">Day ${n.numDia}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  window.trJourneyNodosCache = nodos;
+  cont.innerHTML = `
+    <div class="tr-journey-stage-head"><span>${escNeclub(TR_ETAPA_LABEL[trProgresoActual.etapaActual] || '')}</span></div>
+    <div class="tr-journey-path">${filas}</div>
+    <p class="tr-translate-note" style="margin-top:20px;"><i class="fa-solid fa-circle-info"></i> Tap a completed day to review it. Locked days unlock as you keep going.</p>`;
+}
+window.abrirRepasoDia = (idx) => {
+  const nodos = window.trJourneyNodosCache || [];
+  const n = nodos[idx];
+  if (!n) return;
+  const dia = n.dia || {};
+  const titulo = document.getElementById('tr-review-titulo');
+  const body = document.getElementById('tr-review-body');
+  titulo.textContent = `${n.semana.titulo || 'Week'} · Day ${n.numDia}`;
+  let absorbHtml = '';
+  if (dia.absorbTipo === 'video') {
+    const yid = extraerYoutubeId(dia.absorbContenido);
+    absorbHtml = yid ? `<iframe src="https://www.youtube.com/embed/${yid}" frameborder="0" allowfullscreen style="width:100%; aspect-ratio:16/9; border-radius:12px; margin-top:8px;"></iframe>` : '';
+  } else if (dia.absorbTipo === 'audio') {
+    absorbHtml = `<audio src="${dia.absorbContenido||''}" controls style="width:100%; margin-top:8px;"></audio>`;
+  } else if (dia.absorbContenido) {
+    absorbHtml = `<div class="tr-review-box"><span class="tr-review-label">Absorb</span><p style="color:var(--text); font-size:13.5px; line-height:1.6; white-space:pre-wrap;">${escNeclub(dia.absorbContenido)}</p>${trBotonSonido(dia.absorbContenido, 'en-US')}</div>`;
+  }
+  body.innerHTML = `
+    <div class="tr-review-box">
+      <div class="tr-review-head-row">
+        <div>
+          <span class="tr-review-label">Mindset</span>
+          <p class="tr-review-phrase">"${escNeclub(dia.prime||'')}"</p>
+          <p class="tr-review-trans">${escNeclub(dia.primeTraduccion||'')}</p>
+        </div>
+        ${trBotonSonido(dia.prime||'', 'en-US')}
+      </div>
+    </div>
+    ${absorbHtml}
+    <p class="tr-translate-note"><i class="fa-solid fa-eye"></i> Review mode — just read &amp; listen, no quiz here.</p>`;
+  document.getElementById('modal-tr-review-bg').classList.add('open');
+};
+window.cerrarModalRepaso = () => {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  document.getElementById('modal-tr-review-bg').classList.remove('open');
 };
 
 
