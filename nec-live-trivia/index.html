@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trivia de Expresiones · NicaEnglish Club</title>
+<link rel="icon" type="image/png" href="../logo.png">
+
+<!-- SEGURIDAD: debe ir antes que cualquier otro script -->
+<script src="../seguridad.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #08080a; --canvas: #0a0a0c; --card: #121214; --card2: #16161a; --card-hover: #1a1a1f;
+    --border: #212127; --border2: #2c2c34;
+    --gold: #f0b429; --gold2: #c8891a; --gold3: #ffd966;
+    --gold-dim: rgba(240,180,41,0.1); --gold-glow: rgba(240,180,41,0.16);
+    --red: #ff5c5c; --green: #00d68f; --blue: #4d9fff;
+    --muted: #8a8a97; --muted-dim: #55555f; --text: #e8e8f2; --white: #ffffff;
+    --r-sm: 14px; --r: 18px; --r-lg: 22px; --r-xl: 30px;
+    --shadow-card: 0 20px 50px rgba(0,0,0,.55);
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2, h3, .brand {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .mono { font-family: 'DM Mono', monospace; }
+
+  a { color: inherit; }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--canvas);
+  }
+
+  .brand-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-badge {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: #0a0a0a;
+    border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .logo-badge img { width: 100%; height: 100%; object-fit: contain; }
+
+  .brand-text { line-height: 1.15; }
+  .brand-text .title { font-size: 17px; font-weight: 700; color: var(--white); }
+  .brand-text .subtitle { font-size: 12px; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+
+  .btn-salir {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--r-sm);
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
+  }
+  .btn-salir:hover {
+    background: rgba(255,255,255,.08);
+    border-color: var(--gold2);
+    transform: translateY(-1px);
+  }
+
+  /* ---------- Layout ---------- */
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+  }
+
+  .screen { width: 100%; max-width: 560px; display: none; }
+  .screen.active { display: block; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 36px 32px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .eyebrow-free { color: var(--muted); font-size: 14px; margin: 0 0 6px; }
+  .heading { font-size: 28px; font-weight: 700; color: var(--white); margin: 0 0 8px; }
+  .lede { color: var(--muted); font-size: 15px; line-height: 1.5; margin: 0 0 28px; }
+
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+
+  input[type="text"] {
+    width: 100%;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  input[type="text"].code-input {
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 20px;
+  }
+  input[type="text"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-dim);
+  }
+
+  .field { margin-bottom: 20px; }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .mode-card {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-sm);
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .18s var(--ease), background .18s var(--ease), transform .18s var(--ease);
+  }
+  .mode-card:hover { transform: translateY(-1px); }
+  .mode-card .n { font-family: 'DM Mono', monospace; font-size: 22px; color: var(--gold3); }
+  .mode-card .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .mode-card.selected {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+    box-shadow: 0 0 0 1px var(--gold-glow);
+  }
+
+  .btn-gold {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: var(--r-sm);
+    background: linear-gradient(135deg, var(--gold2), var(--gold3));
+    color: #1a1204;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 10px 24px var(--gold-glow); }
+  .btn-gold:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-ghost {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: var(--r-sm);
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color .18s var(--ease), background .18s var(--ease);
+  }
+  .btn-ghost:hover { border-color: var(--gold2); background: rgba(255,255,255,.03); }
+
+  .divider-or {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--muted-dim);
+    font-size: 13px;
+    margin: 24px 0;
+  }
+  .divider-or::before, .divider-or::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border2);
+  }
+
+  .join-block { display: none; }
+  .join-block.open { display: block; }
+
+  .error-msg {
+    color: var(--red);
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* ---------- Waiting screen ---------- */
+  .room-code-display {
+    text-align: center;
+    margin: 20px 0 28px;
+  }
+  .room-code-display .code {
+    font-family: 'DM Mono', monospace;
+    font-size: 44px;
+    letter-spacing: 8px;
+    color: var(--gold3);
+    font-weight: 500;
+  }
+  .room-code-display .hint { color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+  .pulse-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: inline-block;
+    margin-right: 8px;
+    animation: pulse 1.4s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 var(--gold-glow); }
+    70% { box-shadow: 0 0 0 10px rgba(240,180,41,0); }
+    100% { box-shadow: 0 0 0 0 rgba(240,180,41,0); }
+  }
+
+  .waiting-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  /* ---------- Playing screen ---------- */
+  .scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .player-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .player-chip .name { font-size: 13px; color: var(--muted); }
+  .player-chip .score { font-family: 'DM Mono', monospace; font-size: 26px; color: var(--white); }
+  .player-chip.me .score { color: var(--gold3); }
+  .vs-label { color: var(--muted-dim); font-size: 12px; }
+
+  .progress-track {
+    height: 6px;
+    background: rgba(255,255,255,.06);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold2), var(--gold3));
+    border-radius: 4px;
+    transition: width .4s var(--ease);
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+
+  .timer-bar-track {
+    height: 4px;
+    background: rgba(255,255,255,.06);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .timer-bar-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 4px;
+    width: 100%;
+    transition: width 1s linear;
+  }
+  .timer-bar-fill.urgent { background: var(--red); }
+
+  .expresion-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--gold3);
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-glow);
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .question-text {
+    font-size: 21px;
+    line-height: 1.4;
+    color: var(--white);
+    margin: 0 0 26px;
+    font-weight: 500;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 480px) {
+    .options-grid { grid-template-columns: 1fr; }
+  }
+
+  .option-btn {
+    text-align: left;
+    padding: 16px;
+    border-radius: var(--r-sm);
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: border-color .18s var(--ease), background .18s var(--ease), transform .18s var(--ease);
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--gold2);
+    background: var(--card-hover);
+    transform: translateY(-1px);
+  }
+  .option-btn:disabled { cursor: default; }
+  .option-btn.chosen-correct {
+    border-color: var(--green);
+    background: rgba(0,214,143,.12);
+    color: var(--green);
+  }
+  .option-btn.chosen-wrong {
+    border-color: var(--red);
+    background: rgba(255,92,92,.1);
+    color: var(--red);
+  }
+  .option-btn.reveal-correct {
+    border-color: var(--green);
+  }
+
+  .round-banner {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    min-height: 20px;
+    margin-top: 20px;
+  }
+  .round-banner.win { color: var(--gold3); }
+
+  /* ---------- Countdown overlay ---------- */
+  .countdown-num {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    color: var(--gold3);
+    margin: 10px 0 4px;
+  }
+  .countdown-sub { text-align: center; color: var(--muted); font-size: 14px; }
+
+  /* ---------- Finished screen ---------- */
+  .winner-banner {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .winner-banner .trophy-label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+  .winner-banner .winner-name {
+    font-size: 30px;
+    color: var(--gold3);
+    font-weight: 700;
+  }
+
+  .final-scores {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 30px;
+  }
+  .final-scores .fs-item { text-align: center; }
+  .final-scores .fs-item .fs-name { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .final-scores .fs-item .fs-score { font-family: 'DM Mono', monospace; font-size: 32px; color: var(--white); }
+
+  .actions-row { display: flex; flex-direction: column; gap: 12px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-block">
+    <div class="logo-badge"><img src="../logo.png" alt="NicaEnglish Club"></div>
+    <div class="brand-text">
+      <div class="title">Trivia de Expresiones</div>
+      <div class="subtitle">NicaEnglish Club</div>
+    </div>
+  </div>
+  <a class="btn-salir" href="../index.html">&larr; Volver al portal</a>
+</header>
+
+<main>
+
+  <!-- ============ PANTALLA: SETUP (nombre, modo, crear/unirse) ============ -->
+  <section id="screen-setup" class="screen active">
+    <div class="card">
+      <p class="eyebrow-free">2 jugadores</p>
+      <h1 class="heading">Trivia de expresiones</h1>
+      <p class="lede">Pon tu nombre, elige la duración de la partida y crea una sala, o únete a la de tu rival con su código.</p>
+
+      <div class="field">
+        <label for="input-name">Tu nombre</label>
+        <input type="text" id="input-name" maxlength="20" placeholder="Ej: María">
+      </div>
+
+      <div class="field">
+        <label>Duración de la partida</label>
+        <div class="mode-grid">
+          <div class="mode-card selected" data-mode="rapido" data-count="15">
+            <div class="n">15</div>
+            <div class="label">Rápido</div>
+          </div>
+          <div class="mode-card" data-mode="medio" data-count="25">
+            <div class="n">25</div>
+            <div class="label">Medio</div>
+          </div>
+          <div class="mode-card" data-mode="completo" data-count="40">
+            <div class="n">40</div>
+            <div class="label">Completo</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-gold" id="btn-create-room">Crear sala</button>
+      <p class="error-msg" id="error-create"></p>
+
+      <div class="divider-or">o</div>
+
+      <button class="btn-ghost" id="btn-toggle-join">Unirme con un código</button>
+
+      <div class="join-block" id="join-block">
+        <div class="field" style="margin-top:20px;">
+          <label for="input-code">Código de sala</label>
+          <input type="text" id="input-code" class="code-input" maxlength="6" placeholder="ABC123">
+        </div>
+        <button class="btn-gold" id="btn-join-room">Unirme a la sala</button>
+        <p class="error-msg" id="error-join"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: ESPERANDO RIVAL ============ -->
+  <section id="screen-waiting" class="screen">
+    <div class="card">
+      <p class="eyebrow-free">Sala creada</p>
+      <h2 class="heading">Comparte este código</h2>
+      <p class="lede">Tu rival debe escribir este código en "Unirme con un código" para empezar.</p>
+
+      <div class="room-code-display">
+        <div class="code" id="waiting-code">------</div>
+        <div class="hint">Modo: <span id="waiting-mode">-</span></div>
+      </div>
+
+      <div class="waiting-status">
+        <span class="pulse-dot"></span> Esperando a tu rival...
+      </div>
+
+      <a class="btn-salir" href="../index.html" style="justify-content:center; display:flex;">Cancelar y volver</a>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: CUENTA REGRESIVA ============ -->
+  <section id="screen-countdown" class="screen">
+    <div class="card">
+      <p class="eyebrow-free" style="text-align:center;">Los dos están listos</p>
+      <div class="countdown-num" id="countdown-num">3</div>
+      <div class="countdown-sub">¡Prepárate!</div>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: JUGANDO ============ -->
+  <section id="screen-playing" class="screen">
+    <div class="card">
+      <div class="scoreboard">
+        <div class="player-chip me">
+          <div class="name" id="play-my-name">Tú</div>
+          <div class="score" id="play-my-score">0</div>
+        </div>
+        <div class="vs-label">VS</div>
+        <div class="player-chip">
+          <div class="name" id="play-rival-name">Rival</div>
+          <div class="score" id="play-rival-score">0</div>
+        </div>
+      </div>
+
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+      <div class="progress-label" id="progress-label">Pregunta 1 de 15</div>
+
+      <div class="timer-bar-track"><div class="timer-bar-fill" id="timer-fill"></div></div>
+
+      <div class="expresion-tag" id="play-expresion">expresión</div>
+      <p class="question-text" id="play-question">Pregunta...</p>
+
+      <div class="options-grid" id="play-options"></div>
+
+      <p class="round-banner" id="round-banner"></p>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: FINALIZADO ============ -->
+  <section id="screen-finished" class="screen">
+    <div class="card">
+      <div class="winner-banner">
+        <div class="trophy-label">Resultado final</div>
+        <div class="winner-name" id="finished-winner">-</div>
+      </div>
+
+      <div class="final-scores">
+        <div class="fs-item">
+          <div class="fs-name" id="finished-name-1">Jugador 1</div>
+          <div class="fs-score" id="finished-score-1">0</div>
+        </div>
+        <div class="fs-item">
+          <div class="fs-name" id="finished-name-2">Jugador 2</div>
+          <div class="fs-score" id="finished-score-2">0</div>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn-gold" id="btn-rematch">Jugar otra vez</button>
+        <a class="btn-salir" href="../index.html" style="justify-content:center; display:flex;">Volver al portal</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase, ref, set, get, update, onValue, off,
+  runTransaction, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { QUESTIONS } from "./questions.js";
+
+/* ---------------- Firebase config ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
+  authDomain: "nicaenglishportal.firebaseapp.com",
+  databaseURL: "https://nicaenglishportal-default-rtdb.firebaseio.com",
+  projectId: "nicaenglishportal",
+  storageBucket: "nicaenglishportal.firebasestorage.app",
+  messagingSenderId: "304752198925",
+  appId: "1:304752198925:web:bd98007b81d1f3860fdc44",
+  measurementId: "G-6VCQK2ZNPX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* ---------------- Constantes de juego ---------------- */
+const TIME_PER_ROUND_MS = 15000;
+const ADVANCE_DELAY_MS = 1800;
+const SESSION_KEY = "nica_trivia_session";
+
+/* ---------------- Estado local ---------------- */
+let state = {
+  code: null,
+  role: null,      // 'player1' | 'player2'
+  name: null,
+  mode: null,
+  isHost: false,
+  currentIndex: -1,
+  roundLocked: false,   // ya respondí esta ronda
+  countdownShown: false,
+  advancing: false,
+  roomListenerRef: null,
+  hostTimerInterval: null,
+  localTimerInterval: null
+};
+
+/* ---------------- Helpers DOM ---------------- */
+const $ = (id) => document.getElementById(id);
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+/* ---------------- Helpers de juego ---------------- */
+function generateRoomCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // sin O/0/I/1 para evitar confusiones
+  let code = "";
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function otherRole(role) {
+  return role === "player1" ? "player2" : "player1";
+}
+
+/* ---------------- Sesión (para sobrevivir un refresh) ---------------- */
+function saveSession() {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+    code: state.code, role: state.role, name: state.name, isHost: state.isHost
+  }));
+}
+function loadSession() {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+function clearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+/* ================= PANTALLA SETUP ================= */
+let selectedMode = "rapido";
+let selectedCount = 15;
+
+document.querySelectorAll(".mode-card").forEach(card => {
+  card.addEventListener("click", () => {
+    document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+    selectedMode = card.dataset.mode;
+    selectedCount = parseInt(card.dataset.count, 10);
+  });
+});
+
+$("btn-toggle-join").addEventListener("click", () => {
+  $("join-block").classList.toggle("open");
+});
+
+$("btn-create-room").addEventListener("click", async () => {
+  const name = $("input-name").value.trim();
+  const errEl = $("error-create");
+  errEl.style.display = "none";
+
+  if (!name) {
+    errEl.textContent = "Escribe tu nombre primero.";
+    errEl.style.display = "block";
+    return;
+  }
+
+  $("btn-create-room").disabled = true;
+  $("btn-create-room").textContent = "Creando sala...";
+
+  try {
+    const code = generateRoomCode();
+    const pool = QUESTIONS.length >= selectedCount ? QUESTIONS : QUESTIONS;
+    const count = Math.min(selectedCount, QUESTIONS.length);
+    const chosen = shuffle(pool).slice(0, count);
+
+    await set(ref(db, `rooms/${code}`), {
+      mode: selectedMode,
+      totalQuestions: chosen.length,
+      questions: chosen,
+      currentIndex: 0,
+      status: "esperando",
+      roundWinner: null,
+      roundStartedAt: null,
+      createdAt: serverTimestamp(),
+      players: {
+        player1: { name, score: 0 }
+      }
+    });
+
+    state.code = code;
+    state.role = "player1";
+    state.name = name;
+    state.mode = selectedMode;
+    state.isHost = true;
+    saveSession();
+
+    $("waiting-code").textContent = code;
+    $("waiting-mode").textContent = modeLabel(selectedMode);
+    showScreen("screen-waiting");
+    listenToRoom();
+  } catch (err) {
+    console.error(err);
+    errEl.textContent = "No se pudo crear la sala. Revisa tu conexión e intenta de nuevo.";
+    errEl.style.display = "block";
+  } finally {
+    $("btn-create-room").disabled = false;
+    $("btn-create-room").textContent = "Crear sala";
+  }
+});
+
+$("btn-join-room").addEventListener("click", async () => {
+  const name = $("input-name").value.trim();
+  const code = $("input-code").value.trim().toUpperCase();
+  const errEl = $("error-join");
+  errEl.style.display = "none";
+
+  if (!name) {
+    errEl.textContent = "Escribe tu nombre primero.";
+    errEl.style.display = "block";
+    return;
+  }
+  if (!code || code.length < 4) {
+    errEl.textContent = "Escribe el código de sala de tu rival.";
+    errEl.style.display = "block";
+    return;
+  }
+
+  $("btn-join-room").disabled = true;
+  $("btn-join-room").textContent = "Uniéndote...";
+
+  try {
+    const roomRef = ref(db, `rooms/${code}`);
+    const result = await runTransaction(roomRef, (room) => {
+      if (!room) return room; // no existe -> abort (undefined not returned, returning room=null aborts)
+      if (room.status !== "esperando") return; // ya empezó o no existe hueco -> abort
+      if (room.players && room.players.player2) return; // ya está lleno -> abort
+      room.players.player2 = { name, score: 0 };
+      room.status = "jugando";
+      room.currentIndex = 0;
+      room.roundWinner = null;
+      room.roundStartedAt = serverTimestamp();
+      return room;
+    });
+
+    if (!result.committed || !result.snapshot.exists()) {
+      errEl.textContent = "Esa sala no existe, ya está llena, o ya comenzó.";
+      errEl.style.display = "block";
+      $("btn-join-room").disabled = false;
+      $("btn-join-room").textContent = "Unirme a la sala";
+      return;
+    }
+
+    const roomData = result.snapshot.val();
+
+    state.code = code;
+    state.role = "player2";
+    state.name = name;
+    state.mode = roomData.mode;
+    state.isHost = false;
+    saveSession();
+
+    listenToRoom();
+  } catch (err) {
+    console.error(err);
+    errEl.textContent = "No se pudo unir a la sala. Revisa tu conexión e intenta de nuevo.";
+    errEl.style.display = "block";
+    $("btn-join-room").disabled = false;
+    $("btn-join-room").textContent = "Unirme a la sala";
+  }
+});
+
+function modeLabel(mode) {
+  if (mode === "rapido") return "Rápido (15 preguntas)";
+  if (mode === "medio") return "Medio (25 preguntas)";
+  return "Completo (40 preguntas)";
+}
+
+/* ================= ESCUCHA DE LA SALA ================= */
+function listenToRoom() {
+  const roomRef = ref(db, `rooms/${state.code}`);
+  state.roomListenerRef = roomRef;
+  onValue(roomRef, (snap) => {
+    const room = snap.val();
+    if (!room) return;
+    handleRoomUpdate(room);
+  });
+}
+
+function handleRoomUpdate(room) {
+  // Actualiza nombres/puntajes visibles si ya estamos jugando o terminados
+  if (room.status === "esperando") {
+    showScreen("screen-waiting");
+    return;
+  }
+
+  if (room.status === "jugando") {
+    if (!state.countdownShown) {
+      state.countdownShown = true;
+      runCountdownThenPlay(room);
+    } else {
+      renderPlayingScreen(room);
+      if (state.isHost) manageHostAdvance(room);
+    }
+    return;
+  }
+
+  if (room.status === "terminado") {
+    stopHostTimer();
+    stopLocalTimer();
+    renderFinishedScreen(room);
+    showScreen("screen-finished");
+    clearSession();
+  }
+}
+
+/* ================= CUENTA REGRESIVA ================= */
+function runCountdownThenPlay(room) {
+  showScreen("screen-countdown");
+  let n = 3;
+  $("countdown-num").textContent = n;
+  const interval = setInterval(() => {
+    n -= 1;
+    if (n <= 0) {
+      clearInterval(interval);
+      showScreen("screen-playing");
+      renderPlayingScreen(room);
+      if (state.isHost) manageHostAdvance(room);
+    } else {
+      $("countdown-num").textContent = n;
+    }
+  }, 700);
+}
+
+/* ================= PANTALLA JUGANDO ================= */
+function renderPlayingScreen(room) {
+  showScreen("screen-playing");
+
+  const myRole = state.role;
+  const rivalRole = otherRole(myRole);
+  const me = room.players[myRole];
+  const rival = room.players[rivalRole];
+
+  $("play-my-name").textContent = me ? me.name : state.name;
+  $("play-my-score").textContent = me ? me.score : 0;
+  $("play-rival-name").textContent = rival ? rival.name : "Esperando...";
+  $("play-rival-score").textContent = rival ? rival.score : 0;
+
+  const total = room.totalQuestions;
+  const idx = room.currentIndex;
+  const pct = Math.round((idx / total) * 100);
+  $("progress-fill").style.width = pct + "%";
+  $("progress-label").textContent = `Pregunta ${Math.min(idx + 1, total)} de ${total}`;
+
+  // Si cambiamos de pregunta, reseteamos el estado de respuesta local y el timer visual
+  if (state.currentIndex !== idx) {
+    state.currentIndex = idx;
+    state.roundLocked = false;
+    startLocalTimer();
+  }
+
+  const q = room.questions[idx];
+  $("play-expresion").textContent = `"${q.expresion}"`;
+  $("play-question").textContent = q.pregunta;
+
+  const optionsEl = $("play-options");
+  optionsEl.innerHTML = "";
+  q.opciones.forEach((opcion, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.textContent = opcion;
+    btn.disabled = state.roundLocked || !!room.roundWinner;
+
+    // Si la ronda ya terminó, revela cuál era la correcta
+    if (room.roundWinner) {
+      if (i === q.correcta) btn.classList.add("reveal-correct");
+    }
+
+    btn.addEventListener("click", () => onOptionClick(i, q.correcta));
+    optionsEl.appendChild(btn);
+  });
+
+  const banner = $("round-banner");
+  if (room.roundWinner) {
+    const winnerPlayer = room.players[room.roundWinner];
+    banner.textContent = `¡${winnerPlayer ? winnerPlayer.name : "..."} acertó primero!`;
+    banner.classList.add("win");
+  } else if (state.roundLocked) {
+    banner.textContent = "Ya respondiste. Esperando a tu rival o al tiempo...";
+    banner.classList.remove("win");
+  } else {
+    banner.textContent = "";
+    banner.classList.remove("win");
+  }
+}
+
+async function onOptionClick(selectedIndex, correctaIndex) {
+  if (state.roundLocked) return;
+  state.roundLocked = true;
+
+  const optionsEl = $("play-options");
+  const buttons = optionsEl.querySelectorAll(".option-btn");
+  buttons.forEach(b => (b.disabled = true));
+  buttons[selectedIndex].classList.add(selectedIndex === correctaIndex ? "chosen-correct" : "chosen-wrong");
+
+  $("round-banner").textContent = "Ya respondiste. Esperando a tu rival o al tiempo...";
+
+  if (selectedIndex !== correctaIndex) return; // incorrecta: no participa por el punto
+
+  // Intenta ganar la ronda de forma atómica
+  const winnerRef = ref(db, `rooms/${state.code}/roundWinner`);
+  try {
+    const result = await runTransaction(winnerRef, (current) => {
+      if (current === null || current === undefined) return state.role;
+      return; // ya alguien ganó -> abort
+    });
+    if (result.committed && result.snapshot.val() === state.role) {
+      const scoreRef = ref(db, `rooms/${state.code}/players/${state.role}/score`);
+      await runTransaction(scoreRef, (s) => (s || 0) + 1);
+    }
+  } catch (err) {
+    console.error("Error al registrar respuesta:", err);
+  }
+}
+
+/* ---------------- Timer visual local (cosmético) ---------------- */
+function startLocalTimer() {
+  stopLocalTimer();
+  const fill = $("timer-fill");
+  fill.classList.remove("urgent");
+  fill.style.transition = "none";
+  fill.style.width = "100%";
+  // fuerza reflow para que la siguiente transición se anime desde 100%
+  void fill.offsetWidth;
+  fill.style.transition = `width ${TIME_PER_ROUND_MS / 1000}s linear`;
+  requestAnimationFrame(() => { fill.style.width = "0%"; });
+
+  state.localTimerInterval = setTimeout(() => {
+    fill.classList.add("urgent");
+  }, TIME_PER_ROUND_MS * 0.66);
+}
+function stopLocalTimer() {
+  if (state.localTimerInterval) {
+    clearTimeout(state.localTimerInterval);
+    state.localTimerInterval = null;
+  }
+}
+
+/* ---------------- Lógica del host: avanzar rondas ---------------- */
+function manageHostAdvance(room) {
+  stopHostTimer();
+  if (room.status !== "jugando") return;
+
+  state.hostTimerInterval = setInterval(async () => {
+    const snap = await get(ref(db, `rooms/${state.code}`));
+    const current = snap.val();
+    if (!current || current.status !== "jugando") {
+      stopHostTimer();
+      return;
+    }
+
+    const hasWinner = !!current.roundWinner;
+    const startedAt = current.roundStartedAt;
+    const elapsed = startedAt ? Date.now() - startedAt : 0;
+    const timedOut = elapsed > TIME_PER_ROUND_MS + 500;
+
+    if (hasWinner || timedOut) {
+      stopHostTimer();
+      setTimeout(() => advanceRound(), hasWinner ? ADVANCE_DELAY_MS : 400);
+    }
+  }, 500);
+}
+function stopHostTimer() {
+  if (state.hostTimerInterval) {
+    clearInterval(state.hostTimerInterval);
+    state.hostTimerInterval = null;
+  }
+}
+
+async function advanceRound() {
+  const roomRef = ref(db, `rooms/${state.code}`);
+  await runTransaction(roomRef, (room) => {
+    if (!room) return room;
+    if (room.status !== "jugando") return room; // ya no aplica
+    const nextIndex = room.currentIndex + 1;
+    if (nextIndex >= room.totalQuestions) {
+      room.status = "terminado";
+    } else {
+      room.currentIndex = nextIndex;
+      room.roundStartedAt = serverTimestamp();
+    }
+    room.roundWinner = null;
+    return room;
+  });
+}
+
+/* ================= PANTALLA FINAL ================= */
+function renderFinishedScreen(room) {
+  const p1 = room.players.player1;
+  const p2 = room.players.player2;
+
+  $("finished-name-1").textContent = p1.name;
+  $("finished-score-1").textContent = p1.score;
+  $("finished-name-2").textContent = p2.name;
+  $("finished-score-2").textContent = p2.score;
+
+  const winnerEl = $("finished-winner");
+  if (p1.score === p2.score) {
+    winnerEl.textContent = "¡Empate!";
+  } else {
+    const winner = p1.score > p2.score ? p1 : p2;
+    winnerEl.textContent = `¡Ganó ${winner.name}!`;
+  }
+}
+
+$("btn-rematch").addEventListener("click", () => {
+  clearSession();
+  state = {
+    code: null, role: null, name: null, mode: null, isHost: false,
+    currentIndex: -1, roundLocked: false, countdownShown: false,
+    advancing: false, roomListenerRef: null, hostTimerInterval: null, localTimerInterval: null
+  };
+  showScreen("screen-setup");
+});
+
+/* ================= Reanudar sesión tras refresh ================= */
+(function tryResumeSession() {
+  const saved = loadSession();
+  if (!saved || !saved.code) return;
+  state.code = saved.code;
+  state.role = saved.role;
+  state.name = saved.name;
+  state.isHost = saved.isHost;
+  $("input-name").value = saved.name || "";
+  listenToRoom();
+})();
+</script>
+
+</body>
+</html>
