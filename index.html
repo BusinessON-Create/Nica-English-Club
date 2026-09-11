@@ -437,6 +437,13 @@ a { color: inherit; }
 .tr-badges-row { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
 .tr-badge-chip { display:flex; align-items:center; gap:5px; background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); color:var(--gold3); font-size:10.5px; font-weight:700; padding:6px 12px; border-radius:99px; }
 .tr-lock-msg { text-align:center; color:var(--muted); font-size:12.5px; padding:16px; }
+.tr-icon-fire { color:var(--gold2); animation: pulseSoft 1.6s ease infinite; display:inline-block; }
+.tr-icon-bounce { animation: iconBounce 1.4s ease infinite; display:inline-block; }
+.tr-icon-spin-slow { animation: spin 2.6s linear infinite; display:inline-block; }
+.tr-status-dot { font-size:8px; vertical-align:middle; margin-right:2px; }
+.tr-status-activa { color:var(--green); animation: pulseSoft 1.8s ease infinite; display:inline-block; }
+@keyframes iconBounce { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+@keyframes iconPopIn { 0%{ transform:scale(0); opacity:0; } 60%{ transform:scale(1.2); opacity:1; } 100%{ transform:scale(1); } }
 .tr-day-tabs { display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; padding-bottom:4px; }
 .tr-day-tab { flex-shrink:0; padding:8px 14px; border-radius:99px; background:var(--card2); border:1px solid var(--border2); color:var(--muted); font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit; }
 .tr-day-tab.active { background:var(--gold-dim); border-color:var(--gold2); color:var(--gold3); }
@@ -725,7 +732,7 @@ a { color: inherit; }
 
       <!-- COMPARTIR -->
       <div class="share-bar">
-        <p>Invita a tus amigos a <b>NicaEnglishClub</b> 🇬🇧</p>
+        <p>Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
         <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
       </div>
 
@@ -848,7 +855,7 @@ a { color: inherit; }
         <div style="display:flex; gap:8px; overflow-x:auto;" id="chat-contacts-online"></div>
       </div>
       <div class="chat-messages" id="chat-messages"></div>
-      <p class="chat-hint" id="chat-hint-txt">Please write in English 🇬🇧 — messages are cleared periodically.</p>
+      <p class="chat-hint" id="chat-hint-txt">Please write in English <i class="fa-solid fa-language"></i> — messages are cleared periodically.</p>
       <div class="chat-inputbar">
         <input type="text" id="chat-input" placeholder="Type a message in English..." maxlength="300" onkeydown="if(event.key==='Enter') enviarMensajeChat();">
         <button class="chat-send-btn" onclick="enviarMensajeChat()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -882,7 +889,7 @@ a { color: inherit; }
       <div class="neclub-composer">
         <div class="neclub-composer-row">
           <div class="neclub-avatar" id="neclub-avatar-composer"></div>
-          <textarea id="neclub-texto" placeholder="Ask a question, start a debate, share your story... in English! 🇬🇧" maxlength="500" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; actualizarEstadoPublicarNeclub();"></textarea>
+          <textarea id="neclub-texto" placeholder="Ask a question, start a debate, share your story... in English!" maxlength="500" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; actualizarEstadoPublicarNeclub();"></textarea>
         </div>
         <p class="neclub-composer-hint">Posts, photos, videos and audios disappear automatically after 7 days.</p>
         <div class="neclub-preview-wrap" id="neclub-preview-wrap" style="display:none;">
@@ -1025,7 +1032,7 @@ a { color: inherit; }
 
           <div class="admin-section" style="border-top:1px solid var(--border2); margin-top:28px; padding-top:22px; border-bottom:none;">
             <p class="admin-label"><i class="fa-solid fa-bolt"></i> Reto relámpago</p>
-            <p class="form-hint">Un reto corto y motivador (⚡ + 💪) que suena con un "ding" y llega en el momento a los alumnos elegidos.</p>
+            <p class="form-hint">Un reto corto y motivador (<i class="fa-solid fa-bolt" style="color:var(--gold2);"></i> + <i class="fa-solid fa-dumbbell" style="color:var(--gold2);"></i>) que suena con un "ding" y llega en el momento a los alumnos elegidos.</p>
             <input type="hidden" id="reto-id-edicion">
             <input type="text" id="reto-titulo" class="admin-input" placeholder="Título del reto (ej: ¡Reto de 5 minutos!)">
             <textarea id="reto-instruccion" class="form-textarea" placeholder="¿Qué deben hacer? (instrucciones del reto)"></textarea>
@@ -1088,7 +1095,7 @@ a { color: inherit; }
             </div>
             <p id="neclub-historia-progreso-texto" style="font-size:11.5px; color:var(--muted-dim); margin-top:6px;">Subiendo... 0%</p>
           </div>
-          <p class="form-hint">Aparece en NECLUB marcada como <b>NicaEnglish Club ✔️ Verificado</b> y no se autoborra a los 7 días como los posts normales.</p>
+          <p class="form-hint">Aparece en NECLUB marcada como <b>NicaEnglish Club <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i> Verificado</b> y no se autoborra a los 7 días como los posts normales.</p>
           <hr style="border-color:var(--border); margin:20px 0;">
           <p class="form-hint">Moderación de NECLUB: aquí puedes borrar cualquier publicación de cualquier alumno. Las publicaciones se autoborran solas a los 7 días de creadas (las historias en PDF no).</p>
           <div id="lista-neclub-ui"></div>
@@ -1133,6 +1140,7 @@ a { color: inherit; }
 
 <div class="modal-bg" id="modal-bg">
   <div class="modal-box">
+    <div id="modal-icon-wrap" style="display:none; margin-bottom:10px;"><i id="modal-icon" class="fa-solid" style="font-size:32px; color:var(--gold2); animation: iconPopIn .4s ease;"></i></div>
     <h3 id="modal-title" style="color:#fff; font-family:'Playfair Display'; font-size:22px;"></h3>
     <p id="modal-desc" style="margin:18px 0; color:var(--muted); line-height:1.5; font-size:14px;"></p>
     <button onclick="closeModal()" class="btn-login">Entendido</button>
@@ -1374,26 +1382,26 @@ let primeraCargaRetos = true;
 let primeraCargaReuniones = true;
 
 const MENSAJES_MOTIVACIONALES = [
-  "¡Han pasado más de 24 horas! Tu inglés te está esperando. 💪",
-  "Un poco cada día te lleva lejos. ¡Vuelve a entrenar hoy! 🚀",
-  "Extrañamos verte practicar. ¡Hoy es un buen día para seguir! 🇬🇧",
-  "La constancia es la clave del dominio. ¡No rompas tu progreso! 🔥",
-  "Tu mejor versión en inglés se construye día a día. ¡Sigue así! ⭐",
-  "No dejes que pase otro día sin practicar. ¡Tú puedes! 💪",
-  "Cada sesión cuenta. ¡Regresa y suma un día más a tu racha! 📈",
-  "El inglés se aprende con hábito, no con perfección. ¡Vamos hoy! 🎯",
-  "Pequeños pasos diarios = grandes resultados. ¡No te detengas! 🏆",
-  "¡Tu disciplina de hoy es tu fluidez de mañana! Sigue entrenando. 🧠",
-  "Recuerda por qué empezaste. ¡Hoy es un gran día para continuar! ✨",
-  "Un día sin practicar es un día de ventaja perdida. ¡Retómalo ya! ⏳",
-  "¡Tu meta semanal te está esperando! No la dejes ir. 📅",
-  "La práctica constante vence al talento. ¡Vuelve a entrenar! 🥇",
-  "Nadie mejora sin repetir. ¡Hoy toca otra ronda de inglés! 🔁",
-  "El progreso no se detiene solo porque tú lo hagas. ¡Sigue tú también! 🚴",
-  "Estás más cerca de tu meta de lo que crees. ¡No abandones ahora! 🎯",
-  "El inglés se te va olvidando si no lo usas. ¡Practícalo hoy! 🗣️",
-  "¡Tu racha te necesita! Vuelve a entrenar tu inglés ahora mismo. 🔥",
-  "Disciplina hoy, libertad mañana. ¡No dejes pasar otro día! 🕊️"
+  "¡Han pasado más de 24 horas! Tu inglés te está esperando.",
+  "Un poco cada día te lleva lejos. ¡Vuelve a entrenar hoy!",
+  "Extrañamos verte practicar. ¡Hoy es un buen día para seguir!",
+  "La constancia es la clave del dominio. ¡No rompas tu progreso!",
+  "Tu mejor versión en inglés se construye día a día. ¡Sigue así!",
+  "No dejes que pase otro día sin practicar. ¡Tú puedes!",
+  "Cada sesión cuenta. ¡Regresa y suma un día más a tu racha!",
+  "El inglés se aprende con hábito, no con perfección. ¡Vamos hoy!",
+  "Pequeños pasos diarios = grandes resultados. ¡No te detengas!",
+  "¡Tu disciplina de hoy es tu fluidez de mañana! Sigue entrenando.",
+  "Recuerda por qué empezaste. ¡Hoy es un gran día para continuar!",
+  "Un día sin practicar es un día de ventaja perdida. ¡Retómalo ya!",
+  "¡Tu meta semanal te está esperando! No la dejes ir.",
+  "La práctica constante vence al talento. ¡Vuelve a entrenar!",
+  "Nadie mejora sin repetir. ¡Hoy toca otra ronda de inglés!",
+  "El progreso no se detiene solo porque tú lo hagas. ¡Sigue tú también!",
+  "Estás más cerca de tu meta de lo que crees. ¡No abandones ahora!",
+  "El inglés se te va olvidando si no lo usas. ¡Practícalo hoy!",
+  "¡Tu racha te necesita! Vuelve a entrenar tu inglés ahora mismo.",
+  "Disciplina hoy, libertad mañana. ¡No dejes pasar otro día!"
 ];
 
 // Logo por defecto (incrustado en base64 — no depende de archivos externos)
@@ -1545,7 +1553,7 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
       iniciarLatido(found.id);
       if (inactivo24h) {
         const frase = MENSAJES_MOTIVACIONALES[Math.floor(Math.random()*MENSAJES_MOTIVACIONALES.length)];
-        setTimeout(() => showModal('¡Bienvenido de nuevo! 👋', frase), 900);
+        setTimeout(() => showModal('¡Bienvenido de nuevo!', frase, 'fa-hand'), 900);
       }
     } else { errEl.style.display='block'; await signOut(auth); }
   } catch(e) { console.error(e); }
@@ -1586,8 +1594,8 @@ function renderUI(alumno) {
   const pct = Math.min((diasLogueados/7)*100, 100);
   document.getElementById('ring-pct').innerText = Math.round(pct) + "%";
   document.getElementById('ring-circle').style.strokeDashoffset = 226 - (226 * pct/100);
-  const msgs = ['Día 1: ¡Empieza!','Día 2: ¡Sigue así!','Día 3: ¡Vas bien!','Día 4: ¡Mitad!','Día 5: ¡Excelente!','Día 6: ¡Falta 1!','🏆 META 7/7'];
-  document.getElementById('ring-msg').innerText = msgs[Math.min(diasLogueados,6)];
+  const msgs = ['Día 1: ¡Empieza!','Día 2: ¡Sigue así!','Día 3: ¡Vas bien!','Día 4: ¡Mitad!','Día 5: ¡Excelente!','Día 6: ¡Falta 1!','<i class="fa-solid fa-trophy tr-icon-bounce" style="color:var(--gold2); margin-right:6px;"></i>META 7/7'];
+  document.getElementById('ring-msg').innerHTML = msgs[Math.min(diasLogueados,6)];
 
   // Racha (badge junto al gráfico)
   const rachaEl = document.getElementById('racha-badge-num');
@@ -1824,7 +1832,7 @@ function reproducirDing() {
   } catch (e) { /* silencioso si el navegador bloquea audio sin interacción */ }
 }
 
-/* ===== RETOS RELÁMPAGO (⚡ + 💪) ===== */
+/* ===== RETOS RELÁMPAGO ===== */
 function escucharRetos() {
   onSnapshot(query(collection(db,'retos'), orderBy('fecha','desc'), limit(20)), snap => {
     const miId = sessionActiva ? sessionActiva.id : null;
@@ -1996,7 +2004,7 @@ function renderNeclubPostHTML(p, miId) {
     </div>`;
 }
 
-// Recorre el muro ya pintado y prende/apaga el check ✔️ de cada post según el estado
+// Recorre el muro ya pintado y prende/apaga el check de verificado de cada post según el estado
 // actual de verificado del alumno (sin re-renderizar todo, para no cortar videos en reproducción)
 function repintarChecksVerificadoNeclub() {
   if (!neclubPostsCache || !neclubPostsCache.length) return;
@@ -2013,7 +2021,7 @@ function renderFeedNeclub() {
   const cont = document.getElementById('neclub-feed');
   if (!cont) return;
   if (!neclubPostsCache.length) {
-    cont.innerHTML = `<div class="neclub-empty"><i class="fa-solid fa-hashtag"></i>No posts yet. Be the first to share something in English! 🇬🇧</div>`;
+    cont.innerHTML = `<div class="neclub-empty"><i class="fa-solid fa-hashtag"></i>No posts yet. Be the first to share something in English! <i class="fa-solid fa-language"></i></div>`;
     neclubFeedPintadoAlMenosUnaVez = false;
     return;
   }
@@ -2531,6 +2539,33 @@ async function inicializarProgresoTraining() {
     retosEnviados: 0, palabrasPracticadas: 0, etapasCompletadas: []
   });
 }
+let trReparacionEnCurso = false;
+// FIX: si el progreso del alumno quedó sin semana asignada (por ejemplo, porque abrió
+// el Training Room antes de que el admin activara la primera semana), el documento se
+// creaba una sola vez con semanaIdActual:null y nunca se volvía a revisar. Esta función
+// reintenta buscar una semana disponible cada vez que detectamos ese estado "vacío",
+// para que se autorepare en cuanto el admin publique contenido — sin que el alumno
+// tenga que hacer nada.
+async function intentarRepararSemanaFaltante(progreso) {
+  if (trReparacionEnCurso || !sessionActiva) return;
+  const completo = (progreso.etapasCompletadas || []).length >= 4;
+  if (progreso.semanaIdActual || completo) return;
+  trReparacionEnCurso = true;
+  try {
+    const disponible = await obtenerPrimeraSemanaDisponible(progreso.etapaActual, 0);
+    if (disponible) {
+      await updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), {
+        semanaIdActual: disponible.id,
+        diaActual: progreso.diaActual || 1,
+        pasoActual: progreso.pasoActual || 'prime'
+      });
+    }
+  } catch (e) {
+    console.error('No se pudo reparar el progreso de Training Room:', e);
+  } finally {
+    trReparacionEnCurso = false;
+  }
+}
 function escucharTraining() {
   if (trYaEscuchado || !sessionActiva) return;
   trYaEscuchado = true;
@@ -2539,6 +2574,7 @@ function escucharTraining() {
     const nuevo = snap.data();
     const semanaCambio = !trProgresoActual || trProgresoActual.semanaIdActual !== nuevo.semanaIdActual;
     trProgresoActual = nuevo;
+    if (!nuevo.semanaIdActual) intentarRepararSemanaFaltante(nuevo);
     if (semanaCambio) {
       if (trSemanaUnsub) { trSemanaUnsub(); trSemanaUnsub = null; }
       trSemanaActual = null;
@@ -2553,6 +2589,8 @@ function escucharTraining() {
     } else {
       renderTrainingRoom();
     }
+  }, e => {
+    console.error('Error escuchando el progreso de Training Room:', e);
   });
 }
 
@@ -2564,7 +2602,7 @@ function renderTrainingRoom() {
   const cont = document.getElementById('tr-content');
   if (!trProgresoActual.semanaIdActual || !trSemanaActual) {
     const todoListo = trProgresoActual.etapasCompletadas && trProgresoActual.etapasCompletadas.length >= 4;
-    cont.innerHTML = `<div class="tr-week-card" style="text-align:center;"><i class="fa-solid ${todoListo?'fa-trophy':'fa-hourglass-half'}" style="font-size:34px; color:var(--gold2); margin-bottom:10px;"></i><h3>${todoListo ? 'You completed the whole program! 🏆' : "You've completed everything available right now!"}</h3><p class="form-hint" style="margin-top:8px;">${todoListo ? 'All 4 stages finished. Amazing work reprogramming your English.' : 'New content is coming soon — check back soon. Your progress is saved exactly where you left it.'}</p></div>`;
+    cont.innerHTML = `<div class="tr-week-card" style="text-align:center;"><i class="fa-solid ${todoListo?'fa-trophy tr-icon-bounce':'fa-hourglass-half tr-icon-spin-slow'}" style="font-size:34px; color:var(--gold2); margin-bottom:10px;"></i><h3>${todoListo ? 'You completed the whole program!' : "Looking for your next session..."}</h3><p class="form-hint" style="margin-top:8px;">${todoListo ? 'All 4 stages finished. Amazing work reprogramming your English.' : 'We\'re checking for new content for you. If this takes more than a few seconds, come back a bit later — your progress is saved exactly where you left it.'}</p></div>`;
     return;
   }
   const dia = trSemanaActual.dias && trSemanaActual.dias[trProgresoActual.diaActual - 1];
@@ -2601,7 +2639,7 @@ function renderMetricsTraining() {
   const p = trProgresoActual;
   cont.innerHTML = `
     <div class="tr-metric-box"><div class="num">${p.semanasCompletadas||0}</div><div class="lbl">Weeks done</div></div>
-    <div class="tr-metric-box"><div class="num">${p.rachaSemanas||0}</div><div class="lbl">Week streak 🔥</div></div>
+    <div class="tr-metric-box"><div class="num">${p.rachaSemanas||0}</div><div class="lbl">Week streak <i class="fa-solid fa-fire tr-icon-fire"></i></div></div>
     <div class="tr-metric-box"><div class="num">${p.retosEnviados||0}</div><div class="lbl">Voice challenges</div></div>
     <div class="tr-metric-box"><div class="num">${p.palabrasPracticadas||0}</div><div class="lbl">Phrases practiced</div></div>`;
 }
@@ -2609,7 +2647,7 @@ function renderBadgesTraining() {
   const cont = document.getElementById('tr-badges-row');
   if (!cont) return;
   const completadas = trProgresoActual.etapasCompletadas || [];
-  cont.innerHTML = completadas.map(e => `<span class="tr-badge-chip"><i class="fa-solid fa-trophy"></i> ${TR_ETAPA_LABEL[e]} completed</span>`).join('');
+  cont.innerHTML = completadas.map(e => `<span class="tr-badge-chip"><i class="fa-solid fa-trophy tr-icon-bounce"></i> ${TR_ETAPA_LABEL[e]} completed</span>`).join('');
 }
 
 function renderPasoPrime(dia) {
@@ -2617,7 +2655,7 @@ function renderPasoPrime(dia) {
     <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Mindset</span>
     <p class="tr-prime-phrase">"${escNeclub(dia.prime||'')}"</p>
     <p class="tr-prime-trans">${escNeclub(dia.primeTraduccion||'')}</p>
-    <button class="btn-login" onclick="avanzarPasoTraining('absorb')">I'm ready ▶</button>
+    <button class="btn-login" onclick="avanzarPasoTraining('absorb', this)">I'm ready <i class="fa-solid fa-arrow-right"></i></button>
   </div>`;
 }
 function renderPasoAbsorb(dia) {
@@ -2633,7 +2671,7 @@ function renderPasoAbsorb(dia) {
   return `<div class="tr-step-card">
     <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Absorb</span>
     <div class="tr-absorb-content">${media}</div>
-    <button class="btn-login" onclick="avanzarPasoTraining('train')">Continue ▶</button>
+    <button class="btn-login" onclick="avanzarPasoTraining('train', this)">Continue <i class="fa-solid fa-arrow-right"></i></button>
   </div>`;
 }
 function renderPasoTrain(dia) {
@@ -2663,14 +2701,20 @@ window.responderTrainOption = (btn, texto, correcta) => {
     if (b.innerText === correcta) b.classList.add('correct');
   });
   if (texto !== correcta) btn.classList.add('incorrect');
-  setTimeout(() => {
+  setTimeout(async () => {
     trJuegoIndex++;
     const dia = trSemanaActual.dias[trProgresoActual.diaActual - 1];
     if (trJuegoIndex >= (dia.pares||[]).length) {
       const total = (dia.pares||[]).length;
       trJuegoIndex = 0; trJuegoOrden = [];
-      updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), { palabrasPracticadas: increment(total) }).catch(()=>{});
-      avanzarPasoTraining('produce');
+      try {
+        await updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), { palabrasPracticadas: increment(total) });
+        avanzarPasoTraining('produce');
+      } catch (e) {
+        console.error('No se pudo guardar tu práctica en Training Room:', e);
+        showModal('No se pudo guardar tu avance', 'Revisa tu conexión a internet e intenta de nuevo. Tus respuestas de este ejercicio no se perdieron, solo necesitamos reintentar guardarlas.');
+        renderTrainingRoom();
+      }
     } else {
       renderTrainingRoom();
     }
@@ -2681,7 +2725,7 @@ function renderPasoProduce(dia) {
     <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Speak</span>
     <div class="tr-reto-box"><p>${escNeclub(dia.retoPregunta||'')}</p></div>
     <button class="tr-wa-btn" onclick="enviarRetoTrainingWA('${escNeclub(dia.retoPregunta||'').replace(/'/g,"\\'")}')"><i class="fa-brands fa-whatsapp"></i> Record & Send</button>
-    <button class="tr-confirm-btn" id="tr-confirm-btn" onclick="completarDiaTraining()">✅ I already sent it</button>
+    <button class="tr-confirm-btn" id="tr-confirm-btn" onclick="completarDiaTraining()"><i class="fa-solid fa-circle-check"></i> I already sent it</button>
   </div>`;
 }
 window.enviarRetoTrainingWA = (pregunta) => {
@@ -2691,43 +2735,56 @@ window.enviarRetoTrainingWA = (pregunta) => {
   const btn = document.getElementById('tr-confirm-btn');
   if (btn) btn.classList.add('ready');
 };
-window.avanzarPasoTraining = (paso) => {
-  updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), { pasoActual: paso }).catch(()=>{});
+window.avanzarPasoTraining = (paso, btn) => {
+  if (btn) { btn.disabled = true; btn.dataset.textoOriginal = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; }
+  updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), { pasoActual: paso }).catch(e => {
+    console.error('No se pudo avanzar de paso en Training Room:', e);
+    showModal('No se pudo guardar tu avance', 'Revisa tu conexión a internet e intenta de nuevo.');
+    if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.textoOriginal; }
+  });
 };
 window.completarDiaTraining = async () => {
   if (!trProgresoActual || !sessionActiva) return;
+  const btn = document.getElementById('tr-confirm-btn');
+  if (btn) { btn.disabled = true; btn.dataset.textoOriginal = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; }
   const ref = doc(db,'entrenamiento_progreso', sessionActiva.id);
-  if (trProgresoActual.diaActual < 5) {
-    await updateDoc(ref, { diaActual: increment(1), pasoActual: 'prime', retosEnviados: increment(1) });
-    return;
-  }
-  // día 5: se completó la semana entera
-  const ahora = Date.now();
-  const ultima = trProgresoActual.ultimaSemanaCompletadaFecha || 0;
-  const nuevaRacha = (!ultima || (ahora - ultima) <= 9*24*60*60*1000) ? (trProgresoActual.rachaSemanas||0) + 1 : 1;
-  const ordenActual = trSemanaActual ? (trSemanaActual.orden||0) : 0;
-  let siguiente = await obtenerPrimeraSemanaDisponible(trProgresoActual.etapaActual, ordenActual);
-  let nuevaEtapa = trProgresoActual.etapaActual;
-  let nuevasEtapasCompletadas = trProgresoActual.etapasCompletadas || [];
-  if (!siguiente) {
-    if (!nuevasEtapasCompletadas.includes(nuevaEtapa)) nuevasEtapasCompletadas = [...nuevasEtapasCompletadas, nuevaEtapa];
-    const idx = TR_ETAPAS.indexOf(nuevaEtapa);
-    if (idx < TR_ETAPAS.length - 1) {
-      nuevaEtapa = TR_ETAPAS[idx+1];
-      siguiente = await obtenerPrimeraSemanaDisponible(nuevaEtapa, 0);
+  try {
+    if (trProgresoActual.diaActual < 5) {
+      await updateDoc(ref, { diaActual: increment(1), pasoActual: 'prime', retosEnviados: increment(1) });
+      return;
     }
+    // día 5: se completó la semana entera
+    const ahora = Date.now();
+    const ultima = trProgresoActual.ultimaSemanaCompletadaFecha || 0;
+    const nuevaRacha = (!ultima || (ahora - ultima) <= 9*24*60*60*1000) ? (trProgresoActual.rachaSemanas||0) + 1 : 1;
+    const ordenActual = trSemanaActual ? (trSemanaActual.orden||0) : 0;
+    let siguiente = await obtenerPrimeraSemanaDisponible(trProgresoActual.etapaActual, ordenActual);
+    let nuevaEtapa = trProgresoActual.etapaActual;
+    let nuevasEtapasCompletadas = trProgresoActual.etapasCompletadas || [];
+    if (!siguiente) {
+      if (!nuevasEtapasCompletadas.includes(nuevaEtapa)) nuevasEtapasCompletadas = [...nuevasEtapasCompletadas, nuevaEtapa];
+      const idx = TR_ETAPAS.indexOf(nuevaEtapa);
+      if (idx < TR_ETAPAS.length - 1) {
+        nuevaEtapa = TR_ETAPAS[idx+1];
+        siguiente = await obtenerPrimeraSemanaDisponible(nuevaEtapa, 0);
+      }
+    }
+    await updateDoc(ref, {
+      semanasCompletadas: increment(1),
+      rachaSemanas: nuevaRacha,
+      ultimaSemanaCompletadaFecha: ahora,
+      retosEnviados: increment(1),
+      etapaActual: nuevaEtapa,
+      etapasCompletadas: nuevasEtapasCompletadas,
+      semanaIdActual: siguiente ? siguiente.id : null,
+      diaActual: 1,
+      pasoActual: 'prime'
+    });
+  } catch (e) {
+    console.error('No se pudo completar el día de Training Room:', e);
+    showModal('No se pudo guardar tu progreso', 'Revisa tu conexión a internet e intenta de nuevo. Tu reto de voz ya fue enviado, solo falta guardar el avance del día.');
+    if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.textoOriginal; }
   }
-  await updateDoc(ref, {
-    semanasCompletadas: increment(1),
-    rachaSemanas: nuevaRacha,
-    ultimaSemanaCompletadaFecha: ahora,
-    retosEnviados: increment(1),
-    etapaActual: nuevaEtapa,
-    etapasCompletadas: nuevasEtapasCompletadas,
-    semanaIdActual: siguiente ? siguiente.id : null,
-    diaActual: 1,
-    pasoActual: 'prime'
-  });
 };
 
 
@@ -2806,9 +2863,9 @@ window.addEventListener('scroll', () => {
 window.compartirWeb = () => {
   const url = 'https://www.nicaenglishclub.com';
   if (navigator.share) {
-    navigator.share({ title:'NicaEnglish Club', text:'Aprende inglés con NicaEnglish Club 🇬🇧', url }).catch(()=>{});
+    navigator.share({ title:'NicaEnglish Club', text:'Aprende inglés con NicaEnglish Club', url }).catch(()=>{});
   } else {
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Aprende inglés con NicaEnglish Club 🇬🇧 ' + url)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Aprende inglés con NicaEnglish Club ' + url)}`, '_blank');
   }
 };
 
@@ -3034,7 +3091,7 @@ function cargarDatosAdmin() {
   onSnapshot(collection(db,'alumnos'), snap => {
     const list = document.getElementById('lista-alumnos-ui'); list.innerHTML = '';
     alumnosCacheAdmin = [];
-    alumnosTodosCache = snap.docs.map(d => ({ id:d.id, ...d.data() })); // para el check ✔️ en vivo (esAlumnoVerificado)
+    alumnosTodosCache = snap.docs.map(d => ({ id:d.id, ...d.data() })); // para el check de verificado en vivo (esAlumnoVerificado)
     const ahora = Date.now();
     snap.forEach(d => {
       const data = d.data();
@@ -3316,7 +3373,7 @@ function escucharNeclubAdmin() {
       const archivoPathSafe = (data.archivoPath||'').replace(/'/g,"\\'");
       const coverPathSafe = (data.coverPath||'').replace(/'/g,"\\'");
       const estaVerificado = data.autorId === 'admin' ? true : (esAlumnoVerificado(data.autorId) || !!data.verificado);
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid ${iconoTipo[data.tipo]||'fa-comment'}" style="color:var(--gold); margin-right:6px;"></i><b>${data.autorNombre||'Alumno'}</b>${estaVerificado?' ✔️':''}: ${preview}${preview.length>=60?'…':''} <small style="color:var(--muted)">· ${(data.comentariosCount||0)} coment. · ${(data.likes||[]).length} likes</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarPostNeclubAdmin('${d.id}','${archivoPathSafe}','${coverPathSafe}')"><i class="fa-solid fa-trash"></i></button></div>`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid ${iconoTipo[data.tipo]||'fa-comment'}" style="color:var(--gold); margin-right:6px;"></i><b>${data.autorNombre||'Alumno'}</b>${estaVerificado?' <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i>':''}: ${preview}${preview.length>=60?'…':''} <small style="color:var(--muted)">· ${(data.comentariosCount||0)} coment. · ${(data.likes||[]).length} likes</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarPostNeclubAdmin('${d.id}','${archivoPathSafe}','${coverPathSafe}')"><i class="fa-solid fa-trash"></i></button></div>`;
     });
   });
 }
@@ -3568,7 +3625,7 @@ function renderListaSemanasTraining() {
     if (!semanas.length) return;
     html += `<p class="admin-label" style="margin-top:14px;">${TR_ETAPA_LABEL[etapa]}</p>`;
     semanas.forEach(s => {
-      html += `<div class="tr-week-list-item"><div class="meta"><b>#${s.orden} — ${escNeclub(s.titulo)}</b><small>${s.activa ? '🟢 Activa' : '⚪ Borrador'} · ${(s.dias||[]).length} días</small></div><div style="display:flex; gap:6px;"><button class="tr-mini-btn" onclick="editarSemanaTraining('${s.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button><button class="tr-mini-btn" onclick="duplicarSemanaTraining('${s.id}')" title="Duplicar"><i class="fa-solid fa-copy"></i></button><button class="tr-mini-btn" style="color:var(--red);" onclick="eliminarSemanaTraining('${s.id}')" title="Borrar"><i class="fa-solid fa-trash"></i></button></div></div>`;
+      html += `<div class="tr-week-list-item"><div class="meta"><b>#${s.orden} — ${escNeclub(s.titulo)}</b><small>${s.activa ? '<i class="fa-solid fa-circle tr-status-dot tr-status-activa"></i> Activa' : '<i class="fa-regular fa-circle tr-status-dot"></i> Borrador'} · ${(s.dias||[]).length} días</small></div><div style="display:flex; gap:6px;"><button class="tr-mini-btn" onclick="editarSemanaTraining('${s.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button><button class="tr-mini-btn" onclick="duplicarSemanaTraining('${s.id}')" title="Duplicar"><i class="fa-solid fa-copy"></i></button><button class="tr-mini-btn" style="color:var(--red);" onclick="eliminarSemanaTraining('${s.id}')" title="Borrar"><i class="fa-solid fa-trash"></i></button></div></div>`;
     });
   });
   cont.innerHTML = html || '<p class="form-hint">Aún no hay semanas en la biblioteca.</p>';
@@ -3593,7 +3650,7 @@ function renderTablaProgresoTraining() {
       <td>${TR_ETAPA_LABEL[p.etapaActual]||'—'}</td>
       <td>${semana ? escNeclub(semana.titulo) : '—'}</td>
       <td>${p.diaActual||1}/5</td>
-      <td>${p.rachaSemanas||0} 🔥</td>
+      <td>${p.rachaSemanas||0} <i class="fa-solid fa-fire tr-icon-fire" style="color:var(--gold2);"></i></td>
       <td>${p.retosEnviados||0}</td>
       <td><select id="tr-reasign-${p.id}" class="admin-input" style="margin:0 0 4px; padding:6px; font-size:11px;">${opciones}</select><button class="tr-mini-btn" onclick="reasignarSemanaAlumno('${p.id}')" title="Reasignar"><i class="fa-solid fa-arrow-rotate-right"></i></button></td>
     </tr>`;
@@ -3736,7 +3793,7 @@ window.guardarBanner = async () => {
 
 window.borrarDoc = async (coll, id) => { if(confirm('¿Borrar registro?')) await deleteDoc(doc(db, coll, id)); };
 
-// Da o quita el check de verificado (✔️) a un alumno. Se refleja al instante en NECLUB
+// Da o quita el check de verificado a un alumno. Se refleja al instante en NECLUB
 // en todos sus posts (pasados y futuros), porque el check se lee en vivo del documento del alumno.
 window.toggleVerificadoAlumno = async (id, estaVerificadoActualmente) => {
   try {
@@ -3798,7 +3855,15 @@ window.switchTab = (n, b) => {
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
   b.classList.add('active'); document.getElementById('tab-'+n).style.display='block';
 };
-window.showModal = (t, d) => { document.getElementById('modal-title').innerText=t; document.getElementById('modal-desc').innerText=d; document.getElementById('modal-bg').classList.add('open'); };
+window.showModal = (t, d, icono) => {
+  document.getElementById('modal-title').innerText=t;
+  document.getElementById('modal-desc').innerText=d;
+  const iconoEl = document.getElementById('modal-icon');
+  const wrapEl = document.getElementById('modal-icon-wrap');
+  if (icono) { iconoEl.className = 'fa-solid ' + icono; wrapEl.style.display = 'block'; }
+  else { wrapEl.style.display = 'none'; }
+  document.getElementById('modal-bg').classList.add('open');
+};
 window.closeModal = () => document.getElementById('modal-bg').classList.remove('open');
 
 /* ===== ENVIAR PRACTICA (WhatsApp) ===== */
@@ -3976,7 +4041,7 @@ window.cambiarTabChat = (tab) => {
   document.getElementById('chat-contacts').classList.toggle('open', tab==='privado');
   if (tab === 'grupo') {
     chatContactoActual = null;
-    document.getElementById('chat-hint-txt').innerText = 'Please write in English 🇬🇧 — messages are cleared periodically.';
+    document.getElementById('chat-hint-txt').innerHTML = 'Please write in English <i class="fa-solid fa-language"></i> — messages are cleared periodically.';
   } else if (!chatContactoActual) {
     document.getElementById('chat-hint-txt').innerText = 'Elige a un compañero arriba para escribirle en privado.';
   }
