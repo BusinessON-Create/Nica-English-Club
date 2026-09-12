@@ -4692,7 +4692,7 @@ PRACTICE SESSION STRUCTURE (When user triggers practice or quick replies):
 - Step 4: Smart correction & a quick in-chat challenge/drill.
 - Step 5: Review (brief feedback: what went well, 1-3 key chunks, next steps) — and, when it fits naturally, offer a NECLUB challenge per the rules above.
 
-Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI experience.
+Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you're offering a challenge or asking a question, that counts toward the limit — trim the explanation, not the question. Never leave a sentence unfinished; if you're running long, wrap up early with a shorter closing line instead.
 `;
 
   const QUICK_REPLIES = [
@@ -4849,11 +4849,13 @@ Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI
     const body = {
       system_instruction: { parts: [{ text: sysText }] },
       contents: necHistory,
-      // Gemini 3 ya no acepta temperature/top_p/top_k: se usa thinkingLevel para
-      // mantener las respuestas rápidas, ideales para un chat en vivo.
+      // Gemini 3 ya no acepta temperature/top_p/top_k. thinkingLevel 'minimal' deja
+      // el menor "pensamiento interno" posible para gemini-3.1-flash-lite, así casi
+      // todo el presupuesto de tokens se usa en la respuesta visible (evita que se
+      // corte a medio mensaje). maxOutputTokens se sube con margen de sobra.
       generationConfig: {
-        maxOutputTokens: 400,
-        thinkingConfig: { thinkingLevel: 'low' }
+        maxOutputTokens: 1024,
+        thinkingConfig: { thinkingLevel: 'minimal' }
       }
     };
 
