@@ -4633,7 +4633,9 @@ function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u03
 <script>
 (function () {
   const GEMINI_API_KEY = 'AIzaSyDY-U_zpzP--FDjsxdXJuWisbZysCf3PBk';
-  const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  // NOTA: gemini-1.5-flash fue descontinuado por Google (ahora responde 404 en cualquier proyecto).
+  // Se usa gemini-3.1-flash-lite: es el modelo actual, rápido y económico, recomendado para chat.
+  const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`;
 
   const SYSTEM_PROMPT = `
 You are the "Nica English Coach", the personal AI English trainer for Nica English Club (app.nicaenglishclub.com).
@@ -4766,7 +4768,8 @@ Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI
       ? `¡Hola, ${name}! 👋 Soy tu NEC Coach. Aquí no traducimos inglés, aquí PENSAMOS en inglés. ¿Qué te gustaría practicar hoy?`
       : `¡Hola! 👋 Soy tu NEC Coach, tu entrenador personal de inglés de Nica English Club. Antes de arrancar, cuéntame... ¿cómo te llamas?`;
     necAppendMessage('coach', text);
-    necHistory.push({ role: 'model', parts: [{ text }] });
+    // No se agrega este saludo al historial que se envía a Gemini: los modelos Gemini 3
+    // no aceptan un turno "model" precargado al inicio de la conversación.
     necShowQuickReplies();
   }
 
@@ -4780,7 +4783,12 @@ Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI
     const body = {
       system_instruction: { parts: [{ text: sysText }] },
       contents: necHistory,
-      generationConfig: { temperature: 0.8, maxOutputTokens: 400 }
+      // Gemini 3 ya no acepta temperature/top_p/top_k: se usa thinkingLevel para
+      // mantener las respuestas rápidas, ideales para un chat en vivo.
+      generationConfig: {
+        maxOutputTokens: 400,
+        thinkingConfig: { thinkingLevel: 'low' }
+      }
     };
 
     const res = await fetch(GEMINI_ENDPOINT, {
