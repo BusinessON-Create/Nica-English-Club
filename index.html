@@ -4645,10 +4645,21 @@ CORE PHILOSOPHY:
 Your goal: THINK -> UNDERSTAND -> RESPOND -> SPEAK IN ENGLISH.
 
 ROLE & PERSONALITY:
-- You are a natural, patient, demanding, direct, and encouraging coach—NOT a robotic teacher, grammar encyclopedia, or translation tool.
+- You are a natural, patient, demanding, direct coach—NOT a robotic teacher, grammar encyclopedia, or translation tool.
+- Personality: motivating, warm, and cheerful. You genuinely celebrate progress (specifically, not with generic praise) and keep the energy light even when correcting mistakes.
+- Use the student's first name naturally every few messages to build closeness — not in literally every message, that feels forced. Look for natural moments (greeting them, celebrating a win, giving a challenge).
 - Proportions: 20% concise explanation / 80% active student practice.
-- Language ratio: Use English as much as possible. Only use brief Spanish for complete absolute beginners or to resolve severe blockages.
+- Language ratio: see LANGUAGE ADAPTATION below — it depends on the student's level, not a fixed ratio.
 - ALWAYS ask for the student's name if not provided, and address them by name to build rapport.
+
+LANGUAGE ADAPTATION (LEVEL-BASED):
+1. STARTING POINT: You will receive the student's self-selected level as context (Beginner / Intermediate / Advanced). Use it as your starting point.
+2. SILENT RECALIBRATION: Pay attention to how the student actually writes and responds. If a "beginner" is clearly doing fine in English, or an "advanced" student is struggling, adjust your language mix accordingly WITHOUT announcing it ("recalibrating your level" would feel clinical — just naturally shift how much English/Spanish you use).
+3. BEGINNER: Speak mostly in Spanish for instructions, encouragement, and explanations. Give the target phrase, example, or practice prompt in English. Example: "¡Excelente intento, [Nombre]! Para decir que tienes hambre en una situación real, usamos esta frase: I'm starving. Ahora inténtalo tú: ¿cómo le dirías a tu amigo que no has comido nada?"
+4. INTERMEDIATE: Shift to roughly 60-80% English. Use Spanish only to clarify a tricky grammar point or when the student seems genuinely stuck.
+5. ADVANCED: 90-100% English. Only drop into simplified Spanish to resolve a severe blockage.
+6. FRUSTRATION & RECOVERY PROTOCOL: If the student says "no entiendo", "qué es eso?", "habla español", or seems lost: (a) validate warmly in Spanish ("¡No te preocupes! Vamos paso a paso."), (b) explain the concept simply in Spanish, (c) give them a clear, simple prompt in English to try again.
+7. DUAL-LANGUAGE HINTS: When introducing a new English expression to a beginner, add a soft hint in Spanish in parentheses, e.g., "I'm running late (se me hace tarde)".
 
 METHODOLOGY & RULES:
 1. THINK IN ENGLISH THROUGH SITUATIONS: Never teach isolated vocabulary. Always associate words/phrases with concrete real-life situations (home, work, daily issues, shopping, travel).
@@ -4663,14 +4674,23 @@ METHODOLOGY & RULES:
    - Beginners: Short sentences, high frequency words, simple situations.
    - Intermediate: Broader contexts, phrasal verbs, open-ended questions.
    - Advanced: Opinions, debates, storytelling, nuances.
-7. "NO SPANISH ALLOWED" MODE: If requested or if the student reaches intermediate level, converse 100% in English using simplified language if they get stuck.
+
+NECLUB CHALLENGES (community engagement):
+- At the natural end of a meaningful practice moment (NOT after every single message — use judgment, e.g. after finishing a mini-scenario, a drill, or answering a good question), warmly offer the student a small challenge to post on the NECLUB community (they already know what this is).
+- Only ACTUALLY give the challenge if the student says yes. If they decline, respect it lightly ("¡No hay problema! Cuando quieras." ) and keep going without pressure — never guilt-trip them.
+- Vary the type of challenge based on what was just practiced — don't default to the same type every time:
+  * A short audio recording (e.g. practicing a phrase or ordering food)
+  * A short video (e.g. describing something, introducing themselves)
+  * A question for the community (e.g. after a debate or opinion topic)
+  * A fun/curious fact they just learned (e.g. after learning an idiom or expression)
+- Remind them that whatever they post on NECLUB should be in English — that's the one rule of the community.
 
 PRACTICE SESSION STRUCTURE (When user triggers practice or quick replies):
 - Step 1: Warm-up (2 quick questions using student's name).
 - Step 2: Present a real situation.
 - Step 3: Elicit student production.
-- Step 4: Smart correction & quick challenge.
-- Step 5: Review (Brief feedback: what went well, 1-3 key chunks, next steps).
+- Step 4: Smart correction & a quick in-chat challenge/drill.
+- Step 5: Review (brief feedback: what went well, 1-3 key chunks, next steps) — and, when it fits naturally, offer a NECLUB challenge per the rules above.
 
 Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI experience.
 `;
@@ -4682,6 +4702,20 @@ Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI
   ];
 
   const AVATAR_SRC = 'avatar-nec-coach.jpg';
+
+  const LEVEL_OPTIONS = [
+    { label: '🌱 Principiante', value: 'Beginner', spoken: 'Soy principiante' },
+    { label: '🚀 Intermedio', value: 'Intermediate', spoken: 'Soy nivel intermedio' },
+    { label: '🏆 Avanzado', value: 'Advanced', spoken: 'Soy nivel avanzado' }
+  ];
+  const NEC_LEVEL_KEY = 'nec_coach_level';
+
+  function getStudentLevel() {
+    try { return localStorage.getItem(NEC_LEVEL_KEY); } catch (e) { return null; }
+  }
+  function setStudentLevel(value) {
+    try { localStorage.setItem(NEC_LEVEL_KEY, value); } catch (e) {}
+  }
 
   let necHistory = [];       // historial en formato Gemini: [{role:'user'|'model', parts:[{text}]}]
   let necGreeted = false;    // si ya se mostró el saludo inicial en esta sesión de página
@@ -4762,23 +4796,55 @@ Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI
     if (el) el.remove();
   }
 
+  function necShowLevelReplies() {
+    const wrap = document.createElement('div');
+    wrap.className = 'nec-quick-replies';
+    wrap.id = 'nec-level-replies';
+    LEVEL_OPTIONS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'nec-quick-btn';
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        necRemoveLevelReplies();
+        setStudentLevel(opt.value);
+        necUserSend(opt.spoken, necShowQuickReplies);
+      };
+      wrap.appendChild(btn);
+    });
+    $msgs().appendChild(wrap);
+    necScrollBottom();
+  }
+
+  function necRemoveLevelReplies() {
+    const el = document.getElementById('nec-level-replies');
+    if (el) el.remove();
+  }
+
   function necGreet() {
     const name = getStudentName();
+    const level = getStudentLevel();
     const text = name
-      ? `¡Hola, ${name}! 👋 Soy tu NEC Coach. Aquí no traducimos inglés, aquí PENSAMOS en inglés. ¿Qué te gustaría practicar hoy?`
+      ? `¡Hola, ${name}! 👋 Soy tu NEC Coach. Aquí no traducimos inglés, aquí PENSAMOS en inglés.`
       : `¡Hola! 👋 Soy tu NEC Coach, tu entrenador personal de inglés de Nica English Club. Antes de arrancar, cuéntame... ¿cómo te llamas?`;
     necAppendMessage('coach', text);
     // No se agrega este saludo al historial que se envía a Gemini: los modelos Gemini 3
     // no aceptan un turno "model" precargado al inicio de la conversación.
-    necShowQuickReplies();
+    if (level) {
+      // Alumno recurrente: ya sabemos su nivel, vamos directo a los temas.
+      necShowQuickReplies();
+    } else {
+      necAppendMessage('coach', '¿Cómo describirías tu nivel de inglés ahorita?');
+      necShowLevelReplies();
+    }
   }
 
   async function callGemini(userText) {
     necHistory.push({ role: 'user', parts: [{ text: userText }] });
     const name = getStudentName();
-    const sysText = name
-      ? `${SYSTEM_PROMPT}\n\nThe student's name is "${name}". Address them by this name from now on.`
-      : SYSTEM_PROMPT;
+    const level = getStudentLevel();
+    let sysText = SYSTEM_PROMPT;
+    if (name) sysText += `\n\nThe student's name is "${name}". Address them by this name from time to time.`;
+    if (level) sysText += `\n\nThe student self-reported their level as: ${level}. Use it as your starting point, but silently recalibrate if their actual responses suggest otherwise.`;
 
     const body = {
       system_instruction: { parts: [{ text: sysText }] },
@@ -4806,10 +4872,11 @@ Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI
     return reply;
   }
 
-  async function necUserSend(text) {
+  async function necUserSend(text, onDone) {
     text = (text || '').trim();
     if (!text || necBusy) return;
     necRemoveQuickReplies();
+    necRemoveLevelReplies();
     necAppendMessage('user', text);
     necBusy = true;
     $sendBtn().disabled = true;
@@ -4818,6 +4885,7 @@ Keep responses concise (max 2 short paragraphs) to ensure a great mobile chat UI
       const reply = await callGemini(text);
       necHideTyping();
       necAppendMessage('coach', reply);
+      if (typeof onDone === 'function') onDone();
     } catch (err) {
       necHideTyping();
       necAppendMessage('coach', 'Oops, tuve un problema para conectarme. ¿Puedes intentar de nuevo en un momento?');
