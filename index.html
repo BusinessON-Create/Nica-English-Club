@@ -488,6 +488,23 @@ a { color: inherit; }
 .tr-badges-row { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
 .tr-badge-chip { display:flex; align-items:center; gap:5px; background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); color:var(--gold3); font-size:10.5px; font-weight:700; padding:6px 12px; border-radius:99px; }
 .tr-lock-msg { text-align:center; color:var(--muted); font-size:12.5px; padding:16px; }
+.tr-circuit-tag { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.05); border:1px solid var(--border2); color:var(--muted); font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; padding:5px 11px; border-radius:99px; margin-bottom:10px; }
+.tr-listen-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:88px; height:88px; margin:6px auto 18px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); border:none; border-radius:50%; color:#000; font-size:26px; cursor:pointer; box-shadow:0 10px 26px var(--gold-glow); transition: transform .15s var(--ease); }
+.tr-listen-btn:active { transform:scale(.94); }
+.tr-listen-btn.playing { animation: pulseSoft 1s ease infinite; }
+.tr-ord-bank, .tr-ord-answer { display:flex; flex-wrap:wrap; gap:8px; min-height:44px; padding:10px; border-radius:12px; margin-bottom:12px; }
+.tr-ord-answer { background:rgba(255,255,255,.03); border:1px dashed var(--border2); }
+.tr-ord-bank { border-top:1px solid var(--border); padding-top:14px; }
+.tr-ord-chip { background:rgba(255,255,255,.06); border:1px solid var(--border2); color:var(--text); padding:9px 14px; border-radius:10px; font-size:14px; cursor:pointer; font-family:inherit; transition: border-color .15s, opacity .15s; }
+.tr-ord-chip:hover { border-color:var(--gold2); }
+.tr-ord-chip.used { opacity:.25; pointer-events:none; }
+.tr-ord-chip.wrong-flash { border-color:var(--red); background:rgba(255,92,92,.12); }
+.tr-mic-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:88px; height:88px; margin:14px auto 6px; background:var(--card2); border:2px solid var(--gold2); border-radius:50%; color:var(--gold3); font-size:26px; cursor:pointer; transition: transform .15s var(--ease), background .15s var(--ease); }
+.tr-mic-btn.recording { background:var(--red); border-color:var(--red); color:#fff; animation: pulseSoft 1s ease infinite; }
+.tr-mic-status { color:var(--muted); font-size:12px; min-height:18px; margin-bottom:10px; }
+.tr-mic-feedback { font-size:13px; font-weight:700; margin-top:6px; }
+.tr-mic-feedback.ok { color:var(--green); }
+.tr-mic-feedback.retry { color:var(--red); }
 .tr-icon-fire { color:var(--gold2); animation: pulseSoft 1.6s ease infinite; display:inline-block; }
 .tr-icon-bounce { animation: iconBounce 1.4s ease infinite; display:inline-block; }
 .tr-icon-spin-slow { animation: spin 2.6s linear infinite; display:inline-block; }
@@ -2671,8 +2688,37 @@ let trYaEscuchado = false;
 let trProgresoActual = null;
 let trSemanaActual = null;
 let trSemanaUnsub = null;
-let trJuegoIndex = 0;
-let trJuegoOrden = [];
+// ===== Motor de circuito de juegos (Train) — reemplaza el viejo juego único de pares =====
+let trCircuito = [];          // cola de ejercicios del día actual (se re-encola al final si falla uno)
+let trCircuitoIndex = 0;
+let trCircuitoKey = null;     // identifica semana+día para saber cuándo reconstruir el circuito
+let trCircuitoExitosos = 0;   // cuenta ejercicios superados (para sumar a "frases practicadas")
+let trOrdenarRespuesta = [];  // estado del ejercicio de "armar oración" en curso
+let trReconocedorVoz = null;  // instancia de SpeechRecognition en uso
+let trSpeakingExitosos = 0;   // cuenta ejercicios de "speaking" superados (para la medalla Speaking Master)
+
+/* ===== TRAINING ROOM — Medallas (mismo sistema de logros que ya existe, ampliado) ===== */
+const TR_MEDALLAS = [
+  { id:'racha3',      nombre:'3-Week Streak',      icono:'fa-fire',              check: p => (p.rachaSemanas||0) >= 3 },
+  { id:'racha8',      nombre:'8-Week Streak',      icono:'fa-fire',              check: p => (p.rachaSemanas||0) >= 8 },
+  { id:'semanas5',    nombre:'5 Weeks Completed',  icono:'fa-trophy',            check: p => (p.semanasCompletadas||0) >= 5 },
+  { id:'semanas10',   nombre:'10 Weeks Completed', icono:'fa-trophy',            check: p => (p.semanasCompletadas||0) >= 10 },
+  { id:'frases100',   nombre:'100 Phrases',        icono:'fa-graduation-cap',    check: p => (p.palabrasPracticadas||0) >= 100 },
+  { id:'frases500',   nombre:'500 Phrases',        icono:'fa-graduation-cap',    check: p => (p.palabrasPracticadas||0) >= 500 },
+  { id:'speaking20',  nombre:'Speaking Master',    icono:'fa-microphone-lines',  check: p => (p.speakingExitosos||0) >= 20 },
+];
+async function trVerificarMedallas() {
+  if (!trProgresoActual || !sessionActiva) return;
+  const actuales = trProgresoActual.medallas || [];
+  const nuevas = TR_MEDALLAS.filter(m => !actuales.includes(m.id) && m.check(trProgresoActual));
+  if (!nuevas.length) return;
+  try {
+    await updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), { medallas: arrayUnion(...nuevas.map(m => m.id)) });
+    nuevas.forEach(m => showModal('New badge! 🏅', `You just earned "${m.nombre}". Keep going!`));
+  } catch (e) {
+    console.error('No se pudieron guardar las nuevas medallas:', e);
+  }
+}
 
 function extraerYoutubeId(url) {
   const m = String(url||'').match(/(?:youtu\.be\/|v=|embed\/)([a-zA-Z0-9_-]{6,})/);
@@ -2769,8 +2815,9 @@ function renderTrainingRoom() {
   else pasoHtml = renderPasoProduce(dia);
 
   const dots = [1,2,3,4,5].map(d => `<div class="tr-daydot ${d < trProgresoActual.diaActual ? 'done' : d === trProgresoActual.diaActual ? 'current' : ''}"></div>`).join('');
-  const pasos = ['prime','absorb','train','produce'];
-  const nombresPaso = { prime:'Mindset', absorb:'Absorb', train:'Train', produce:'Speak' };
+  const esDia5 = trProgresoActual.diaActual === 5;
+  const pasos = esDia5 ? ['prime','absorb','train','produce'] : ['prime','absorb','train'];
+  const nombresPaso = { prime:'Mindset', absorb:'Absorb', train:'Practice', produce:'Send to coach' };
   const idxActual = pasos.indexOf(trProgresoActual.pasoActual);
   const chips = pasos.map((p,i) => `<div class="tr-step-chip ${i<idxActual?'done':i===idxActual?'active':''}">${nombresPaso[p]}</div>`).join('');
 
@@ -2802,7 +2849,10 @@ function renderBadgesTraining() {
   const cont = document.getElementById('tr-badges-row');
   if (!cont) return;
   const completadas = trProgresoActual.etapasCompletadas || [];
-  cont.innerHTML = completadas.map(e => `<span class="tr-badge-chip"><i class="fa-solid fa-trophy tr-icon-bounce"></i> ${TR_ETAPA_LABEL[e]} completed</span>`).join('');
+  const etapaChips = completadas.map(e => `<span class="tr-badge-chip"><i class="fa-solid fa-trophy tr-icon-bounce"></i> ${TR_ETAPA_LABEL[e]} completed</span>`);
+  const medallasGanadas = trProgresoActual.medallas || [];
+  const medallaChips = TR_MEDALLAS.filter(m => medallasGanadas.includes(m.id)).map(m => `<span class="tr-badge-chip"><i class="fa-solid ${m.icono}"></i> ${m.nombre}</span>`);
+  cont.innerHTML = etapaChips.concat(medallaChips).join('');
 }
 
 function renderPasoPrime(dia) {
@@ -2832,25 +2882,112 @@ function renderPasoAbsorb(dia) {
     <button class="btn-login" onclick="avanzarPasoTraining('train', this)">Continue <i class="fa-solid fa-arrow-right"></i></button>
   </div>`;
 }
+/* ===== TRAINING ROOM — Circuito de juegos "Train" (estilo Duolingo) =====
+   Cada día genera automáticamente una mezcla de ejercicios a partir de lo que
+   el admin ya llena en el panel (prime + pares). No requiere campos nuevos.
+   El tipo de ejercicios disponibles crece con el día de la semana, para que
+   se sienta como una progresión de "programación mental":
+     Día 1-2: Reconocer  (pares + listening)
+     Día 3:   + Construir (armar oración)
+     Día 4-5: + Producir  (speaking con el micrófono)
+   Si el navegador no soporta reconocimiento de voz (ej. Safari/iPhone),
+   "speaking" se omite automáticamente y no bloquea a nadie. */
+
+function trSpeechSoportado() {
+  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+function trTiposDisponiblesPorDia(diaNum) {
+  let tipos;
+  if (diaNum <= 2) tipos = ['pares', 'listening'];
+  else if (diaNum === 3) tipos = ['pares', 'listening', 'ordenar'];
+  else tipos = ['pares', 'listening', 'ordenar', 'speaking'];
+  if (tipos.includes('speaking') && !trSpeechSoportado()) tipos = tipos.filter(t => t !== 'speaking');
+  return tipos;
+}
+function trBarajar(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function trConstruirCircuito(dia, diaNum) {
+  const tipos = trTiposDisponiblesPorDia(diaNum);
+  const paresValidos = (dia.pares || []).filter(p => p && p.correcta && p.incorrecta);
+  const ejercicios = [];
+  if (tipos.includes('pares')) {
+    trBarajar(paresValidos).slice(0, 3).forEach(p => ejercicios.push({ tipo: 'pares', par: p }));
+  }
+  if (tipos.includes('listening') && paresValidos.length) {
+    trBarajar(paresValidos).slice(0, 2).forEach(p => ejercicios.push({ tipo: 'listening', par: p }));
+  }
+  if (tipos.includes('ordenar')) {
+    const frase = (dia.prime || '').trim();
+    if (frase.split(/\s+/).length >= 3) ejercicios.push({ tipo: 'ordenar', frase });
+  }
+  if (tipos.includes('speaking')) {
+    const frase = (dia.prime || (paresValidos[0] && paresValidos[0].correcta) || '').trim();
+    if (frase) ejercicios.push({ tipo: 'speaking', frase });
+  }
+  return trBarajar(ejercicios);
+}
 function renderPasoTrain(dia) {
-  const pares = dia.pares || [];
-  if (!pares.length) { setTimeout(() => avanzarPasoTraining('produce'), 0); return `<div class="tr-step-card"><p class="tr-lock-msg">Loading...</p></div>`; }
-  if (trJuegoIndex >= pares.length) trJuegoIndex = 0;
-  if (!trJuegoOrden[trJuegoIndex]) trJuegoOrden[trJuegoIndex] = Math.random() < 0.5;
-  const par = pares[trJuegoIndex];
-  const izqEsCorrecta = trJuegoOrden[trJuegoIndex];
-  const opA = izqEsCorrecta ? par.correcta : par.incorrecta;
-  const opB = izqEsCorrecta ? par.incorrecta : par.correcta;
+  const key = (trSemanaActual ? trSemanaActual.id : '') + '-' + trProgresoActual.diaActual;
+  if (trCircuitoKey !== key) {
+    trCircuito = trConstruirCircuito(dia, trProgresoActual.diaActual);
+    trCircuitoIndex = 0;
+    trCircuitoExitosos = 0;
+    trSpeakingExitosos = 0;
+    trCircuitoKey = key;
+  }
+  if (!trCircuito.length) { setTimeout(() => trCircuitoCompletado(), 0); return `<div class="tr-step-card"><p class="tr-lock-msg">Loading...</p></div>`; }
+  const ej = trCircuito[trCircuitoIndex];
+  const progreso = `Exercise ${trCircuitoIndex + 1} / ${trCircuito.length}`;
+  if (ej.tipo === 'pares') return trRenderPares(ej, progreso);
+  if (ej.tipo === 'listening') return trRenderListening(ej, progreso);
+  if (ej.tipo === 'ordenar') return trRenderOrdenar(ej, progreso);
+  if (ej.tipo === 'speaking') return trRenderSpeaking(ej, progreso);
+  return `<div class="tr-step-card"><p class="tr-lock-msg">Loading...</p></div>`;
+}
+
+/* --- Ejercicio: Pares (elegir la frase correcta) --- */
+function trRenderPares(ej, progreso) {
+  const izqEsCorrecta = Math.random() < 0.5;
+  const opA = izqEsCorrecta ? ej.par.correcta : ej.par.incorrecta;
+  const opB = izqEsCorrecta ? ej.par.incorrecta : ej.par.correcta;
   return `<div class="tr-step-card">
-    <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Train</span>
-    <p class="tr-tot-progress">Pick the correct one — ${trJuegoIndex+1} / ${pares.length}</p>
+    <span class="tr-circuit-tag"><i class="fa-solid fa-check-double"></i> Recognize</span>
+    <p class="tr-tot-progress">Pick the correct one — ${progreso}</p>
     <div class="tr-tot-pair" id="tr-tot-pair">
-      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '1':'0'}" onclick="responderTrainOption(this)">${escNeclub(opA)}</button>
-      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '0':'1'}" onclick="responderTrainOption(this)">${escNeclub(opB)}</button>
+      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '1' : '0'}" onclick="trResponderOpcion(this)">${escNeclub(opA)}</button>
+      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '0' : '1'}" onclick="trResponderOpcion(this)">${escNeclub(opB)}</button>
     </div>
   </div>`;
 }
-window.responderTrainOption = (btn) => {
+/* --- Ejercicio: Listening (escuchar y elegir lo que se dijo) --- */
+function trRenderListening(ej, progreso) {
+  const izqEsCorrecta = Math.random() < 0.5;
+  const opA = izqEsCorrecta ? ej.par.correcta : ej.par.incorrecta;
+  const opB = izqEsCorrecta ? ej.par.incorrecta : ej.par.correcta;
+  return `<div class="tr-step-card">
+    <span class="tr-circuit-tag"><i class="fa-solid fa-ear-listen"></i> Listening</span>
+    <p class="tr-tot-progress">Listen and choose what you heard — ${progreso}</p>
+    <button type="button" class="tr-listen-btn" id="tr-listen-btn" onclick="trReproducirListening(this,'${escNeclub(ej.par.correcta).replace(/'/g,"&#39;")}')"><i class="fa-solid fa-volume-high"></i></button>
+    <div class="tr-tot-pair" id="tr-tot-pair">
+      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '1' : '0'}" onclick="trResponderOpcion(this)">${escNeclub(opA)}</button>
+      <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '0' : '1'}" onclick="trResponderOpcion(this)">${escNeclub(opB)}</button>
+    </div>
+  </div>`;
+}
+window.trReproducirListening = (btn, texto) => {
+  btn.classList.add('playing');
+  try {
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'en-US';
+    u.onend = () => btn.classList.remove('playing');
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  } catch (e) { btn.classList.remove('playing'); }
+};
+window.trResponderOpcion = (btn) => {
   const wrap = document.getElementById('tr-tot-pair');
   if (!wrap || wrap.dataset.bloqueado) return;
   wrap.dataset.bloqueado = '1';
@@ -2858,29 +2995,142 @@ window.responderTrainOption = (btn) => {
     b.disabled = true;
     if (b.dataset.correcta === '1') b.classList.add('correct');
   });
-  if (btn.dataset.correcta !== '1') btn.classList.add('incorrect');
-  setTimeout(async () => {
-    trJuegoIndex++;
-    const dia = trSemanaActual.dias[trProgresoActual.diaActual - 1];
-    if (trJuegoIndex >= (dia.pares||[]).length) {
-      const total = (dia.pares||[]).length;
-      trJuegoIndex = 0; trJuegoOrden = [];
-      try {
-        await updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), { palabrasPracticadas: increment(total) });
-        avanzarPasoTraining('produce');
-      } catch (e) {
-        console.error('No se pudo guardar tu práctica en Training Room:', e);
-        showModal('No se pudo guardar tu avance', 'Revisa tu conexión a internet e intenta de nuevo. Tus respuestas de este ejercicio no se perdieron, solo necesitamos reintentar guardarlas.');
-        renderTrainingRoom();
-      }
-    } else {
-      renderTrainingRoom();
-    }
-  }, 700);
+  const exito = btn.dataset.correcta === '1';
+  if (!exito) btn.classList.add('incorrect');
+  setTimeout(() => trResolverEjercicio(exito), 700);
 };
+
+/* --- Ejercicio: Armar oración (sentence builder) --- */
+function trRenderOrdenar(ej, progreso) {
+  const palabras = ej.frase.split(/\s+/);
+  const barajadas = trBarajar(palabras.map((p, i) => ({ texto: p, id: i })));
+  trOrdenarRespuesta = [];
+  return `<div class="tr-step-card">
+    <span class="tr-circuit-tag"><i class="fa-solid fa-puzzle-piece"></i> Build</span>
+    <p class="tr-tot-progress">Tap the words in the right order — ${progreso}</p>
+    <div class="tr-ord-answer" id="tr-ord-answer"></div>
+    <div class="tr-ord-bank" id="tr-ord-bank">
+      ${barajadas.map(w => `<button type="button" class="tr-ord-chip" id="tr-ord-w${w.id}" onclick="trTocarPalabraOrdenar(${w.id}, '${escNeclub(w.texto).replace(/'/g, "&#39;")}')">${escNeclub(w.texto)}</button>`).join('')}
+    </div>
+    <button class="btn-login btn-outline-gold" type="button" onclick="trReiniciarOrdenar()" style="margin-top:4px;">Reset</button>
+  </div>`;
+}
+window.trTocarPalabraOrdenar = (id, texto) => {
+  const chip = document.getElementById('tr-ord-w' + id);
+  if (!chip || chip.classList.contains('used')) return;
+  chip.classList.add('used');
+  trOrdenarRespuesta.push({ id, texto });
+  const ans = document.getElementById('tr-ord-answer');
+  const span = document.createElement('button');
+  span.type = 'button';
+  span.className = 'tr-ord-chip';
+  span.textContent = texto;
+  span.onclick = () => trQuitarPalabraOrdenar(id, span);
+  ans.appendChild(span);
+  const totalPalabras = document.querySelectorAll('#tr-ord-bank .tr-ord-chip').length;
+  if (trOrdenarRespuesta.length === totalPalabras) trVerificarOrdenar();
+};
+window.trQuitarPalabraOrdenar = (id, span) => {
+  span.remove();
+  trOrdenarRespuesta = trOrdenarRespuesta.filter(w => w.id !== id);
+  const chip = document.getElementById('tr-ord-w' + id);
+  if (chip) chip.classList.remove('used');
+};
+window.trReiniciarOrdenar = () => {
+  renderTrainingRoom(); // re-dibuja el mismo ejercicio (misma trCircuitoIndex) con palabras barajadas de nuevo
+};
+function trVerificarOrdenar() {
+  const ej = trCircuito[trCircuitoIndex];
+  const objetivo = ej.frase.split(/\s+/).map(w => w.toLowerCase().replace(/[.,!?]/g, ''));
+  const dado = trOrdenarRespuesta.map(w => w.texto.toLowerCase().replace(/[.,!?]/g, ''));
+  const exito = objetivo.length === dado.length && objetivo.every((w, i) => w === dado[i]);
+  document.querySelectorAll('#tr-ord-answer .tr-ord-chip').forEach(c => { if (!exito) c.classList.add('wrong-flash'); });
+  setTimeout(() => trResolverEjercicio(exito), 700);
+}
+
+/* --- Ejercicio: Speaking (repetir en voz alta, con reconocimiento de voz) --- */
+function trSimilitudTexto(esperado, obtenido) {
+  const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s]/g, '').trim().split(/\s+/).filter(Boolean);
+  const a = norm(esperado), b = norm(obtenido);
+  if (!a.length) return 0;
+  const bCopy = b.slice();
+  let coincididas = 0;
+  a.forEach(palabra => { const idx = bCopy.indexOf(palabra); if (idx !== -1) { coincididas++; bCopy.splice(idx, 1); } });
+  return Math.round((coincididas / a.length) * 100);
+}
+function trRenderSpeaking(ej, progreso) {
+  return `<div class="tr-step-card">
+    <span class="tr-circuit-tag"><i class="fa-solid fa-microphone-lines"></i> Speak</span>
+    <p class="tr-tot-progress">Say this out loud — ${progreso}</p>
+    <p class="tr-prime-phrase" style="font-size:18px;">"${escNeclub(ej.frase)}" ${trBotonSonido(ej.frase, 'en-US')}</p>
+    <button type="button" class="tr-mic-btn" id="tr-mic-btn" onclick="trEscucharSpeaking()"><i class="fa-solid fa-microphone"></i></button>
+    <p class="tr-mic-status" id="tr-mic-status">Tap the mic and repeat the sentence</p>
+  </div>`;
+}
+window.trEscucharSpeaking = () => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = document.getElementById('tr-mic-btn');
+  const status = document.getElementById('tr-mic-status');
+  if (!SR) { status.textContent = "Your browser doesn't support voice recognition."; return; }
+  if (btn.classList.contains('recording')) return;
+  const ej = trCircuito[trCircuitoIndex];
+  btn.classList.add('recording');
+  status.innerHTML = '<i class="fa-solid fa-ear-listen"></i> Listening...';
+  trReconocedorVoz = new SR();
+  trReconocedorVoz.lang = 'en-US';
+  trReconocedorVoz.interimResults = false;
+  trReconocedorVoz.maxAlternatives = 1;
+  trReconocedorVoz.onresult = (e) => {
+    const dicho = e.results[0][0].transcript;
+    const pct = trSimilitudTexto(ej.frase, dicho);
+    const exito = pct >= 80;
+    status.innerHTML = `You said: "${escNeclub(dicho)}" — <span class="tr-mic-feedback ${exito ? 'ok' : 'retry'}">${pct}% match</span>`;
+    setTimeout(() => trResolverEjercicio(exito), 1300);
+  };
+  trReconocedorVoz.onerror = () => {
+    btn.classList.remove('recording');
+    status.textContent = "Couldn't hear you clearly. Tap the mic to try again.";
+  };
+  trReconocedorVoz.onend = () => { btn.classList.remove('recording'); };
+  try { trReconocedorVoz.start(); } catch (e) { btn.classList.remove('recording'); }
+};
+
+/* --- Resolver ejercicio y avanzar el circuito --- */
+async function trResolverEjercicio(exito) {
+  const ej = trCircuito[trCircuitoIndex];
+  if (exito) {
+    trCircuitoExitosos++;
+    if (ej.tipo === 'speaking') trSpeakingExitosos++;
+    trCircuito.splice(trCircuitoIndex, 1); // se quita de la cola
+  } else {
+    trCircuito.splice(trCircuitoIndex, 1);
+    trCircuito.push(ej); // se re-encola al final para repetirlo luego, como Duolingo
+  }
+  if (trCircuitoIndex >= trCircuito.length) trCircuitoIndex = 0;
+  if (!trCircuito.length) { await trCircuitoCompletado(); return; }
+  renderTrainingRoom();
+}
+async function trCircuitoCompletado() {
+  try {
+    const cambios = {};
+    if (trCircuitoExitosos > 0) cambios.palabrasPracticadas = increment(trCircuitoExitosos);
+    if (trSpeakingExitosos > 0) cambios.speakingExitosos = increment(trSpeakingExitosos);
+    if (Object.keys(cambios).length) await updateDoc(doc(db, 'entrenamiento_progreso', sessionActiva.id), cambios);
+    await trVerificarMedallas();
+  } catch (e) {
+    console.error('No se pudo guardar tu práctica en Training Room:', e);
+    showModal('No se pudo guardar tu avance', 'Revisa tu conexión a internet e intenta de nuevo. Tus respuestas de este ejercicio no se perdieron, solo necesitamos reintentar guardarlas.');
+  }
+  if (trProgresoActual.diaActual === 5) {
+    avanzarPasoTraining('produce'); // día 5: se mantiene el envío de audio al coach por WhatsApp
+  } else {
+    completarDiaTraining(); // días 1-4: el circuito de juegos ES la práctica del día, no hay WhatsApp
+  }
+}
 function renderPasoProduce(dia) {
   return `<div class="tr-step-card">
-    <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Speak</span>
+    <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Weekly check-in with your coach</span>
+    <p class="form-hint" style="margin:4px 0 12px;">This is the only voice note of the week — your coach listens to it to check how you're doing.</p>
     <div class="tr-reto-box"><p>${escNeclub(dia.retoPregunta||'')}</p></div>
     <button class="tr-wa-btn" onclick="enviarRetoTrainingWA()"><i class="fa-brands fa-whatsapp"></i> Record & Send</button>
     <button class="tr-confirm-btn" id="tr-confirm-btn" onclick="completarDiaTraining()"><i class="fa-solid fa-circle-check"></i> I already sent it</button>
@@ -2910,7 +3160,8 @@ window.completarDiaTraining = async () => {
   const ref = doc(db,'entrenamiento_progreso', sessionActiva.id);
   try {
     if (trProgresoActual.diaActual < 5) {
-      await updateDoc(ref, { diaActual: increment(1), pasoActual: 'prime', retosEnviados: increment(1) });
+      // Días 1-4: el circuito de juegos YA fue la práctica del día, no hay envío de audio por WhatsApp.
+      await updateDoc(ref, { diaActual: increment(1), pasoActual: 'prime' });
       return;
     }
     // día 5: se completó la semana entera
@@ -2943,6 +3194,7 @@ window.completarDiaTraining = async () => {
       // pueda repasarla después desde English Journey (Mindset/Absorb + audio).
       ...(trSemanaActual ? { historialSemanas: arrayUnion(trSemanaActual.id) } : {})
     });
+    setTimeout(() => trVerificarMedallas(), 800); // deja que el listener sincronice el nuevo progreso antes de chequear
   } catch (e) {
     console.error('No se pudo completar el día de Training Room:', e);
     showModal('No se pudo guardar tu progreso', 'Revisa tu conexión a internet e intenta de nuevo. Tu reto de voz ya fue enviado, solo falta guardar el avance del día.');
@@ -3920,7 +4172,8 @@ function bloqueDiaHtmlTraining(n, dia) {
     <textarea id="tr-d${n}-contenido" class="admin-input" rows="3" placeholder="Contenido a consumir (texto, link de YouTube, o URL de audio)">${dia.absorbContenido||''}</textarea>
     <p class="admin-label" style="font-size:11px;">This or That — 6 pares (frase correcta vs incorrecta)</p>
     ${paresHtml}
-    <textarea id="tr-d${n}-reto" class="admin-input" rows="2" placeholder="Pregunta/frase del reto de voz (Día ${n})">${dia.retoPregunta||''}</textarea>
+    <p class="form-hint" style="margin:4px 0 10px; font-size:11px;"><i class="fa-solid fa-circle-info"></i> Con la frase de Mindset y estos pares, el sistema arma solo los juegos de listening, armar oración y speaking — no hace falta llenar nada más.</p>
+    <textarea id="tr-d${n}-reto" class="admin-input" rows="2" placeholder="Pregunta/frase del reto de voz — solo se usa el Día 5 (envío al coach)">${dia.retoPregunta||''}</textarea>
   </div>`;
 }
 function renderEditorDayFieldsTraining(prefillDias) {
