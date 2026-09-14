@@ -36,7 +36,23 @@
     min-height: 100vh;
   }
 
-  body { display: flex; flex-direction: column; }
+  body { display: flex; flex-direction: column; position: relative; }
+  body::before {
+    content: ""; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+    background-image:
+      radial-gradient(1200px 600px at 15% -5%, rgba(240,180,41,.09), transparent 55%),
+      radial-gradient(1000px 700px at 110% 65%, rgba(240,180,41,.06), transparent 60%);
+    background-repeat: no-repeat;
+    will-change: transform;
+    animation: ambientDrift 28s ease-in-out infinite alternate;
+  }
+  @keyframes ambientDrift {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(2.5%, 2%, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body::before { animation: none; }
+  }
 
   h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
   .mono { font-family: 'DM Mono', monospace; }
@@ -74,11 +90,27 @@
   }
   .btn-salir:hover { background: rgba(255,255,255,.08); border-color: var(--gold2); transform: translateY(-1px); }
 
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-sound-toggle {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border2); color: var(--text);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease);
+  }
+  .btn-sound-toggle svg { width: 18px; height: 18px; }
+  .btn-sound-toggle:hover { border-color: var(--gold2); transform: translateY(-1px); }
+  .btn-sound-toggle:active { transform: scale(.92); }
+  .btn-sound-toggle.muted { color: var(--muted-dim); border-color: var(--border2); }
+
   /* ---------- Layout ---------- */
   main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px 20px; }
-  .screen { width: 100%; max-width: 560px; display: none; }
+  .screen { width: 100%; max-width: 560px; display: none; opacity: 0; transform: translateY(14px); transition: opacity .38s var(--ease), transform .38s var(--ease); }
   .screen.wide { max-width: 640px; }
   .screen.active { display: block; }
+  .screen.active.screen-visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .screen { transition: none; }
+  }
 
   .card {
     background: var(--card); border: 1px solid var(--border);
@@ -123,6 +155,7 @@
     transition: transform .18s var(--ease), box-shadow .18s var(--ease);
   }
   .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 10px 24px var(--gold-glow); }
+  .btn-gold:active:not(:disabled) { transform: translateY(0) scale(.97); box-shadow: 0 4px 14px var(--gold-glow); }
   .btn-gold:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
 
   .btn-ghost {
@@ -131,6 +164,7 @@
     font-size: 14px; cursor: pointer; transition: border-color .18s var(--ease), background .18s var(--ease);
   }
   .btn-ghost:hover { border-color: var(--gold2); background: rgba(255,255,255,.03); }
+  .btn-ghost:active { transform: scale(.97); }
 
   .btn-row { display: flex; gap: 10px; margin-bottom: 10px; }
   .btn-row .btn-gold, .btn-row .btn-ghost { margin: 0; }
@@ -190,11 +224,11 @@
   .vs-label { color: var(--muted-dim); font-size: 12px; }
 
   .progress-track { height: 6px; background: rgba(255,255,255,.06); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold2), var(--gold3)); border-radius: 4px; transition: width .4s var(--ease); }
+  .progress-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--gold2), var(--gold3)); border-radius: 4px; transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease); }
   .progress-label { font-size: 12px; color: var(--muted); margin-bottom: 22px; }
 
   .timer-bar-track { height: 4px; background: rgba(255,255,255,.06); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
-  .timer-bar-fill { height: 100%; background: var(--blue); border-radius: 4px; width: 100%; transition: width 1s linear; }
+  .timer-bar-fill { height: 100%; width: 100%; background: var(--blue); border-radius: 4px; transform: scaleX(1); transform-origin: left; transition: transform 1s linear; }
   .timer-bar-fill.urgent { background: var(--red); }
 
   .expresion-tag {
@@ -215,6 +249,7 @@
     transition: border-color .18s var(--ease), background .18s var(--ease), transform .18s var(--ease);
   }
   .option-btn:hover:not(:disabled) { border-color: var(--gold2); background: var(--card-hover); transform: translateY(-1px); }
+  .option-btn:active:not(:disabled) { transform: scale(.97); }
   .option-btn:disabled { cursor: default; }
   .option-btn.chosen-correct { border-color: var(--green); background: rgba(0,214,143,.12); color: var(--green); }
   .option-btn.chosen-wrong { border-color: var(--red); background: rgba(255,92,92,.1); color: var(--red); }
@@ -261,14 +296,19 @@
   .game-card:active { transform: translateY(-1px) scale(.99); }
   .game-card .g-icon {
     width: 52px; height: 52px; flex-shrink: 0; border-radius: 16px;
-    display: flex; align-items: center; justify-content: center; font-size: 26px;
+    display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, var(--gold-dim), rgba(255,255,255,.02));
-    border: 1px solid var(--gold-glow);
+    border: 1px solid var(--gold-glow); color: var(--gold3);
   }
+  .game-card .g-icon svg { width: 26px; height: 26px; }
+  .game-card .g-arrow svg { width: 18px; height: 18px; display: block; }
   .game-card .g-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
   .game-card .g-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
   .game-card .g-arrow { margin-left: auto; color: var(--muted-dim); font-size: 18px; transition: transform .2s var(--ease); }
   .game-card:hover .g-arrow { transform: translateX(4px); color: var(--gold3); }
+
+  .icon-btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; }
+  .icon-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
 
   .btn-back-link {
     display: inline-flex; align-items: center; gap: 6px; background: none; border: none;
@@ -325,6 +365,12 @@
   }
   .memory-card.flipped, .memory-card.matched { transform: rotateY(180deg); }
   .memory-card.disabled { cursor: default; }
+  @media (hover: hover) and (pointer: fine) {
+    .memory-card:not(.disabled):not(.flipped):not(.matched):hover { transform: rotateY(0) translateY(-4px) scale(1.03); filter: drop-shadow(0 8px 14px rgba(0,0,0,.4)); }
+    .memory-card.flipped:hover, .memory-card.matched:hover { filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
+  }
+  .memory-card:not(.disabled):active { transform: scale(.95); }
+  .memory-card.flipped:active, .memory-card.matched:active { transform: rotateY(180deg) scale(.97); }
   .mc-face {
     position: absolute; inset: 0; border-radius: 12px; backface-visibility: hidden;
     display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px;
@@ -332,8 +378,9 @@
   }
   .mc-back {
     background: linear-gradient(135deg, var(--card2), var(--card));
-    border: 1px solid var(--border2); color: var(--gold3); font-size: 20px;
+    border: 1px solid var(--border2); color: var(--gold3);
   }
+  .mc-back svg { width: 30%; height: 30%; opacity: .85; }
   .mc-front {
     background: linear-gradient(135deg, var(--gold-dim), rgba(255,255,255,.03));
     border: 1px solid var(--gold-glow); color: var(--text); transform: rotateY(180deg);
@@ -378,12 +425,14 @@
   /* ================= PARTICLES / CONFETTI ================= */
   .fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden; }
   .confetti-piece {
-    position: absolute; top: -20px; width: 8px; height: 14px; opacity: .9;
+    position: absolute; top: -20px; opacity: .95; display: block;
     animation: confettiFall linear forwards;
+    --rot-start: 0deg;
   }
+  .confetti-piece svg { display: block; width: 100%; height: 100%; }
   @keyframes confettiFall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+    0%   { transform: translateY(0) rotate(var(--rot-start)); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(calc(var(--rot-start) + 540deg)); opacity: 0; }
   }
   .pulse-correct { animation: pulseCorrect .5s var(--ease); }
   @keyframes pulseCorrect { 0%{transform:scale(1);} 40%{transform:scale(1.03);} 100%{transform:scale(1);} }
@@ -419,7 +468,10 @@
       <div class="subtitle">NicaEnglish Club</div>
     </div>
   </div>
-  <a class="btn-salir" href="../index.html">&larr; Volver al portal</a>
+  <div class="header-actions">
+    <button class="btn-sound-toggle" id="btn-sound-toggle" aria-label="Silenciar sonido"></button>
+    <a class="btn-salir" href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M15 6l-6 6 6 6"/></svg> Volver al portal</a>
+  </div>
 </header>
 
 <main>
@@ -433,28 +485,34 @@
 
       <div class="game-select-grid">
         <button class="game-card" data-game="trivia">
-          <div class="g-icon">🧠</div>
+          <div class="g-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a4 4 0 0 0-4 4v1.2A4.5 4.5 0 0 0 6 12a4.5 4.5 0 0 0 1.3 3.2c.2.9.2 1.8.2 2.8a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2c0-1 0-1.9.2-2.8A4.5 4.5 0 0 0 18 12a4.5 4.5 0 0 0-2-3.8V7a4 4 0 0 0-4-4Z"/><path d="M9.5 20h5"/><path d="M12 9v3l1.5 1.5"/></svg>
+          </div>
           <div>
             <div class="g-title">Trivia de Expresiones</div>
             <div class="g-desc">Adivina el significado de expresiones y verbos frasales en inglés.</div>
           </div>
-          <div class="g-arrow">→</div>
+          <div class="g-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
         </button>
         <button class="game-card" data-game="pares">
-          <div class="g-icon">🃏</div>
+          <div class="g-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="6.5" width="12" height="15" rx="2" transform="rotate(-8 9.5 14)"/><rect x="8" y="3" width="12" height="15" rx="2"/></svg>
+          </div>
           <div>
             <div class="g-title">Memoria de Verbos</div>
             <div class="g-desc">Encuentra los pares: verbo en inglés con su significado en español.</div>
           </div>
-          <div class="g-arrow">→</div>
+          <div class="g-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
         </button>
         <button class="game-card" data-game="oraciones">
-          <div class="g-icon">🧩</div>
+          <div class="g-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h4a1.5 1.5 0 0 1 0 3 1.5 1.5 0 0 0 0 3h5v4a1.5 1.5 0 0 1-3 0 1.5 1.5 0 0 0-3 0v5H8a1.5 1.5 0 0 1 0-3 1.5 1.5 0 0 0 0-3H4V9a1.5 1.5 0 0 1 3 0 1.5 1.5 0 0 0 3 0V4Z"/></svg>
+          </div>
           <div>
             <div class="g-title">Arma la Oración</div>
             <div class="g-desc">Ordena las palabras desordenadas para formar una oración correcta.</div>
           </div>
-          <div class="g-arrow">→</div>
+          <div class="g-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
         </button>
       </div>
     </div>
@@ -463,7 +521,7 @@
   <!-- ============ PANTALLA: SETUP (genérica para los 3 juegos) ============ -->
   <section id="screen-setup" class="screen">
     <div class="card">
-      <button class="btn-back-link" id="btn-back-to-select">← Elegir otro juego</button>
+      <button class="btn-back-link" id="btn-back-to-select"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M15 6l-6 6 6 6"/></svg> Elegir otro juego</button>
       <p class="eyebrow-free" id="setup-eyebrow">2 a 5 jugadores o práctica individual</p>
       <h1 class="heading" id="setup-heading">Trivia de expresiones</h1>
       <p class="lede" id="setup-lede">Pon tu nombre, elige el nivel y crea una sala, únete con un código, o practica solo a tu ritmo.</p>
@@ -478,7 +536,10 @@
         <div class="mode-grid" id="mode-grid"></div>
       </div>
 
-      <button class="btn-ghost" id="btn-open-guide" style="margin-bottom:20px;">📖 Ver guía antes de jugar</button>
+      <button class="btn-ghost icon-btn" id="btn-open-guide" style="margin-bottom:20px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v17H6.5A2.5 2.5 0 0 0 4 22.5v-17Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v17h5.5a2.5 2.5 0 0 1 2.5 2.5v-17Z"/></svg>
+        <span id="guide-btn-label">Ver guía antes de jugar</span>
+      </button>
 
       <button class="btn-gold" id="btn-create-room">Crear sala (hasta 5 jugadores)</button>
       <p class="error-msg" id="error-create"></p>
@@ -716,21 +777,21 @@ const GAME_META = {
     title: "Trivia de expresiones",
     eyebrow: "2 a 5 jugadores o práctica individual",
     lede: "Pon tu nombre, elige el nivel y crea una sala, únete con un código, o practica solo a tu ritmo.",
-    guideBtn: "📖 Ver guía de expresiones",
+    guideBtn: "Ver guía de expresiones",
     brandTitle: "Trivia de Expresiones"
   },
   pares: {
     title: "Memoria de verbos",
     eyebrow: "2 a 5 jugadores o práctica individual",
     lede: "Encuentra los pares: cada verbo en inglés con su significado en español. Elige tu nivel y juega.",
-    guideBtn: "📖 Ver lista de verbos",
+    guideBtn: "Ver lista de verbos",
     brandTitle: "Memoria de Verbos"
   },
   oraciones: {
     title: "Arma la oración",
     eyebrow: "2 a 5 jugadores o práctica individual",
     lede: "Toca las palabras desordenadas en el orden correcto para formar la oración antes de que se acabe el tiempo.",
-    guideBtn: "📖 Ver cómo se juega",
+    guideBtn: "Ver cómo se juega",
     brandTitle: "Arma la Oración"
   }
 };
@@ -747,8 +808,12 @@ let selectedMode = "rapido";
 /* ---------------- Helpers DOM ---------------- */
 const $ = (id) => document.getElementById(id);
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  $(id).classList.add("active");
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active", "screen-visible"));
+  const el = $(id);
+  el.classList.add("active");
+  void el.offsetWidth;
+  requestAnimationFrame(() => el.classList.add("screen-visible"));
+  Sound.whoosh();
 }
 function escapeHtml(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -757,13 +822,17 @@ function escapeHtml(s) {
 /* ---------------- Motor de sonido (Web Audio, sin archivos externos) ---------------- */
 const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
 let actx = null;
+const SOUND_PREF_KEY = "nica_sound_on";
+let soundOn = true;
+try { const saved = localStorage.getItem(SOUND_PREF_KEY); if (saved !== null) soundOn = saved === "1"; } catch { /* ignore */ }
+
 function ensureAudio() {
   if (!AudioCtxClass) return;
   if (!actx) { try { actx = new AudioCtxClass(); } catch (e) { /* no-op */ } }
   if (actx && actx.state === "suspended") actx.resume();
 }
 function tone(freq, dur, type = "sine", vol = 0.15, delay = 0) {
-  if (!actx) return;
+  if (!actx || !soundOn) return;
   const t0 = actx.currentTime + delay;
   const osc = actx.createOscillator();
   const gain = actx.createGain();
@@ -774,29 +843,84 @@ function tone(freq, dur, type = "sine", vol = 0.15, delay = 0) {
   osc.connect(gain); gain.connect(actx.destination);
   osc.start(t0); osc.stop(t0 + dur + 0.02);
 }
+function noiseWhoosh(dur = 0.18, vol = 0.05, rising = true) {
+  if (!actx || !soundOn) return;
+  const bufferSize = actx.sampleRate * dur;
+  const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+  const src = actx.createBufferSource();
+  src.buffer = buffer;
+  const filter = actx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.setValueAtTime(rising ? 300 : 1200, actx.currentTime);
+  filter.frequency.linearRampToValueAtTime(rising ? 1400 : 300, actx.currentTime + dur);
+  const gain = actx.createGain();
+  gain.gain.setValueAtTime(vol, actx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+  src.connect(filter); filter.connect(gain); gain.connect(actx.destination);
+  src.start();
+}
+function vibrate(pattern) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch { /* ignore */ }
+}
 const Sound = {
-  tap()     { tone(520, 0.06, "triangle", 0.12); },
+  tap()     { tone(520, 0.06, "triangle", 0.11); },
   flip()    { tone(430, 0.05, "triangle", 0.10); },
-  correct() { tone(660, 0.09, "sine", 0.16); tone(880, 0.12, "sine", 0.14, 0.08); },
-  wrong()   { tone(180, 0.18, "sawtooth", 0.13); },
-  match()   { tone(740, 0.08, "sine", 0.15); tone(988, 0.14, "sine", 0.15, 0.09); },
-  tick()    { tone(300, 0.05, "square", 0.08); },
-  win()     { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.16, "sine", 0.16, i * 0.11)); }
+  correct() { tone(660, 0.09, "sine", 0.16); tone(880, 0.12, "sine", 0.14, 0.08); vibrate(18); },
+  wrong()   { tone(180, 0.18, "sawtooth", 0.12); vibrate([16, 40, 16]); },
+  match()   { tone(740, 0.08, "sine", 0.15); tone(988, 0.14, "sine", 0.15, 0.09); vibrate(18); },
+  tick()    { tone(300, 0.05, "square", 0.07); },
+  whoosh()  { noiseWhoosh(0.16, 0.045, true); },
+  win()     {
+    [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.18, "sine", 0.15, i * 0.1));
+    tone(1568, 0.28, "triangle", 0.1, 0.5);
+    vibrate([20, 30, 20, 30, 40]);
+  }
 };
 document.addEventListener("pointerdown", ensureAudio, { once: true });
+function toggleSound() {
+  soundOn = !soundOn;
+  try { localStorage.setItem(SOUND_PREF_KEY, soundOn ? "1" : "0"); } catch { /* ignore */ }
+  updateSoundToggleIcon();
+  if (soundOn) { ensureAudio(); Sound.tap(); }
+}
+function updateSoundToggleIcon() {
+  const btn = $("btn-sound-toggle");
+  if (!btn) return;
+  btn.classList.toggle("muted", !soundOn);
+  btn.setAttribute("aria-label", soundOn ? "Silenciar sonido" : "Activar sonido");
+  btn.innerHTML = soundOn
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a9 9 0 0 1 0 12"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+}
 
 /* ---------------- Confeti ---------------- */
-function burstConfetti(count = 24) {
+const STAR_PATH = "M8 .3l2.1 4.9 5.3.5-4 3.6 1.2 5.2L8 11.8 3.4 14.5l1.2-5.2-4-3.6 5.3-.5z";
+function isSmallScreen() { return window.innerWidth < 560; }
+function burstConfetti(count = 18) {
   const layer = $("fx-layer");
   if (!layer) return;
+  const cap = isSmallScreen() ? 12 : 20;
+  count = Math.min(count, cap);
   const colors = ["#f0b429", "#ffd966", "#00d68f", "#4d9fff", "#ff5c5c"];
   for (let i = 0; i < count; i++) {
-    const el = document.createElement("div");
+    const isStar = Math.random() > 0.45;
+    const size = 8 + Math.random() * 6;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const el = document.createElement(isStar ? "div" : "span");
     el.className = "confetti-piece";
     el.style.left = Math.random() * 100 + "vw";
-    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.width = size + "px";
+    el.style.height = size + "px";
     el.style.animationDuration = (1.1 + Math.random() * 1.1) + "s";
-    el.style.transform = `rotate(${Math.random() * 360}deg)`;
+    el.style.setProperty("--rot-start", Math.random() * 360 + "deg");
+    if (isStar) {
+      el.innerHTML = `<svg viewBox="0 0 16 15" width="100%" height="100%"><path d="${STAR_PATH}" fill="${color}"/></svg>`;
+    } else {
+      el.style.borderRadius = "50%";
+      el.style.background = color;
+    }
     layer.appendChild(el);
     setTimeout(() => el.remove(), 2600);
   }
@@ -916,7 +1040,7 @@ function showSetupFor(game) {
   $("setup-heading").textContent = meta.title;
   $("setup-eyebrow").textContent = meta.eyebrow;
   $("setup-lede").textContent = meta.lede;
-  $("btn-open-guide").textContent = meta.guideBtn;
+  $("guide-btn-label").textContent = meta.guideBtn;
   $("brand-title").textContent = meta.brandTitle;
   $("error-create").style.display = "none";
   $("error-join").style.display = "none";
@@ -925,11 +1049,14 @@ function showSetupFor(game) {
   showScreen("screen-setup");
 }
 
+updateSoundToggleIcon();
+$("btn-sound-toggle").addEventListener("click", toggleSound);
+
 document.querySelectorAll(".game-card").forEach(card => {
   card.addEventListener("click", () => { Sound.tap(); showSetupFor(card.dataset.game); });
 });
-$("btn-back-to-select").addEventListener("click", () => { $("brand-title").textContent = "Centro de Juegos"; showScreen("screen-game-select"); });
-$("btn-toggle-join").addEventListener("click", () => $("join-block").classList.toggle("open"));
+$("btn-back-to-select").addEventListener("click", () => { Sound.tap(); $("brand-title").textContent = "Centro de Juegos"; showScreen("screen-game-select"); });
+$("btn-toggle-join").addEventListener("click", () => { Sound.tap(); $("join-block").classList.toggle("open"); });
 
 /* ---------------- Guía (genérica por juego) ---------------- */
 function openGuide() {
@@ -977,11 +1104,12 @@ function openGuide() {
   }
   showScreen("screen-guide");
 }
-$("btn-open-guide").addEventListener("click", openGuide);
-$("btn-close-guide").addEventListener("click", () => showScreen("screen-setup"));
+$("btn-open-guide").addEventListener("click", () => { Sound.tap(); openGuide(); });
+$("btn-close-guide").addEventListener("click", () => { Sound.tap(); showScreen("screen-setup"); });
 
 /* ---------------- Crear sala (hasta 5 jugadores) ---------------- */
 $("btn-create-room").addEventListener("click", async () => {
+  Sound.tap();
   const name = $("input-name").value.trim();
   const errEl = $("error-create");
   errEl.style.display = "none";
@@ -1025,6 +1153,7 @@ $("btn-create-room").addEventListener("click", async () => {
 
 /* ---------------- Unirse a sala ---------------- */
 $("btn-join-room").addEventListener("click", async () => {
+  Sound.tap();
   const name = $("input-name").value.trim();
   const code = $("input-code").value.trim().toUpperCase();
   const errEl = $("error-join");
@@ -1072,6 +1201,7 @@ $("btn-join-room").addEventListener("click", async () => {
 
 /* ---------------- Iniciar partida (host) ---------------- */
 $("btn-start-room").addEventListener("click", async () => {
+  Sound.tap();
   const roomRef = ref(db, `rooms/${state.code}`);
   await runTransaction(roomRef, (room) => {
     if (!room) return;
@@ -1191,10 +1321,12 @@ function renderScoreboardMulti(containerId, room, mySlot) {
   const entries = Object.entries(room.players || {});
   entries.sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
   const maxScore = entries.length ? (entries[0][1].score || 0) : 0;
+  const crownSvg = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:11px;height:11px;vertical-align:-1px;margin-right:3px;"><path d="M4 17l1.2-8.5L8 11l4-6 4 6 2.8-2.5L20 17Z"/></svg>';
   entries.forEach(([slot, p]) => {
+    const isLeader = (p.score || 0) === maxScore && maxScore > 0;
     const chip = document.createElement("div");
-    chip.className = "score-chip" + (slot === mySlot ? " me" : "") + ((p.score || 0) === maxScore && maxScore > 0 ? " leader" : "");
-    chip.innerHTML = `<div class="sc-name">${escapeHtml(p.name)}</div><div class="sc-score">${p.score || 0}</div>`;
+    chip.className = "score-chip" + (slot === mySlot ? " me" : "") + (isLeader ? " leader" : "");
+    chip.innerHTML = `<div class="sc-name">${isLeader ? crownSvg : ""}${escapeHtml(p.name)}</div><div class="sc-score">${p.score || 0}</div>`;
     el.appendChild(chip);
   });
 }
@@ -1209,7 +1341,7 @@ function renderTriviaMulti(room) {
   const total = room.totalItems;
   const idx = room.currentIndex;
   const pct = Math.round((idx / total) * 100);
-  $("trivia-progress-fill").style.width = pct + "%";
+  $("trivia-progress-fill").style.transform = `scaleX(${pct/100})`;
   $("trivia-progress-label").textContent = `Pregunta ${Math.min(idx + 1, total)} de ${total}`;
 
   if (state.currentIndex !== idx) {
@@ -1275,7 +1407,7 @@ function renderOracionesMulti(room) {
   const total = room.totalItems;
   const idx = room.currentIndex;
   const pct = Math.round((idx / total) * 100);
-  $("oraciones-progress-fill").style.width = pct + "%";
+  $("oraciones-progress-fill").style.transform = `scaleX(${pct/100})`;
   $("oraciones-progress-label").textContent = `Oración ${Math.min(idx + 1, total)} de ${total}`;
 
   if (state.currentIndex !== idx) {
@@ -1396,10 +1528,10 @@ function startLocalTimer(fillEl, ms) {
   stopLocalTimer();
   fillEl.classList.remove("urgent");
   fillEl.style.transition = "none";
-  fillEl.style.width = "100%";
+  fillEl.style.transform = "scaleX(1)";
   void fillEl.offsetWidth;
-  fillEl.style.transition = `width ${ms / 1000}s linear`;
-  requestAnimationFrame(() => { fillEl.style.width = "0%"; });
+  fillEl.style.transition = `transform ${ms / 1000}s linear`;
+  requestAnimationFrame(() => { fillEl.style.transform = "scaleX(0)"; });
   state.localTimerInterval = setTimeout(() => { fillEl.classList.add("urgent"); }, ms * 0.66);
 }
 function stopLocalTimer() {
@@ -1490,7 +1622,7 @@ function renderParesMulti(room) {
       + (card.matched ? " matched" : "")
       + (revealed && !card.matched ? " flipped" : "")
       + (!clickable ? " disabled" : "");
-    div.innerHTML = `<div class="mc-face mc-back">🂠</div><div class="mc-face mc-front">${escapeHtml(card.text)}</div>`;
+    div.innerHTML = `<div class="mc-face mc-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l1.2-8.5L8 11l4-6 4 6 2.8-2.5L20 17Z"/><circle cx="12" cy="19.4" r="1"/></svg></div><div class="mc-face mc-front">${escapeHtml(card.text)}</div>`;
     if (clickable) div.addEventListener("click", () => paresTapMulti(i));
     gridEl.appendChild(div);
   });
@@ -1580,6 +1712,7 @@ function renderFinishedScreen(room) {
 }
 
 $("btn-rematch").addEventListener("click", () => {
+  Sound.tap();
   clearSession();
   const game = state.game;
   state = {
@@ -1620,7 +1753,7 @@ function renderSoloTriviaQuestion() {
   const q = soloTrivia.questions[idx];
 
   $("solo-trivia-score").textContent = soloTrivia.score;
-  $("solo-trivia-progress-fill").style.width = Math.round((idx / total) * 100) + "%";
+  $("solo-trivia-progress-fill").style.transform = `scaleX(${idx/total})`;
   $("solo-trivia-progress-label").textContent = `Pregunta ${idx + 1} de ${total}`;
   $("solo-trivia-expresion").textContent = `"${q.expresion}"`;
   $("solo-trivia-question").textContent = q.pregunta;
@@ -1697,7 +1830,7 @@ function renderSoloParesGrid() {
     const opened = soloPares.openIndices.includes(i);
     const div = document.createElement("div");
     div.className = "memory-card side-" + card.side + (card.matched ? " matched" : "") + (opened && !card.matched ? " flipped" : "") + ((card.matched || opened || soloPares.locked) ? " disabled" : "");
-    div.innerHTML = `<div class="mc-face mc-back">🂠</div><div class="mc-face mc-front">${escapeHtml(card.text)}</div>`;
+    div.innerHTML = `<div class="mc-face mc-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l1.2-8.5L8 11l4-6 4 6 2.8-2.5L20 17Z"/><circle cx="12" cy="19.4" r="1"/></svg></div><div class="mc-face mc-front">${escapeHtml(card.text)}</div>`;
     if (!card.matched && !opened && !soloPares.locked) div.addEventListener("click", () => soloParesTap(i));
     gridEl.appendChild(div);
   });
@@ -1744,7 +1877,7 @@ function renderSoloOracionesRound() {
   const item = soloOraciones.items[idx];
 
   $("solo-oraciones-score").textContent = soloOraciones.score;
-  $("solo-oraciones-progress-fill").style.width = Math.round((idx / total) * 100) + "%";
+  $("solo-oraciones-progress-fill").style.transform = `scaleX(${idx/total})`;
   $("solo-oraciones-progress-label").textContent = `Oración ${idx + 1} de ${total}`;
   $("solo-oraciones-banner").textContent = "";
   $("solo-oraciones-banner").classList.remove("win", "timeout");
@@ -1815,6 +1948,7 @@ function resolveSoloOracionesTimeout(item) {
 
 /* ---------------- Botones modo solo genéricos ---------------- */
 $("btn-solo").addEventListener("click", () => {
+  Sound.tap();
   const name = $("input-name").value.trim();
   const errEl = $("error-create");
   if (!name) { errEl.textContent = "Escribe tu nombre primero."; errEl.style.display = "block"; return; }
@@ -1839,6 +1973,7 @@ function showSoloFinishedGeneric(game, text) {
 }
 
 $("btn-solo-again").addEventListener("click", () => {
+  Sound.tap();
   const game = state.lastSoloGame || state.game;
   const mode = state.mode || "rapido";
   if (game === "trivia") startSoloTrivia(mode);
@@ -1846,6 +1981,7 @@ $("btn-solo-again").addEventListener("click", () => {
   else if (game === "oraciones") startSoloOraciones(mode);
 });
 $("btn-solo-change-game").addEventListener("click", () => {
+  Sound.tap();
   $("brand-title").textContent = "Centro de Juegos";
   showScreen("screen-game-select");
 });
