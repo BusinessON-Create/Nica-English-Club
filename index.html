@@ -2706,6 +2706,7 @@ let trPracticaPickerAbierto = false;
 /* ===== TRAINING ROOM — Modo práctica (repasar días ya completados sin afectar el progreso real) ===== */
 function trDiaEfectivo() { return trModoPractica ? trModoPractica.dia : (trProgresoActual ? trProgresoActual.diaActual : 1); }
 function trPasoEfectivo() { return trModoPractica ? trModoPractica.paso : (trProgresoActual ? trProgresoActual.pasoActual : 'prime'); }
+function trSemanaEfectiva() { return (trModoPractica && trModoPractica.semana) ? trModoPractica.semana : trSemanaActual; }
 function trAvanzarPaso(paso, btn) {
   if (trModoPractica) { trModoPractica.paso = paso; renderTrainingRoom(); return; }
   avanzarPasoTraining(paso, btn);
@@ -2728,11 +2729,15 @@ function renderPracticeRow() {
   }
 }
 window.trTogglePracticaPicker = () => { trPracticaPickerAbierto = !trPracticaPickerAbierto; renderPracticeRow(); };
-window.trAbrirPracticaDia = (diaNum) => {
-  trModoPractica = { dia: diaNum, paso: 'prime' };
+window.trAbrirPracticaDia = (diaNum, semanaObj) => {
+  trModoPractica = { dia: diaNum, paso: 'prime', semana: semanaObj || trSemanaActual };
   trPracticaPickerAbierto = false;
   trCircuitoKey = null; // fuerza a reconstruir el circuito para el día que se va a repasar
   renderTrainingRoom();
+};
+window.trRepetirPracticaActual = () => {
+  if (!trModoPractica) return;
+  trAbrirPracticaDia(trModoPractica.dia, trModoPractica.semana);
 };
 window.trSalirPractica = () => {
   trModoPractica = null;
@@ -2851,11 +2856,12 @@ function renderTrainingRoom() {
     return;
   }
   if (trModoPractica && trModoPractica.paso === 'done') {
-    cont.innerHTML = `<div class="tr-step-card"><i class="fa-solid fa-face-smile" style="font-size:34px; color:var(--gold2); margin-bottom:8px;"></i><h3>Nice practice!</h3><p class="form-hint" style="margin-top:8px;">This was just for practice — your real progress (Day ${trProgresoActual.diaActual}) didn't move.</p><button class="btn-login" style="margin-top:14px;" onclick="trAbrirPracticaDia(${trModoPractica.dia})">Practice this day again</button><button class="btn-login btn-outline-gold" style="margin-top:8px;" onclick="trSalirPractica()">Back to my real progress</button></div>`;
+    cont.innerHTML = `<div class="tr-step-card"><i class="fa-solid fa-face-smile" style="font-size:34px; color:var(--gold2); margin-bottom:8px;"></i><h3>Nice practice!</h3><p class="form-hint" style="margin-top:8px;">This was just for practice — your real progress (Day ${trProgresoActual.diaActual}) didn't move.</p><button class="btn-login" style="margin-top:14px;" onclick="trRepetirPracticaActual()">Practice this day again</button><button class="btn-login btn-outline-gold" style="margin-top:8px;" onclick="trSalirPractica()">Back to my real progress</button></div>`;
     return;
   }
   const diaEfectivo = trDiaEfectivo();
-  const dia = trSemanaActual.dias && trSemanaActual.dias[diaEfectivo - 1];
+  const semanaEfectiva = trSemanaEfectiva();
+  const dia = semanaEfectiva && semanaEfectiva.dias && semanaEfectiva.dias[diaEfectivo - 1];
   if (!dia) { cont.innerHTML = `<div class="tr-week-card"><p class="tr-lock-msg">This week's content is being updated. Check back soon!</p></div>`; return; }
   const pasoEfectivo = trPasoEfectivo();
   let pasoHtml = '';
@@ -2873,7 +2879,7 @@ function renderTrainingRoom() {
 
   cont.innerHTML = `<div class="tr-week-card">
     <span class="tr-etapa-tag">${TR_ETAPA_LABEL[trProgresoActual.etapaActual]}</span>
-    <h3>${escNeclub(trSemanaActual.titulo || 'Untitled week')}</h3>
+    <h3>${escNeclub(semanaEfectiva.titulo || 'Untitled week')}</h3>
     <div class="tr-daydots">${dots}</div>
   </div>
   <div class="tr-steps">${chips}</div>
@@ -2981,7 +2987,8 @@ function trConstruirCircuito(dia, diaNum) {
 }
 function renderPasoTrain(dia) {
   const diaEfectivo = trDiaEfectivo();
-  const key = (trSemanaActual ? trSemanaActual.id : '') + '-' + diaEfectivo + (trModoPractica ? '-practice' : '');
+  const semanaEfectiva = trSemanaEfectiva();
+  const key = (semanaEfectiva ? semanaEfectiva.id : '') + '-' + diaEfectivo + (trModoPractica ? '-practice' : '');
   if (trCircuitoKey !== key) {
     trCircuito = trConstruirCircuito(dia, diaEfectivo);
     trCircuitoIndex = 0;
@@ -3460,8 +3467,17 @@ window.abrirRepasoDia = (idx) => {
       </div>
     </div>
     ${absorbHtml}
-    <p class="tr-translate-note"><i class="fa-solid fa-eye"></i> Review mode — just read &amp; listen, no quiz here.</p>`;
+    <p class="tr-translate-note"><i class="fa-solid fa-eye"></i> Review mode — just read &amp; listen below, or play the exercises again.</p>
+    <button class="btn-login" style="margin-top:10px;" onclick="trIniciarPracticaDesdeJourney(${idx})"><i class="fa-solid fa-gamepad"></i> Practice this day again</button>`;
   document.getElementById('modal-tr-review-bg').classList.add('open');
+};
+window.trIniciarPracticaDesdeJourney = (idx) => {
+  const nodos = window.trJourneyNodosCache || [];
+  const n = nodos[idx];
+  if (!n) return;
+  cerrarModalRepaso();
+  trAbrirPracticaDia(n.numDia, n.semana);
+  showScreen('s-training');
 };
 window.cerrarModalRepaso = () => {
   window.speechSynthesis && window.speechSynthesis.cancel();
