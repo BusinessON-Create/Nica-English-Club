@@ -241,15 +241,181 @@
   .actions-row { display: flex; flex-direction: column; gap: 12px; }
 
   .hidden { display: none !important; }
+
+  /* ================= GAME SELECT ================= */
+  .game-select-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 6px; }
+  .game-card {
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--border2);
+    border-radius: var(--r); padding: 18px; cursor: pointer; text-align: left;
+    transition: transform .22s var(--ease), border-color .22s var(--ease), background .22s var(--ease), box-shadow .22s var(--ease);
+    position: relative; overflow: hidden;
+  }
+  .game-card::after {
+    content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none;
+    background: radial-gradient(160px 100px at 85% 50%, var(--gold-glow), transparent 70%);
+    transition: opacity .3s var(--ease);
+  }
+  .game-card:hover::after { opacity: 1; }
+  .game-card:hover { transform: translateY(-3px); border-color: var(--gold2); box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+  .game-card:active { transform: translateY(-1px) scale(.99); }
+  .game-card .g-icon {
+    width: 52px; height: 52px; flex-shrink: 0; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+    background: linear-gradient(135deg, var(--gold-dim), rgba(255,255,255,.02));
+    border: 1px solid var(--gold-glow);
+  }
+  .game-card .g-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+  .game-card .g-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+  .game-card .g-arrow { margin-left: auto; color: var(--muted-dim); font-size: 18px; transition: transform .2s var(--ease); }
+  .game-card:hover .g-arrow { transform: translateX(4px); color: var(--gold3); }
+
+  .btn-back-link {
+    display: inline-flex; align-items: center; gap: 6px; background: none; border: none;
+    color: var(--muted); font-size: 13px; cursor: pointer; padding: 0; margin-bottom: 18px;
+    font-family: 'DM Sans', sans-serif; transition: color .18s var(--ease);
+  }
+  .btn-back-link:hover { color: var(--gold3); }
+
+  /* ================= PLAYER LIST (waiting room, hasta 5) ================= */
+  .players-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 22px 0; }
+  .player-slot {
+    width: 84px; padding: 12px 6px; border-radius: var(--r-sm); text-align: center;
+    border: 1px dashed var(--border2); background: rgba(255,255,255,.02); color: var(--muted-dim);
+    font-size: 12px; transition: all .25s var(--ease);
+  }
+  .player-slot.filled {
+    border-style: solid; border-color: var(--gold-glow); background: var(--gold-dim); color: var(--gold3);
+    animation: slotPop .35s var(--ease);
+  }
+  .player-slot .p-avatar {
+    width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 6px;
+    background: linear-gradient(135deg, var(--gold2), var(--gold3));
+    display: flex; align-items: center; justify-content: center;
+    color: #1a1204; font-weight: 700; font-size: 13px;
+  }
+  .player-slot.filled.me { box-shadow: 0 0 0 2px var(--gold); }
+  @keyframes slotPop { 0% { transform: scale(.7); opacity:0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity:1; } }
+
+  .btn-gold.small { width: auto; padding: 10px 18px; font-size: 13px; }
+  .waiting-hint { text-align:center; color: var(--muted); font-size: 13px; margin-top: 14px; }
+
+  /* ================= SCOREBOARD MULTI (2-5 jugadores) ================= */
+  .scoreboard-multi { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: thin; }
+  .score-chip {
+    flex-shrink: 0; min-width: 74px; padding: 8px 10px; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border2); text-align: center;
+    transition: border-color .3s var(--ease), background .3s var(--ease);
+  }
+  .score-chip.me { border-color: var(--gold); background: var(--gold-dim); }
+  .score-chip.leader { border-color: var(--gold3); box-shadow: 0 0 12px var(--gold-glow); }
+  .score-chip .sc-name { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
+  .score-chip.me .sc-name { color: var(--gold3); }
+  .score-chip .sc-score { font-family: 'DM Mono', monospace; font-size: 18px; color: var(--white); }
+
+  /* ================= MEMORIA DE VERBOS (pares) ================= */
+  .memory-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 6px 0 20px;
+    perspective: 800px;
+  }
+  @media (max-width: 480px) { .memory-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+  .memory-card {
+    aspect-ratio: 3/4; position: relative; cursor: pointer;
+    transform-style: preserve-3d; transition: transform .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .memory-card.flipped, .memory-card.matched { transform: rotateY(180deg); }
+  .memory-card.disabled { cursor: default; }
+  .mc-face {
+    position: absolute; inset: 0; border-radius: 12px; backface-visibility: hidden;
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px;
+    font-size: 12.5px; line-height: 1.2; font-weight: 600;
+  }
+  .mc-back {
+    background: linear-gradient(135deg, var(--card2), var(--card));
+    border: 1px solid var(--border2); color: var(--gold3); font-size: 20px;
+  }
+  .mc-front {
+    background: linear-gradient(135deg, var(--gold-dim), rgba(255,255,255,.03));
+    border: 1px solid var(--gold-glow); color: var(--text); transform: rotateY(180deg);
+  }
+  .memory-card.side-en .mc-front { color: var(--gold3); font-family: 'DM Mono', monospace; }
+  .memory-card.matched .mc-front { background: rgba(0,214,143,.14); border-color: var(--green); color: var(--green); }
+  .memory-card.wrong-shake { animation: shakeCard .4s; }
+  @keyframes shakeCard {
+    0%,100% { transform: rotateY(180deg) translateX(0); }
+    25% { transform: rotateY(180deg) translateX(-6px); }
+    75% { transform: rotateY(180deg) translateX(6px); }
+  }
+  .memory-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: var(--muted); font-size: 13px; }
+
+  /* ================= ARMA LA ORACIÓN ================= */
+  .sentence-line {
+    min-height: 56px; border: 1px dashed var(--border2); border-radius: var(--r-sm);
+    background: rgba(255,255,255,.02); display: flex; flex-wrap: wrap; gap: 8px;
+    align-items: center; padding: 10px 12px; margin-bottom: 18px; transition: border-color .2s var(--ease);
+  }
+  .sentence-line.line-wrong { border-color: var(--red); animation: lineShake .4s; }
+  .sentence-line.line-correct { border-color: var(--green); }
+  @keyframes lineShake { 0%,100% { transform: translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+  .word-chip.placed {
+    background: rgba(0,214,143,.1); border-color: var(--green); color: var(--green);
+    animation: chipDrop .3s var(--ease);
+  }
+  @keyframes chipDrop { 0% { transform: translateY(-14px) scale(.8); opacity:0; } 100% { transform: translateY(0) scale(1); opacity:1; } }
+  .word-bank { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; min-height: 46px; }
+  .word-chip {
+    padding: 10px 16px; border-radius: 100px; background: rgba(255,255,255,.05);
+    border: 1px solid var(--border2); color: var(--text); font-size: 14px; cursor: pointer;
+    transition: transform .15s var(--ease), border-color .15s var(--ease), background .15s var(--ease), opacity .15s var(--ease);
+    user-select: none;
+  }
+  .word-chip:hover:not(.used):not(.placed) { border-color: var(--gold2); transform: translateY(-2px); }
+  .word-chip:active:not(.used):not(.placed) { transform: scale(.94); }
+  .word-chip.used { opacity: 0; pointer-events: none; }
+  .sentence-hint { font-size: 12px; color: var(--muted-dim); margin-bottom: 12px; }
+  .btn-clear-line { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; margin-bottom: 16px; }
+
+  /* ================= PARTICLES / CONFETTI ================= */
+  .fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetti-piece {
+    position: absolute; top: -20px; width: 8px; height: 14px; opacity: .9;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+  }
+  .pulse-correct { animation: pulseCorrect .5s var(--ease); }
+  @keyframes pulseCorrect { 0%{transform:scale(1);} 40%{transform:scale(1.03);} 100%{transform:scale(1);} }
+  .shake-wrong { animation: shakeWrong .4s; }
+  @keyframes shakeWrong { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+
+  /* ================= PODIUM (finished multi) ================= */
+  .podium-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+  .podium-row {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    border-radius: var(--r-sm); background: rgba(255,255,255,.03); border: 1px solid var(--border2);
+  }
+  .podium-row.rank-1 { border-color: var(--gold); background: var(--gold-dim); }
+  .podium-row .p-rank { font-family: 'DM Mono', monospace; font-size: 18px; color: var(--muted); width: 24px; }
+  .podium-row.rank-1 .p-rank { color: var(--gold3); }
+  .podium-row .p-name { flex: 1; font-size: 14px; color: var(--text); }
+  .podium-row .p-score { font-family: 'DM Mono', monospace; font-size: 18px; color: var(--white); }
+  .podium-row.me { box-shadow: 0 0 0 1px var(--gold-glow) inset; }
+
+  .level-hint { font-size: 12px; color: var(--muted-dim); margin: -14px 0 20px; text-align: center; }
+
 </style>
 </head>
 <body>
+
+<div class="fx-layer" id="fx-layer"></div>
 
 <header>
   <div class="brand-block">
     <div class="logo-badge"><img src="../logo.png" alt="NicaEnglish Club"></div>
     <div class="brand-text">
-      <div class="title">Trivia de Expresiones</div>
+      <div class="title" id="brand-title">Centro de Juegos</div>
       <div class="subtitle">NicaEnglish Club</div>
     </div>
   </div>
@@ -258,12 +424,49 @@
 
 <main>
 
-  <!-- ============ PANTALLA: SETUP ============ -->
-  <section id="screen-setup" class="screen active">
+  <!-- ============ PANTALLA: SELECCIÓN DE JUEGO ============ -->
+  <section id="screen-game-select" class="screen active">
     <div class="card">
-      <p class="eyebrow-free">2 jugadores o práctica individual</p>
-      <h1 class="heading">Trivia de expresiones</h1>
-      <p class="lede">Pon tu nombre, elige la duración y crea una sala, únete con un código, o practica solo a tu ritmo.</p>
+      <p class="eyebrow-free">Elige un juego</p>
+      <h1 class="heading">¿Qué quieres practicar hoy?</h1>
+      <p class="lede">Cada juego tiene modo individual y modo multijugador para hasta 5 personas.</p>
+
+      <div class="game-select-grid">
+        <button class="game-card" data-game="trivia">
+          <div class="g-icon">🧠</div>
+          <div>
+            <div class="g-title">Trivia de Expresiones</div>
+            <div class="g-desc">Adivina el significado de expresiones y verbos frasales en inglés.</div>
+          </div>
+          <div class="g-arrow">→</div>
+        </button>
+        <button class="game-card" data-game="pares">
+          <div class="g-icon">🃏</div>
+          <div>
+            <div class="g-title">Memoria de Verbos</div>
+            <div class="g-desc">Encuentra los pares: verbo en inglés con su significado en español.</div>
+          </div>
+          <div class="g-arrow">→</div>
+        </button>
+        <button class="game-card" data-game="oraciones">
+          <div class="g-icon">🧩</div>
+          <div>
+            <div class="g-title">Arma la Oración</div>
+            <div class="g-desc">Ordena las palabras desordenadas para formar una oración correcta.</div>
+          </div>
+          <div class="g-arrow">→</div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: SETUP (genérica para los 3 juegos) ============ -->
+  <section id="screen-setup" class="screen">
+    <div class="card">
+      <button class="btn-back-link" id="btn-back-to-select">← Elegir otro juego</button>
+      <p class="eyebrow-free" id="setup-eyebrow">2 a 5 jugadores o práctica individual</p>
+      <h1 class="heading" id="setup-heading">Trivia de expresiones</h1>
+      <p class="lede" id="setup-lede">Pon tu nombre, elige el nivel y crea una sala, únete con un código, o practica solo a tu ritmo.</p>
 
       <div class="field">
         <label for="input-name">Tu nombre</label>
@@ -271,23 +474,13 @@
       </div>
 
       <div class="field">
-        <label>Duración de la partida</label>
-        <div class="mode-grid">
-          <div class="mode-card selected" data-mode="rapido" data-count="15">
-            <div class="n">15</div><div class="label">Rápido</div>
-          </div>
-          <div class="mode-card" data-mode="medio" data-count="25">
-            <div class="n">25</div><div class="label">Medio</div>
-          </div>
-          <div class="mode-card" data-mode="completo" data-count="40">
-            <div class="n">40</div><div class="label">Completo</div>
-          </div>
-        </div>
+        <label>Nivel</label>
+        <div class="mode-grid" id="mode-grid"></div>
       </div>
 
-      <button class="btn-ghost" id="btn-open-guide" style="margin-bottom:20px;">📖 Ver guía de estudio antes de jugar</button>
+      <button class="btn-ghost" id="btn-open-guide" style="margin-bottom:20px;">📖 Ver guía antes de jugar</button>
 
-      <button class="btn-gold" id="btn-create-room">Crear sala (2 jugadores)</button>
+      <button class="btn-gold" id="btn-create-room">Crear sala (hasta 5 jugadores)</button>
       <p class="error-msg" id="error-create"></p>
 
       <div style="margin-top:12px;">
@@ -309,12 +502,12 @@
     </div>
   </section>
 
-  <!-- ============ PANTALLA: GUÍA DE ESTUDIO ============ -->
+  <!-- ============ PANTALLA: GUÍA (genérica) ============ -->
   <section id="screen-guide" class="screen wide">
     <div class="card">
-      <p class="eyebrow-free">Guía de estudio</p>
-      <h2 class="heading">Expresiones para repasar</h2>
-      <p class="lede">Todas las expresiones que pueden salir en la trivia, con su significado y un ejemplo de uso.</p>
+      <p class="eyebrow-free" id="guide-eyebrow">Guía de estudio</p>
+      <h2 class="heading" id="guide-heading">Repasa antes de jugar</h2>
+      <p class="lede" id="guide-lede">Todo lo que puede salir en el juego.</p>
 
       <div class="guide-list" id="guide-list"></div>
 
@@ -322,63 +515,88 @@
     </div>
   </section>
 
-  <!-- ============ PANTALLA: ESPERANDO RIVAL ============ -->
+  <!-- ============ PANTALLA: ESPERANDO JUGADORES (2-5) ============ -->
   <section id="screen-waiting" class="screen">
     <div class="card">
       <p class="eyebrow-free">Sala creada</p>
       <h2 class="heading">Comparte este código</h2>
-      <p class="lede">Tu rival debe escribir este código en "Unirme con un código" para empezar.</p>
+      <p class="lede">Cualquiera puede unirse con este código. Se necesitan al menos 2 jugadores para empezar (máximo 5).</p>
 
       <div class="room-code-display">
         <div class="code" id="waiting-code">------</div>
-        <div class="hint">Modo: <span id="waiting-mode">-</span></div>
+        <div class="hint">Nivel: <span id="waiting-mode">-</span></div>
       </div>
 
-      <div class="waiting-status"><span class="pulse-dot"></span> Esperando a tu rival...</div>
+      <div class="players-list" id="waiting-players"></div>
 
-      <a class="btn-salir" href="../index.html" style="justify-content:center; display:flex;">Cancelar y volver</a>
+      <button class="btn-gold" id="btn-start-room" style="display:none;">Iniciar partida</button>
+      <p class="waiting-hint" id="waiting-hint"><span class="pulse-dot"></span> Esperando a que se unan más jugadores...</p>
+
+      <a class="btn-salir" href="../index.html" style="justify-content:center; display:flex; margin-top:10px;">Cancelar y volver</a>
     </div>
   </section>
 
   <!-- ============ PANTALLA: CUENTA REGRESIVA ============ -->
   <section id="screen-countdown" class="screen">
     <div class="card">
-      <p class="eyebrow-free" style="text-align:center;">Los dos están listos</p>
+      <p class="eyebrow-free" style="text-align:center;">¡Ya empieza!</p>
       <div class="countdown-num" id="countdown-num">3</div>
       <div class="countdown-sub">¡Prepárate!</div>
     </div>
   </section>
 
-  <!-- ============ PANTALLA: JUGANDO (multijugador) ============ -->
-  <section id="screen-playing" class="screen">
+  <!-- ============ PANTALLA: JUGANDO — TRIVIA (multi) ============ -->
+  <section id="screen-playing-trivia" class="screen">
     <div class="card">
-      <div class="scoreboard">
-        <div class="player-chip me">
-          <div class="name" id="play-my-name">Tú</div>
-          <div class="score" id="play-my-score">0</div>
-        </div>
-        <div class="vs-label">VS</div>
-        <div class="player-chip">
-          <div class="name" id="play-rival-name">Rival</div>
-          <div class="score" id="play-rival-score">0</div>
-        </div>
-      </div>
+      <div class="scoreboard-multi" id="trivia-scoreboard"></div>
 
-      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
-      <div class="progress-label" id="progress-label">Pregunta 1 de 15</div>
+      <div class="progress-track"><div class="progress-fill" id="trivia-progress-fill" style="width:0%;"></div></div>
+      <div class="progress-label" id="trivia-progress-label">Pregunta 1 de 15</div>
 
-      <div class="timer-bar-track"><div class="timer-bar-fill" id="timer-fill"></div></div>
+      <div class="timer-bar-track"><div class="timer-bar-fill" id="trivia-timer-fill"></div></div>
 
-      <div class="expresion-tag" id="play-expresion">expresión</div>
-      <p class="question-text" id="play-question">Pregunta...</p>
+      <div class="expresion-tag" id="trivia-expresion">expresión</div>
+      <p class="question-text" id="trivia-question">Pregunta...</p>
 
-      <div class="options-grid" id="play-options"></div>
+      <div class="options-grid" id="trivia-options"></div>
 
-      <p class="round-banner" id="round-banner"></p>
+      <p class="round-banner" id="trivia-banner"></p>
     </div>
   </section>
 
-  <!-- ============ PANTALLA: FINALIZADO (multijugador) ============ -->
+  <!-- ============ PANTALLA: JUGANDO — PARES (multi) ============ -->
+  <section id="screen-playing-pares" class="screen wide">
+    <div class="card">
+      <div class="scoreboard-multi" id="pares-scoreboard"></div>
+      <div class="memory-meta">
+        <span id="pares-progress-label">0 / 8 pares</span>
+        <span id="pares-turn-hint">Toca dos cartas para encontrar el par</span>
+      </div>
+      <div class="memory-grid" id="pares-grid"></div>
+      <p class="round-banner" id="pares-banner"></p>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: JUGANDO — ORACIONES (multi) ============ -->
+  <section id="screen-playing-oraciones" class="screen wide">
+    <div class="card">
+      <div class="scoreboard-multi" id="oraciones-scoreboard"></div>
+
+      <div class="progress-track"><div class="progress-fill" id="oraciones-progress-fill" style="width:0%;"></div></div>
+      <div class="progress-label" id="oraciones-progress-label">Oración 1 de 10</div>
+
+      <div class="timer-bar-track"><div class="timer-bar-fill" id="oraciones-timer-fill"></div></div>
+
+      <p class="sentence-hint">Toca las palabras en el orden correcto para armar la oración:</p>
+      <div class="sentence-line" id="oraciones-line"></div>
+      <button class="btn-clear-line" id="oraciones-clear">Vaciar y empezar de nuevo</button>
+      <div class="word-bank" id="oraciones-bank"></div>
+
+      <p class="round-banner" id="oraciones-banner"></p>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: FINALIZADO (multi, genérica hasta 5) ============ -->
   <section id="screen-finished" class="screen">
     <div class="card">
       <div class="winner-banner">
@@ -386,16 +604,7 @@
         <div class="winner-name" id="finished-winner">-</div>
       </div>
 
-      <div class="final-scores">
-        <div class="fs-item">
-          <div class="fs-name" id="finished-name-1">Jugador 1</div>
-          <div class="fs-score" id="finished-score-1">0</div>
-        </div>
-        <div class="fs-item">
-          <div class="fs-name" id="finished-name-2">Jugador 2</div>
-          <div class="fs-score" id="finished-score-2">0</div>
-        </div>
-      </div>
+      <div class="podium-list" id="finished-podium"></div>
 
       <div class="actions-row">
         <button class="btn-gold" id="btn-rematch">Jugar otra vez</button>
@@ -404,40 +613,61 @@
     </div>
   </section>
 
-  <!-- ============ PANTALLA: JUGANDO (solo) ============ -->
-  <section id="screen-solo-playing" class="screen">
+  <!-- ============ PANTALLA: SOLO — TRIVIA ============ -->
+  <section id="screen-solo-trivia" class="screen">
     <div class="card">
       <div class="scoreboard">
-        <div class="player-chip me">
-          <div class="name">Tu puntaje</div>
-          <div class="score" id="solo-score">0</div>
-        </div>
+        <div class="player-chip me"><div class="name">Tu puntaje</div><div class="score" id="solo-trivia-score">0</div></div>
       </div>
-
-      <div class="progress-track"><div class="progress-fill" id="solo-progress-fill" style="width:0%;"></div></div>
-      <div class="progress-label" id="solo-progress-label">Pregunta 1 de 15</div>
-
-      <div class="timer-bar-track"><div class="timer-bar-fill" id="solo-timer-fill"></div></div>
-
-      <div class="expresion-tag" id="solo-expresion">expresión</div>
-      <p class="question-text" id="solo-question">Pregunta...</p>
-
-      <div class="options-grid" id="solo-options"></div>
-
-      <p class="round-banner" id="solo-banner"></p>
+      <div class="progress-track"><div class="progress-fill" id="solo-trivia-progress-fill" style="width:0%;"></div></div>
+      <div class="progress-label" id="solo-trivia-progress-label">Pregunta 1 de 15</div>
+      <div class="timer-bar-track"><div class="timer-bar-fill" id="solo-trivia-timer-fill"></div></div>
+      <div class="expresion-tag" id="solo-trivia-expresion">expresión</div>
+      <p class="question-text" id="solo-trivia-question">Pregunta...</p>
+      <div class="options-grid" id="solo-trivia-options"></div>
+      <p class="round-banner" id="solo-trivia-banner"></p>
     </div>
   </section>
 
-  <!-- ============ PANTALLA: FINALIZADO (solo) ============ -->
+  <!-- ============ PANTALLA: SOLO — PARES ============ -->
+  <section id="screen-solo-pares" class="screen wide">
+    <div class="card">
+      <div class="memory-meta">
+        <span id="solo-pares-progress-label">0 / 8 pares</span>
+        <span id="solo-pares-moves">0 intentos</span>
+      </div>
+      <div class="memory-grid" id="solo-pares-grid"></div>
+      <p class="round-banner" id="solo-pares-banner"></p>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: SOLO — ORACIONES ============ -->
+  <section id="screen-solo-oraciones" class="screen wide">
+    <div class="card">
+      <div class="scoreboard">
+        <div class="player-chip me"><div class="name">Tu puntaje</div><div class="score" id="solo-oraciones-score">0</div></div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="solo-oraciones-progress-fill" style="width:0%;"></div></div>
+      <div class="progress-label" id="solo-oraciones-progress-label">Oración 1 de 10</div>
+      <div class="timer-bar-track"><div class="timer-bar-fill" id="solo-oraciones-timer-fill"></div></div>
+      <p class="sentence-hint">Toca las palabras en el orden correcto:</p>
+      <div class="sentence-line" id="solo-oraciones-line"></div>
+      <button class="btn-clear-line" id="solo-oraciones-clear">Vaciar y empezar de nuevo</button>
+      <div class="word-bank" id="solo-oraciones-bank"></div>
+      <p class="round-banner" id="solo-oraciones-banner"></p>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA: SOLO FINALIZADO (genérica) ============ -->
   <section id="screen-solo-finished" class="screen">
     <div class="card">
       <div class="winner-banner">
-        <div class="trophy-label">Terminaste la práctica</div>
-        <div class="winner-name" id="solo-final-score">0/15</div>
+        <div class="trophy-label" id="solo-finished-label">Terminaste la práctica</div>
+        <div class="winner-name" id="solo-finished-score">0/15</div>
       </div>
-
       <div class="actions-row">
         <button class="btn-gold" id="btn-solo-again">Practicar otra vez</button>
+        <button class="btn-ghost" id="btn-solo-change-game">Elegir otro juego</button>
         <a class="btn-salir" href="../index.html" style="justify-content:center; display:flex;">Volver al portal</a>
       </div>
     </div>
@@ -451,6 +681,8 @@ import {
   getDatabase, ref, set, get, onValue, runTransaction, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { QUESTIONS } from "./questions.js";
+import { VERBS } from "./verbs-data.js";
+import { SENTENCES } from "./sentences-data.js";
 
 /* ---------------- Firebase config ---------------- */
 const firebaseConfig = {
@@ -467,17 +699,50 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ---------------- Constantes de juego ---------------- */
-const TIME_PER_ROUND_MS = 20000;     // 20 segundos por pregunta (15 + 5 extra)
-const ADVANCE_DELAY_MS = 3000;       // tiempo que se muestra la respuesta correcta antes de pasar a la siguiente
-const SESSION_KEY = "nica_trivia_session";
+/* ================= CONSTANTES ================= */
+const TIME_PER_ROUND = { trivia: 20000, oraciones: 30000 };
+const ADVANCE_DELAY_MS = 3000;
+const SESSION_KEY = "nica_multi_session";
+const MAX_PLAYERS = 5;
 
-/* ---------------- Estado local (multijugador) ---------------- */
-let state = {
-  code: null, role: null, name: null, mode: null, isHost: false,
-  currentIndex: -1, roundLocked: false, countdownShown: false,
-  advanceScheduled: false, hostTimerInterval: null, localTimerInterval: null
+const LEVELS = {
+  trivia:    [ { key: "rapido", count: 15, label: "Rápido" }, { key: "medio", count: 25, label: "Medio" }, { key: "completo", count: 40, label: "Completo" } ],
+  pares:     [ { key: "rapido", pairs: 8,  label: "Rápido" }, { key: "medio", pairs: 12, label: "Medio" }, { key: "completo", pairs: 18, label: "Completo" } ],
+  oraciones: [ { key: "rapido", count: 10, label: "Rápido" }, { key: "medio", count: 18, label: "Medio" }, { key: "completo", count: 28, label: "Completo" } ]
 };
+
+const GAME_META = {
+  trivia: {
+    title: "Trivia de expresiones",
+    eyebrow: "2 a 5 jugadores o práctica individual",
+    lede: "Pon tu nombre, elige el nivel y crea una sala, únete con un código, o practica solo a tu ritmo.",
+    guideBtn: "📖 Ver guía de expresiones",
+    brandTitle: "Trivia de Expresiones"
+  },
+  pares: {
+    title: "Memoria de verbos",
+    eyebrow: "2 a 5 jugadores o práctica individual",
+    lede: "Encuentra los pares: cada verbo en inglés con su significado en español. Elige tu nivel y juega.",
+    guideBtn: "📖 Ver lista de verbos",
+    brandTitle: "Memoria de Verbos"
+  },
+  oraciones: {
+    title: "Arma la oración",
+    eyebrow: "2 a 5 jugadores o práctica individual",
+    lede: "Toca las palabras desordenadas en el orden correcto para formar la oración antes de que se acabe el tiempo.",
+    guideBtn: "📖 Ver cómo se juega",
+    brandTitle: "Arma la Oración"
+  }
+};
+
+/* ---------------- Estado local ---------------- */
+let state = {
+  game: null, code: null, mySlot: null, name: null, isHost: false, mode: null,
+  currentIndex: -1, roundLocked: false, countdownShown: false,
+  advanceScheduled: false, hostTimerInterval: null, localTimerInterval: null,
+  builtPositions: [], lastKnownMatchedCount: 0, joinId: null
+};
+let selectedMode = "rapido";
 
 /* ---------------- Helpers DOM ---------------- */
 const $ = (id) => document.getElementById(id);
@@ -485,13 +750,67 @@ function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   $(id).classList.add("active");
 }
+function escapeHtml(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* ---------------- Motor de sonido (Web Audio, sin archivos externos) ---------------- */
+const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+let actx = null;
+function ensureAudio() {
+  if (!AudioCtxClass) return;
+  if (!actx) { try { actx = new AudioCtxClass(); } catch (e) { /* no-op */ } }
+  if (actx && actx.state === "suspended") actx.resume();
+}
+function tone(freq, dur, type = "sine", vol = 0.15, delay = 0) {
+  if (!actx) return;
+  const t0 = actx.currentTime + delay;
+  const osc = actx.createOscillator();
+  const gain = actx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(vol, t0);
+  gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  osc.connect(gain); gain.connect(actx.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.02);
+}
+const Sound = {
+  tap()     { tone(520, 0.06, "triangle", 0.12); },
+  flip()    { tone(430, 0.05, "triangle", 0.10); },
+  correct() { tone(660, 0.09, "sine", 0.16); tone(880, 0.12, "sine", 0.14, 0.08); },
+  wrong()   { tone(180, 0.18, "sawtooth", 0.13); },
+  match()   { tone(740, 0.08, "sine", 0.15); tone(988, 0.14, "sine", 0.15, 0.09); },
+  tick()    { tone(300, 0.05, "square", 0.08); },
+  win()     { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.16, "sine", 0.16, i * 0.11)); }
+};
+document.addEventListener("pointerdown", ensureAudio, { once: true });
+
+/* ---------------- Confeti ---------------- */
+function burstConfetti(count = 24) {
+  const layer = $("fx-layer");
+  if (!layer) return;
+  const colors = ["#f0b429", "#ffd966", "#00d68f", "#4d9fff", "#ff5c5c"];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti-piece";
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.animationDuration = (1.1 + Math.random() * 1.1) + "s";
+    el.style.transform = `rotate(${Math.random() * 360}deg)`;
+    layer.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+}
 
 /* ---------------- Helpers de juego ---------------- */
 function generateRoomCode() {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // sin O/0/I/1
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
   for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return code;
+}
+function generateJoinId() {
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 function shuffle(arr) {
   const a = [...arr];
@@ -501,11 +820,66 @@ function shuffle(arr) {
   }
   return a;
 }
-function otherRole(role) { return role === "player1" ? "player2" : "player1"; }
+function nextFreeSlot(players) {
+  for (let n = 1; n <= MAX_PLAYERS; n++) {
+    const key = "p" + n;
+    if (!players || !players[key]) return key;
+  }
+  return null;
+}
+function modeLabel(game, mode) {
+  const lvl = LEVELS[game].find(l => l.key === mode) || LEVELS[game][0];
+  return lvl.label;
+}
 
+/* ---------------- Anti-repetición (localStorage) ---------------- */
+function pickIndices(poolLen, count, storeKey) {
+  count = Math.min(count, poolLen);
+  let used = [];
+  try { used = JSON.parse(localStorage.getItem(storeKey) || "[]"); } catch { used = []; }
+  let available = [];
+  for (let i = 0; i < poolLen; i++) if (!used.includes(i)) available.push(i);
+  if (available.length < count) { available = Array.from({ length: poolLen }, (_, i) => i); used = []; }
+  const chosen = shuffle(available).slice(0, count);
+  used = used.concat(chosen);
+  try { localStorage.setItem(storeKey, JSON.stringify(used)); } catch { /* ignore */ }
+  return chosen;
+}
+
+function buildTriviaItems(mode) {
+  const lvl = LEVELS.trivia.find(l => l.key === mode);
+  const count = Math.min(lvl.count, QUESTIONS.length);
+  return pickIndices(QUESTIONS.length, count, `nica_used_trivia_${mode}`).map(i => QUESTIONS[i]);
+}
+function buildOracionesItems(mode) {
+  const lvl = LEVELS.oraciones.find(l => l.key === mode);
+  const count = Math.min(lvl.count, SENTENCES.length);
+  const idxs = pickIndices(SENTENCES.length, count, `nica_used_oraciones_${mode}`);
+  return idxs.map(i => {
+    const correct = SENTENCES[i].words;
+    let shuffled = shuffle(correct);
+    let tries = 0;
+    while (tries < 6 && correct.length > 1 && shuffled.every((w, p) => w === correct[p])) { shuffled = shuffle(correct); tries++; }
+    return { correct, shuffled };
+  });
+}
+function buildParesBoard(mode) {
+  const lvl = LEVELS.pares.find(l => l.key === mode);
+  const pairs = Math.min(lvl.pairs, VERBS.length);
+  const idxs = pickIndices(VERBS.length, pairs, `nica_used_pares_${mode}`);
+  const chosen = idxs.map(i => VERBS[i]);
+  let cards = [];
+  chosen.forEach((v, pid) => {
+    cards.push({ pairId: pid, text: v.en, side: "en", matched: false });
+    cards.push({ pairId: pid, text: v.es, side: "es", matched: false });
+  });
+  return shuffle(cards);
+}
+
+/* ---------------- Sesión ---------------- */
 function saveSession() {
   sessionStorage.setItem(SESSION_KEY, JSON.stringify({
-    code: state.code, role: state.role, name: state.name, isHost: state.isHost
+    code: state.code, mySlot: state.mySlot, name: state.name, isHost: state.isHost, game: state.game
   }));
 }
 function loadSession() {
@@ -514,93 +888,129 @@ function loadSession() {
 }
 function clearSession() { sessionStorage.removeItem(SESSION_KEY); }
 
-/* ================= SETUP: modo, guía, crear/unirse/solo ================= */
-let selectedMode = "rapido";
-let selectedCount = 15;
-
-document.querySelectorAll(".mode-card").forEach(card => {
-  card.addEventListener("click", () => {
-    document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
-    card.classList.add("selected");
-    selectedMode = card.dataset.mode;
-    selectedCount = parseInt(card.dataset.count, 10);
+/* =========================================================
+   SELECCIÓN DE JUEGO Y SETUP
+   ========================================================= */
+function renderModeGrid(game) {
+  const grid = $("mode-grid");
+  grid.innerHTML = "";
+  LEVELS[game].forEach((lvl, idx) => {
+    const div = document.createElement("div");
+    div.className = "mode-card" + (idx === 0 ? " selected" : "");
+    const n = lvl.count !== undefined ? lvl.count : lvl.pairs;
+    div.innerHTML = `<div class="n">${n}</div><div class="label">${lvl.label}</div>`;
+    div.addEventListener("click", () => {
+      grid.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+      div.classList.add("selected");
+      selectedMode = lvl.key;
+      Sound.tap();
+    });
+    grid.appendChild(div);
   });
-});
-
-$("btn-toggle-join").addEventListener("click", () => {
-  $("join-block").classList.toggle("open");
-});
-
-function modeLabel(mode) {
-  if (mode === "rapido") return "Rápido (15 preguntas)";
-  if (mode === "medio") return "Medio (25 preguntas)";
-  return "Completo (40 preguntas)";
+  selectedMode = LEVELS[game][0].key;
 }
 
-/* ---------------- Guía de estudio ---------------- */
-function renderGuide() {
+function showSetupFor(game) {
+  state.game = game;
+  const meta = GAME_META[game];
+  $("setup-heading").textContent = meta.title;
+  $("setup-eyebrow").textContent = meta.eyebrow;
+  $("setup-lede").textContent = meta.lede;
+  $("btn-open-guide").textContent = meta.guideBtn;
+  $("brand-title").textContent = meta.brandTitle;
+  $("error-create").style.display = "none";
+  $("error-join").style.display = "none";
+  $("join-block").classList.remove("open");
+  renderModeGrid(game);
+  showScreen("screen-setup");
+}
+
+document.querySelectorAll(".game-card").forEach(card => {
+  card.addEventListener("click", () => { Sound.tap(); showSetupFor(card.dataset.game); });
+});
+$("btn-back-to-select").addEventListener("click", () => { $("brand-title").textContent = "Centro de Juegos"; showScreen("screen-game-select"); });
+$("btn-toggle-join").addEventListener("click", () => $("join-block").classList.toggle("open"));
+
+/* ---------------- Guía (genérica por juego) ---------------- */
+function openGuide() {
+  const game = state.game;
   const list = $("guide-list");
   list.innerHTML = "";
-  QUESTIONS.forEach(q => {
-    const item = document.createElement("div");
-    item.className = "guide-item";
-    const meaning = q.opciones[q.correcta];
-    item.innerHTML = `
-      <div class="g-expresion">"${q.expresion}"</div>
-      <div class="g-meaning">${meaning}</div>
-      <div class="g-example">${q.ejemplo ? q.ejemplo : ""}</div>
-    `;
-    list.appendChild(item);
-  });
-}
-$("btn-open-guide").addEventListener("click", () => {
-  renderGuide();
+  if (game === "trivia") {
+    $("guide-eyebrow").textContent = "Guía de estudio";
+    $("guide-heading").textContent = "Expresiones para repasar";
+    $("guide-lede").textContent = "Todas las expresiones que pueden salir en la trivia.";
+    QUESTIONS.forEach(q => {
+      const item = document.createElement("div");
+      item.className = "guide-item";
+      const meaning = q.opciones[q.correcta];
+      item.innerHTML = `<div class="g-expresion">"${escapeHtml(q.expresion)}"</div><div class="g-meaning">${escapeHtml(meaning)}</div><div class="g-example">${q.ejemplo ? escapeHtml(q.ejemplo) : ""}</div>`;
+      list.appendChild(item);
+    });
+  } else if (game === "pares") {
+    $("guide-eyebrow").textContent = "Banco de verbos";
+    $("guide-heading").textContent = "100 verbos que pueden salir";
+    $("guide-lede").textContent = "Cada partida elige algunos de estos verbos al azar.";
+    VERBS.forEach(v => {
+      const item = document.createElement("div");
+      item.className = "guide-item";
+      item.innerHTML = `<div class="g-expresion">${escapeHtml(v.en)}</div><div class="g-meaning">${escapeHtml(v.es)}</div>`;
+      list.appendChild(item);
+    });
+  } else {
+    $("guide-eyebrow").textContent = "Cómo se juega";
+    $("guide-heading").textContent = "Arma la oración";
+    $("guide-lede").textContent = "";
+    const tips = [
+      "Verás palabras desordenadas en la parte de abajo.",
+      "Tócalas en el orden correcto para armar la oración en la línea de arriba.",
+      "Si te equivocas, la línea se pone roja y puedes intentarlo de nuevo.",
+      "Toca la última palabra colocada para quitarla si te equivocaste.",
+      "En modo multijugador, gana el punto quien arme la oración correcta primero."
+    ];
+    tips.forEach(t => {
+      const item = document.createElement("div");
+      item.className = "guide-item";
+      item.innerHTML = `<div class="g-meaning">• ${t}</div>`;
+      list.appendChild(item);
+    });
+  }
   showScreen("screen-guide");
-});
+}
+$("btn-open-guide").addEventListener("click", openGuide);
 $("btn-close-guide").addEventListener("click", () => showScreen("screen-setup"));
 
-/* ---------------- Crear sala ---------------- */
+/* ---------------- Crear sala (hasta 5 jugadores) ---------------- */
 $("btn-create-room").addEventListener("click", async () => {
   const name = $("input-name").value.trim();
   const errEl = $("error-create");
   errEl.style.display = "none";
-
-  if (!name) {
-    errEl.textContent = "Escribe tu nombre primero.";
-    errEl.style.display = "block";
-    return;
-  }
+  if (!name) { errEl.textContent = "Escribe tu nombre primero."; errEl.style.display = "block"; return; }
 
   $("btn-create-room").disabled = true;
   $("btn-create-room").textContent = "Creando sala...";
-
   try {
     const code = generateRoomCode();
-    const count = Math.min(selectedCount, QUESTIONS.length);
-    const chosen = shuffle(QUESTIONS).slice(0, count);
+    const joinId = generateJoinId();
+    const baseRoom = {
+      game: state.game, mode: selectedMode, status: "esperando",
+      createdAt: serverTimestamp(), hostSlot: "p1",
+      players: { p1: { name, score: 0, joinId } }
+    };
+    if (state.game === "pares") {
+      const board = buildParesBoard(selectedMode);
+      Object.assign(baseRoom, { board, totalPairs: board.length / 2, matchedCount: 0, revealed: {} });
+    } else {
+      const items = state.game === "trivia" ? buildTriviaItems(selectedMode) : buildOracionesItems(selectedMode);
+      Object.assign(baseRoom, { items, totalItems: items.length, currentIndex: 0, roundWinner: null, roundEnded: false, roundStartedAt: null });
+    }
+    await set(ref(db, `rooms/${code}`), baseRoom);
 
-    await set(ref(db, `rooms/${code}`), {
-      mode: selectedMode,
-      totalQuestions: chosen.length,
-      questions: chosen,
-      currentIndex: 0,
-      status: "esperando",
-      roundWinner: null,
-      roundEnded: false,
-      roundStartedAt: null,
-      createdAt: serverTimestamp(),
-      players: { player1: { name, score: 0 } }
-    });
-
-    state.code = code;
-    state.role = "player1";
-    state.name = name;
-    state.mode = selectedMode;
-    state.isHost = true;
+    state.code = code; state.mySlot = "p1"; state.name = name; state.isHost = true; state.joinId = joinId;
     saveSession();
 
     $("waiting-code").textContent = code;
-    $("waiting-mode").textContent = modeLabel(selectedMode);
+    $("waiting-mode").textContent = modeLabel(state.game, selectedMode);
     showScreen("screen-waiting");
     listenToRoom();
   } catch (err) {
@@ -609,7 +1019,7 @@ $("btn-create-room").addEventListener("click", async () => {
     errEl.style.display = "block";
   } finally {
     $("btn-create-room").disabled = false;
-    $("btn-create-room").textContent = "Crear sala (2 jugadores)";
+    $("btn-create-room").textContent = "Crear sala (hasta 5 jugadores)";
   }
 });
 
@@ -620,62 +1030,66 @@ $("btn-join-room").addEventListener("click", async () => {
   const errEl = $("error-join");
   errEl.style.display = "none";
 
-  if (!name) {
-    errEl.textContent = "Escribe tu nombre primero.";
-    errEl.style.display = "block";
-    return;
-  }
-  if (!code || code.length < 4) {
-    errEl.textContent = "Escribe el código de sala de tu rival.";
-    errEl.style.display = "block";
-    return;
-  }
+  if (!name) { errEl.textContent = "Escribe tu nombre primero."; errEl.style.display = "block"; return; }
+  if (!code || code.length < 4) { errEl.textContent = "Escribe el código de sala."; errEl.style.display = "block"; return; }
 
   $("btn-join-room").disabled = true;
   $("btn-join-room").textContent = "Uniéndote...";
-
   try {
+    const joinId = generateJoinId();
     const roomRef = ref(db, `rooms/${code}`);
     const result = await runTransaction(roomRef, (room) => {
-      if (!room) return room;
+      if (!room) return;
       if (room.status !== "esperando") return;
-      if (room.players && room.players.player2) return;
-      room.players.player2 = { name, score: 0 };
-      room.status = "jugando";
-      room.currentIndex = 0;
-      room.roundWinner = null;
-      room.roundEnded = false;
-      room.roundStartedAt = serverTimestamp();
+      const slot = nextFreeSlot(room.players);
+      if (!slot) return;
+      room.players[slot] = { name, score: 0, joinId };
       return room;
     });
 
     if (!result.committed || !result.snapshot.exists()) {
-      errEl.textContent = "Esa sala no existe, ya está llena, o ya comenzó.";
+      errEl.textContent = "Esa sala no existe, ya está llena (máx. 5), o ya comenzó.";
       errEl.style.display = "block";
-      $("btn-join-room").disabled = false;
-      $("btn-join-room").textContent = "Unirme a la sala";
       return;
     }
 
     const roomData = result.snapshot.val();
-    state.code = code;
-    state.role = "player2";
-    state.name = name;
-    state.mode = roomData.mode;
-    state.isHost = false;
-    saveSession();
+    let mySlot = null;
+    for (const [slot, p] of Object.entries(roomData.players || {})) if (p.joinId === joinId) mySlot = slot;
 
+    state.code = code; state.mySlot = mySlot; state.name = name; state.isHost = false; state.game = roomData.game; state.joinId = joinId;
+    saveSession();
     listenToRoom();
   } catch (err) {
     console.error(err);
     errEl.textContent = "No se pudo unir a la sala. Revisa tu conexión e intenta de nuevo.";
     errEl.style.display = "block";
+  } finally {
     $("btn-join-room").disabled = false;
     $("btn-join-room").textContent = "Unirme a la sala";
   }
 });
 
-/* ================= ESCUCHA DE LA SALA (multijugador) ================= */
+/* ---------------- Iniciar partida (host) ---------------- */
+$("btn-start-room").addEventListener("click", async () => {
+  const roomRef = ref(db, `rooms/${state.code}`);
+  await runTransaction(roomRef, (room) => {
+    if (!room) return;
+    if (room.status !== "esperando") return;
+    const count = Object.keys(room.players || {}).length;
+    if (count < 2) return;
+    room.status = "jugando";
+    if (room.game !== "pares") {
+      room.currentIndex = 0;
+      room.roundWinner = null;
+      room.roundEnded = false;
+      room.roundStartedAt = serverTimestamp();
+    }
+    return room;
+  });
+});
+
+/* ================= ESCUCHA DE LA SALA ================= */
 function listenToRoom() {
   const roomRef = ref(db, `rooms/${state.code}`);
   onValue(roomRef, (snap) => {
@@ -686,26 +1100,60 @@ function listenToRoom() {
 }
 
 function handleRoomUpdate(room) {
-  if (room.status === "esperando") { showScreen("screen-waiting"); return; }
+  if (room.status === "esperando") { renderWaitingScreen(room); return; }
 
   if (room.status === "jugando") {
     if (!state.countdownShown) {
       state.countdownShown = true;
       runCountdownThenPlay(room);
     } else {
-      renderPlayingScreen(room);
-      if (state.isHost) manageHostAdvance(room);
+      dispatchPlaying(room);
+      manageHostSideEffects(room);
     }
     return;
   }
 
   if (room.status === "terminado") {
-    stopHostTimer();
-    stopLocalTimer();
+    stopHostTimer(); stopLocalTimer();
     renderFinishedScreen(room);
     showScreen("screen-finished");
     clearSession();
   }
+}
+
+function renderWaitingScreen(room) {
+  $("waiting-code").textContent = state.code;
+  $("waiting-mode").textContent = modeLabel(room.game, room.mode);
+
+  const entries = Object.entries(room.players || {});
+  const playersEl = $("waiting-players");
+  playersEl.innerHTML = "";
+  entries.forEach(([slot, p]) => {
+    const div = document.createElement("div");
+    div.className = "player-slot filled" + (slot === state.mySlot ? " me" : "");
+    div.innerHTML = `<div class="p-avatar">${escapeHtml((p.name || "?").charAt(0).toUpperCase())}</div>${escapeHtml(p.name)}`;
+    playersEl.appendChild(div);
+  });
+  for (let i = entries.length; i < MAX_PLAYERS; i++) {
+    const div = document.createElement("div");
+    div.className = "player-slot";
+    div.textContent = "Vacío";
+    playersEl.appendChild(div);
+  }
+
+  const startBtn = $("btn-start-room");
+  const hint = $("waiting-hint");
+  if (state.isHost) {
+    startBtn.style.display = "block";
+    startBtn.disabled = entries.length < 2;
+    startBtn.textContent = entries.length < 2 ? `Esperando jugadores (${entries.length}/${MAX_PLAYERS})` : `Iniciar partida (${entries.length} jugadores)`;
+    hint.style.display = "none";
+  } else {
+    startBtn.style.display = "none";
+    hint.style.display = "flex";
+    hint.innerHTML = `<span class="pulse-dot"></span> Esperando a que el anfitrión inicie (${entries.length}/${MAX_PLAYERS} jugadores)...`;
+  }
+  showScreen("screen-waiting");
 }
 
 function runCountdownThenPlay(room) {
@@ -716,48 +1164,66 @@ function runCountdownThenPlay(room) {
     n -= 1;
     if (n <= 0) {
       clearInterval(interval);
-      showScreen("screen-playing");
-      renderPlayingScreen(room);
-      if (state.isHost) manageHostAdvance(room);
+      dispatchPlaying(room);
+      manageHostSideEffects(room);
     } else {
       $("countdown-num").textContent = n;
+      Sound.tick();
     }
   }, 700);
 }
 
-/* ================= PANTALLA JUGANDO (multijugador) ================= */
-function renderPlayingScreen(room) {
-  showScreen("screen-playing");
+function dispatchPlaying(room) {
+  if (room.game === "trivia") renderTriviaMulti(room);
+  else if (room.game === "oraciones") renderOracionesMulti(room);
+  else if (room.game === "pares") renderParesMulti(room);
+}
+function manageHostSideEffects(room) {
+  if (!state.isHost) return;
+  if (room.game === "pares") return; // el propio tap resuelve el fin de juego
+  manageHostAdvance(room);
+}
 
-  const myRole = state.role;
-  const rivalRole = otherRole(myRole);
-  const me = room.players[myRole];
-  const rival = room.players[rivalRole];
+/* ---------------- Scoreboard genérico (2-5 jugadores) ---------------- */
+function renderScoreboardMulti(containerId, room, mySlot) {
+  const el = $(containerId);
+  el.innerHTML = "";
+  const entries = Object.entries(room.players || {});
+  entries.sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+  const maxScore = entries.length ? (entries[0][1].score || 0) : 0;
+  entries.forEach(([slot, p]) => {
+    const chip = document.createElement("div");
+    chip.className = "score-chip" + (slot === mySlot ? " me" : "") + ((p.score || 0) === maxScore && maxScore > 0 ? " leader" : "");
+    chip.innerHTML = `<div class="sc-name">${escapeHtml(p.name)}</div><div class="sc-score">${p.score || 0}</div>`;
+    el.appendChild(chip);
+  });
+}
 
-  $("play-my-name").textContent = me ? me.name : state.name;
-  $("play-my-score").textContent = me ? me.score : 0;
-  $("play-rival-name").textContent = rival ? rival.name : "Esperando...";
-  $("play-rival-score").textContent = rival ? rival.score : 0;
+/* =========================================================
+   TRIVIA — multijugador (carrera: primero en acertar gana el punto)
+   ========================================================= */
+function renderTriviaMulti(room) {
+  showScreen("screen-playing-trivia");
+  renderScoreboardMulti("trivia-scoreboard", room, state.mySlot);
 
-  const total = room.totalQuestions;
+  const total = room.totalItems;
   const idx = room.currentIndex;
   const pct = Math.round((idx / total) * 100);
-  $("progress-fill").style.width = pct + "%";
-  $("progress-label").textContent = `Pregunta ${Math.min(idx + 1, total)} de ${total}`;
+  $("trivia-progress-fill").style.width = pct + "%";
+  $("trivia-progress-label").textContent = `Pregunta ${Math.min(idx + 1, total)} de ${total}`;
 
   if (state.currentIndex !== idx) {
     state.currentIndex = idx;
     state.roundLocked = false;
-    startLocalTimer($("timer-fill"));
+    startLocalTimer($("trivia-timer-fill"), TIME_PER_ROUND.trivia);
   }
 
-  const q = room.questions[idx];
-  $("play-expresion").textContent = `"${q.expresion}"`;
-  $("play-question").textContent = q.pregunta;
+  const q = room.items[idx];
+  $("trivia-expresion").textContent = `"${q.expresion}"`;
+  $("trivia-question").textContent = q.pregunta;
 
   const roundOver = room.roundEnded;
-
-  const optionsEl = $("play-options");
+  const optionsEl = $("trivia-options");
   optionsEl.innerHTML = "";
   q.opciones.forEach((opcion, i) => {
     const btn = document.createElement("button");
@@ -765,11 +1231,11 @@ function renderPlayingScreen(room) {
     btn.textContent = opcion;
     btn.disabled = state.roundLocked || roundOver;
     if (roundOver && i === q.correcta) btn.classList.add("reveal-correct");
-    btn.addEventListener("click", () => onOptionClick(i, q.correcta));
+    btn.addEventListener("click", () => onTriviaOptionClick(i, q.correcta));
     optionsEl.appendChild(btn);
   });
 
-  const banner = $("round-banner");
+  const banner = $("trivia-banner");
   banner.classList.remove("win", "timeout");
   if (roundOver && room.roundWinner) {
     const winnerPlayer = room.players[room.roundWinner];
@@ -779,59 +1245,168 @@ function renderPlayingScreen(room) {
     banner.textContent = `Nadie acertó a tiempo. La respuesta correcta era: "${q.opciones[q.correcta]}"`;
     banner.classList.add("timeout");
   } else if (state.roundLocked) {
-    banner.textContent = "Ya respondiste. Esperando a tu rival o al tiempo...";
+    banner.textContent = "Ya respondiste. Esperando a los demás o al tiempo...";
   } else {
     banner.textContent = "";
   }
 }
 
-async function onOptionClick(selectedIndex, correctaIndex) {
+async function onTriviaOptionClick(selectedIndex, correctaIndex) {
   if (state.roundLocked) return;
   state.roundLocked = true;
 
-  const buttons = $("play-options").querySelectorAll(".option-btn");
+  const buttons = $("trivia-options").querySelectorAll(".option-btn");
   buttons.forEach(b => (b.disabled = true));
   buttons[selectedIndex].classList.add(selectedIndex === correctaIndex ? "chosen-correct" : "chosen-wrong");
-  $("round-banner").textContent = "Ya respondiste. Esperando a tu rival o al tiempo...";
+  $("trivia-banner").textContent = "Ya respondiste. Esperando a los demás o al tiempo...";
 
-  if (selectedIndex !== correctaIndex) return;
+  if (selectedIndex !== correctaIndex) { Sound.wrong(); return; }
+  Sound.correct(); burstConfetti(16);
+  await claimRoundWin();
+}
 
+/* =========================================================
+   ARMA LA ORACIÓN — multijugador (misma lógica de carrera)
+   ========================================================= */
+function renderOracionesMulti(room) {
+  showScreen("screen-playing-oraciones");
+  renderScoreboardMulti("oraciones-scoreboard", room, state.mySlot);
+
+  const total = room.totalItems;
+  const idx = room.currentIndex;
+  const pct = Math.round((idx / total) * 100);
+  $("oraciones-progress-fill").style.width = pct + "%";
+  $("oraciones-progress-label").textContent = `Oración ${Math.min(idx + 1, total)} de ${total}`;
+
+  if (state.currentIndex !== idx) {
+    state.currentIndex = idx;
+    state.roundLocked = false;
+    state.builtPositions = [];
+    startLocalTimer($("oraciones-timer-fill"), TIME_PER_ROUND.oraciones);
+  }
+
+  const item = room.items[idx];
+  state.currentOracionesItemMulti = item;
+  const roundOver = room.roundEnded;
+  const locked = state.roundLocked || roundOver;
+  renderOracionesBankLine("oraciones-bank", "oraciones-line", item, locked, onOracionesWordTapMulti);
+
+  const banner = $("oraciones-banner");
+  banner.classList.remove("win", "timeout");
+  if (roundOver && room.roundWinner) {
+    const winnerPlayer = room.players[room.roundWinner];
+    banner.textContent = `¡${winnerPlayer ? winnerPlayer.name : "..."} la armó primero! Era: "${item.correct.join(" ")}"`;
+    banner.classList.add("win");
+  } else if (roundOver && !room.roundWinner) {
+    banner.textContent = `Nadie la armó a tiempo. Era: "${item.correct.join(" ")}"`;
+    banner.classList.add("timeout");
+  } else if (state.roundLocked) {
+    banner.textContent = "¡La armaste! Verificando...";
+  } else {
+    banner.textContent = "";
+  }
+}
+
+function renderOracionesBankLine(bankId, lineId, item, locked, onWordTap) {
+  const bankEl = $(bankId), lineEl = $(lineId);
+  bankEl.innerHTML = "";
+  lineEl.innerHTML = "";
+  lineEl.classList.remove("line-wrong");
+
+  item.shuffled.forEach((word, p) => {
+    const used = state.builtPositions.includes(p);
+    const chip = document.createElement("button");
+    chip.className = "word-chip" + (used ? " used" : "");
+    chip.textContent = word;
+    chip.disabled = used || locked;
+    chip.addEventListener("click", () => onWordTap(p, item));
+    bankEl.appendChild(chip);
+  });
+
+  state.builtPositions.forEach((p, orderIdx) => {
+    const chip = document.createElement("button");
+    chip.className = "word-chip placed";
+    chip.textContent = item.shuffled[p];
+    chip.disabled = locked;
+    chip.addEventListener("click", () => {
+      if (locked) return;
+      if (orderIdx === state.builtPositions.length - 1) {
+        state.builtPositions.pop();
+        Sound.tap();
+        renderOracionesBankLine(bankId, lineId, item, locked, onWordTap);
+      }
+    });
+    lineEl.appendChild(chip);
+  });
+}
+
+function onOracionesWordTapMulti(p, item) {
+  if (state.roundLocked) return;
+  if (state.builtPositions.includes(p)) return;
+  state.builtPositions.push(p);
+  Sound.tap();
+  renderOracionesBankLine("oraciones-bank", "oraciones-line", item, false, onOracionesWordTapMulti);
+
+  if (state.builtPositions.length === item.shuffled.length) {
+    const built = state.builtPositions.map(pp => item.shuffled[pp]);
+    const ok = built.join(" ").toLowerCase() === item.correct.join(" ").toLowerCase();
+    if (ok) {
+      state.roundLocked = true;
+      $("oraciones-line").classList.add("line-correct");
+      $("oraciones-banner").textContent = "¡La armaste! Verificando...";
+      Sound.correct(); burstConfetti(18);
+      claimRoundWin();
+    } else {
+      $("oraciones-line").classList.add("line-wrong");
+      Sound.wrong();
+      setTimeout(() => {
+        state.builtPositions = [];
+        renderOracionesBankLine("oraciones-bank", "oraciones-line", item, false, onOracionesWordTapMulti);
+      }, 800);
+    }
+  }
+}
+$("oraciones-clear").addEventListener("click", () => {
+  if (state.roundLocked || !state.currentOracionesItemMulti) return;
+  if (state.builtPositions.length === 0) return;
+  state.builtPositions = [];
+  Sound.tap();
+  renderOracionesBankLine("oraciones-bank", "oraciones-line", state.currentOracionesItemMulti, false, onOracionesWordTapMulti);
+});
+
+/* ---------------- Reclamar victoria de ronda (trivia + oraciones) ---------------- */
+async function claimRoundWin() {
   const roomRef = ref(db, `rooms/${state.code}`);
   const myIndex = state.currentIndex;
   try {
     await runTransaction(roomRef, (room) => {
       if (!room) return room;
-      if (room.currentIndex !== myIndex) return room; // ya avanzó, muy tarde
-      if (room.roundEnded) return room;                // ya se resolvió
-      room.roundWinner = state.role;
+      if (room.currentIndex !== myIndex) return room;
+      if (room.roundEnded) return room;
+      room.roundWinner = state.mySlot;
       room.roundEnded = true;
-      room.players[state.role].score = (room.players[state.role].score || 0) + 1;
+      room.players[state.mySlot].score = (room.players[state.mySlot].score || 0) + 1;
       return room;
     });
-  } catch (err) {
-    console.error("Error al registrar respuesta:", err);
-  }
+  } catch (err) { console.error("Error al registrar respuesta:", err); }
 }
 
-/* ---------------- Timer visual (reutilizado en multi y solo) ---------------- */
-function startLocalTimer(fillEl) {
+/* ---------------- Timer visual compartido ---------------- */
+function startLocalTimer(fillEl, ms) {
   stopLocalTimer();
   fillEl.classList.remove("urgent");
   fillEl.style.transition = "none";
   fillEl.style.width = "100%";
   void fillEl.offsetWidth;
-  fillEl.style.transition = `width ${TIME_PER_ROUND_MS / 1000}s linear`;
+  fillEl.style.transition = `width ${ms / 1000}s linear`;
   requestAnimationFrame(() => { fillEl.style.width = "0%"; });
-
-  state.localTimerInterval = setTimeout(() => {
-    fillEl.classList.add("urgent");
-  }, TIME_PER_ROUND_MS * 0.66);
+  state.localTimerInterval = setTimeout(() => { fillEl.classList.add("urgent"); }, ms * 0.66);
 }
 function stopLocalTimer() {
   if (state.localTimerInterval) { clearTimeout(state.localTimerInterval); state.localTimerInterval = null; }
 }
 
-/* ---------------- Lógica del host: avanzar rondas ---------------- */
+/* ---------------- Lógica del host: avanzar rondas (trivia + oraciones) ---------------- */
 function manageHostAdvance(room) {
   if (room.status !== "jugando") { stopHostTimer(); return; }
 
@@ -839,10 +1414,7 @@ function manageHostAdvance(room) {
     stopHostTimer();
     if (!state.advanceScheduled) {
       state.advanceScheduled = true;
-      setTimeout(async () => {
-        await advanceRound();
-        state.advanceScheduled = false;
-      }, ADVANCE_DELAY_MS);
+      setTimeout(async () => { await advanceRound(); state.advanceScheduled = false; }, ADVANCE_DELAY_MS);
     }
     return;
   }
@@ -854,13 +1426,14 @@ function manageHostAdvance(room) {
       if (!current || current.status !== "jugando") { stopHostTimer(); return; }
       if (current.roundEnded) { stopHostTimer(); return; }
 
+      const limit = TIME_PER_ROUND[current.game] || 20000;
       const elapsed = current.roundStartedAt ? Date.now() - current.roundStartedAt : 0;
-      if (elapsed > TIME_PER_ROUND_MS + 500) {
+      if (elapsed > limit + 500) {
         stopHostTimer();
         await runTransaction(ref(db, `rooms/${state.code}`), (r) => {
           if (!r) return r;
           if (r.roundEnded) return r;
-          r.roundEnded = true; // nadie acertó: roundWinner queda en null
+          r.roundEnded = true;
           return r;
         });
       }
@@ -870,14 +1443,13 @@ function manageHostAdvance(room) {
 function stopHostTimer() {
   if (state.hostTimerInterval) { clearInterval(state.hostTimerInterval); state.hostTimerInterval = null; }
 }
-
 async function advanceRound() {
   const roomRef = ref(db, `rooms/${state.code}`);
   await runTransaction(roomRef, (room) => {
     if (!room) return room;
     if (room.status !== "jugando") return room;
     const nextIndex = room.currentIndex + 1;
-    if (nextIndex >= room.totalQuestions) {
+    if (nextIndex >= room.totalItems) {
       room.status = "terminado";
     } else {
       room.currentIndex = nextIndex;
@@ -889,150 +1461,400 @@ async function advanceRound() {
   });
 }
 
-/* ================= PANTALLA FINAL (multijugador) ================= */
-function renderFinishedScreen(room) {
-  const p1 = room.players.player1;
-  const p2 = room.players.player2;
+/* =========================================================
+   MEMORIA DE VERBOS — multijugador (tablero compartido, hasta 5)
+   ========================================================= */
+function isCardClickable(room, i) {
+  const card = room.board[i];
+  if (card.matched) return false;
+  if (room.revealed && room.revealed[i] !== undefined) return false;
+  const mine = (room.players[state.mySlot] && room.players[state.mySlot].openIndices) || [];
+  if (mine.length >= 2) return false;
+  return true;
+}
 
-  $("finished-name-1").textContent = p1.name;
-  $("finished-score-1").textContent = p1.score;
-  $("finished-name-2").textContent = p2.name;
-  $("finished-score-2").textContent = p2.score;
+function renderParesMulti(room) {
+  showScreen("screen-playing-pares");
+  renderScoreboardMulti("pares-scoreboard", room, state.mySlot);
+  $("pares-progress-label").textContent = `${room.matchedCount || 0} / ${room.totalPairs} pares`;
+  $("pares-turn-hint").textContent = "Toca dos cartas para encontrar el par";
+  state.lastKnownMatchedCount = room.matchedCount || 0;
+
+  const gridEl = $("pares-grid");
+  gridEl.innerHTML = "";
+  room.board.forEach((card, i) => {
+    const revealed = room.revealed && room.revealed[i] !== undefined;
+    const clickable = isCardClickable(room, i);
+    const div = document.createElement("div");
+    div.className = "memory-card side-" + card.side
+      + (card.matched ? " matched" : "")
+      + (revealed && !card.matched ? " flipped" : "")
+      + (!clickable ? " disabled" : "");
+    div.innerHTML = `<div class="mc-face mc-back">🂠</div><div class="mc-face mc-front">${escapeHtml(card.text)}</div>`;
+    if (clickable) div.addEventListener("click", () => paresTapMulti(i));
+    gridEl.appendChild(div);
+  });
+
+  $("pares-banner").textContent = "";
+}
+
+async function paresTapMulti(i) {
+  Sound.flip();
+  const beforeCount = state.lastKnownMatchedCount || 0;
+  const roomRef = ref(db, `rooms/${state.code}`);
+  try {
+    const result = await runTransaction(roomRef, (room) => {
+      if (!room || room.status !== "jugando") return;
+      if (!room.board || room.board[i].matched) return;
+      room.revealed = room.revealed || {};
+      if (room.revealed[i] !== undefined) return;
+      const mySlot = state.mySlot;
+      room.players[mySlot].openIndices = room.players[mySlot].openIndices || [];
+      const mine = room.players[mySlot].openIndices;
+      if (mine.length >= 2) return;
+      room.revealed[i] = mySlot;
+      mine.push(i);
+      if (mine.length === 2) {
+        const [a, b] = mine;
+        if (room.board[a].pairId === room.board[b].pairId) {
+          room.board[a].matched = true; room.board[b].matched = true;
+          room.players[mySlot].score = (room.players[mySlot].score || 0) + 1;
+          room.matchedCount = (room.matchedCount || 0) + 1;
+          delete room.revealed[a]; delete room.revealed[b];
+          room.players[mySlot].openIndices = [];
+          if (room.matchedCount >= room.totalPairs) room.status = "terminado";
+        }
+      }
+      return room;
+    });
+    if (!result.committed || !result.snapshot.exists()) return;
+    const after = result.snapshot.val();
+    const myOpen = (after.players[state.mySlot] || {}).openIndices || [];
+    const afterCount = after.matchedCount || 0;
+    if (afterCount > beforeCount) {
+      Sound.match(); burstConfetti(14);
+    } else if (myOpen.length === 2) {
+      Sound.wrong();
+      setTimeout(() => clearMyOpenCards(), 900);
+    }
+  } catch (err) { console.error("Error al voltear carta:", err); }
+}
+
+async function clearMyOpenCards() {
+  const roomRef = ref(db, `rooms/${state.code}`);
+  try {
+    await runTransaction(roomRef, (room) => {
+      if (!room) return room;
+      const mySlot = state.mySlot;
+      const mine = (room.players[mySlot] && room.players[mySlot].openIndices) || [];
+      if (mine.length === 2) {
+        room.revealed = room.revealed || {};
+        mine.forEach(idx => { delete room.revealed[idx]; });
+        room.players[mySlot].openIndices = [];
+      }
+      return room;
+    });
+  } catch (err) { console.error(err); }
+}
+
+/* ================= PANTALLA FINAL (multijugador, hasta 5) ================= */
+function renderFinishedScreen(room) {
+  const entries = Object.entries(room.players || {});
+  entries.sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+  const maxScore = entries.length ? (entries[0][1].score || 0) : 0;
+  const winners = entries.filter(e => (e[1].score || 0) === maxScore);
 
   const winnerEl = $("finished-winner");
-  if (p1.score === p2.score) {
-    winnerEl.textContent = "¡Empate!";
-  } else {
-    const winner = p1.score > p2.score ? p1 : p2;
-    winnerEl.textContent = `¡Ganó ${winner.name}!`;
-  }
+  if (winners.length > 1) winnerEl.textContent = `¡Empate entre ${winners.map(w => w[1].name).join(", ")}!`;
+  else winnerEl.textContent = `¡Ganó ${winners[0][1].name}!`;
+
+  const podium = $("finished-podium");
+  podium.innerHTML = "";
+  entries.forEach(([slot, p], i) => {
+    const row = document.createElement("div");
+    row.className = "podium-row" + (i === 0 ? " rank-1" : "") + (slot === state.mySlot ? " me" : "");
+    row.innerHTML = `<div class="p-rank">#${i + 1}</div><div class="p-name">${escapeHtml(p.name)}</div><div class="p-score">${p.score || 0}</div>`;
+    podium.appendChild(row);
+  });
+  Sound.win(); burstConfetti(36);
 }
 
 $("btn-rematch").addEventListener("click", () => {
   clearSession();
+  const game = state.game;
   state = {
-    code: null, role: null, name: null, mode: null, isHost: false,
+    game, code: null, mySlot: null, name: state.name, isHost: false, mode: null,
     currentIndex: -1, roundLocked: false, countdownShown: false,
-    advanceScheduled: false, hostTimerInterval: null, localTimerInterval: null
+    advanceScheduled: false, hostTimerInterval: null, localTimerInterval: null,
+    builtPositions: [], lastKnownMatchedCount: 0, joinId: null
   };
-  showScreen("screen-setup");
+  showSetupFor(game);
 });
 
 (function tryResumeSession() {
   const saved = loadSession();
   if (!saved || !saved.code) return;
   state.code = saved.code;
-  state.role = saved.role;
+  state.mySlot = saved.mySlot;
   state.name = saved.name;
   state.isHost = saved.isHost;
+  state.game = saved.game;
   $("input-name").value = saved.name || "";
+  if (GAME_META[saved.game]) $("brand-title").textContent = GAME_META[saved.game].brandTitle;
   listenToRoom();
 })();
 
 /* =========================================================
-   MODO SOLO — sin Firebase, todo local en el navegador
+   MODO SOLO — Trivia
    ========================================================= */
-let solo = { questions: [], index: 0, score: 0, locked: false, timeoutId: null };
+let soloTrivia = { questions: [], index: 0, score: 0, locked: false, timeoutId: null };
 
-$("btn-solo").addEventListener("click", () => {
-  const name = $("input-name").value.trim();
-  if (!name) {
-    const errEl = $("error-create");
-    errEl.textContent = "Escribe tu nombre primero.";
-    errEl.style.display = "block";
-    return;
-  }
-  const count = Math.min(selectedCount, QUESTIONS.length);
-  solo = { questions: shuffle(QUESTIONS).slice(0, count), index: 0, score: 0, locked: false, timeoutId: null };
-  showScreen("screen-solo-playing");
-  renderSoloQuestion();
-});
+function startSoloTrivia(mode) {
+  soloTrivia = { questions: buildTriviaItems(mode), index: 0, score: 0, locked: false, timeoutId: null };
+  showScreen("screen-solo-trivia");
+  renderSoloTriviaQuestion();
+}
+function renderSoloTriviaQuestion() {
+  const total = soloTrivia.questions.length;
+  const idx = soloTrivia.index;
+  const q = soloTrivia.questions[idx];
 
-function renderSoloQuestion() {
-  const total = solo.questions.length;
-  const idx = solo.index;
-  const q = solo.questions[idx];
+  $("solo-trivia-score").textContent = soloTrivia.score;
+  $("solo-trivia-progress-fill").style.width = Math.round((idx / total) * 100) + "%";
+  $("solo-trivia-progress-label").textContent = `Pregunta ${idx + 1} de ${total}`;
+  $("solo-trivia-expresion").textContent = `"${q.expresion}"`;
+  $("solo-trivia-question").textContent = q.pregunta;
+  $("solo-trivia-banner").textContent = "";
+  $("solo-trivia-banner").classList.remove("win", "timeout");
 
-  $("solo-score").textContent = solo.score;
-  const pct = Math.round((idx / total) * 100);
-  $("solo-progress-fill").style.width = pct + "%";
-  $("solo-progress-label").textContent = `Pregunta ${idx + 1} de ${total}`;
-
-  $("solo-expresion").textContent = `"${q.expresion}"`;
-  $("solo-question").textContent = q.pregunta;
-  $("solo-banner").textContent = "";
-  $("solo-banner").classList.remove("win", "timeout");
-
-  const optionsEl = $("solo-options");
+  const optionsEl = $("solo-trivia-options");
   optionsEl.innerHTML = "";
   q.opciones.forEach((opcion, i) => {
     const btn = document.createElement("button");
     btn.className = "option-btn";
     btn.textContent = opcion;
-    btn.addEventListener("click", () => onSoloOptionClick(i, q.correcta));
+    btn.addEventListener("click", () => { Sound.tap(); onSoloTriviaOptionClick(i, q.correcta); });
     optionsEl.appendChild(btn);
   });
 
-  solo.locked = false;
-  startLocalTimer($("solo-timer-fill"));
-  clearTimeout(solo.timeoutId);
-  solo.timeoutId = setTimeout(() => {
-    if (!solo.locked) resolveSoloRound(-1, q.correcta);
-  }, TIME_PER_ROUND_MS + 200);
+  soloTrivia.locked = false;
+  startLocalTimer($("solo-trivia-timer-fill"), TIME_PER_ROUND.trivia);
+  clearTimeout(soloTrivia.timeoutId);
+  soloTrivia.timeoutId = setTimeout(() => { if (!soloTrivia.locked) resolveSoloTriviaRound(-1, q.correcta); }, TIME_PER_ROUND.trivia + 200);
 }
-
-function onSoloOptionClick(selectedIndex, correctaIndex) {
-  if (solo.locked) return;
-  resolveSoloRound(selectedIndex, correctaIndex);
+function onSoloTriviaOptionClick(selectedIndex, correctaIndex) {
+  if (soloTrivia.locked) return;
+  resolveSoloTriviaRound(selectedIndex, correctaIndex);
 }
-
-function resolveSoloRound(selectedIndex, correctaIndex) {
-  solo.locked = true;
-  clearTimeout(solo.timeoutId);
+function resolveSoloTriviaRound(selectedIndex, correctaIndex) {
+  soloTrivia.locked = true;
+  clearTimeout(soloTrivia.timeoutId);
   stopLocalTimer();
 
-  const buttons = $("solo-options").querySelectorAll(".option-btn");
-  buttons.forEach((b, i) => {
-    b.disabled = true;
-    if (i === correctaIndex) b.classList.add("reveal-correct");
-  });
+  const buttons = $("solo-trivia-options").querySelectorAll(".option-btn");
+  buttons.forEach((b, i) => { b.disabled = true; if (i === correctaIndex) b.classList.add("reveal-correct"); });
 
-  const banner = $("solo-banner");
+  const banner = $("solo-trivia-banner");
   if (selectedIndex === correctaIndex) {
-    solo.score += 1;
-    $("solo-score").textContent = solo.score;
+    soloTrivia.score += 1;
+    $("solo-trivia-score").textContent = soloTrivia.score;
     buttons[selectedIndex].classList.add("chosen-correct");
     banner.textContent = "¡Correcto!";
     banner.classList.add("win");
+    Sound.correct(); burstConfetti(14);
   } else {
     if (selectedIndex >= 0) buttons[selectedIndex].classList.add("chosen-wrong");
-    const q = solo.questions[solo.index];
-    banner.textContent = selectedIndex >= 0
-      ? `Casi. La respuesta correcta era: "${q.opciones[correctaIndex]}"`
-      : `Se acabó el tiempo. La respuesta correcta era: "${q.opciones[correctaIndex]}"`;
+    const q = soloTrivia.questions[soloTrivia.index];
+    banner.textContent = selectedIndex >= 0 ? `Casi. La respuesta correcta era: "${q.opciones[correctaIndex]}"` : `Se acabó el tiempo. La respuesta correcta era: "${q.opciones[correctaIndex]}"`;
     banner.classList.add("timeout");
+    Sound.wrong();
   }
 
   setTimeout(() => {
-    solo.index += 1;
-    if (solo.index >= solo.questions.length) {
-      showSoloFinished();
-    } else {
-      renderSoloQuestion();
-    }
+    soloTrivia.index += 1;
+    if (soloTrivia.index >= soloTrivia.questions.length) showSoloFinishedGeneric("trivia", `${soloTrivia.score}/${soloTrivia.questions.length}`);
+    else renderSoloTriviaQuestion();
   }, ADVANCE_DELAY_MS);
 }
 
-function showSoloFinished() {
-  $("solo-final-score").textContent = `${solo.score}/${solo.questions.length}`;
+/* =========================================================
+   MODO SOLO — Memoria de verbos
+   ========================================================= */
+let soloPares = { board: [], moves: 0, matchedCount: 0, totalPairs: 0, openIndices: [], locked: false };
+
+function startSoloPares(mode) {
+  const board = buildParesBoard(mode);
+  soloPares = { board, moves: 0, matchedCount: 0, totalPairs: board.length / 2, openIndices: [], locked: false };
+  showScreen("screen-solo-pares");
+  renderSoloParesGrid();
+}
+function renderSoloParesGrid() {
+  $("solo-pares-progress-label").textContent = `${soloPares.matchedCount} / ${soloPares.totalPairs} pares`;
+  $("solo-pares-moves").textContent = `${soloPares.moves} intentos`;
+  const gridEl = $("solo-pares-grid");
+  gridEl.innerHTML = "";
+  soloPares.board.forEach((card, i) => {
+    const opened = soloPares.openIndices.includes(i);
+    const div = document.createElement("div");
+    div.className = "memory-card side-" + card.side + (card.matched ? " matched" : "") + (opened && !card.matched ? " flipped" : "") + ((card.matched || opened || soloPares.locked) ? " disabled" : "");
+    div.innerHTML = `<div class="mc-face mc-back">🂠</div><div class="mc-face mc-front">${escapeHtml(card.text)}</div>`;
+    if (!card.matched && !opened && !soloPares.locked) div.addEventListener("click", () => soloParesTap(i));
+    gridEl.appendChild(div);
+  });
+  $("solo-pares-banner").textContent = "";
+}
+function soloParesTap(i) {
+  if (soloPares.locked || soloPares.openIndices.includes(i)) return;
+  Sound.flip();
+  soloPares.openIndices.push(i);
+  renderSoloParesGrid();
+  if (soloPares.openIndices.length === 2) {
+    soloPares.locked = true;
+    soloPares.moves++;
+    const [a, b] = soloPares.openIndices;
+    if (soloPares.board[a].pairId === soloPares.board[b].pairId) {
+      soloPares.board[a].matched = true; soloPares.board[b].matched = true;
+      soloPares.matchedCount++;
+      Sound.match(); burstConfetti(14);
+      soloPares.openIndices = []; soloPares.locked = false;
+      renderSoloParesGrid();
+      if (soloPares.matchedCount >= soloPares.totalPairs) {
+        setTimeout(() => showSoloFinishedGeneric("pares", `¡Completado! ${soloPares.moves} intentos`), 400);
+      }
+    } else {
+      Sound.wrong();
+      setTimeout(() => { soloPares.openIndices = []; soloPares.locked = false; renderSoloParesGrid(); }, 800);
+    }
+  }
+}
+
+/* =========================================================
+   MODO SOLO — Arma la oración
+   ========================================================= */
+let soloOraciones = { items: [], index: 0, score: 0, locked: false, timeoutId: null };
+
+function startSoloOraciones(mode) {
+  soloOraciones = { items: buildOracionesItems(mode), index: 0, score: 0, locked: false, timeoutId: null };
+  showScreen("screen-solo-oraciones");
+  renderSoloOracionesRound();
+}
+function renderSoloOracionesRound() {
+  const total = soloOraciones.items.length;
+  const idx = soloOraciones.index;
+  const item = soloOraciones.items[idx];
+
+  $("solo-oraciones-score").textContent = soloOraciones.score;
+  $("solo-oraciones-progress-fill").style.width = Math.round((idx / total) * 100) + "%";
+  $("solo-oraciones-progress-label").textContent = `Oración ${idx + 1} de ${total}`;
+  $("solo-oraciones-banner").textContent = "";
+  $("solo-oraciones-banner").classList.remove("win", "timeout");
+
+  state.builtPositions = [];
+  state.currentOracionesItemSolo = item;
+  soloOraciones.locked = false;
+  renderOracionesBankLine("solo-oraciones-bank", "solo-oraciones-line", item, false, onSoloOracionesWordTap);
+
+  startLocalTimer($("solo-oraciones-timer-fill"), TIME_PER_ROUND.oraciones);
+  clearTimeout(soloOraciones.timeoutId);
+  soloOraciones.timeoutId = setTimeout(() => { if (!soloOraciones.locked) resolveSoloOracionesTimeout(item); }, TIME_PER_ROUND.oraciones + 200);
+}
+function onSoloOracionesWordTap(p, item) {
+  if (soloOraciones.locked) return;
+  if (state.builtPositions.includes(p)) return;
+  state.builtPositions.push(p);
+  Sound.tap();
+  renderOracionesBankLine("solo-oraciones-bank", "solo-oraciones-line", item, false, onSoloOracionesWordTap);
+
+  if (state.builtPositions.length === item.shuffled.length) {
+    const built = state.builtPositions.map(pp => item.shuffled[pp]);
+    const ok = built.join(" ").toLowerCase() === item.correct.join(" ").toLowerCase();
+    if (ok) resolveSoloOracionesRound(true, item);
+    else {
+      $("solo-oraciones-line").classList.add("line-wrong");
+      Sound.wrong();
+      setTimeout(() => {
+        state.builtPositions = [];
+        renderOracionesBankLine("solo-oraciones-bank", "solo-oraciones-line", item, false, onSoloOracionesWordTap);
+      }, 800);
+    }
+  }
+}
+function resolveSoloOracionesRound(correct, item) {
+  soloOraciones.locked = true;
+  clearTimeout(soloOraciones.timeoutId);
+  stopLocalTimer();
+  const banner = $("solo-oraciones-banner");
+  if (correct) {
+    soloOraciones.score++;
+    $("solo-oraciones-score").textContent = soloOraciones.score;
+    banner.textContent = "¡Correcto!";
+    banner.classList.add("win");
+    $("solo-oraciones-line").classList.add("line-correct");
+    Sound.correct(); burstConfetti(18);
+  }
+  setTimeout(() => {
+    soloOraciones.index++;
+    if (soloOraciones.index >= soloOraciones.items.length) showSoloFinishedGeneric("oraciones", `${soloOraciones.score}/${soloOraciones.items.length}`);
+    else renderSoloOracionesRound();
+  }, ADVANCE_DELAY_MS);
+}
+function resolveSoloOracionesTimeout(item) {
+  soloOraciones.locked = true;
+  stopLocalTimer();
+  const banner = $("solo-oraciones-banner");
+  banner.textContent = `Se acabó el tiempo. Era: "${item.correct.join(" ")}"`;
+  banner.classList.add("timeout");
+  $("solo-oraciones-line").classList.add("line-wrong");
+  Sound.wrong();
+  setTimeout(() => {
+    soloOraciones.index++;
+    if (soloOraciones.index >= soloOraciones.items.length) showSoloFinishedGeneric("oraciones", `${soloOraciones.score}/${soloOraciones.items.length}`);
+    else renderSoloOracionesRound();
+  }, ADVANCE_DELAY_MS);
+}
+
+/* ---------------- Botones modo solo genéricos ---------------- */
+$("btn-solo").addEventListener("click", () => {
+  const name = $("input-name").value.trim();
+  const errEl = $("error-create");
+  if (!name) { errEl.textContent = "Escribe tu nombre primero."; errEl.style.display = "block"; return; }
+  errEl.style.display = "none";
+  state.name = name; state.mode = selectedMode;
+  if (state.game === "trivia") startSoloTrivia(selectedMode);
+  else if (state.game === "pares") startSoloPares(selectedMode);
+  else if (state.game === "oraciones") startSoloOraciones(selectedMode);
+});
+
+function showSoloFinishedGeneric(game, text) {
+  const labels = {
+    trivia: "Terminaste la práctica de trivia",
+    pares: "Terminaste la memoria de verbos",
+    oraciones: "Terminaste Arma la Oración"
+  };
+  $("solo-finished-label").textContent = labels[game] || "Terminaste la práctica";
+  $("solo-finished-score").textContent = text;
+  state.lastSoloGame = game;
+  Sound.win(); burstConfetti(30);
   showScreen("screen-solo-finished");
 }
 
 $("btn-solo-again").addEventListener("click", () => {
-  const count = Math.min(selectedCount, QUESTIONS.length);
-  solo = { questions: shuffle(QUESTIONS).slice(0, count), index: 0, score: 0, locked: false, timeoutId: null };
-  showScreen("screen-solo-playing");
-  renderSoloQuestion();
+  const game = state.lastSoloGame || state.game;
+  const mode = state.mode || "rapido";
+  if (game === "trivia") startSoloTrivia(mode);
+  else if (game === "pares") startSoloPares(mode);
+  else if (game === "oraciones") startSoloOraciones(mode);
+});
+$("btn-solo-change-game").addEventListener("click", () => {
+  $("brand-title").textContent = "Centro de Juegos";
+  showScreen("screen-game-select");
+});
+$("solo-oraciones-clear").addEventListener("click", () => {
+  if (soloOraciones.locked || !state.currentOracionesItemSolo) return;
+  if (state.builtPositions.length === 0) return;
+  state.builtPositions = [];
+  Sound.tap();
+  renderOracionesBankLine("solo-oraciones-bank", "solo-oraciones-line", state.currentOracionesItemSolo, false, onSoloOracionesWordTap);
 });
 </script>
 
