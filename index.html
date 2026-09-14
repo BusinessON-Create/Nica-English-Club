@@ -505,6 +505,9 @@ a { color: inherit; }
 .tr-mic-feedback { font-size:13px; font-weight:700; margin-top:6px; }
 .tr-mic-feedback.ok { color:var(--green); }
 .tr-mic-feedback.retry { color:var(--red); }
+.tr-practice-row { margin:4px 0 6px; }
+.tr-practice-banner { background:rgba(240,180,41,.08); border:1px solid var(--gold2); border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:12px; color:var(--gold3); }
+.tr-practice-days { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 .tr-icon-fire { color:var(--gold2); animation: pulseSoft 1.6s ease infinite; display:inline-block; }
 .tr-icon-bounce { animation: iconBounce 1.4s ease infinite; display:inline-block; }
 .tr-icon-spin-slow { animation: spin 2.6s linear infinite; display:inline-block; }
@@ -1056,6 +1059,7 @@ a { color: inherit; }
       </div>
       <div id="tr-translate-result"></div>
       <div class="tr-stagepath" id="tr-stagepath"></div>
+      <div class="tr-practice-row" id="tr-practice-row"></div>
       <div id="tr-content"><p class="tr-lock-msg">Loading your progress...</p></div>
       <div class="tr-metric-grid" id="tr-metric-grid"></div>
       <div class="tr-badges-row" id="tr-badges-row"></div>
@@ -2696,6 +2700,45 @@ let trCircuitoExitosos = 0;   // cuenta ejercicios superados (para sumar a "fras
 let trOrdenarRespuesta = [];  // estado del ejercicio de "armar oración" en curso
 let trReconocedorVoz = null;  // instancia de SpeechRecognition en uso
 let trSpeakingExitosos = 0;   // cuenta ejercicios de "speaking" superados (para la medalla Speaking Master)
+let trModoPractica = null;    // { dia:1-5, paso:'prime'|'absorb'|'train'|'done' } — repaso libre, NO escribe en Firestore
+let trPracticaPickerAbierto = false;
+
+/* ===== TRAINING ROOM — Modo práctica (repasar días ya completados sin afectar el progreso real) ===== */
+function trDiaEfectivo() { return trModoPractica ? trModoPractica.dia : (trProgresoActual ? trProgresoActual.diaActual : 1); }
+function trPasoEfectivo() { return trModoPractica ? trModoPractica.paso : (trProgresoActual ? trProgresoActual.pasoActual : 'prime'); }
+function trAvanzarPaso(paso, btn) {
+  if (trModoPractica) { trModoPractica.paso = paso; renderTrainingRoom(); return; }
+  avanzarPasoTraining(paso, btn);
+}
+function renderPracticeRow() {
+  const cont = document.getElementById('tr-practice-row');
+  if (!cont || !trProgresoActual) return;
+  if (trModoPractica) {
+    cont.innerHTML = `<div class="tr-practice-banner"><span><i class="fa-solid fa-flask"></i> Practice mode — Day ${trModoPractica.dia} (this does not change your real progress)</span><button class="tr-mini-btn" onclick="trSalirPractica()" title="Exit practice"><i class="fa-solid fa-xmark"></i></button></div>`;
+    return;
+  }
+  const diasDisponibles = Math.max(0, trProgresoActual.diaActual - 1); // solo días YA completados de esta semana
+  if (!trSemanaActual || diasDisponibles < 1) { cont.innerHTML = ''; return; }
+  if (!trPracticaPickerAbierto) {
+    cont.innerHTML = `<button class="tr-journey-btn" type="button" onclick="trTogglePracticaPicker()"><i class="fa-solid fa-arrows-rotate"></i> Practice a previous day</button>`;
+  } else {
+    const chips = Array.from({ length: diasDisponibles }, (_, i) => i + 1)
+      .map(d => `<button class="tr-day-tab" type="button" onclick="trAbrirPracticaDia(${d})">Day ${d}</button>`).join('');
+    cont.innerHTML = `<p class="form-hint" style="margin-bottom:2px;">Pick a day to replay just for practice — your real progress stays where it is:</p><div class="tr-practice-days">${chips}</div>`;
+  }
+}
+window.trTogglePracticaPicker = () => { trPracticaPickerAbierto = !trPracticaPickerAbierto; renderPracticeRow(); };
+window.trAbrirPracticaDia = (diaNum) => {
+  trModoPractica = { dia: diaNum, paso: 'prime' };
+  trPracticaPickerAbierto = false;
+  trCircuitoKey = null; // fuerza a reconstruir el circuito para el día que se va a repasar
+  renderTrainingRoom();
+};
+window.trSalirPractica = () => {
+  trModoPractica = null;
+  trCircuitoKey = null;
+  renderTrainingRoom();
+};
 
 /* ===== TRAINING ROOM — Medallas (mismo sistema de logros que ya existe, ampliado) ===== */
 const TR_MEDALLAS = [
@@ -2800,25 +2843,32 @@ function renderTrainingRoom() {
   renderStagePathTraining();
   renderMetricsTraining();
   renderBadgesTraining();
+  renderPracticeRow();
   const cont = document.getElementById('tr-content');
   if (!trProgresoActual.semanaIdActual || !trSemanaActual) {
     const todoListo = trProgresoActual.etapasCompletadas && trProgresoActual.etapasCompletadas.length >= 4;
     cont.innerHTML = `<div class="tr-week-card" style="text-align:center;"><i class="fa-solid ${todoListo?'fa-trophy tr-icon-bounce':'fa-hourglass-half tr-icon-spin-slow'}" style="font-size:34px; color:var(--gold2); margin-bottom:10px;"></i><h3>${todoListo ? 'You completed the whole program!' : "Looking for your next session..."}</h3><p class="form-hint" style="margin-top:8px;">${todoListo ? 'All 4 stages finished. Amazing work reprogramming your English.' : 'We\'re checking for new content for you. If this takes more than a few seconds, come back a bit later — your progress is saved exactly where you left it.'}</p></div>`;
     return;
   }
-  const dia = trSemanaActual.dias && trSemanaActual.dias[trProgresoActual.diaActual - 1];
+  if (trModoPractica && trModoPractica.paso === 'done') {
+    cont.innerHTML = `<div class="tr-step-card"><i class="fa-solid fa-face-smile" style="font-size:34px; color:var(--gold2); margin-bottom:8px;"></i><h3>Nice practice!</h3><p class="form-hint" style="margin-top:8px;">This was just for practice — your real progress (Day ${trProgresoActual.diaActual}) didn't move.</p><button class="btn-login" style="margin-top:14px;" onclick="trAbrirPracticaDia(${trModoPractica.dia})">Practice this day again</button><button class="btn-login btn-outline-gold" style="margin-top:8px;" onclick="trSalirPractica()">Back to my real progress</button></div>`;
+    return;
+  }
+  const diaEfectivo = trDiaEfectivo();
+  const dia = trSemanaActual.dias && trSemanaActual.dias[diaEfectivo - 1];
   if (!dia) { cont.innerHTML = `<div class="tr-week-card"><p class="tr-lock-msg">This week's content is being updated. Check back soon!</p></div>`; return; }
+  const pasoEfectivo = trPasoEfectivo();
   let pasoHtml = '';
-  if (trProgresoActual.pasoActual === 'prime') pasoHtml = renderPasoPrime(dia);
-  else if (trProgresoActual.pasoActual === 'absorb') pasoHtml = renderPasoAbsorb(dia);
-  else if (trProgresoActual.pasoActual === 'train') pasoHtml = renderPasoTrain(dia);
+  if (pasoEfectivo === 'prime') pasoHtml = renderPasoPrime(dia);
+  else if (pasoEfectivo === 'absorb') pasoHtml = renderPasoAbsorb(dia);
+  else if (pasoEfectivo === 'train') pasoHtml = renderPasoTrain(dia);
   else pasoHtml = renderPasoProduce(dia);
 
   const dots = [1,2,3,4,5].map(d => `<div class="tr-daydot ${d < trProgresoActual.diaActual ? 'done' : d === trProgresoActual.diaActual ? 'current' : ''}"></div>`).join('');
-  const esDia5 = trProgresoActual.diaActual === 5;
+  const esDia5 = !trModoPractica && trProgresoActual.diaActual === 5;
   const pasos = esDia5 ? ['prime','absorb','train','produce'] : ['prime','absorb','train'];
   const nombresPaso = { prime:'Mindset', absorb:'Absorb', train:'Practice', produce:'Send to coach' };
-  const idxActual = pasos.indexOf(trProgresoActual.pasoActual);
+  const idxActual = pasos.indexOf(pasoEfectivo);
   const chips = pasos.map((p,i) => `<div class="tr-step-chip ${i<idxActual?'done':i===idxActual?'active':''}">${nombresPaso[p]}</div>`).join('');
 
   cont.innerHTML = `<div class="tr-week-card">
@@ -2857,10 +2907,10 @@ function renderBadgesTraining() {
 
 function renderPasoPrime(dia) {
   return `<div class="tr-step-card">
-    <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Mindset</span>
+    <span class="tr-etapa-tag">Day ${trDiaEfectivo()} · Mindset</span>
     <p class="tr-prime-phrase">"${escNeclub(dia.prime||'')}" ${trBotonSonido(dia.prime||'', 'en-US', 'tr-inline-speak')}</p>
     <p class="tr-prime-trans">${escNeclub(dia.primeTraduccion||'')}</p>
-    <button class="btn-login" onclick="avanzarPasoTraining('absorb', this)">I'm ready <i class="fa-solid fa-arrow-right"></i></button>
+    <button class="btn-login" onclick="trAvanzarPaso('absorb', this)">I'm ready <i class="fa-solid fa-arrow-right"></i></button>
   </div>`;
 }
 function renderPasoAbsorb(dia) {
@@ -2876,10 +2926,10 @@ function renderPasoAbsorb(dia) {
     botonSonidoAbsorb = trBotonSonido(dia.absorbContenido||'', 'en-US');
   }
   return `<div class="tr-step-card">
-    <span class="tr-etapa-tag">Day ${trProgresoActual.diaActual} · Absorb</span>
+    <span class="tr-etapa-tag">Day ${trDiaEfectivo()} · Absorb</span>
     <div class="tr-absorb-content">${media}</div>
     ${botonSonidoAbsorb ? `<div style="margin:-8px 0 14px;">${botonSonidoAbsorb}</div>` : ''}
-    <button class="btn-login" onclick="avanzarPasoTraining('train', this)">Continue <i class="fa-solid fa-arrow-right"></i></button>
+    <button class="btn-login" onclick="trAvanzarPaso('train', this)">Continue <i class="fa-solid fa-arrow-right"></i></button>
   </div>`;
 }
 /* ===== TRAINING ROOM — Circuito de juegos "Train" (estilo Duolingo) =====
@@ -2921,7 +2971,7 @@ function trConstruirCircuito(dia, diaNum) {
   }
   if (tipos.includes('ordenar')) {
     const frase = (dia.prime || '').trim();
-    if (frase.split(/\s+/).length >= 3) ejercicios.push({ tipo: 'ordenar', frase });
+    if (frase.split(/\s+/).length >= 3) ejercicios.push({ tipo: 'ordenar', frase, traduccion: (dia.primeTraduccion || '').trim() });
   }
   if (tipos.includes('speaking')) {
     const frase = (dia.prime || (paresValidos[0] && paresValidos[0].correcta) || '').trim();
@@ -2930,9 +2980,10 @@ function trConstruirCircuito(dia, diaNum) {
   return trBarajar(ejercicios);
 }
 function renderPasoTrain(dia) {
-  const key = (trSemanaActual ? trSemanaActual.id : '') + '-' + trProgresoActual.diaActual;
+  const diaEfectivo = trDiaEfectivo();
+  const key = (trSemanaActual ? trSemanaActual.id : '') + '-' + diaEfectivo + (trModoPractica ? '-practice' : '');
   if (trCircuitoKey !== key) {
-    trCircuito = trConstruirCircuito(dia, trProgresoActual.diaActual);
+    trCircuito = trConstruirCircuito(dia, diaEfectivo);
     trCircuitoIndex = 0;
     trCircuitoExitosos = 0;
     trSpeakingExitosos = 0;
@@ -3008,6 +3059,7 @@ function trRenderOrdenar(ej, progreso) {
   return `<div class="tr-step-card">
     <span class="tr-circuit-tag"><i class="fa-solid fa-puzzle-piece"></i> Build</span>
     <p class="tr-tot-progress">Tap the words in the right order — ${progreso}</p>
+    ${ej.traduccion ? `<p class="tr-prime-trans" style="margin-bottom:14px;"><i class="fa-solid fa-language"></i> ${escNeclub(ej.traduccion)}</p>` : ''}
     <div class="tr-ord-answer" id="tr-ord-answer"></div>
     <div class="tr-ord-bank" id="tr-ord-bank">
       ${barajadas.map(w => `<button type="button" class="tr-ord-chip" id="tr-ord-w${w.id}" onclick="trTocarPalabraOrdenar(${w.id}, '${escNeclub(w.texto).replace(/'/g, "&#39;")}')">${escNeclub(w.texto)}</button>`).join('')}
@@ -3111,6 +3163,13 @@ async function trResolverEjercicio(exito) {
   renderTrainingRoom();
 }
 async function trCircuitoCompletado() {
+  if (trModoPractica) {
+    // Modo práctica: no se escribe nada en Firestore (ni frases practicadas, ni racha, ni día).
+    // Es solo repaso libre para que el alumno (o tú probando) pueda repetir un día ya visto.
+    trModoPractica.paso = 'done';
+    renderTrainingRoom();
+    return;
+  }
   try {
     const cambios = {};
     if (trCircuitoExitosos > 0) cambios.palabrasPracticadas = increment(trCircuitoExitosos);
@@ -3120,6 +3179,7 @@ async function trCircuitoCompletado() {
   } catch (e) {
     console.error('No se pudo guardar tu práctica en Training Room:', e);
     showModal('No se pudo guardar tu avance', 'Revisa tu conexión a internet e intenta de nuevo. Tus respuestas de este ejercicio no se perdieron, solo necesitamos reintentar guardarlas.');
+    return;
   }
   if (trProgresoActual.diaActual === 5) {
     avanzarPasoTraining('produce'); // día 5: se mantiene el envío de audio al coach por WhatsApp
