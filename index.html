@@ -1059,7 +1059,6 @@ a { color: inherit; }
       </div>
       <div id="tr-translate-result"></div>
       <div class="tr-stagepath" id="tr-stagepath"></div>
-      <div class="tr-practice-row" id="tr-practice-row"></div>
       <div id="tr-content"><p class="tr-lock-msg">Loading your progress...</p></div>
       <div class="tr-metric-grid" id="tr-metric-grid"></div>
       <div class="tr-badges-row" id="tr-badges-row"></div>
@@ -2707,7 +2706,7 @@ let trPracticaPickerAbierto = false;
 function trDiaEfectivo() { return trModoPractica ? trModoPractica.dia : (trProgresoActual ? trProgresoActual.diaActual : 1); }
 function trPasoEfectivo() { return trModoPractica ? trModoPractica.paso : (trProgresoActual ? trProgresoActual.pasoActual : 'prime'); }
 function trSemanaEfectiva() { return (trModoPractica && trModoPractica.semana) ? trModoPractica.semana : trSemanaActual; }
-function trAvanzarPaso(paso, btn) {
+window.trAvanzarPaso = function(paso, btn) {
   if (trModoPractica) { trModoPractica.paso = paso; renderTrainingRoom(); return; }
   avanzarPasoTraining(paso, btn);
 }
