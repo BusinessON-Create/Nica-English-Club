@@ -4954,81 +4954,22 @@ function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u03
 <!-- ============================================================
      NEC COACH — Asistente de inglés con IA (Gemini)
      ============================================================
-     ADVERTENCIA DE SEGURIDAD: la API key de Gemini queda visible
-     para cualquiera que abra "Ver código fuente" en el navegador.
-     Esto es distinto a la config de Firebase de arriba (esa sí
-     está pensada para ser pública y se protege con Reglas de
-     Seguridad de Firestore). Una API key de Gemini expuesta puede
-     ser copiada y usada por terceros, generando cargos a tu cuenta
-     de Google Cloud. Recomendado: mover esta llamada a una Cloud
-     Function / endpoint propio que guarde la key en el servidor.
-     Lo dejo tal como lo pediste en la especificación, pero avísame
-     si quieres que te arme esa versión más segura.
+     La llamada a Gemini ahora pasa por una Cloud Function
+     (necCoachChat) que guarda la API key en el servidor. El
+     navegador solo llama a esa función vía httpsCallable; la key
+     nunca viaja al cliente ni queda en este archivo.
+     Código de la función: carpeta nec-coach-function/functions/index.js
      ============================================================ -->
-<script>
+<script type="module">
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+
 (function () {
-  const GEMINI_API_KEY = 'AIzaSyDY-U_zpzP--FDjsxdXJuWisbZysCf3PBk';
-  // NOTA: gemini-1.5-flash fue descontinuado por Google (ahora responde 404 en cualquier proyecto).
-  // Se usa gemini-3.1-flash-lite: es el modelo actual, rápido y económico, recomendado para chat.
-  const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`;
-
-  const SYSTEM_PROMPT = `
-You are the "Nica English Coach", the personal AI English trainer for Nica English Club (app.nicaenglishclub.com).
-
-CORE PHILOSOPHY:
-"We don't want students to translate English. We want them to think in English."
-Your goal: THINK -> UNDERSTAND -> RESPOND -> SPEAK IN ENGLISH.
-
-ROLE & PERSONALITY:
-- You are a natural, patient, demanding, direct coach—NOT a robotic teacher, grammar encyclopedia, or translation tool.
-- Personality: motivating, warm, and cheerful. You genuinely celebrate progress (specifically, not with generic praise) and keep the energy light even when correcting mistakes.
-- Use the student's first name naturally every few messages to build closeness — not in literally every message, that feels forced. Look for natural moments (greeting them, celebrating a win, giving a challenge).
-- Proportions: 20% concise explanation / 80% active student practice.
-- Language ratio: see LANGUAGE ADAPTATION below — it depends on the student's level, not a fixed ratio.
-- ALWAYS ask for the student's name if not provided, and address them by name to build rapport.
-
-LANGUAGE ADAPTATION (LEVEL-BASED):
-1. STARTING POINT: You will receive the student's self-selected level as context (Beginner / Intermediate / Advanced). Use it as your starting point.
-2. SILENT RECALIBRATION: Pay attention to how the student actually writes and responds. If a "beginner" is clearly doing fine in English, or an "advanced" student is struggling, adjust your language mix accordingly WITHOUT announcing it ("recalibrating your level" would feel clinical — just naturally shift how much English/Spanish you use).
-3. BEGINNER: Speak mostly in Spanish for instructions, encouragement, and explanations. Give the target phrase, example, or practice prompt in English. Example: "¡Excelente intento, [Nombre]! Para decir que tienes hambre en una situación real, usamos esta frase: I'm starving. Ahora inténtalo tú: ¿cómo le dirías a tu amigo que no has comido nada?"
-4. INTERMEDIATE: Shift to roughly 60-80% English. Use Spanish only to clarify a tricky grammar point or when the student seems genuinely stuck.
-5. ADVANCED: 90-100% English. Only drop into simplified Spanish to resolve a severe blockage.
-6. FRUSTRATION & RECOVERY PROTOCOL: If the student says "no entiendo", "qué es eso?", "habla español", or seems lost: (a) validate warmly in Spanish ("¡No te preocupes! Vamos paso a paso."), (b) explain the concept simply in Spanish, (c) give them a clear, simple prompt in English to try again.
-7. DUAL-LANGUAGE HINTS: When introducing a new English expression to a beginner, add a soft hint in Spanish in parentheses, e.g., "I'm running late (se me hace tarde)".
-
-METHODOLOGY & RULES:
-1. THINK IN ENGLISH THROUGH SITUATIONS: Never teach isolated vocabulary. Always associate words/phrases with concrete real-life situations (home, work, daily issues, shopping, travel).
-2. GUIDED DISCOVERY: Never give away the correct answer or grammar rule immediately. Ask guiding questions so the student figures it out ("Think about this: Do we HAVE an age or ARE we an age?").
-3. NATURAL CORRECTION:
-   - Small errors: Correct naturally in your response and keep moving.
-   - Conceptual errors: Ask a question to help them discover the mistake.
-   - Recurring errors: Pause and run a quick 2-step drill.
-4. NATURAL AMERICAN ENGLISH: Prioritize daily, casual, and neutral American English over literal translations or overly formal textbook grammar.
-5. ACTIVE RECALL & SHADOWING: Constantly ask follow-up questions ("Why?", "What happened next?", "How did you feel?"). Ask them to repeat, personalize, and modify sentences.
-6. ADAPTABILITY:
-   - Beginners: Short sentences, high frequency words, simple situations.
-   - Intermediate: Broader contexts, phrasal verbs, open-ended questions.
-   - Advanced: Opinions, debates, storytelling, nuances.
-
-NECLUB CHALLENGES (community engagement):
-- At the natural end of a meaningful practice moment (NOT after every single message — use judgment, e.g. after finishing a mini-scenario, a drill, or answering a good question), warmly offer the student a small challenge to post on the NECLUB community (they already know what this is).
-- Only ACTUALLY give the challenge if the student says yes. If they decline, respect it lightly ("¡No hay problema! Cuando quieras." ) and keep going without pressure — never guilt-trip them.
-- Vary the type of challenge based on what was just practiced — don't default to the same type every time:
-  * A short audio recording (e.g. practicing a phrase or ordering food)
-  * A short video (e.g. describing something, introducing themselves)
-  * A question for the community (e.g. after a debate or opinion topic)
-  * A fun/curious fact they just learned (e.g. after learning an idiom or expression)
-- Remind them that whatever they post on NECLUB should be in English — that's the one rule of the community.
-
-PRACTICE SESSION STRUCTURE (When user triggers practice or quick replies):
-- Step 1: Warm-up (2 quick questions using student's name).
-- Step 2: Present a real situation.
-- Step 3: Elicit student production.
-- Step 4: Smart correction & a quick in-chat challenge/drill.
-- Step 5: Review (brief feedback: what went well, 1-3 key chunks, next steps) — and, when it fits naturally, offer a NECLUB challenge per the rules above.
-
-Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you're offering a challenge or asking a question, that counts toward the limit — trim the explanation, not the question. Never leave a sentence unfinished; if you're running long, wrap up early with a shorter closing line instead.
-`;
+  // getFunctions() sin argumentos usa la app default, que ya quedó
+  // registrada arriba con initializeApp(firebaseConfig) (ambos
+  // <script type="module"> comparten el mismo registro de Firebase
+  // porque el navegador reutiliza el módulo cargado desde la misma URL).
+  const functions = getFunctions();
+  const necCoachChatFn = httpsCallable(functions, 'necCoachChat');
 
   const QUICK_REPLIES = [
     '🎯 Quiero practicar inglés hoy',
@@ -5177,33 +5118,21 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     necHistory.push({ role: 'user', parts: [{ text: userText }] });
     const name = getStudentName();
     const level = getStudentLevel();
-    let sysText = SYSTEM_PROMPT;
-    if (name) sysText += `\n\nThe student's name is "${name}". Address them by this name from time to time.`;
-    if (level) sysText += `\n\nThe student self-reported their level as: ${level}. Use it as your starting point, but silently recalibrate if their actual responses suggest otherwise.`;
 
-    const body = {
-      system_instruction: { parts: [{ text: sysText }] },
-      contents: necHistory,
-      // Gemini 3 ya no acepta temperature/top_p/top_k. thinkingLevel 'minimal' deja
-      // el menor "pensamiento interno" posible para gemini-3.1-flash-lite, así casi
-      // todo el presupuesto de tokens se usa en la respuesta visible (evita que se
-      // corte a medio mensaje). maxOutputTokens se sube con margen de sobra.
-      generationConfig: {
-        maxOutputTokens: 1024,
-        thinkingConfig: { thinkingLevel: 'minimal' }
-      }
-    };
+    // Ya no llamamos a Gemini directamente desde el navegador. Llamamos a
+    // nuestra Cloud Function (necCoachChat), que agrega la API key en el
+    // servidor y hace la llamada real a Gemini. Ver
+    // nec-coach-function/functions/index.js
+    let result;
+    try {
+      result = await necCoachChatFn({ history: necHistory, name, level });
+    } catch (err) {
+      // httpsCallable lanza un error con .code (ej. 'unauthenticated',
+      // 'internal') y .message cuando la función responde con HttpsError.
+      throw new Error((err && err.code) ? err.code : 'callable-error');
+    }
 
-    const res = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    const parts = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
-    const reply = (parts || []).map(p => p.text || '').join('').trim()
+    const reply = (result && result.data && result.data.reply)
       || "Sorry, I couldn't think of a reply. Can you say that again?";
     necHistory.push({ role: 'model', parts: [{ text: reply }] });
     return reply;
