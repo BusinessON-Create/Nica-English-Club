@@ -1736,12 +1736,20 @@ async function restaurarSesion(user) {
   }
 }
 
+// Fecha/hora actual en Managua (UTC-6 fijo; Nicaragua no usa horario de verano).
+// Esta es la ÚNICA función que debe convertir a huso de Managua — getLocalDateStr()
+// y getMonday() ya no convierten, solo leen la fecha que reciben, para evitar
+// la doble conversión que hacía fallar el cálculo en dispositivos fuera de Nicaragua.
+function managuaNow() {
+  const ahora = new Date();
+  const utcMs = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+  return new Date(utcMs - (6 * 60 * 60000));
+}
 function getLocalDateStr(d) {
-  const t = new Date(d.toLocaleString("en-US", {timeZone: "America/Managua"}));
-  return t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,'0') + "-" + String(t.getDate()).padStart(2,'0');
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
 }
 function getMonday(d) {
-  const t = new Date(d.toLocaleString("en-US", {timeZone: "America/Managua"}));
+  const t = new Date(d);
   const day = t.getDay(), diff = t.getDate() - day + (day === 0 ? -6 : 1);
   t.setDate(diff); t.setHours(0,0,0,0);
   return t;
@@ -1830,8 +1838,8 @@ function huboInactividad24h(alumno) {
 }
 
 async function registrarAcceso(alumno) {
-  const hoyStr = getLocalDateStr(new Date());
-  const lunesActualStr = getLocalDateStr(getMonday(new Date()));
+  const hoyStr = getLocalDateStr(managuaNow());
+  const lunesActualStr = getLocalDateStr(getMonday(managuaNow()));
   let dias = (alumno.dias_semana || []).filter(d => d >= lunesActualStr);
   if (!dias.includes(hoyStr)) dias.push(hoyStr);
   const upd = { total_logins: (alumno.total_logins || 0) + 1, dias_semana: dias, logins: dias.length, ultimo_acceso: hoyStr, ultimoAccesoTS: Date.now() };
@@ -1841,7 +1849,7 @@ async function registrarAcceso(alumno) {
 }
 
 function renderUI(alumno) {
-  const hoyStr = getLocalDateStr(new Date());
+  const hoyStr = getLocalDateStr(managuaNow());
   const diasValidos = (alumno.dias_semana || []).filter(d => d <= hoyStr);
   const diasLogueados = diasValidos.length;
   const initial = alumno.nombre.charAt(0).toUpperCase();
@@ -1878,8 +1886,8 @@ function renderUI(alumno) {
 function renderGraph(diasSemana) {
   const container = document.getElementById('streak-graph');
   if(!container) return; // Seguridad
-  const lunes = getMonday(new Date());
-  const hoyStr = getLocalDateStr(new Date());
+  const lunes = getMonday(managuaNow());
+  const hoyStr = getLocalDateStr(managuaNow());
   const dias = ['L','M','M','J','V','S','D'];
   let bars = '', labels = '';
   for (let i = 0; i < 7; i++) {
@@ -1895,7 +1903,7 @@ function renderGraph(diasSemana) {
 
 function horarioEstaActivoAhora(horario) {
   if (!horario || !horario.dias || !horario.franja) return false;
-  const ahora = new Date(new Date().toLocaleString("en-US", {timeZone:"America/Managua"}));
+  const ahora = managuaNow();
   const diaSemana = ahora.getDay(); // 0=Dom,1=Lun,...6=Sab
   const diasValidos = horario.dias === 'Lunes a miércoles' ? [1,2,3] : [6,0];
   if (!diasValidos.includes(diaSemana)) return false;
@@ -2034,7 +2042,7 @@ function escucharTop3() {
 
 /* ===== ACTIVIDADES DE LA SEMANA + NOTIFICACIONES (campanita) ===== */
 function escucharActividades() {
-  const lunesStr = getLocalDateStr(getMonday(new Date()));
+  const lunesStr = getLocalDateStr(getMonday(managuaNow()));
   onSnapshot(query(collection(db,'actividades'), orderBy('fecha','desc')), snap => {
     const miId = sessionActiva ? sessionActiva.id : null;
     ultimasActividades = snap.docs
@@ -4309,7 +4317,7 @@ window.guardarActividad = async () => {
   const enlace = normalizarUrl(document.getElementById('actividad-enlace').value);
   const id = document.getElementById('actividad-id-edicion').value;
   if (!titulo) return;
-  const semana = getLocalDateStr(getMonday(new Date()));
+  const semana = getLocalDateStr(getMonday(managuaNow()));
   const res = obtenerDestinatariosPorModo('dest-modo', 'dest-grupo-select', 'dest-check');
   if (!res.ok) { showModal('Falta información', res.msg); return; }
   const destinatarios = res.destinatarios;
@@ -5682,7 +5690,7 @@ window.borrarVideoDeCategoria = async (catId, videoId) => {
 };
 window.limpiarActividadesAnteriores = async () => {
   if (!confirm("¿Borrar actividades de semanas anteriores? Las de esta semana se conservan.")) return;
-  const semanaActual = getLocalDateStr(getMonday(new Date()));
+  const semanaActual = getLocalDateStr(getMonday(managuaNow()));
   const snap = await getDocs(collection(db,'actividades'));
   const borrar = [];
   snap.forEach(d => { if (d.data().semana !== semanaActual) borrar.push(d.id); });
