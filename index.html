@@ -460,10 +460,6 @@ a { color: inherit; }
 .tr-week-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:18px; margin-bottom:16px; }
 .tr-week-card h3 { font-family:'Playfair Display'; color:#fff; font-size:18px; margin-bottom:4px; }
 .tr-week-card .tr-etapa-tag { font-size:10px; font-weight:700; color:var(--gold3); text-transform:uppercase; letter-spacing:.5px; }
-.tr-daydots { display:flex; gap:8px; margin-top:14px; }
-.tr-daydot { flex:1; height:8px; border-radius:99px; background:var(--card2); border:1px solid var(--border2); }
-.tr-daydot.done { background:var(--gold2); border-color:var(--gold2); }
-.tr-daydot.current { background:rgba(240,180,41,.3); border-color:var(--gold2); }
 .tr-steps { display:flex; justify-content:space-between; margin:16px 0 4px; }
 .tr-step-chip { flex:1; text-align:center; padding:8px 4px; font-size:10px; font-weight:700; color:var(--muted-dim); border-bottom:2px solid var(--border2); }
 .tr-step-chip.done { color:var(--gold2); border-color:var(--gold2); }
@@ -480,6 +476,14 @@ a { color: inherit; }
 .tr-tot-opt:active:not(:disabled) { transform:translateY(3px); box-shadow:0 0 0 rgba(0,0,0,.3); }
 .tr-tot-opt.correct { background:rgba(0,214,143,.15); border-color:var(--green); box-shadow:0 3px 0 rgba(0,150,100,.4); animation: trPopCorrect .4s var(--ease); }
 .tr-tot-opt.incorrect { background:rgba(255,92,92,.15); border-color:var(--red); animation: trShakeWrong .4s var(--ease); }
+.tr-match-grid { display:flex; gap:12px; margin:14px 0 4px; }
+.tr-match-col { flex:1; display:flex; flex-direction:column; gap:8px; }
+.tr-match-tile { background:rgba(255,255,255,.05); border:1px solid var(--border2); color:var(--text); padding:12px 8px; border-radius:12px; font-size:12.5px; line-height:1.3; cursor:pointer; font-family:inherit; text-align:center; transition: border-color .15s, background .15s, transform .1s var(--ease); }
+.tr-match-tile:hover:not(:disabled) { border-color:var(--gold2); transform:translateY(-1px); }
+.tr-match-tile.selected { border-color:var(--gold); background:var(--gold-dim); color:var(--gold3); }
+.tr-match-tile.matched { background:rgba(0,214,143,.15); border-color:var(--green); color:var(--green); opacity:.6; cursor:default; animation: trPopCorrect .4s var(--ease); }
+.tr-match-tile.incorrect { animation: trShakeWrong .4s var(--ease); border-color:var(--red); background:rgba(255,92,92,.12); }
+.tr-match-progress { text-align:center; color:var(--muted); font-size:11px; margin-top:10px; }
 .tr-reto-box { background:rgba(240,180,41,.08); border:1px solid rgba(240,180,41,.3); border-radius:14px; padding:16px; margin:14px 0; text-align:left; }
 .tr-reto-box p { color:#fff; font-size:15px; line-height:1.5; }
 .tr-wa-btn { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; font-weight:700; padding:13px 22px; border-radius:99px; border:none; cursor:pointer; font-family:inherit; font-size:13.5px; margin-top:6px; box-shadow: 0 4px 0 #128a3e; transition: transform .1s var(--ease), box-shadow .1s var(--ease); }
@@ -581,13 +585,16 @@ a { color: inherit; }
 .tr-confetti-dot:nth-child(10) { left:44%; background:var(--gold2); animation-delay:.4s; }
 @keyframes trConfettiFall { 0%{ transform:translateY(0) rotate(0deg); opacity:1; } 100%{ transform:translateY(240px) rotate(280deg); opacity:0; } }
 
-/* ===== TRAINING ROOM — días clicables (repasar días anteriores) ===== */
-.tr-daydots { position:relative; }
-.tr-daydot { position:relative; cursor:default; transition: transform .15s var(--ease), background .2s var(--ease); }
-.tr-daydot.clickable { cursor:pointer; }
-.tr-daydot.clickable:hover { transform:scaleY(2.4); }
-.tr-daydot.clickable:active { transform:scaleY(1.6); }
-.tr-daydot.current { animation: pulseSoft 1.6s ease infinite; }
+/* ===== TRAINING ROOM — días clicables (repasar días anteriores), como pastillas "Day 1..5" ===== */
+.tr-daydots { display:flex; gap:6px; margin-top:14px; }
+.tr-daylabel { flex:1; min-width:0; padding:9px 2px; text-align:center; border-radius:10px; background:var(--card2); border:1px solid var(--border2); color:var(--muted-dim); font-size:10.5px; font-weight:800; font-family:inherit; cursor:default; letter-spacing:.2px; transition: transform .15s var(--ease), background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease); }
+.tr-daylabel .fa-check { font-size:8.5px; margin-right:3px; }
+.tr-daylabel.done { background:rgba(240,180,41,.1); border-color:var(--gold2); color:var(--gold3); }
+.tr-daylabel.clickable { cursor:pointer; }
+.tr-daylabel.clickable:hover { transform:translateY(-2px); border-color:var(--gold3); }
+.tr-daylabel.clickable:active { transform:translateY(0) scale(.95); }
+.tr-daylabel.current { background:linear-gradient(135deg, var(--gold3), var(--gold2)); border-color:var(--gold2); color:#000; animation: pulseSoft 1.8s ease infinite; }
+.tr-daylabel.locked { opacity:.4; }
 .tr-daynav-hint { text-align:center; color:var(--muted-dim); font-size:10.5px; margin-top:8px; }
 .tr-daynav-hint i { color:var(--gold2); margin-right:3px; }
 
@@ -2985,12 +2992,15 @@ function renderTrainingRoom() {
     const esPasado = d < diaRealActual;               // ya completado → se puede repasar
     const esActual = d === diaRealActual && !trModoPractica;
     const esActualEnPractica = trModoPractica && d === trModoPractica.dia;
-    const clases = ['tr-daydot'];
+    const esFuturo = d > diaRealActual;
+    const clases = ['tr-daylabel'];
     if (esPasado) clases.push('done', 'clickable');
     if (esActual || esActualEnPractica) clases.push('current');
+    if (esFuturo) clases.push('locked');
     const click = esPasado ? ` onclick="trAbrirPracticaDia(${d})"` : '';
     const title = esPasado ? ` title="Repasar Day ${d}"` : '';
-    return `<div class="${clases.join(' ')}"${click}${title}></div>`;
+    const etiqueta = esPasado ? `<i class="fa-solid fa-check"></i>Day ${d}` : `Day ${d}`;
+    return `<button type="button" class="${clases.join(' ')}"${click}${title}>${etiqueta}</button>`;
   }).join('');
   const hayDiasParaRepasar = !trModoPractica && (diaRealActual - 1) >= 1;
   const esDia5 = !trModoPractica && trProgresoActual.diaActual === 5;
@@ -3113,9 +3123,9 @@ function trSpeechSoportado() {
 }
 function trTiposDisponiblesPorDia(diaNum) {
   let tipos;
-  if (diaNum <= 2) tipos = ['pares', 'listening'];
-  else if (diaNum === 3) tipos = ['pares', 'listening', 'ordenar'];
-  else tipos = ['pares', 'listening', 'ordenar', 'speaking'];
+  if (diaNum <= 2) tipos = ['pares', 'listening', 'match'];
+  else if (diaNum === 3) tipos = ['pares', 'listening', 'match', 'ordenar'];
+  else tipos = ['pares', 'listening', 'match', 'ordenar', 'speaking'];
   if (tipos.includes('speaking') && !trSpeechSoportado()) tipos = tipos.filter(t => t !== 'speaking');
   return tipos;
 }
@@ -3130,6 +3140,8 @@ function trCantidadesCircuito(total) {
   if (total >= 8) return { pares: 5, listening: 4 };
   return { pares: 3, listening: 2 };
 }
+const TR_MATCH_MIN = 4;   // mínimo de pares de vocabulario para armar una ronda de Match
+const TR_MATCH_MAX = 6;   // máximo de tarjetas por ronda (para que quepan bien en una pantalla de celular)
 function trConstruirCircuito(dia, diaNum) {
   const tipos = trTiposDisponiblesPorDia(diaNum);
   const paresValidos = (dia.pares || []).filter(p => p && p.correcta && p.incorrecta);
@@ -3140,6 +3152,15 @@ function trConstruirCircuito(dia, diaNum) {
   }
   if (tipos.includes('listening') && paresValidos.length) {
     trBarajar(paresValidos).slice(0, cant.listening).forEach(p => ejercicios.push({ tipo: 'listening', par: p }));
+  }
+  if (tipos.includes('match')) {
+    const vocabValido = (dia.vocabulario || []).filter(v => v && v.es && v.en);
+    // Solo armamos la ronda si hay suficientes pares como para que valga la pena emparejar
+    // (con 1-3 sería demasiado obvio/corto). Si el día no tiene vocabulario cargado, simplemente
+    // no aparece "Match" ese día — igual que "ordenar" se omite si la frase es muy corta.
+    if (vocabValido.length >= TR_MATCH_MIN) {
+      ejercicios.push({ tipo: 'match', pares: trBarajar(vocabValido).slice(0, TR_MATCH_MAX) });
+    }
   }
   if (tipos.includes('ordenar')) {
     const frase = (dia.prime || '').trim();
@@ -3176,6 +3197,7 @@ function renderPasoTrain(dia) {
   const progreso = `Exercise ${trCircuitoIndex + 1} / ${trCircuito.length}`;
   if (ej.tipo === 'pares') return trRenderPares(ej, progreso);
   if (ej.tipo === 'listening') return trRenderListening(ej, progreso);
+  if (ej.tipo === 'match') return trRenderMatch(ej, progreso);
   if (ej.tipo === 'ordenar') return trRenderOrdenar(ej, progreso);
   if (ej.tipo === 'speaking') return trRenderSpeaking(ej, progreso);
   return `<div class="tr-step-card"><p class="tr-lock-msg">Loading...</p></div>`;
@@ -3219,6 +3241,64 @@ window.trReproducirListening = (btn, texto) => {
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   } catch (e) { btn.classList.remove('playing'); }
+};
+
+/* --- Ejercicio: Match (vocabulario español-inglés, varias tarjetas en la misma pantalla) ---
+   Distinto del "This or That" (pares correcta/incorrecta, ambas en inglés): aquí sí hay
+   palabras/frases en ESPAÑOL a un lado y su traducción en INGLÉS al otro, revueltas cada una
+   por su cuenta, y el alumno las va tocando de a dos hasta emparejarlas todas. */
+let trMatchSeleccion = null; // { gid, side, el }
+let trMatchEmparejados = 0;
+let trMatchTotal = 0;
+let trMatchBloqueado = false;
+function trRenderMatch(ej, progreso) {
+  trMatchSeleccion = null;
+  trMatchEmparejados = 0;
+  trMatchTotal = ej.pares.length;
+  trMatchBloqueado = false;
+  const izquierda = trBarajar(ej.pares.map((p, i) => ({ ...p, gid: i })));
+  const derecha = trBarajar(ej.pares.map((p, i) => ({ ...p, gid: i })));
+  const ficha = (item, side) => `<button type="button" class="tr-match-tile" data-gid="${item.gid}" data-side="${side}" onclick="trTocarFichaMatch(this)">${escNeclub(side === 'es' ? item.es : item.en)}</button>`;
+  return `<div class="tr-step-card">
+    <span class="tr-circuit-tag"><i class="fa-solid fa-shuffle"></i> Match</span>
+    <p class="tr-tot-progress">Tap the matching pairs (Spanish ↔ English) — ${progreso}</p>
+    <div class="tr-match-grid" id="tr-match-grid">
+      <div class="tr-match-col">${izquierda.map(i => ficha(i, 'es')).join('')}</div>
+      <div class="tr-match-col">${derecha.map(i => ficha(i, 'en')).join('')}</div>
+    </div>
+    <p class="tr-match-progress" id="tr-match-progress">0 / ${trMatchTotal} matched</p>
+  </div>`;
+}
+window.trTocarFichaMatch = (el) => {
+  if (trMatchBloqueado || el.disabled || el.classList.contains('matched')) return;
+  const gid = el.dataset.gid, side = el.dataset.side;
+  if (!trMatchSeleccion) { el.classList.add('selected'); trMatchSeleccion = { gid, side, el }; return; }
+  if (trMatchSeleccion.el === el) return; // tocó la misma ficha dos veces
+  if (trMatchSeleccion.side === side) {
+    // tocó otra ficha del mismo lado: cambia la selección, no cuenta como intento
+    trMatchSeleccion.el.classList.remove('selected');
+    el.classList.add('selected');
+    trMatchSeleccion = { gid, side, el };
+    return;
+  }
+  const previa = trMatchSeleccion.el;
+  if (trMatchSeleccion.gid === gid) {
+    // ¡Pareja correcta!
+    previa.classList.remove('selected'); previa.classList.add('matched'); previa.disabled = true;
+    el.classList.add('matched'); el.disabled = true;
+    trMatchEmparejados++;
+    trMatchSeleccion = null;
+    const prog = document.getElementById('tr-match-progress');
+    if (prog) prog.textContent = `${trMatchEmparejados} / ${trMatchTotal} matched`;
+    if (trMatchEmparejados >= trMatchTotal) setTimeout(() => trResolverEjercicio(true), 500);
+  } else {
+    // No coinciden: las dos tiemblan en rojo un instante y quedan libres de nuevo
+    trMatchBloqueado = true;
+    previa.classList.remove('selected'); previa.classList.add('incorrect');
+    el.classList.add('incorrect');
+    trMatchSeleccion = null;
+    setTimeout(() => { previa.classList.remove('incorrect'); el.classList.remove('incorrect'); trMatchBloqueado = false; }, 550);
+  }
 };
 window.trResponderOpcion = (btn) => {
   const wrap = document.getElementById('tr-tot-pair');
@@ -4498,11 +4578,15 @@ window.cambiarDiaEditorTraining = (d) => {
   [1,2,3,4,5].forEach(n => { const el = document.getElementById('tr-day-block-'+n); if (el) el.style.display = (n===d ? 'block' : 'none'); });
 };
 const TR_PARES_MAX = 10;
+const TR_VOCAB_MAX = 8;
 function bloqueDiaHtmlTraining(n, dia) {
   dia = dia || {};
   const paresBase = (dia.pares && dia.pares.length) ? dia.pares : Array.from({length:TR_PARES_MAX},()=>({correcta:'',incorrecta:''}));
   const pares = paresBase.length < TR_PARES_MAX ? paresBase.concat(Array.from({length:TR_PARES_MAX-paresBase.length},()=>({correcta:'',incorrecta:''}))) : paresBase.slice(0,TR_PARES_MAX);
   const paresHtml = pares.map((p,i) => `<div class="tr-pair-row"><input type="text" id="tr-d${n}-par${i}-correcta" class="admin-input" placeholder="Correct phrase" value="${(p.correcta||'').replace(/"/g,'&quot;')}"><input type="text" id="tr-d${n}-par${i}-incorrecta" class="admin-input" placeholder="Incorrect phrase" value="${(p.incorrecta||'').replace(/"/g,'&quot;')}"></div>`).join('');
+  const vocabBase = (dia.vocabulario && dia.vocabulario.length) ? dia.vocabulario : Array.from({length:TR_VOCAB_MAX},()=>({es:'',en:''}));
+  const vocab = vocabBase.length < TR_VOCAB_MAX ? vocabBase.concat(Array.from({length:TR_VOCAB_MAX-vocabBase.length},()=>({es:'',en:''}))) : vocabBase.slice(0,TR_VOCAB_MAX);
+  const vocabHtml = vocab.map((v,i) => `<div class="tr-pair-row"><input type="text" id="tr-d${n}-voc${i}-es" class="admin-input" placeholder="Spanish word/phrase" value="${(v.es||'').replace(/"/g,'&quot;')}"><input type="text" id="tr-d${n}-voc${i}-en" class="admin-input" placeholder="English translation" value="${(v.en||'').replace(/"/g,'&quot;')}"></div>`).join('');
   return `<div id="tr-day-block-${n}" style="display:${n===1?'block':'none'};">
     <input type="text" id="tr-d${n}-prime" class="admin-input" placeholder="Mindset phrase (English)" value="${(dia.prime||'').replace(/"/g,'&quot;')}">
     <input type="text" id="tr-d${n}-trans" class="admin-input" placeholder="Traducción al español" value="${(dia.primeTraduccion||'').replace(/"/g,'&quot;')}">
@@ -4514,7 +4598,9 @@ function bloqueDiaHtmlTraining(n, dia) {
     <textarea id="tr-d${n}-contenido" class="admin-input" rows="3" placeholder="Contenido a consumir (texto, link de YouTube, o URL de audio)">${dia.absorbContenido||''}</textarea>
     <p class="admin-label" style="font-size:11px;">This or That — hasta ${TR_PARES_MAX} pares (frase correcta vs incorrecta). Deja vacíos los que no uses.</p>
     ${paresHtml}
-    <p class="form-hint" style="margin:4px 0 10px; font-size:11px;"><i class="fa-solid fa-circle-info"></i> Con la frase de Mindset y estos pares, el sistema arma solo los juegos de listening, armar oración y speaking — no hace falta llenar nada más.</p>
+    <p class="admin-label" style="font-size:11px; margin-top:14px;">Vocabulary Match — hasta ${TR_VOCAB_MAX} pares (palabra en español → traducción en inglés). Se necesitan mínimo ${TR_MATCH_MIN} para que aparezca el juego de emparejar tarjetas ese día. Deja vacíos los que no uses.</p>
+    ${vocabHtml}
+    <p class="form-hint" style="margin:4px 0 10px; font-size:11px;"><i class="fa-solid fa-circle-info"></i> Con la frase de Mindset y estos pares, el sistema arma solo los juegos de listening, match, armar oración y speaking — no hace falta llenar nada más.</p>
     <textarea id="tr-d${n}-reto" class="admin-input" rows="2" placeholder="Pregunta/frase del reto de voz — solo se usa el Día 5 (envío al coach)">${dia.retoPregunta||''}</textarea>
   </div>`;
 }
@@ -4539,6 +4625,10 @@ window.guardarSemanaTraining = async () => {
       correcta: (document.getElementById(`tr-d${n}-par${i}-correcta`)||{}).value?.trim() || '',
       incorrecta: (document.getElementById(`tr-d${n}-par${i}-incorrecta`)||{}).value?.trim() || ''
     })).filter(p => p.correcta && p.incorrecta),
+    vocabulario: Array.from({length:TR_VOCAB_MAX},(_,i) => ({
+      es: (document.getElementById(`tr-d${n}-voc${i}-es`)||{}).value?.trim() || '',
+      en: (document.getElementById(`tr-d${n}-voc${i}-en`)||{}).value?.trim() || ''
+    })).filter(v => v.es && v.en),
     retoPregunta: (document.getElementById(`tr-d${n}-reto`)||{}).value?.trim() || ''
   }));
   const data = { etapa, orden, titulo, activa, dias, fecha: Date.now() };
@@ -4652,6 +4742,9 @@ window.cargarEjemploSemanaTraining = () => {
       {correcta:"How are you?", incorrecta:"How you are?"},
       {correcta:"I'm fine, thank you.", incorrecta:"I fine, thank you am."},
       {correcta:"Good morning!", incorrecta:"Good morning it!"}
+    ], vocabulario:[
+      {es:"hola", en:"hello"}, {es:"adiós", en:"goodbye"}, {es:"nombre", en:"name"},
+      {es:"mucho gusto", en:"nice to meet you"}, {es:"¿cómo estás?", en:"how are you?"}, {es:"gracias", en:"thank you"}
     ], retoPregunta:"Record a 15-second audio: say your name, where you're from, and one thing you like." },
     { dia:2, prime:"Numbers open doors. Today I count in English.", primeTraduccion:"Los números abren puertas. Hoy cuento en inglés.", absorbTipo:'texto', absorbContenido:"Numbers 1-20 and personal info:\none, two, three... twenty.\n- How old are you? I am 25 years old.\n- What is your phone number?", pares:[
       {correcta:"I am twenty years old.", incorrecta:"I have twenty years."},
@@ -4660,6 +4753,9 @@ window.cargarEjemploSemanaTraining = () => {
       {correcta:"She is thirty years old.", incorrecta:"She has thirty years."},
       {correcta:"My number is five five five.", incorrecta:"My number are five five five."},
       {correcta:"How old are you?", incorrecta:"How many years do you have?"}
+    ], vocabulario:[
+      {es:"uno", en:"one"}, {es:"dos", en:"two"}, {es:"tres", en:"three"},
+      {es:"edad", en:"age"}, {es:"teléfono", en:"phone"}, {es:"años", en:"years old"}
     ], retoPregunta:"Say your age and your phone number out loud in English." },
     { dia:3, prime:"I describe my world in English.", primeTraduccion:"Describo mi mundo en inglés.", absorbTipo:'texto', absorbContenido:"Family vocabulary: mother, father, sister, brother, parents.\nDescribing people: tall, short, young, old, friendly.", pares:[
       {correcta:"I have two sisters.", incorrecta:"I have two sister."},
@@ -4668,6 +4764,9 @@ window.cargarEjemploSemanaTraining = () => {
       {correcta:"They are my parents.", incorrecta:"They is my parents."},
       {correcta:"My brother is young.", incorrecta:"My brother have young."},
       {correcta:"This is my family.", incorrecta:"This is my families."}
+    ], vocabulario:[
+      {es:"madre", en:"mother"}, {es:"padre", en:"father"}, {es:"hermana", en:"sister"},
+      {es:"hermano", en:"brother"}, {es:"familia", en:"family"}, {es:"amable", en:"friendly"}
     ], retoPregunta:"Describe one member of your family in 3 sentences (name, relationship, one characteristic)." },
     { dia:4, prime:"My opinions matter, and I say them in English.", primeTraduccion:"Mis opiniones importan, y las digo en inglés.", absorbTipo:'texto', absorbContenido:"I like... / I don't like... / I love... / I hate...\nExample: I like coffee. I don't like rain.", pares:[
       {correcta:"I like coffee.", incorrecta:"I like of coffee."},
@@ -4676,6 +4775,9 @@ window.cargarEjemploSemanaTraining = () => {
       {correcta:"We love pizza.", incorrecta:"We loves pizza."},
       {correcta:"Do you like coffee?", incorrecta:"You like coffee?"},
       {correcta:"I don't like Mondays.", incorrecta:"I not like Mondays."}
+    ], vocabulario:[
+      {es:"me gusta", en:"I like"}, {es:"no me gusta", en:"I don't like"}, {es:"café", en:"coffee"},
+      {es:"lluvia", en:"rain"}, {es:"música", en:"music"}, {es:"amar / encantar", en:"to love"}
     ], retoPregunta:"Say two things you like and one thing you don't like." },
     { dia:5, prime:"This is proof. Today I speak with confidence.", primeTraduccion:"Esto es la prueba. Hoy hablo con confianza.", absorbTipo:'texto', absorbContenido:"Review tip: don't worry about your accent — just speak. Every word you say out loud is progress.", pares:[
       {correcta:"My name is Carlos and I am from León.", incorrecta:"My name Carlos and I from León."},
@@ -4684,6 +4786,9 @@ window.cargarEjemploSemanaTraining = () => {
       {correcta:"I like soccer.", incorrecta:"I like of soccer."},
       {correcta:"Nice to meet you.", incorrecta:"Nice meet you to."},
       {correcta:"I don't like the cold.", incorrecta:"I no like the cold."}
+    ], vocabulario:[
+      {es:"confianza", en:"confidence"}, {es:"hablar", en:"to speak"}, {es:"practicar", en:"to practice"},
+      {es:"progreso", en:"progress"}, {es:"orgulloso", en:"proud"}, {es:"logro", en:"achievement"}
     ], retoPregunta:"Record a full 30-second introduction: your name, age, where you are from, your family, and something you like and something you don't like." }
   ];
   abrirEditorSemanaTraining(diasEjemplo);
