@@ -563,6 +563,13 @@ a { color: inherit; }
 .tr-journey-shell { max-width:420px; margin:0 auto; padding:24px 14px 100px; }
 .tr-journey-stage-head { text-align:center; margin:26px 0 18px; }
 .tr-journey-stage-head span { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gold3); background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); padding:6px 16px; border-radius:99px; }
+.tr-journey-week-block { margin-bottom:8px; }
+.tr-journey-week-head { display:flex; align-items:center; gap:10px; justify-content:center; margin:34px 0 20px; padding:0 8px; }
+.tr-journey-week-head .num { font-size:11px; font-weight:800; color:#000; background:var(--gold2); border-radius:99px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.tr-journey-week-head .titulo { font-size:14px; font-weight:800; color:#fff; }
+.tr-journey-week-head .estado-chip { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; padding:4px 9px; border-radius:99px; white-space:nowrap; border:1px solid var(--border2); color:var(--muted-dim); }
+.tr-journey-week-head .estado-chip.done { color:var(--gold3); border-color:rgba(240,180,41,.35); background:var(--gold-dim); }
+.tr-journey-week-head .estado-chip.current { color:var(--gold2); border-color:var(--gold2); background:rgba(240,180,41,.1); }
 .tr-journey-path { display:flex; flex-direction:column; align-items:center; gap:2px; }
 .tr-journey-node-row { display:flex; justify-content:center; width:100%; margin:6px 0; }
 .tr-journey-node-row.pos-0 { justify-content:center; }
@@ -2719,6 +2726,7 @@ let trSemanaUnsub = null;
 let trCircuito = [];          // cola de ejercicios del día actual (se re-encola al final si falla uno)
 let trCircuitoIndex = 0;
 let trCircuitoKey = null;     // identifica semana+día para saber cuándo reconstruir el circuito
+let trCircuitoFinalizando = false; // evita que un re-render (disparado por el propio guardado) complete el mismo día dos veces
 let trCircuitoExitosos = 0;   // cuenta ejercicios superados (para sumar a "frases practicadas")
 let trOrdenarRespuesta = [];  // estado del ejercicio de "armar oración" en curso
 let trReconocedorVoz = null;  // instancia de SpeechRecognition en uso
@@ -3050,8 +3058,17 @@ function renderPasoTrain(dia) {
     trCircuitoExitosos = 0;
     trSpeakingExitosos = 0;
     trCircuitoKey = key;
+    trCircuitoFinalizando = false; // día/circuito nuevo: se habilita de nuevo el cierre
   }
-  if (!trCircuito.length) { setTimeout(() => trCircuitoCompletado(), 0); return `<div class="tr-step-card"><p class="tr-lock-msg">Loading...</p></div>`; }
+  if (!trCircuito.length) {
+    // FIX: guardar el día dispara un re-render (por el listener de Firestore) ANTES de que
+    // diaActual/pasoActual cambien localmente. Sin este seguro, ese re-render vuelve a ver el
+    // circuito vacío y llama trCircuitoCompletado() otra vez — y otra, y otra — sumando frases
+    // de más y saltando varios días de golpe. Con la bandera, solo la primera llamada se ejecuta;
+    // se vuelve a habilitar arriba, en cuanto arranca un circuito nuevo de verdad.
+    if (!trCircuitoFinalizando) { trCircuitoFinalizando = true; setTimeout(() => trCircuitoCompletado(), 0); }
+    return `<div class="tr-step-card"><p class="tr-lock-msg">Loading...</p></div>`;
+  }
   const ej = trCircuito[trCircuitoIndex];
   const progreso = `Exercise ${trCircuitoIndex + 1} / ${trCircuito.length}`;
   if (ej.tipo === 'pares') return trRenderPares(ej, progreso);
@@ -3221,7 +3238,7 @@ async function trResolverEjercicio(exito) {
     trCircuito.push(ej); // se re-encola al final para repetirlo luego, como Duolingo
   }
   if (trCircuitoIndex >= trCircuito.length) trCircuitoIndex = 0;
-  if (!trCircuito.length) { await trCircuitoCompletado(); return; }
+  if (!trCircuito.length) { trCircuitoFinalizando = true; await trCircuitoCompletado(); return; }
   renderTrainingRoom();
 }
 async function trCircuitoCompletado() {
@@ -3452,56 +3469,77 @@ async function renderEnglishJourney() {
   if (!cont || !trProgresoActual) return;
   cont.innerHTML = `<p class="tr-lock-msg"><i class="fa-solid fa-spinner fa-spin"></i> Loading your journey...</p>`;
 
-  // 1) Semanas ya completadas (historial) — todos sus 5 días cuentan como "done".
+  // Traemos TODAS las semanas activas de la etapa actual (no solo la que ya jugó), para que
+  // el alumno vea el camino completo que tiene por delante — las futuras aparecen bloqueadas
+  // (candado) con su nombre visible, como un mapa, no solo la semana en curso.
+  let semanasEtapa = [];
+  try {
+    const snap = await getDocs(query(collection(db,'entrenamiento_semanas'), where('etapa','==', trProgresoActual.etapaActual), where('activa','==',true)));
+    semanasEtapa = snap.docs.map(d => ({ id:d.id, ...d.data() })).sort((a,b) => (a.orden||0)-(b.orden||0));
+  } catch (e) { console.error('No se pudo cargar la biblioteca para English Journey:', e); }
+
   const idsHistorial = trProgresoActual.historialSemanas || [];
-  const semanasHistorial = (await Promise.all(idsHistorial.map(trObtenerSemanaPorId))).filter(Boolean);
+  const ordenActual = trSemanaActual ? (trSemanaActual.orden||0) : Infinity;
 
-  let nodos = [];
-  semanasHistorial.forEach(sem => {
-    (sem.dias || []).forEach((dia, i) => {
-      nodos.push({ estado: 'done', semana: sem, dia, numDia: i + 1 });
-    });
-  });
-
-  // 2) Semana actual — días antes de diaActual = done, el actual = current, resto = locked.
-  if (trSemanaActual) {
-    (trSemanaActual.dias || []).forEach((dia, i) => {
-      const numDia = i + 1;
-      let estado = 'locked';
-      if (numDia < trProgresoActual.diaActual) estado = 'done';
-      else if (numDia === trProgresoActual.diaActual) estado = 'current';
-      nodos.push({ estado, semana: trSemanaActual, dia, numDia });
-    });
-  }
-
-  if (!nodos.length) {
+  if (!semanasEtapa.length) {
     cont.innerHTML = `<div class="tr-week-card" style="text-align:center;"><p class="tr-lock-msg">Tu camino aparecerá aquí en cuanto empieces tu primera semana.</p></div>`;
     return;
   }
 
-  const filas = nodos.map((n, i) => {
-    const pos = i % 5;
-    const icono = n.estado === 'done' ? 'fa-check' : n.estado === 'current' ? 'fa-star' : 'fa-lock';
-    const candado = n.estado === 'locked' ? `<div class="tr-journey-lock-icon"><i class="fa-solid fa-lock"></i></div>` : '';
-    let onclick = '';
-    if (n.estado === 'current') onclick = `onclick="showScreen('s-training')"`;
-    else if (n.estado === 'done') onclick = `onclick="abrirRepasoDia(${i})"`;
-    return `<div class="tr-journey-node-row pos-${pos}">
-      <div class="tr-journey-node-wrap" style="animation-delay:${Math.min(i,14)*70}ms;">
-        <button type="button" class="tr-journey-node ${n.estado}" ${onclick}>
-          <span class="core"><i class="fa-solid ${icono}"></i></span>
-          ${candado}
-        </button>
-        <span class="tr-journey-node-label">Day ${n.numDia}</span>
-      </div>
+  // Agrupamos por semana, calculando el estado de cada día dentro de su propia semana.
+  const grupos = semanasEtapa.map(sem => {
+    const esHistorial = idsHistorial.includes(sem.id);
+    const esActual = trSemanaActual && sem.id === trSemanaActual.id;
+    const dias = (sem.dias || []).map((dia, i) => {
+      const numDia = i + 1;
+      let estado;
+      if (esActual) {
+        estado = numDia < trProgresoActual.diaActual ? 'done' : numDia === trProgresoActual.diaActual ? 'current' : 'locked';
+      } else if (esHistorial || (sem.orden||0) < ordenActual) {
+        estado = 'done';
+      } else {
+        estado = 'locked';
+      }
+      return { estado, semana: sem, dia, numDia };
+    });
+    return { semana: sem, dias, esActual };
+  });
+
+  let nodos = [];
+  const gruposHtml = grupos.map(g => {
+    const filasHtml = g.dias.map((n, localIdx) => {
+      const i = nodos.length;
+      nodos.push(n);
+      const pos = localIdx % 5;
+      const icono = n.estado === 'done' ? 'fa-check' : n.estado === 'current' ? 'fa-star' : 'fa-lock';
+      const candado = n.estado === 'locked' ? `<div class="tr-journey-lock-icon"><i class="fa-solid fa-lock"></i></div>` : '';
+      let onclick = '';
+      if (n.estado === 'current') onclick = `onclick="showScreen('s-training')"`;
+      else if (n.estado === 'done') onclick = `onclick="abrirRepasoDia(${i})"`;
+      return `<div class="tr-journey-node-row pos-${pos}">
+        <div class="tr-journey-node-wrap" style="animation-delay:${Math.min(i,14)*70}ms;">
+          <button type="button" class="tr-journey-node ${n.estado}" ${onclick}>
+            <span class="core"><i class="fa-solid ${icono}"></i></span>
+            ${candado}
+          </button>
+          <span class="tr-journey-node-label">Day ${n.numDia}</span>
+        </div>
+      </div>`;
+    }).join('');
+    const todasHechas = g.dias.length && g.dias.every(d => d.estado === 'done');
+    const chipClase = g.esActual ? 'current' : todasHechas ? 'done' : '';
+    const chipTexto = g.esActual ? '<i class="fa-solid fa-star"></i> In progress' : todasHechas ? '<i class="fa-solid fa-check"></i> Completed' : '<i class="fa-solid fa-lock"></i> Coming up';
+    return `<div class="tr-journey-week-block">
+      <div class="tr-journey-week-head"><span class="num">${g.semana.orden||''}</span><span class="titulo">${escNeclub(g.semana.titulo||'Week')}</span><span class="estado-chip ${chipClase}">${chipTexto}</span></div>
+      <div class="tr-journey-path">${filasHtml}</div>
     </div>`;
   }).join('');
 
   window.trJourneyNodosCache = nodos;
   cont.innerHTML = `
     <div class="tr-journey-stage-head"><span>${escNeclub(TR_ETAPA_LABEL[trProgresoActual.etapaActual] || '')}</span></div>
-    <div class="tr-journey-path">${filas}</div>
-    <p class="tr-translate-note" style="margin-top:20px;"><i class="fa-solid fa-circle-info"></i> Tap a completed day to review it. Locked days unlock as you keep going.</p>`;
+    ${gruposHtml}
+    <p class="tr-translate-note" style="margin-top:20px;"><i class="fa-solid fa-circle-info"></i> Tap a completed day to review it. Locked weeks unlock as you keep going.</p>`;
 }
 window.abrirRepasoDia = (idx) => {
   const nodos = window.trJourneyNodosCache || [];
