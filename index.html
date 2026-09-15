@@ -6417,7 +6417,12 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
       body: JSON.stringify(body)
     });
 
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (!res.ok) {
+      let detalle = '';
+      try { detalle = await res.text(); } catch (e) {}
+      console.error('NEC Coach / Gemini raw error body:', detalle);
+      throw new Error('HTTP ' + res.status + ' - ' + detalle);
+    }
     const data = await res.json();
     const parts = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
     const reply = (parts || []).map(p => p.text || '').join('').trim()
