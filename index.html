@@ -2813,12 +2813,31 @@ async function inicializarProgresoTraining() {
   });
 }
 let trReparacionEnCurso = false;
-// FIX: si el progreso del alumno quedó sin semana asignada (por ejemplo, porque abrió
-// el Training Room antes de que el admin activara la primera semana), el documento se
-// creaba una sola vez con semanaIdActual:null y nunca se volvía a revisar. Esta función
-// reintenta buscar una semana disponible cada vez que detectamos ese estado "vacío",
-// para que se autorepare en cuanto el admin publique contenido — sin que el alumno
-// tenga que hacer nada.
+let trLibreriaEsperaUnsub = null;
+// FIX: mientras el alumno está en "Looking for your next session..." (sin semana asignada),
+// nos quedamos escuchando EN VIVO la biblioteca de esa etapa. En el momento en que el admin
+// guarda y activa la semana que sigue, este listener la detecta y se la asigna al alumno
+// automáticamente — sin que nadie tenga que refrescar la página ni reasignar nada a mano.
+function trEscucharLibreriaEnEspera(etapa, ordenMayorQue) {
+  if (trLibreriaEsperaUnsub) { trLibreriaEsperaUnsub(); trLibreriaEsperaUnsub = null; }
+  if (!etapa) return;
+  trLibreriaEsperaUnsub = onSnapshot(
+    query(collection(db,'entrenamiento_semanas'), where('etapa','==',etapa), where('activa','==',true)),
+    async snap => {
+      if (!sessionActiva || !trProgresoActual || trProgresoActual.semanaIdActual) return; // ya se resolvió, no hacer nada
+      const candidatas = snap.docs.map(d => ({ id:d.id, ...d.data() }))
+        .filter(s => (s.orden||0) > ordenMayorQue).sort((a,b) => (a.orden||0)-(b.orden||0));
+      const disponible = candidatas[0];
+      if (!disponible) return;
+      try {
+        await updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), {
+          semanaIdActual: disponible.id, diaActual: trProgresoActual.diaActual || 1, pasoActual: trProgresoActual.pasoActual || 'prime'
+        });
+      } catch (e) { console.error('No se pudo auto-asignar la nueva semana publicada:', e); }
+    },
+    e => console.error('Error escuchando biblioteca en espera de Training Room:', e)
+  );
+}
 async function intentarRepararSemanaFaltante(progreso) {
   if (trReparacionEnCurso || !sessionActiva) return;
   const completo = (progreso.etapasCompletadas || []).length >= 4;
@@ -2847,7 +2866,12 @@ function escucharTraining() {
     const nuevo = snap.data();
     const semanaCambio = !trProgresoActual || trProgresoActual.semanaIdActual !== nuevo.semanaIdActual;
     trProgresoActual = nuevo;
-    if (!nuevo.semanaIdActual) intentarRepararSemanaFaltante(nuevo);
+    if (!nuevo.semanaIdActual) {
+      intentarRepararSemanaFaltante(nuevo); // intento inmediato (por si ya hay contenido esperando)
+      trEscucharLibreriaEnEspera(nuevo.etapaActual, nuevo.ultimoOrdenCompletado || 0); // se queda escuchando en vivo
+    } else if (trLibreriaEsperaUnsub) {
+      trLibreriaEsperaUnsub(); trLibreriaEsperaUnsub = null; // ya tiene semana, dejamos de escuchar la biblioteca
+    }
     if (semanaCambio) {
       if (trSemanaUnsub) { trSemanaUnsub(); trSemanaUnsub = null; }
       trSemanaActual = null;
