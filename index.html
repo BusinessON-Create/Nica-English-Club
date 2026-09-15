@@ -2705,6 +2705,11 @@ async function limpiarNeclubExpirados() {
 /* ===== TRAINING ROOM — programa de 5 días/semana, progreso individual, "programación mental" ===== */
 const TR_ETAPAS = ['foundations','everyday','confidence','fluency'];
 const TR_ETAPA_LABEL = { foundations:'Foundations', everyday:'Everyday English', confidence:'Confidence', fluency:'Fluency Mode' };
+// Total real de semanas planeadas por etapa. Mientras una etapa no tenga número aquí (o el
+// alumno no haya llegado a ese orden), el sistema NUNCA la marca como "completada" solo porque
+// no encontró la siguiente semana en la biblioteca — eso solo significa "aún no la hemos publicado".
+// Actualiza este mapa cuando definamos el total final de cada etapa.
+const TR_ETAPA_TOTAL_SEMANAS = { foundations: 13 };
 const WA_TRAINING = '50581481862';
 let trYaEscuchado = false;
 let trProgresoActual = null;
@@ -2803,7 +2808,8 @@ async function inicializarProgresoTraining() {
     etapaActual: 'foundations', semanaIdActual: primera ? primera.id : null,
     diaActual: 1, pasoActual: 'prime',
     semanasCompletadas: 0, rachaSemanas: 0, ultimaSemanaCompletadaFecha: 0,
-    retosEnviados: 0, palabrasPracticadas: 0, etapasCompletadas: [], historialSemanas: []
+    retosEnviados: 0, palabrasPracticadas: 0, etapasCompletadas: [], historialSemanas: [],
+    ultimoOrdenCompletado: 0
   });
 }
 let trReparacionEnCurso = false;
@@ -2819,7 +2825,7 @@ async function intentarRepararSemanaFaltante(progreso) {
   if (progreso.semanaIdActual || completo) return;
   trReparacionEnCurso = true;
   try {
-    const disponible = await obtenerPrimeraSemanaDisponible(progreso.etapaActual, 0);
+    const disponible = await obtenerPrimeraSemanaDisponible(progreso.etapaActual, progreso.ultimoOrdenCompletado || 0);
     if (disponible) {
       await updateDoc(doc(db,'entrenamiento_progreso', sessionActiva.id), {
         semanaIdActual: disponible.id,
@@ -3264,7 +3270,14 @@ window.completarDiaTraining = async () => {
     let siguiente = await obtenerPrimeraSemanaDisponible(trProgresoActual.etapaActual, ordenActual);
     let nuevaEtapa = trProgresoActual.etapaActual;
     let nuevasEtapasCompletadas = trProgresoActual.etapasCompletadas || [];
-    if (!siguiente) {
+    // Solo consideramos la etapa "realmente terminada" si ya sabemos cuántas semanas tiene en
+    // total esa etapa (TR_ETAPA_TOTAL_SEMANAS) Y el alumno llegó a esa última semana. Si la
+    // biblioteca simplemente no tiene la siguiente semana publicada todavía, NO avanzamos de
+    // etapa ni otorgamos el badge — el alumno se queda esperando contenido nuevo, sin perder
+    // su lugar ni recibir un logro que no ganó.
+    const totalEtapa = TR_ETAPA_TOTAL_SEMANAS[nuevaEtapa];
+    const etapaRealmenteTerminada = !siguiente && !!totalEtapa && ordenActual >= totalEtapa;
+    if (!siguiente && etapaRealmenteTerminada) {
       if (!nuevasEtapasCompletadas.includes(nuevaEtapa)) nuevasEtapasCompletadas = [...nuevasEtapasCompletadas, nuevaEtapa];
       const idx = TR_ETAPAS.indexOf(nuevaEtapa);
       if (idx < TR_ETAPAS.length - 1) {
@@ -3280,6 +3293,9 @@ window.completarDiaTraining = async () => {
       etapaActual: nuevaEtapa,
       etapasCompletadas: nuevasEtapasCompletadas,
       semanaIdActual: siguiente ? siguiente.id : null,
+      // Si nos quedamos en la misma etapa (con o sin siguiente semana lista), recordamos hasta
+      // dónde llegó el alumno para no hacerlo repetir semanas ya hechas cuando se autorepare.
+      ultimoOrdenCompletado: nuevaEtapa === trProgresoActual.etapaActual ? ordenActual : 0,
       diaActual: 1,
       pasoActual: 'prime',
       // Guardamos la semana recién terminada en el historial para que el alumno
@@ -4386,7 +4402,22 @@ window.reasignarSemanaAlumno = async (alumnoId) => {
   const semana = trSemanasCacheAdmin.find(s => s.id === sel.value);
   if (!semana) return;
   if (!confirm(`¿Reasignar a "${semana.titulo}"? El alumno empezará esa semana desde el Día 1.`)) return;
-  await updateDoc(doc(db,'entrenamiento_progreso', alumnoId), { semanaIdActual: semana.id, etapaActual: semana.etapa, diaActual:1, pasoActual:'prime' });
+  const progreso = trProgresoCacheAdmin.find(p => p.id === alumnoId);
+  const idxEtapaDestino = TR_ETAPAS.indexOf(semana.etapa);
+  // Al reasignar manualmente, quitamos de "etapasCompletadas" cualquier etapa igual o posterior
+  // a la que estamos asignando — si el alumno va a cursar (o recursar) esa etapa, no puede seguir
+  // marcada como completada ni mostrar su badge. Las etapas anteriores sí se conservan.
+  const etapasCompletadasLimpias = (progreso && progreso.etapasCompletadas || []).filter(e => TR_ETAPAS.indexOf(e) < idxEtapaDestino);
+  await updateDoc(doc(db,'entrenamiento_progreso', alumnoId), {
+    semanaIdActual: semana.id,
+    etapaActual: semana.etapa,
+    diaActual: 1,
+    pasoActual: 'prime',
+    etapasCompletadas: etapasCompletadasLimpias,
+    // Recordamos como "última completada" la semana justo anterior a la asignada, para que la
+    // autoreparación futura no lo haga repetir esta semana ni las anteriores de esta etapa.
+    ultimoOrdenCompletado: Math.max(0, (semana.orden||1) - 1)
+  });
 };
 window.cargarEjemploSemanaTraining = () => {
   const diasEjemplo = [
