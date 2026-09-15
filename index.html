@@ -536,6 +536,61 @@ a { color: inherit; }
 .tr-progress-table th { text-align:left; color:var(--muted-dim); font-size:10.5px; text-transform:uppercase; padding:8px 6px; border-bottom:1px solid var(--border); }
 .tr-progress-table td { padding:9px 6px; border-bottom:1px solid var(--border); color:var(--text); }
 
+/* ===== TRAINING ROOM — "sentirse vivo": feedback de toque en botones clave ===== */
+.tr-step-card, .tr-week-card { animation: fadeUp .38s var(--ease) both; }
+.btn-login, .tr-day-tab, .tr-confirm-btn, .tr-wa-btn, .tr-journey-btn, .tr-mini-btn, .tr-search-btn, .tr-tot-opt, .tr-ord-chip {
+  transition: transform .12s var(--ease), box-shadow .12s var(--ease), background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease);
+}
+.btn-login:active:not(:disabled), .tr-day-tab:active, .tr-journey-btn:active, .tr-mini-btn:active, .tr-search-btn:active { transform: scale(.96); }
+
+/* ===== TRAINING ROOM — Day Completed / Level Up ===== */
+.tr-daycomplete { text-align:center; padding:34px 18px; position:relative; overflow:hidden; }
+.tr-daycomplete .tr-dc-icon { width:76px; height:76px; border-radius:50%; margin:0 auto 16px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); display:flex; align-items:center; justify-content:center; font-size:32px; color:#000; box-shadow:0 12px 30px var(--gold-glow); animation: trDcPopIn .5s var(--ease) both; }
+.tr-daycomplete h3 { font-family:'Playfair Display'; font-size:22px; color:#fff; margin-bottom:6px; }
+.tr-daycomplete p.tr-dc-sub { color:var(--muted); font-size:13px; margin-bottom:22px; }
+.tr-dc-btnrow { display:flex; flex-direction:column; gap:10px; max-width:280px; margin:0 auto; }
+.tr-dc-btn-continue { width:100%; padding:15px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:800; border:none; border-radius:var(--r-sm); cursor:pointer; font-family:inherit; font-size:13.5px; box-shadow:0 4px 0 #8a5c10; transition: transform .12s var(--ease), box-shadow .12s var(--ease); }
+.tr-dc-btn-continue:active { transform:translateY(4px); box-shadow:0 0 0 #8a5c10; }
+.tr-dc-btn-exit { width:100%; padding:14px; background:transparent; color:var(--muted); font-weight:700; border:1px solid var(--border2); border-radius:var(--r-sm); cursor:pointer; font-family:inherit; font-size:13px; transition: transform .12s var(--ease), border-color .15s var(--ease), color .15s var(--ease); }
+.tr-dc-btn-exit:active { transform:scale(.97); }
+.tr-dc-btn-exit:hover { border-color:var(--muted); color:var(--text); }
+@keyframes trDcPopIn { 0%{ transform:scale(.3); opacity:0; } 60%{ transform:scale(1.12); opacity:1; } 100%{ transform:scale(1); } }
+
+/* Level-up (semana completada) — más grande, más celebración */
+.tr-levelup { text-align:center; padding:38px 16px 30px; position:relative; overflow:hidden; }
+.tr-levelup .tr-lu-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 16px; border-radius:99px; background:rgba(240,180,41,.12); border:1px solid var(--gold2); color:var(--gold3); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; animation: pulseSoft 1.8s ease infinite; }
+.tr-lu-trophy { width:96px; height:96px; border-radius:50%; margin:0 auto 18px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); display:flex; align-items:center; justify-content:center; font-size:42px; color:#000; box-shadow:0 16px 40px var(--gold-glow); animation: trLevelUpPop .6s var(--ease) both, glow 2s ease infinite 0.6s; position:relative; z-index:2; }
+.tr-levelup h2 { font-family:'Playfair Display'; font-size:25px; color:#fff; margin-bottom:6px; position:relative; z-index:2; }
+.tr-levelup p.tr-lu-sub { color:var(--muted); font-size:13.5px; margin-bottom:6px; position:relative; z-index:2; }
+.tr-levelup p.tr-lu-next { color:var(--gold3); font-weight:700; font-size:14px; margin:14px 0 22px; position:relative; z-index:2; }
+.tr-lu-stage-jump { display:inline-flex; align-items:center; gap:10px; background:rgba(255,255,255,.04); border:1px solid var(--border2); border-radius:14px; padding:10px 16px; margin:0 0 22px; font-size:12px; color:var(--muted); position:relative; z-index:2; }
+.tr-lu-stage-jump b { color:var(--gold3); }
+.tr-lu-stage-jump i.fa-arrow-right-long { color:var(--gold2); }
+@keyframes trLevelUpPop { 0%{ transform:scale(.2) rotate(-25deg); opacity:0; } 55%{ transform:scale(1.18) rotate(6deg); opacity:1; } 100%{ transform:scale(1) rotate(0); } }
+.tr-confetti-wrap { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1; }
+.tr-confetti-dot { position:absolute; top:-12px; width:7px; height:7px; border-radius:2px; background:var(--gold2); opacity:.9; animation: trConfettiFall 2.4s ease-in forwards; }
+.tr-confetti-dot:nth-child(1) { left:6%;  background:var(--gold3); animation-delay:.02s; }
+.tr-confetti-dot:nth-child(2) { left:16%; background:var(--green); animation-delay:.16s; }
+.tr-confetti-dot:nth-child(3) { left:26%; background:var(--gold); animation-delay:.05s; }
+.tr-confetti-dot:nth-child(4) { left:38%; background:var(--blue); animation-delay:.3s; }
+.tr-confetti-dot:nth-child(5) { left:50%; background:var(--gold3); animation-delay:.1s; }
+.tr-confetti-dot:nth-child(6) { left:62%; background:var(--gold2); animation-delay:.24s; }
+.tr-confetti-dot:nth-child(7) { left:74%; background:var(--green); animation-delay:.02s; }
+.tr-confetti-dot:nth-child(8) { left:84%; background:var(--gold); animation-delay:.34s; }
+.tr-confetti-dot:nth-child(9) { left:94%; background:var(--blue); animation-delay:.14s; }
+.tr-confetti-dot:nth-child(10) { left:44%; background:var(--gold2); animation-delay:.4s; }
+@keyframes trConfettiFall { 0%{ transform:translateY(0) rotate(0deg); opacity:1; } 100%{ transform:translateY(240px) rotate(280deg); opacity:0; } }
+
+/* ===== TRAINING ROOM — días clicables (repasar días anteriores) ===== */
+.tr-daydots { position:relative; }
+.tr-daydot { position:relative; cursor:default; transition: transform .15s var(--ease), background .2s var(--ease); }
+.tr-daydot.clickable { cursor:pointer; }
+.tr-daydot.clickable:hover { transform:scaleY(2.4); }
+.tr-daydot.clickable:active { transform:scaleY(1.6); }
+.tr-daydot.current { animation: pulseSoft 1.6s ease infinite; }
+.tr-daynav-hint { text-align:center; color:var(--muted-dim); font-size:10.5px; margin-top:8px; }
+.tr-daynav-hint i { color:var(--gold2); margin-right:3px; }
+
 /* ===== TRAINING ROOM — herramientas superiores (Journey + Traductor) ===== */
 .tr-toolbar { display:flex; gap:8px; margin:14px 0 6px; }
 .tr-journey-btn { flex-shrink:0; display:flex; align-items:center; gap:7px; background:linear-gradient(135deg, var(--gold-dim), rgba(240,180,41,.04)); border:1px solid var(--gold2); color:var(--gold3); font-weight:700; font-size:11.5px; padding:0 14px; border-radius:12px; cursor:pointer; font-family:inherit; white-space:nowrap; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
@@ -1073,6 +1128,7 @@ a { color: inherit; }
       </div>
       <div id="tr-translate-result"></div>
       <div class="tr-stagepath" id="tr-stagepath"></div>
+      <div class="tr-practice-row" id="tr-practice-row"></div>
       <div id="tr-content"><p class="tr-lock-msg">Loading your progress...</p></div>
       <div class="tr-metric-grid" id="tr-metric-grid"></div>
       <div class="tr-badges-row" id="tr-badges-row"></div>
@@ -2732,7 +2788,11 @@ let trOrdenarRespuesta = [];  // estado del ejercicio de "armar oración" en cur
 let trReconocedorVoz = null;  // instancia de SpeechRecognition en uso
 let trSpeakingExitosos = 0;   // cuenta ejercicios de "speaking" superados (para la medalla Speaking Master)
 let trModoPractica = null;    // { dia:1-5, paso:'prime'|'absorb'|'train'|'done' } — repaso libre, NO escribe en Firestore
-let trPracticaPickerAbierto = false;
+// Pantalla de "Day Completed" / "Level Up": se calcula y se guarda ANTES de escribir en
+// Firestore, así el listener (que puede disparar casi instantáneo por la caché local) ya
+// encuentra esta bandera activa y muestra la celebración en vez del contenido del día nuevo.
+// El alumno decide cuándo avanzar (Salir / Continuar), nunca pasa "de un solo".
+let trPendingCelebration = null;
 
 /* ===== TRAINING ROOM — Modo práctica (repasar días ya completados sin afectar el progreso real) ===== */
 function trDiaEfectivo() { return trModoPractica ? trModoPractica.dia : (trProgresoActual ? trProgresoActual.diaActual : 1); }
@@ -2743,26 +2803,19 @@ window.trAvanzarPaso = function(paso, btn) {
   avanzarPasoTraining(paso, btn);
 }
 function renderPracticeRow() {
+  // Los días anteriores ahora se repasan tocando directamente los puntitos (tr-daydots) del
+  // día de la semana. Este bloque solo muestra el banner de "estás en modo práctica" para
+  // que quede claro que tu progreso real no se está moviendo.
   const cont = document.getElementById('tr-practice-row');
   if (!cont || !trProgresoActual) return;
   if (trModoPractica) {
     cont.innerHTML = `<div class="tr-practice-banner"><span><i class="fa-solid fa-flask"></i> Practice mode — Day ${trModoPractica.dia} (this does not change your real progress)</span><button class="tr-mini-btn" onclick="trSalirPractica()" title="Exit practice"><i class="fa-solid fa-xmark"></i></button></div>`;
-    return;
-  }
-  const diasDisponibles = Math.max(0, trProgresoActual.diaActual - 1); // solo días YA completados de esta semana
-  if (!trSemanaActual || diasDisponibles < 1) { cont.innerHTML = ''; return; }
-  if (!trPracticaPickerAbierto) {
-    cont.innerHTML = `<button class="tr-journey-btn" type="button" onclick="trTogglePracticaPicker()"><i class="fa-solid fa-arrows-rotate"></i> Practice a previous day</button>`;
   } else {
-    const chips = Array.from({ length: diasDisponibles }, (_, i) => i + 1)
-      .map(d => `<button class="tr-day-tab" type="button" onclick="trAbrirPracticaDia(${d})">Day ${d}</button>`).join('');
-    cont.innerHTML = `<p class="form-hint" style="margin-bottom:2px;">Pick a day to replay just for practice — your real progress stays where it is:</p><div class="tr-practice-days">${chips}</div>`;
+    cont.innerHTML = '';
   }
 }
-window.trTogglePracticaPicker = () => { trPracticaPickerAbierto = !trPracticaPickerAbierto; renderPracticeRow(); };
 window.trAbrirPracticaDia = (diaNum, semanaObj) => {
   trModoPractica = { dia: diaNum, paso: 'prime', semana: semanaObj || trSemanaActual };
-  trPracticaPickerAbierto = false;
   trCircuitoKey = null; // fuerza a reconstruir el circuito para el día que se va a repasar
   renderTrainingRoom();
 };
@@ -2906,6 +2959,7 @@ function renderTrainingRoom() {
   renderBadgesTraining();
   renderPracticeRow();
   const cont = document.getElementById('tr-content');
+  if (trPendingCelebration) { cont.innerHTML = renderCelebracionTraining(trPendingCelebration); return; }
   if (!trProgresoActual.semanaIdActual || !trSemanaActual) {
     const todoListo = trProgresoActual.etapasCompletadas && trProgresoActual.etapasCompletadas.length >= 4;
     cont.innerHTML = `<div class="tr-week-card" style="text-align:center;"><i class="fa-solid ${todoListo?'fa-trophy tr-icon-bounce':'fa-hourglass-half tr-icon-spin-slow'}" style="font-size:34px; color:var(--gold2); margin-bottom:10px;"></i><h3>${todoListo ? 'You completed the whole program!' : "Looking for your next session..."}</h3><p class="form-hint" style="margin-top:8px;">${todoListo ? 'All 4 stages finished. Amazing work reprogramming your English.' : 'We\'re checking for new content for you. If this takes more than a few seconds, come back a bit later — your progress is saved exactly where you left it.'}</p></div>`;
@@ -2926,7 +2980,19 @@ function renderTrainingRoom() {
   else if (pasoEfectivo === 'train') pasoHtml = renderPasoTrain(dia);
   else pasoHtml = renderPasoProduce(dia);
 
-  const dots = [1,2,3,4,5].map(d => `<div class="tr-daydot ${d < trProgresoActual.diaActual ? 'done' : d === trProgresoActual.diaActual ? 'current' : ''}"></div>`).join('');
+  const diaRealActual = trProgresoActual.diaActual;
+  const dots = [1,2,3,4,5].map(d => {
+    const esPasado = d < diaRealActual;               // ya completado → se puede repasar
+    const esActual = d === diaRealActual && !trModoPractica;
+    const esActualEnPractica = trModoPractica && d === trModoPractica.dia;
+    const clases = ['tr-daydot'];
+    if (esPasado) clases.push('done', 'clickable');
+    if (esActual || esActualEnPractica) clases.push('current');
+    const click = esPasado ? ` onclick="trAbrirPracticaDia(${d})"` : '';
+    const title = esPasado ? ` title="Repasar Day ${d}"` : '';
+    return `<div class="${clases.join(' ')}"${click}${title}></div>`;
+  }).join('');
+  const hayDiasParaRepasar = !trModoPractica && (diaRealActual - 1) >= 1;
   const esDia5 = !trModoPractica && trProgresoActual.diaActual === 5;
   const pasos = esDia5 ? ['prime','absorb','train','produce'] : ['prime','absorb','train'];
   const nombresPaso = { prime:'Mindset', absorb:'Absorb', train:'Practice', produce:'Send to coach' };
@@ -2937,10 +3003,47 @@ function renderTrainingRoom() {
     <span class="tr-etapa-tag">${TR_ETAPA_LABEL[trProgresoActual.etapaActual]}</span>
     <h3>${escNeclub(semanaEfectiva.titulo || 'Untitled week')}</h3>
     <div class="tr-daydots">${dots}</div>
+    ${hayDiasParaRepasar ? `<p class="tr-daynav-hint"><i class="fa-solid fa-arrows-rotate"></i>Toca un día anterior para repasarlo</p>` : ''}
   </div>
   <div class="tr-steps">${chips}</div>
   ${pasoHtml}`;
 }
+function renderCelebracionTraining(info) {
+  if (info.tipo === 'day') {
+    return `<div class="tr-week-card tr-daycomplete">
+      <div class="tr-dc-icon"><i class="fa-solid fa-check"></i></div>
+      <h3>Day ${info.diaCompletado} Completed!</h3>
+      <p class="tr-dc-sub">Nice work. Ready for Day ${info.diaCompletado + 1}, or take a break — your progress is saved either way.</p>
+      <div class="tr-dc-btnrow">
+        <button class="tr-dc-btn-continue" onclick="trCerrarCelebracion()">Continue → Day ${info.diaCompletado + 1} <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="tr-dc-btn-exit" onclick="trSalirDesdeCelebracion()">Exit</button>
+      </div>
+    </div>`;
+  }
+  // tipo === 'week' — celebración grande de "subir de nivel"
+  const confetti = Array.from({length:10}).map(() => `<div class="tr-confetti-dot"></div>`).join('');
+  const stageJumpHtml = info.subioDeEtapa
+    ? `<div class="tr-lu-stage-jump"><b>${escNeclub(TR_ETAPA_LABEL[info.etapaAnterior]||'')}</b><i class="fa-solid fa-arrow-right-long"></i><b>${escNeclub(TR_ETAPA_LABEL[info.etapaNueva]||'')}</b></div>`
+    : '';
+  const nextHtml = info.siguienteTitulo
+    ? `<p class="tr-lu-next"><i class="fa-solid fa-flag-checkered"></i> Next up: ${escNeclub(info.siguienteTitulo)}</p>`
+    : `<p class="tr-lu-next"><i class="fa-solid fa-hourglass-half"></i> We're preparing your next week — check back soon</p>`;
+  return `<div class="tr-week-card tr-levelup">
+    <div class="tr-confetti-wrap">${confetti}</div>
+    <span class="tr-lu-badge"><i class="fa-solid fa-fire"></i> ${info.rachaSemanas}-week streak</span>
+    <div class="tr-lu-trophy"><i class="fa-solid fa-trophy"></i></div>
+    <h2>Week Completed! 🎉</h2>
+    <p class="tr-lu-sub">"${escNeclub(info.semanaCompletadaTitulo||'')}" is done. You just leveled up.</p>
+    ${stageJumpHtml}
+    ${nextHtml}
+    <div class="tr-dc-btnrow">
+      <button class="tr-dc-btn-continue" onclick="trCerrarCelebracion()">${info.siguienteTitulo ? 'Start next week' : 'Continue'} <i class="fa-solid fa-arrow-right"></i></button>
+      <button class="tr-dc-btn-exit" onclick="trSalirDesdeCelebracion()">Exit</button>
+    </div>
+  </div>`;
+}
+window.trCerrarCelebracion = () => { trPendingCelebration = null; renderTrainingRoom(); };
+window.trSalirDesdeCelebracion = () => { trPendingCelebration = null; showScreen('s-student'); };
 function renderStagePathTraining() {
   const cont = document.getElementById('tr-stagepath');
   if (!cont) return;
@@ -3300,6 +3403,10 @@ window.completarDiaTraining = async () => {
   try {
     if (trProgresoActual.diaActual < 5) {
       // Días 1-4: el circuito de juegos YA fue la práctica del día, no hay envío de audio por WhatsApp.
+      // Activamos la bandera de celebración ANTES del updateDoc para que el listener de Firestore
+      // (que puede disparar casi instantáneo desde la caché local) ya la encuentre activa y
+      // muestre "Day Completed" en vez de saltar directo al contenido del día siguiente.
+      trPendingCelebration = { tipo: 'day', diaCompletado: trProgresoActual.diaActual };
       await updateDoc(ref, { diaActual: increment(1), pasoActual: 'prime' });
       return;
     }
@@ -3326,6 +3433,17 @@ window.completarDiaTraining = async () => {
         siguiente = await obtenerPrimeraSemanaDisponible(nuevaEtapa, 0);
       }
     }
+    // Igual que en el caso de día 1-4: activamos la celebración ANTES del updateDoc para que
+    // nunca se vea "de un solo" el salto a la semana/etapa siguiente.
+    trPendingCelebration = {
+      tipo: 'week',
+      semanaCompletadaTitulo: trSemanaActual ? trSemanaActual.titulo : '',
+      siguienteTitulo: siguiente ? siguiente.titulo : null,
+      rachaSemanas: nuevaRacha,
+      subioDeEtapa: nuevaEtapa !== trProgresoActual.etapaActual,
+      etapaNueva: nuevaEtapa,
+      etapaAnterior: trProgresoActual.etapaActual
+    };
     await updateDoc(ref, {
       semanasCompletadas: increment(1),
       rachaSemanas: nuevaRacha,
@@ -3346,6 +3464,7 @@ window.completarDiaTraining = async () => {
     setTimeout(() => trVerificarMedallas(), 800); // deja que el listener sincronice el nuevo progreso antes de chequear
   } catch (e) {
     console.error('No se pudo completar el día de Training Room:', e);
+    trPendingCelebration = null; // el guardado falló: no mostramos celebración de algo que no se guardó
     showModal('No se pudo guardar tu progreso', 'Revisa tu conexión a internet e intenta de nuevo. Tu reto de voz ya fue enviado, solo falta guardar el avance del día.');
     if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.textoOriginal; }
   }
@@ -3359,6 +3478,51 @@ function trBotonSonido(texto, lang, claseExtra) {
   return `<button type="button" class="tr-speak-btn ${claseExtra||''}" data-speak="${escNeclub(limpio)}" data-lang="${lang||'en-US'}" onclick="trHablar(this)" title="Escuchar pronunciación"><i class="fa-solid fa-volume-high"></i></button>`;
 }
 let trUtteranceActual = null;
+let trVocesDisponibles = [];
+let trVocesListas = false;
+function trCargarVoces() {
+  if (!('speechSynthesis' in window)) return;
+  trVocesDisponibles = window.speechSynthesis.getVoices() || [];
+  if (trVocesDisponibles.length) trVocesListas = true;
+}
+if ('speechSynthesis' in window) {
+  trCargarVoces();
+  // En Chrome/Android las voces se cargan de forma asíncrona; si tocamos el botón de sonido
+  // antes de que 'voiceschanged' dispare, el navegador a veces se queda mudo sin avisar.
+  window.speechSynthesis.onvoiceschanged = trCargarVoces;
+}
+function trMejorVozPara(lang) {
+  if (!trVocesDisponibles.length) return null;
+  const base = String(lang||'en-US').toLowerCase();
+  const corto = base.split('-')[0];
+  return trVocesDisponibles.find(v => v.lang && v.lang.toLowerCase() === base)
+      || trVocesDisponibles.find(v => v.lang && v.lang.toLowerCase().startsWith(corto))
+      || null;
+}
+function trAvisoSinAudio(btn) {
+  // Aviso corto y no intrusivo (evita el "silencio total" sin explicación) cuando de verdad
+  // no hay ninguna voz disponible en el idioma pedido en este dispositivo.
+  if (btn) {
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+    btn.title = 'Sin voz de audio en este dispositivo';
+    setTimeout(() => { btn.innerHTML = original; }, 1800);
+  }
+}
+function trEjecutarHabla(texto, lang, btn) {
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang = lang;
+  const voz = trMejorVozPara(lang);
+  if (voz) u.voice = voz;
+  u.rate = 0.92;
+  if (btn) {
+    btn.classList.add('playing');
+    u.onend = () => btn.classList.remove('playing');
+    u.onerror = () => { btn.classList.remove('playing'); trAvisoSinAudio(btn); };
+  }
+  trUtteranceActual = u;
+  window.speechSynthesis.speak(u);
+}
 window.trHablar = (origen) => {
   if (!('speechSynthesis' in window)) {
     showModal('Audio no disponible', 'Tu navegador no soporta la pronunciación por voz. Prueba con Chrome o Safari actualizados.');
@@ -3368,19 +3532,17 @@ window.trHablar = (origen) => {
   let texto, lang, btn;
   if (typeof origen === 'string') { texto = origen; lang = 'en-US'; }
   else { btn = origen; texto = btn.dataset.speak; lang = btn.dataset.lang || 'en-US'; }
-  window.speechSynthesis.cancel();
   document.querySelectorAll('.tr-speak-btn.playing').forEach(b => b.classList.remove('playing'));
   if (!texto) return;
-  const u = new SpeechSynthesisUtterance(texto);
-  u.lang = lang;
-  u.rate = 0.92;
-  if (btn) {
-    btn.classList.add('playing');
-    u.onend = () => btn.classList.remove('playing');
-    u.onerror = () => btn.classList.remove('playing');
-  }
-  trUtteranceActual = u;
-  window.speechSynthesis.speak(u);
+  window.speechSynthesis.cancel();
+  // FIX del bug intermitente: llamar cancel() y speak() en el mismo tick hace que varios
+  // navegadores (sobre todo Chrome en Android) descarten también la nueva frase, quedándose
+  // en silencio sin ningún error. Con un pequeño respiro después del cancel(), esto casi
+  // siempre desaparece.
+  setTimeout(() => {
+    if (!trVocesListas) trCargarVoces(); // último intento por si 'voiceschanged' nunca disparó
+    trEjecutarHabla(texto, lang, btn);
+  }, 70);
 };
 
 /* ===== TRAINING ROOM — Traductor (solo dentro del Training Room) ===== */
