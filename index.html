@@ -1620,6 +1620,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
@@ -1634,9 +1635,22 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
+const functionsInstance = getFunctions(app, 'us-central1');
 const CORREO_ADMIN = "95gusmg@gmail.com";
 let sessionActiva = null;
 window.getSessionActiva = () => sessionActiva; // permite que el widget NEC Coach (fuera del módulo) lea el nombre del alumno
+
+// Puente seguro para el widget NEC Coach: llama a la Cloud Function
+// necCoachChat (la key de Gemini vive solo en el servidor, nunca aquí).
+// Requiere sesión iniciada (aunque sea anónima) porque la función exige auth.
+window.necCallCoach = async function (history, name, level) {
+  if (!auth.currentUser) {
+    await signInAnonymously(auth);
+  }
+  const callCoach = httpsCallable(functionsInstance, 'necCoachChat');
+  const res = await callCoach({ history, name, level });
+  return res.data && res.data.reply;
+};
 let latidoInterval = null;
 let ultimasActividades = [];
 let ultimosRetos = [];
@@ -6184,12 +6198,9 @@ function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u03
      ============================================================ -->
 <script>
 (function () {
-  const GEMINI_API_KEY = 'AIzaSyDY-U_zpzP--FDjsxdXJuWisbZysCf3PBk';
-  // NOTA: gemini-1.5-flash fue descontinuado por Google (ahora responde 404 en cualquier proyecto).
-  // Se usa gemini-3.1-flash-lite: es el modelo actual, rápido y económico, recomendado para chat.
-  const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`;
-
-  const SYSTEM_PROMPT = `
+  // La llamada a Gemini ahora vive en el backend (Cloud Function necCoachChat).
+  // La key y el prompt del sistema ya NO se necesitan aquí — ver functions/index.js.
+  const SYSTEM_PROMPT_UNUSED_KEEP_FOR_REFERENCE = `
 You are the "Nica English Coach", the personal AI English trainer for Nica English Club (app.nicaenglishclub.com).
 
 CORE PHILOSOPHY:
@@ -6394,39 +6405,15 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     necHistory.push({ role: 'user', parts: [{ text: userText }] });
     const name = getStudentName();
     const level = getStudentLevel();
-    let sysText = SYSTEM_PROMPT;
-    if (name) sysText += `\n\nThe student's name is "${name}". Address them by this name from time to time.`;
-    if (level) sysText += `\n\nThe student self-reported their level as: ${level}. Use it as your starting point, but silently recalibrate if their actual responses suggest otherwise.`;
 
-    const body = {
-      systemInstruction: { parts: [{ text: sysText }] },
-      contents: necHistory,
-      // Gemini 3 ya no acepta temperature/top_p/top_k. thinkingLevel 'minimal' deja
-      // el menor "pensamiento interno" posible para gemini-3.1-flash-lite, así casi
-      // todo el presupuesto de tokens se usa en la respuesta visible (evita que se
-      // corte a medio mensaje). maxOutputTokens se sube con margen de sobra.
-      generationConfig: {
-        maxOutputTokens: 1024,
-        thinkingConfig: { thinkingLevel: 'low' }
-      }
-    };
-
-    const res = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    if (!res.ok) {
-      let detalle = '';
-      try { detalle = await res.text(); } catch (e) {}
-      console.error('NEC Coach / Gemini raw error body:', detalle);
-      throw new Error('HTTP ' + res.status + ' - ' + detalle);
+    let reply;
+    try {
+      reply = await window.necCallCoach(necHistory, name, level);
+    } catch (err) {
+      console.error('NEC Coach / backend error:', err);
+      throw err;
     }
-    const data = await res.json();
-    const parts = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
-    const reply = (parts || []).map(p => p.text || '').join('').trim()
-      || "Sorry, I couldn't think of a reply. Can you say that again?";
+    reply = (reply || '').trim() || "Sorry, I couldn't think of a reply. Can you say that again?";
     necHistory.push({ role: 'model', parts: [{ text: reply }] });
     return reply;
   }
