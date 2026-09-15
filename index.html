@@ -6399,7 +6399,7 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     if (level) sysText += `\n\nThe student self-reported their level as: ${level}. Use it as your starting point, but silently recalibrate if their actual responses suggest otherwise.`;
 
     const body = {
-      system_instruction: { parts: [{ text: sysText }] },
+      systemInstruction: { parts: [{ text: sysText }] },
       contents: necHistory,
       // Gemini 3 ya no acepta temperature/top_p/top_k. thinkingLevel 'minimal' deja
       // el menor "pensamiento interno" posible para gemini-3.1-flash-lite, así casi
