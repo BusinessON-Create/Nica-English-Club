@@ -1254,7 +1254,19 @@ a { color: inherit; }
           <p class="admin-label"><i class="fa-solid fa-book-open-reader"></i> Biblioteca de semanas</p>
           <p class="form-hint">Crea el contenido de cada semana (Foundations, Everyday English, Confidence, Fluency Mode). Los alumnos avanzan solos por la biblioteca según su propio ritmo — tú solo la mantienes llena.</p>
           <button class="btn-login btn-outline-gold" onclick="abrirEditorSemanaTraining()"><i class="fa-solid fa-plus"></i> Nueva semana</button>
-          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemanaTraining()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 1 — Foundations)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemanaTraining()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 1 — Who Are You?)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana2Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 2 — My Day, My Words)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana3Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 3 — Where Is It?)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana4Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 4 — Yesterday & Me)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana5Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 5 — My People)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana6Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 6 — Free Time)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana7Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 7 — What to Wear)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana8Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 8 — How Do You Feel?)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana9Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 9 — Let's Go Shopping)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana10Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 10 — My Plans)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana11Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 11 — Bigger, Better, Best)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana12Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 12 — What Should I Do?)</button>
+          <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana13Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 13 — This Is My Life)</button>
 
           <div id="tr-editor-wrap" style="display:none; margin-top:18px; border-top:1px solid var(--border); padding-top:18px;">
             <input type="hidden" id="tr-semana-id-edicion">
@@ -2971,15 +2983,22 @@ function trBarajar(arr) {
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
+function trCantidadesCircuito(total) {
+  // Más pares cargados por el admin = sesión más larga. Con 6 pares (Semana 1) se mantiene igual que siempre.
+  if (total >= 10) return { pares: 6, listening: 5 };
+  if (total >= 8) return { pares: 5, listening: 4 };
+  return { pares: 3, listening: 2 };
+}
 function trConstruirCircuito(dia, diaNum) {
   const tipos = trTiposDisponiblesPorDia(diaNum);
   const paresValidos = (dia.pares || []).filter(p => p && p.correcta && p.incorrecta);
+  const cant = trCantidadesCircuito(paresValidos.length);
   const ejercicios = [];
   if (tipos.includes('pares')) {
-    trBarajar(paresValidos).slice(0, 3).forEach(p => ejercicios.push({ tipo: 'pares', par: p }));
+    trBarajar(paresValidos).slice(0, cant.pares).forEach(p => ejercicios.push({ tipo: 'pares', par: p }));
   }
   if (tipos.includes('listening') && paresValidos.length) {
-    trBarajar(paresValidos).slice(0, 2).forEach(p => ejercicios.push({ tipo: 'listening', par: p }));
+    trBarajar(paresValidos).slice(0, cant.listening).forEach(p => ejercicios.push({ tipo: 'listening', par: p }));
   }
   if (tipos.includes('ordenar')) {
     const frase = (dia.prime || '').trim();
@@ -4238,10 +4257,11 @@ window.cambiarDiaEditorTraining = (d) => {
   renderEditorDayTabsTraining();
   [1,2,3,4,5].forEach(n => { const el = document.getElementById('tr-day-block-'+n); if (el) el.style.display = (n===d ? 'block' : 'none'); });
 };
+const TR_PARES_MAX = 10;
 function bloqueDiaHtmlTraining(n, dia) {
   dia = dia || {};
-  const paresBase = (dia.pares && dia.pares.length) ? dia.pares : Array.from({length:6},()=>({correcta:'',incorrecta:''}));
-  const pares = paresBase.length < 6 ? paresBase.concat(Array.from({length:6-paresBase.length},()=>({correcta:'',incorrecta:''}))) : paresBase.slice(0,6);
+  const paresBase = (dia.pares && dia.pares.length) ? dia.pares : Array.from({length:TR_PARES_MAX},()=>({correcta:'',incorrecta:''}));
+  const pares = paresBase.length < TR_PARES_MAX ? paresBase.concat(Array.from({length:TR_PARES_MAX-paresBase.length},()=>({correcta:'',incorrecta:''}))) : paresBase.slice(0,TR_PARES_MAX);
   const paresHtml = pares.map((p,i) => `<div class="tr-pair-row"><input type="text" id="tr-d${n}-par${i}-correcta" class="admin-input" placeholder="Correct phrase" value="${(p.correcta||'').replace(/"/g,'&quot;')}"><input type="text" id="tr-d${n}-par${i}-incorrecta" class="admin-input" placeholder="Incorrect phrase" value="${(p.incorrecta||'').replace(/"/g,'&quot;')}"></div>`).join('');
   return `<div id="tr-day-block-${n}" style="display:${n===1?'block':'none'};">
     <input type="text" id="tr-d${n}-prime" class="admin-input" placeholder="Mindset phrase (English)" value="${(dia.prime||'').replace(/"/g,'&quot;')}">
@@ -4252,7 +4272,7 @@ function bloqueDiaHtmlTraining(n, dia) {
       <option value="audio" ${dia.absorbTipo==='audio'?'selected':''}>Audio (URL)</option>
     </select>
     <textarea id="tr-d${n}-contenido" class="admin-input" rows="3" placeholder="Contenido a consumir (texto, link de YouTube, o URL de audio)">${dia.absorbContenido||''}</textarea>
-    <p class="admin-label" style="font-size:11px;">This or That — 6 pares (frase correcta vs incorrecta)</p>
+    <p class="admin-label" style="font-size:11px;">This or That — hasta ${TR_PARES_MAX} pares (frase correcta vs incorrecta). Deja vacíos los que no uses.</p>
     ${paresHtml}
     <p class="form-hint" style="margin:4px 0 10px; font-size:11px;"><i class="fa-solid fa-circle-info"></i> Con la frase de Mindset y estos pares, el sistema arma solo los juegos de listening, armar oración y speaking — no hace falta llenar nada más.</p>
     <textarea id="tr-d${n}-reto" class="admin-input" rows="2" placeholder="Pregunta/frase del reto de voz — solo se usa el Día 5 (envío al coach)">${dia.retoPregunta||''}</textarea>
@@ -4275,7 +4295,7 @@ window.guardarSemanaTraining = async () => {
     primeTraduccion: (document.getElementById(`tr-d${n}-trans`)||{}).value?.trim() || '',
     absorbTipo: (document.getElementById(`tr-d${n}-tipo`)||{}).value || 'texto',
     absorbContenido: (document.getElementById(`tr-d${n}-contenido`)||{}).value?.trim() || '',
-    pares: Array.from({length:6},(_,i) => ({
+    pares: Array.from({length:TR_PARES_MAX},(_,i) => ({
       correcta: (document.getElementById(`tr-d${n}-par${i}-correcta`)||{}).value?.trim() || '',
       incorrecta: (document.getElementById(`tr-d${n}-par${i}-incorrecta`)||{}).value?.trim() || ''
     })).filter(p => p.correcta && p.incorrecta),
@@ -4416,6 +4436,835 @@ window.cargarEjemploSemanaTraining = () => {
   document.getElementById('tr-semana-orden').value = 1;
   document.getElementById('tr-semana-titulo').value = 'Who Are You?';
 };
+
+window.cargarEjemploSemana2Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:"Every morning, I start my day in English.", primeTraduccion:"Cada mañana, empiezo mi día en inglés.", absorbTipo:'texto', absorbContenido:"Morning routine — the way families talk at home every day:\n- Wake up! Time to get up.\n- Did you brush your teeth?\n- Get dressed, please.\n- Let's have breakfast.\n\nMini dialogue:\nMom: Good morning! Time to wake up.\nChild: Five more minutes, please!\nMom: Come on, brush your teeth and get dressed.\n\nPresent Simple tip: for daily habits we just say 'I wake up', 'I brush my teeth' — no extra words needed.", pares:[
+      {correcta:"I wake up at seven.", incorrecta:"I wake up at the seven."},
+      {correcta:"I brush my teeth every morning.", incorrecta:"I brush my teeths every morning."},
+      {correcta:"She gets dressed quickly.", incorrecta:"She get dressed quickly."},
+      {correcta:"Did you brush your teeth?", incorrecta:"You brushed your teeth?"},
+      {correcta:"Time to get up!", incorrecta:"Time for get up!"},
+      {correcta:"I have breakfast at eight.", incorrecta:"I have the breakfast at eight."},
+      {correcta:"He washes his face.", incorrecta:"He wash his face."},
+      {correcta:"Let's have breakfast.", incorrecta:"Let's to have breakfast."},
+      {correcta:"I make my bed every day.", incorrecta:"I do my bed every day."},
+      {correcta:"Come on, get dressed!", incorrecta:"Come on, get dress!"}
+    ], retoPregunta:"Say your morning routine out loud: what's the first thing you do when you wake up?" },
+    { dia:2, prime:"I know my daily schedule, and I say it in English.", primeTraduccion:"Conozco mi horario diario, y lo digo en inglés.", absorbTipo:'texto', absorbContenido:"Telling time and days of the week — the questions you hear at home every day:\n- What time is it?\n- What day is today?\n- What time does school start?\n\nMini dialogue:\nChild: What time is it?\nMom: It's seven o'clock. School starts at eight!\n\nDays: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday.", pares:[
+      {correcta:"What time is it?", incorrecta:"What time it is?"},
+      {correcta:"It's seven o'clock.", incorrecta:"It's the seven o'clock."},
+      {correcta:"School starts at eight.", incorrecta:"School starts at the eight."},
+      {correcta:"Today is Monday.", incorrecta:"Today it's Monday."},
+      {correcta:"I go to bed at nine.", incorrecta:"I go to the bed at nine."},
+      {correcta:"We eat lunch at noon.", incorrecta:"We eat lunch in noon."},
+      {correcta:"It's time for school.", incorrecta:"It's time to school."},
+      {correcta:"On Saturdays, I play outside.", incorrecta:"In Saturdays, I play outside."},
+      {correcta:"I have English class on Mondays.", incorrecta:"I have English class the Mondays."},
+      {correcta:"What day is today?", incorrecta:"What day today is?"}
+    ], retoPregunta:"Say what time you wake up, what time school starts, and what time you go to bed." },
+    { dia:3, prime:"I help at home, and I talk about it in English.", primeTraduccion:"Ayudo en casa, y hablo de eso en inglés.", absorbTipo:'texto', absorbContenido:"Helping at home — things parents ask every day:\n- Can you help me, please?\n- Clean your room.\n- Set the table.\n- Feed the dog.\n\nMini dialogue:\nMom: Can you help me, please? Clean your room and feed the dog.\nChild: Sure! I'll do it now.", pares:[
+      {correcta:"I clean my room.", incorrecta:"I clean my rooms."},
+      {correcta:"Can you help me, please?", incorrecta:"Can you to help me, please?"},
+      {correcta:"He feeds the dog.", incorrecta:"He feed the dog."},
+      {correcta:"She sets the table.", incorrecta:"She set the table."},
+      {correcta:"I put my toys away.", incorrecta:"I put away my toys the."},
+      {correcta:"Please, help your sister.", incorrecta:"Please, help to your sister."},
+      {correcta:"We clean the kitchen together.", incorrecta:"We clean the kitchen togethers."},
+      {correcta:"I water the plants.", incorrecta:"I water to the plants."},
+      {correcta:"Did you make your bed?", incorrecta:"You made your bed?"},
+      {correcta:"Thank you for helping.", incorrecta:"Thanks you for helping."}
+    ], retoPregunta:"Say two ways you help at home, using 'I help by...' or a simple sentence." },
+    { dia:4, prime:"I talk about food at home, in English.", primeTraduccion:"Hablo sobre la comida en casa, en inglés.", absorbTipo:'texto', absorbContenido:"Food and meals at home — what families say at the table:\n- Are you hungry?\n- What do you want to eat?\n- Dinner is ready!\n\nMini dialogue:\nMom: Dinner is ready! Are you hungry?\nChild: Yes! I want some water too, please.", pares:[
+      {correcta:"Are you hungry?", incorrecta:"You are hungry?"},
+      {correcta:"I'm thirsty.", incorrecta:"I have thirsty."},
+      {correcta:"What do you want to eat?", incorrecta:"What you want to eat?"},
+      {correcta:"I want some water, please.", incorrecta:"I want some water, please the."},
+      {correcta:"Dinner is ready!", incorrecta:"Dinner it's ready!"},
+      {correcta:"She drinks milk every day.", incorrecta:"She drink milk every day."},
+      {correcta:"We have dinner at seven.", incorrecta:"We have the dinner at seven."},
+      {correcta:"Can I have more, please?", incorrecta:"Can I have more, please the?"},
+      {correcta:"It smells delicious.", incorrecta:"It smell delicious."},
+      {correcta:"Let's set the table.", incorrecta:"Let's to set the table."}
+    ], retoPregunta:"Say what you usually eat for breakfast, lunch, and dinner." },
+    { dia:5, prime:"This is proof. I can describe my whole day in English.", primeTraduccion:"Esto es la prueba. Puedo describir todo mi día en inglés.", absorbTipo:'texto', absorbContenido:"Review tip: link your sentences with 'first', 'then', and 'after that' — it makes your day sound like a real story, not just separate words.", pares:[
+      {correcta:"I wake up at seven and brush my teeth.", incorrecta:"I wake up at seven and I brushes my teeth."},
+      {correcta:"First, I get dressed. Then, I have breakfast.", incorrecta:"First, I get dress. Then, I have the breakfast."},
+      {correcta:"School starts at eight.", incorrecta:"School start at eight."},
+      {correcta:"After school, I help at home.", incorrecta:"After school, I help in home."},
+      {correcta:"I clean my room and feed the dog.", incorrecta:"I clean my room and I feeds the dog."},
+      {correcta:"We have dinner at seven.", incorrecta:"We having dinner at seven."},
+      {correcta:"At night, I go to bed at nine.", incorrecta:"At night, I go to bed the nine."},
+      {correcta:"This is my daily routine.", incorrecta:"This is my routine daily."},
+      {correcta:"I have a busy day, but I like it.", incorrecta:"I have a busy day, but I like."},
+      {correcta:"Every day is a chance to practice.", incorrecta:"Every day it's a chance for practice."}
+    ], retoPregunta:"Record a 30-second voice note describing your whole day in English: when you wake up, what you do at home, and what time you go to bed." }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 2;
+  document.getElementById('tr-semana-titulo').value = 'My Day, My Words';
+};
+
+window.cargarEjemploSemana3Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:"I know my house, and I describe it in English.", primeTraduccion:"Conozco mi casa, y la describo en inglés.", absorbTipo:'texto', absorbContenido:"There is / There are + rooms of the house — how we naturally describe where we live:\n- There is a kitchen. There are two bedrooms.\n- Where's the kitchen? It's next to the living room.\n\nMini dialogue:\nChild: Where's the kitchen?\nDad: It's next to the living room.", pares:[
+      {correcta:"There is a kitchen in my house.", incorrecta:"There is a kitchen in my house the."},
+      {correcta:"There are two bedrooms.", incorrecta:"There is two bedrooms."},
+      {correcta:"The bathroom is next to my room.", incorrecta:"The bathroom is next my room."},
+      {correcta:"Where is the kitchen?", incorrecta:"Where the kitchen is?"},
+      {correcta:"It's next to the living room.", incorrecta:"It's next the living room."},
+      {correcta:"There isn't a garden.", incorrecta:"There not is a garden."},
+      {correcta:"My house has three rooms.", incorrecta:"My house have three rooms."},
+      {correcta:"The living room is big.", incorrecta:"The living room is bigly."},
+      {correcta:"Is there a garage?", incorrecta:"There is a garage?"},
+      {correcta:"Yes, there is.", incorrecta:"Yes, it is there."}
+    ], retoPregunta:"Describe two rooms in your house using 'There is' or 'There are'." },
+    { dia:2, prime:"I find my things, and I ask for them in English.", primeTraduccion:"Encuentro mis cosas, y las pido en inglés.", absorbTipo:'texto', absorbContenido:"Where are my things? — prepositions on / in / under, and the questions every home has:\n- Where are my shoes? They're under the bed.\n- Have you seen my jacket? It's in the closet.\n\nMini dialogue:\nChild: Mom, where are my shoes?\nMom: Look under the bed!", pares:[
+      {correcta:"Where are my shoes?", incorrecta:"Where my shoes are?"},
+      {correcta:"They're under the bed.", incorrecta:"They're the under bed."},
+      {correcta:"My backpack is on the chair.", incorrecta:"My backpack is in the chair on."},
+      {correcta:"The keys are in my pocket.", incorrecta:"The keys are on my pocket."},
+      {correcta:"I can't find my phone.", incorrecta:"I no can find my phone."},
+      {correcta:"It's on the table.", incorrecta:"It's in the table on."},
+      {correcta:"Have you seen my jacket?", incorrecta:"You have seen my jacket?"},
+      {correcta:"It's in the closet.", incorrecta:"It's in closet."},
+      {correcta:"Look under the sofa.", incorrecta:"Look the under sofa."},
+      {correcta:"There it is!", incorrecta:"There is it!"}
+    ], retoPregunta:"Say where three things are in your room, using 'on', 'in', or 'under'." },
+    { dia:3, prime:"I know my neighborhood, and I talk about it in English.", primeTraduccion:"Conozco mi barrio, y hablo de él en inglés.", absorbTipo:'texto', absorbContenido:"Places in the neighborhood — the everyday plan:\n- Let's go to the park.\n- The store is close to my house.\n- We go to church on Sundays.\n\nMini dialogue:\nDad: Let's go to the park!\nChild: Yes! Is it close to here?\nDad: Yes, it's close.", pares:[
+      {correcta:"Let's go to the park.", incorrecta:"Let's go to park."},
+      {correcta:"The store is close to my house.", incorrecta:"The store is close of my house."},
+      {correcta:"I walk to school every day.", incorrecta:"I walk to the school every day."},
+      {correcta:"Where is the nearest store?", incorrecta:"Where the nearest store is?"},
+      {correcta:"It's far from here.", incorrecta:"It's far of here."},
+      {correcta:"We go to church on Sundays.", incorrecta:"We go to the church in Sundays."},
+      {correcta:"The park is beautiful.", incorrecta:"The park is beautifully."},
+      {correcta:"Is it near or far?", incorrecta:"It is near or far?"},
+      {correcta:"I like my neighborhood.", incorrecta:"I like of my neighborhood."},
+      {correcta:"There are many stores here.", incorrecta:"There is many stores here."}
+    ], retoPregunta:"Name two places near your house and say if they are close or far." },
+    { dia:4, prime:"I can give directions, and people understand me in English.", primeTraduccion:"Puedo dar direcciones, y la gente me entiende en inglés.", absorbTipo:'texto', absorbContenido:"Simple directions — how we help someone find a place:\n- Go straight, then turn left.\n- It's two blocks away.\n\nMini dialogue:\nPerson: Excuse me, where's the bank?\nYou: Go straight and turn left. It's on the corner.", pares:[
+      {correcta:"Go straight, please.", incorrecta:"Go straight, please the."},
+      {correcta:"Turn left at the corner.", incorrecta:"Turn to left at the corner."},
+      {correcta:"Turn right on Main Street.", incorrecta:"Turn on right Main Street."},
+      {correcta:"It's on the corner.", incorrecta:"It's in the corner."},
+      {correcta:"How do I get to the park?", incorrecta:"How I get to the park?"},
+      {correcta:"It's two blocks away.", incorrecta:"It's two blocks of away."},
+      {correcta:"Excuse me, where's the bank?", incorrecta:"Excuse me, where's is the bank?"},
+      {correcta:"Walk two blocks and turn right.", incorrecta:"Walk two blocks and turn to right."},
+      {correcta:"Is it far from here?", incorrecta:"It is far from here?"},
+      {correcta:"Thank you for the directions.", incorrecta:"Thanks you for the directions."}
+    ], retoPregunta:"Give simple directions from your house to a place you like nearby." },
+    { dia:5, prime:"This is proof. I can describe my home and my world in English.", primeTraduccion:"Esto es la prueba. Puedo describir mi casa y mi mundo en inglés.", absorbTipo:'texto', absorbContenido:"Review tip: mix 'there is/are' with directions to paint a full picture — 'There's a park near my house, and it's two blocks away.'", pares:[
+      {correcta:"There are three rooms in my house.", incorrecta:"There are three room in my house."},
+      {correcta:"My backpack is on the chair.", incorrecta:"My backpack is in chair."},
+      {correcta:"The park is near my house.", incorrecta:"The park is near of my house."},
+      {correcta:"Turn left to get to the store.", incorrecta:"Turn to left to get to the store."},
+      {correcta:"Where are my keys?", incorrecta:"Where my keys are?"},
+      {correcta:"They're in my pocket.", incorrecta:"They're on my pocket."},
+      {correcta:"My neighborhood is quiet.", incorrecta:"My neighborhood is quietly."},
+      {correcta:"Is there a park nearby?", incorrecta:"There is a park nearby?"},
+      {correcta:"Yes, it's two blocks away.", incorrecta:"Yes, it's two blocks of away."},
+      {correcta:"I love where I live.", incorrecta:"I love where I lives."}
+    ], retoPregunta:"Record a 30-second voice note describing your house and your neighborhood: what rooms you have, where things are, and one place nearby you like." }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 3;
+  document.getElementById('tr-semana-titulo').value = 'Where Is It?';
+};
+
+window.cargarEjemploSemana4Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:"I talk about yesterday, in English.", primeTraduccion:"Hablo sobre ayer, en inglés.", absorbTipo:'texto', absorbContenido:"Past Simple — talking about what already happened, the way families do at the dinner table:\n- What did you do yesterday? I played soccer.\n- Did you clean your room? Yes, I did.\n\nMini dialogue:\nDad: What did you do yesterday?\nChild: I played soccer and helped my mom.", pares:[
+      {correcta:"I played soccer yesterday.", incorrecta:"I play soccer yesterday."},
+      {correcta:"She watched TV last night.", incorrecta:"She watch TV last night."},
+      {correcta:"We walked to school.", incorrecta:"We walked to the school."},
+      {correcta:"Did you clean your room?", incorrecta:"You cleaned your room?"},
+      {correcta:"Yes, I did.", incorrecta:"Yes, I do."},
+      {correcta:"He helped his mom.", incorrecta:"He help his mom."},
+      {correcta:"I didn't watch TV yesterday.", incorrecta:"I no watched TV yesterday."},
+      {correcta:"What did you do yesterday?", incorrecta:"What you did yesterday?"},
+      {correcta:"I studied English.", incorrecta:"I studyed English."},
+      {correcta:"They played in the park.", incorrecta:"They played in park."}
+    ], retoPregunta:"Say three things you did yesterday." },
+    { dia:2, prime:"I remember my weekend, and I share it in English.", primeTraduccion:"Recuerdo mi fin de semana, y lo comparto en inglés.", absorbTipo:'texto', absorbContenido:"Weekend activities — the Monday conversation every family has:\n- What did you do last weekend? I visited my grandma.\n- Did you have fun? Yes, we did.\n\nMini dialogue:\nFriend: What did you do last weekend?\nYou: I visited my grandma and we cooked dinner together.", pares:[
+      {correcta:"Last weekend, I visited my grandma.", incorrecta:"Last weekend, I visit my grandma."},
+      {correcta:"We cooked dinner together.", incorrecta:"We cook dinner together."},
+      {correcta:"I watched a movie.", incorrecta:"I watched movie."},
+      {correcta:"Did you have fun?", incorrecta:"You had fun?"},
+      {correcta:"Yes, we did.", incorrecta:"Yes, we do."},
+      {correcta:"I rested on Sunday.", incorrecta:"I rest on Sunday."},
+      {correcta:"We went to the park.", incorrecta:"We goed to the park."},
+      {correcta:"It was a great weekend.", incorrecta:"It was a great the weekend."},
+      {correcta:"What did you do?", incorrecta:"What you did?"},
+      {correcta:"I stayed home.", incorrecta:"I stay home yesterday was."}
+    ], retoPregunta:"Say what you did last weekend, in two or three sentences." },
+    { dia:3, prime:"I share my feelings, even about yesterday, in English.", primeTraduccion:"Comparto mis sentimientos, incluso sobre ayer, en inglés.", absorbTipo:'texto', absorbContenido:"Was / Were — talking about how you felt:\n- How were you yesterday? I was really tired.\n- Was it fun? Yes, it was.\n\nMini dialogue:\nMom: How were you at school today?\nChild: I was happy, but a little tired.", pares:[
+      {correcta:"I was happy yesterday.", incorrecta:"I were happy yesterday."},
+      {correcta:"She was tired last night.", incorrecta:"She were tired last night."},
+      {correcta:"We were excited about the trip.", incorrecta:"We was excited about the trip."},
+      {correcta:"How were you yesterday?", incorrecta:"How you were yesterday?"},
+      {correcta:"I was really tired.", incorrecta:"I was really tiredly."},
+      {correcta:"They were at home.", incorrecta:"They was at home."},
+      {correcta:"Was it fun?", incorrecta:"It was fun?"},
+      {correcta:"Yes, it was.", incorrecta:"Yes, it did."},
+      {correcta:"I wasn't hungry.", incorrecta:"I no was hungry."},
+      {correcta:"He was happy to see us.", incorrecta:"He was happy for see us."}
+    ], retoPregunta:"Say how you felt yesterday and why, using 'I was...'." },
+    { dia:4, prime:"I tell a story about my day, in English.", primeTraduccion:"Cuento una historia sobre mi día, en inglés.", absorbTipo:'texto', absorbContenido:"Telling a story in order — first, then, after that, finally:\n- First, I woke up. Then, I had breakfast. After that, I went to school. Finally, I went to bed.\n\nThis is how kids naturally learn to tell a story — one small step at a time.", pares:[
+      {correcta:"First, I woke up.", incorrecta:"First, I wake up yesterday."},
+      {correcta:"Then, I had breakfast.", incorrecta:"Then, I have breakfast yesterday."},
+      {correcta:"After that, I went to school.", incorrecta:"After that, I go to school."},
+      {correcta:"Finally, I went to bed.", incorrecta:"Finally, I go to bed."},
+      {correcta:"It was a busy day.", incorrecta:"It was a day busy."},
+      {correcta:"First, we cleaned the house.", incorrecta:"First, we clean the house."},
+      {correcta:"Then, we cooked lunch.", incorrecta:"Then, we cook lunch."},
+      {correcta:"After that, we rested.", incorrecta:"After that, we rest."},
+      {correcta:"It was a good day.", incorrecta:"It was a good the day."},
+      {correcta:"Finally, everyone was happy.", incorrecta:"Finally, everyone were happy."}
+    ], retoPregunta:"Tell what you did yesterday using 'First... Then... After that... Finally...'." },
+    { dia:5, prime:"This is proof. I can tell a whole story about my day in English.", primeTraduccion:"Esto es la prueba. Puedo contar toda una historia sobre mi día en inglés.", absorbTipo:'texto', absorbContenido:"Review tip: combine past simple, feelings, and sequencing words. Don't worry about small mistakes — just tell the story, like you'd tell it to your family at dinner.", pares:[
+      {correcta:"Yesterday, I woke up early.", incorrecta:"Yesterday, I wake up early."},
+      {correcta:"First, I had breakfast.", incorrecta:"First, I have breakfast."},
+      {correcta:"Then, I went to school.", incorrecta:"Then, I go to school."},
+      {correcta:"I was happy all day.", incorrecta:"I were happy all day."},
+      {correcta:"After school, I helped at home.", incorrecta:"After school, I help at home."},
+      {correcta:"We had dinner together.", incorrecta:"We have dinner together."},
+      {correcta:"It was a great day.", incorrecta:"It was great a day."},
+      {correcta:"I was tired at night.", incorrecta:"I were tired at night."},
+      {correcta:"Finally, I went to bed.", incorrecta:"Finally, I go to bed."},
+      {correcta:"This was my day yesterday.", incorrecta:"This were my day yesterday."}
+    ], retoPregunta:"Record a 45-second voice note telling the story of your day yesterday: what happened first, then, after that, and how you felt." }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 4;
+  document.getElementById('tr-semana-titulo').value = 'Yesterday & Me';
+};
+
+window.cargarEjemploSemana5Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I can describe the people I love, in English.', primeTraduccion:'Puedo describir a la gente que quiero, en inglés.', absorbTipo:'texto', absorbContenido:'Physical descriptions — the way we talk about family photos:\n- She has long hair. He is tall.\n\nMini dialogue:\nFriend: What does your sister look like?\nYou: She has long hair and brown eyes.', pares:[
+      {correcta:'She has long hair.', incorrecta:'She have long hair.'},
+      {correcta:'He is tall.', incorrecta:'He is tall very.'},
+      {correcta:'My mom has brown eyes.', incorrecta:'My mom has the brown eyes.'},
+      {correcta:'My dad is short.', incorrecta:'My dad is a short.'},
+      {correcta:'She has curly hair.', incorrecta:'She has hair curly.'},
+      {correcta:'Is he tall or short?', incorrecta:'He is tall or short?'},
+      {correcta:'My brother looks like my dad.', incorrecta:'My brother looks like to my dad.'},
+      {correcta:'They have dark hair.', incorrecta:'They has dark hair.'},
+      {correcta:'What does she look like?', incorrecta:'What she looks like?'},
+      {correcta:'He has a big smile.', incorrecta:'He has a smile big.'}
+    ], retoPregunta:'Describe how two people in your family look.' },
+    { dia:2, prime:'I describe how people are, not just how they look.', primeTraduccion:'Describo cómo es la gente, no solo cómo se ve.', absorbTipo:'texto', absorbContenido:'Personality — the words we use to describe character, not appearance:\n- My grandma is very kind. He\'s really funny.\n\nMini dialogue:\nFriend: What\'s your best friend like?\nYou: She\'s honest and really funny.', pares:[
+      {correcta:'My grandma is very kind.', incorrecta:'My grandma is very kind person.'},
+      {correcta:'He is really funny.', incorrecta:'He is really funny person.'},
+      {correcta:'She is a little shy.', incorrecta:'She is a little shy person.'},
+      {correcta:'My best friend is honest.', incorrecta:'My best friend it\'s honest.'},
+      {correcta:'They are friendly people.', incorrecta:'They are friendlies people.'},
+      {correcta:'Is he serious or funny?', incorrecta:'He is serious or funny?'},
+      {correcta:'My uncle is very patient.', incorrecta:'My uncle is very patient with.'},
+      {correcta:'She\'s the nicest person I know.', incorrecta:'She\'s the more nice person I know.'},
+      {correcta:'He never gets angry.', incorrecta:'He never get angry.'},
+      {correcta:'I admire her a lot.', incorrecta:'I admire of her a lot.'}
+    ], retoPregunta:'Describe the personality of someone you admire.' },
+    { dia:3, prime:'I know my whole family, and I name them in English.', primeTraduccion:'Conozco a toda mi familia, y los nombro en inglés.', absorbTipo:'texto', absorbContenido:'Extended family — aunt, uncle, cousin, grandparents, nephew, niece:\n- This is my aunt. She\'s my mom\'s sister.\n\nMini dialogue:\nFriend: Who\'s this in the photo?\nYou: That\'s my uncle. He lives in León.', pares:[
+      {correcta:'This is my aunt.', incorrecta:'This is my aunt one.'},
+      {correcta:'She\'s my mom\'s sister.', incorrecta:'She\'s the sister of my mom.'},
+      {correcta:'My cousin is my age.', incorrecta:'My cousin has my age.'},
+      {correcta:'These are my grandparents.', incorrecta:'These are my grandparent.'},
+      {correcta:'My uncle lives in León.', incorrecta:'My uncle live in León.'},
+      {correcta:'How many cousins do you have?', incorrecta:'How many cousins you have?'},
+      {correcta:'I have five cousins.', incorrecta:'I have five cousin.'},
+      {correcta:'My nephew is very small.', incorrecta:'My nephew is very small one.'},
+      {correcta:'She\'s my father\'s mother.', incorrecta:'She\'s mother of my father.'},
+      {correcta:'We have a big family.', incorrecta:'We have a family big.'}
+    ], retoPregunta:'Name three members of your extended family and how they\'re related to you.' },
+    { dia:4, prime:'I say who things belong to, in English.', primeTraduccion:'Digo de quién son las cosas, en inglés.', absorbTipo:'texto', absorbContenido:'Possessive \'s and \'whose\':\n- Whose phone is this? It\'s my sister\'s.\n\nMini dialogue:\nMom: Whose bag is this?\nChild: It\'s Ana\'s. She left it here.', pares:[
+      {correcta:'Whose phone is this?', incorrecta:'Whose phone this is?'},
+      {correcta:'It\'s my sister\'s phone.', incorrecta:'It\'s the phone of my sister.'},
+      {correcta:'This is Ana\'s bag.', incorrecta:'This is the bag of Ana.'},
+      {correcta:'That\'s my dad\'s car.', incorrecta:'That\'s the car of my dad.'},
+      {correcta:'Is this your mom\'s photo?', incorrecta:'This is your mom\'s photo?'},
+      {correcta:'These are the kids\' toys.', incorrecta:'These are the toys of the kids.'},
+      {correcta:'It\'s not mine, it\'s his.', incorrecta:'It\'s not mine, it\'s him.'},
+      {correcta:'Whose idea was that?', incorrecta:'Whose was that idea?'},
+      {correcta:'That bike is my brother\'s.', incorrecta:'That bike is of my brother.'},
+      {correcta:'It belongs to my grandma.', incorrecta:'It belongs to my grandma to.'}
+    ], retoPregunta:'Point to three things and say whose they are.' },
+    { dia:5, prime:'This is proof. I can introduce my whole family in English.', primeTraduccion:'Esto es la prueba. Puedo presentar a toda mi familia en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: combine appearance, personality, and relation in one sentence — \'This is my aunt. She\'s tall and very kind. She\'s my mom\'s sister.\' That\'s how a real introduction sounds.', pares:[
+      {correcta:'This is my aunt. She\'s very kind.', incorrecta:'This is my aunt. She is very kind person.'},
+      {correcta:'My cousin has long hair and is funny.', incorrecta:'My cousin have long hair and is funny.'},
+      {correcta:'My grandparents live close to us.', incorrecta:'My grandparents live close of us.'},
+      {correcta:'He\'s my dad\'s brother.', incorrecta:'He\'s the brother of my dad.'},
+      {correcta:'She\'s tall like my mom.', incorrecta:'She\'s tall like to my mom.'},
+      {correcta:'Whose photo is this?', incorrecta:'Whose photo this is?'},
+      {correcta:'It\'s my sister\'s.', incorrecta:'It\'s of my sister.'},
+      {correcta:'I love my whole family.', incorrecta:'I love all my family.'},
+      {correcta:'They are all very friendly.', incorrecta:'They are all very friendlies.'},
+      {correcta:'This is my family — they mean everything to me.', incorrecta:'This is my family — they means everything to me.'}
+    ], retoPregunta:'Record a 45-second voice note introducing three people in your family: what they look like, their personality, and how they\'re related to you.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 5;
+  document.getElementById('tr-semana-titulo').value = 'My People';
+};
+
+window.cargarEjemploSemana6Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I talk about what I enjoy doing, in English.', primeTraduccion:'Hablo de lo que disfruto hacer, en inglés.', absorbTipo:'texto', absorbContenido:'Hobbies — reading, drawing, playing video games, dancing:\n- I like playing video games.\n\nMini dialogue:\nFriend: What\'s your hobby?\nYou: I like drawing. It\'s fun and relaxing.', pares:[
+      {correcta:'I like playing video games.', incorrecta:'I like play video games.'},
+      {correcta:'She enjoys reading books.', incorrecta:'She enjoy reading books.'},
+      {correcta:'We love dancing.', incorrecta:'We love to dancing.'},
+      {correcta:'Do you like drawing?', incorrecta:'You like drawing?'},
+      {correcta:'He doesn\'t like sports.', incorrecta:'He don\'t likes sports.'},
+      {correcta:'My hobby is painting.', incorrecta:'My hobby it\'s painting.'},
+      {correcta:'What do you like doing?', incorrecta:'What you like doing?'},
+      {correcta:'I spend my free time reading.', incorrecta:'I spend my free time to read.'},
+      {correcta:'She\'s really into music.', incorrecta:'She\'s really in music.'},
+      {correcta:'It\'s fun and relaxing.', incorrecta:'It\'s fun and relax.'}
+    ], retoPregunta:'Say what your favorite hobby is and why you like it.' },
+    { dia:2, prime:'I say what I can and can\'t do, in English.', primeTraduccion:'Digo lo que puedo y no puedo hacer, en inglés.', absorbTipo:'texto', absorbContenido:'Can / can\'t for ability:\n- I can swim. I can\'t cook.\n\nMini dialogue:\nFriend: Can you ride a bike?\nYou: Yes, I can! But I can\'t swim very well.', pares:[
+      {correcta:'I can swim.', incorrecta:'I can to swim.'},
+      {correcta:'I can\'t cook very well.', incorrecta:'I no can cook very well.'},
+      {correcta:'Can you ride a bike?', incorrecta:'You can ride a bike?'},
+      {correcta:'Yes, I can.', incorrecta:'Yes, I do.'},
+      {correcta:'She can play the guitar.', incorrecta:'She can plays the guitar.'},
+      {correcta:'He can\'t sing.', incorrecta:'He can\'t sings.'},
+      {correcta:'We can speak a little English.', incorrecta:'We can speak a little of English.'},
+      {correcta:'Can she dance?', incorrecta:'She can dance?'},
+      {correcta:'I can\'t draw well, but I try.', incorrecta:'I can\'t draw well, but I tries.'},
+      {correcta:'What can you do well?', incorrecta:'What you can do well?'}
+    ], retoPregunta:'Say two things you can do well and one thing you can\'t do yet.' },
+    { dia:3, prime:'I talk about sports, in English.', primeTraduccion:'Hablo de deportes, en inglés.', absorbTipo:'texto', absorbContenido:'Sports vocabulary and habits:\n- I play soccer. I go swimming.\n\nMini dialogue:\nFriend: What\'s your favorite sport?\nYou: Soccer. I play every Saturday.', pares:[
+      {correcta:'I play soccer on Saturdays.', incorrecta:'I play soccer in Saturdays.'},
+      {correcta:'She goes swimming every week.', incorrecta:'She go swimming every week.'},
+      {correcta:'Do you play basketball?', incorrecta:'You play basketball?'},
+      {correcta:'He\'s good at baseball.', incorrecta:'He\'s good in baseball.'},
+      {correcta:'We watch soccer on TV.', incorrecta:'We watch soccer in TV.'},
+      {correcta:'My favorite sport is volleyball.', incorrecta:'My favorite sport is the volleyball.'},
+      {correcta:'I\'m not good at running.', incorrecta:'I\'m not good in running.'},
+      {correcta:'Let\'s play together!', incorrecta:'Let\'s to play together!'},
+      {correcta:'Who\'s your favorite team?', incorrecta:'Who is your team favorite?'},
+      {correcta:'I practice every day.', incorrecta:'I practice all days.'}
+    ], retoPregunta:'Say your favorite sport and how often you play it.' },
+    { dia:4, prime:'I invite my friends to do something fun, in English.', primeTraduccion:'Invito a mis amigos a hacer algo divertido, en inglés.', absorbTipo:'texto', absorbContenido:'Invitations — how you ask a friend to hang out:\n- Do you want to play soccer? Let\'s go to the park!\n\nMini dialogue:\nYou: Do you want to play soccer this afternoon?\nFriend: I\'d love to! What time?', pares:[
+      {correcta:'Do you want to play soccer?', incorrecta:'You want to play soccer?'},
+      {correcta:'Let\'s go to the park.', incorrecta:'Let\'s to go to the park.'},
+      {correcta:'I\'d love to!', incorrecta:'I would love!'},
+      {correcta:'Sorry, I can\'t today.', incorrecta:'Sorry, I no can today.'},
+      {correcta:'Maybe next weekend.', incorrecta:'Maybe the next weekend.'},
+      {correcta:'What do you want to do?', incorrecta:'What you want to do?'},
+      {correcta:'Let\'s watch a movie together.', incorrecta:'Let\'s to watch a movie together.'},
+      {correcta:'That sounds fun!', incorrecta:'That sound fun!'},
+      {correcta:'Are you free this afternoon?', incorrecta:'You are free this afternoon?'},
+      {correcta:'See you later, then!', incorrecta:'See you later, so!'}
+    ], retoPregunta:'Invite a friend to do something this weekend, out loud.' },
+    { dia:5, prime:'This is proof. I can talk about my free time in English.', primeTraduccion:'Esto es la prueba. Puedo hablar de mi tiempo libre en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: combine hobby + ability + invitation — \'I like playing soccer. I can play well, and I always invite my friends on weekends.\'', pares:[
+      {correcta:'I like playing soccer with my friends.', incorrecta:'I like play soccer with my friends.'},
+      {correcta:'I can swim, but I can\'t dive.', incorrecta:'I can swim, but I no can dive.'},
+      {correcta:'We play every Saturday.', incorrecta:'We play every Saturday\'s.'},
+      {correcta:'Do you want to come with us?', incorrecta:'You want to come with us?'},
+      {correcta:'She\'s really good at dancing.', incorrecta:'She\'s really good in dancing.'},
+      {correcta:'My favorite hobby is drawing.', incorrecta:'My favorite hobby it\'s drawing.'},
+      {correcta:'Let\'s do something fun this weekend.', incorrecta:'Let\'s to do something fun this weekend.'},
+      {correcta:'I spend my free time with my family.', incorrecta:'I spend my free time with my family to.'},
+      {correcta:'What\'s your favorite hobby?', incorrecta:'What is your favorite hobby?'},
+      {correcta:'Free time makes me happy.', incorrecta:'Free time make me happy.'}
+    ], retoPregunta:'Record a 30-second voice note about your free time: what you like doing, what you\'re good at, and what you did with friends recently.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 6;
+  document.getElementById('tr-semana-titulo').value = 'Free Time';
+};
+
+window.cargarEjemploSemana7Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I talk about the weather, in English.', primeTraduccion:'Hablo del clima, en inglés.', absorbTipo:'texto', absorbContenido:'Weather vocabulary — sunny, rainy, hot, cold, windy:\n- It\'s sunny today.\n\nMini dialogue:\nFriend: What\'s the weather like?\nYou: It\'s sunny, but a little windy.', pares:[
+      {correcta:'It\'s sunny today.', incorrecta:'It\'s sun today.'},
+      {correcta:'It\'s raining outside.', incorrecta:'It\'s rain outside.'},
+      {correcta:'It\'s really hot.', incorrecta:'It\'s really hot very.'},
+      {correcta:'It\'s cold this morning.', incorrecta:'It\'s cold this morning very.'},
+      {correcta:'What\'s the weather like?', incorrecta:'How is the weather like?'},
+      {correcta:'It\'s windy today.', incorrecta:'It\'s wind today.'},
+      {correcta:'I don\'t like rainy days.', incorrecta:'I no like rainy days.'},
+      {correcta:'It\'s a beautiful day.', incorrecta:'It\'s a day beautiful.'},
+      {correcta:'Is it cold outside?', incorrecta:'It is cold outside?'},
+      {correcta:'It might rain later.', incorrecta:'It might to rain later.'}
+    ], retoPregunta:'Describe today\'s weather in two or three sentences.' },
+    { dia:2, prime:'I talk about the seasons, in English.', primeTraduccion:'Hablo de las estaciones, en inglés.', absorbTipo:'texto', absorbContenido:'Seasons — summer, winter, spring, fall:\n- I love summer because it\'s hot.\n\nMini dialogue:\nFriend: Which season do you like best?\nYou: Spring. The weather is perfect.', pares:[
+      {correcta:'I love summer.', incorrecta:'I love the summer.'},
+      {correcta:'Winter is very cold.', incorrecta:'Winter is very cold very.'},
+      {correcta:'My favorite season is spring.', incorrecta:'My favorite season it\'s spring.'},
+      {correcta:'It rains a lot in fall.', incorrecta:'It rains a lot on fall.'},
+      {correcta:'Do you like winter?', incorrecta:'You like winter?'},
+      {correcta:'In summer, I go to the beach.', incorrecta:'In summer, I go to beach.'},
+      {correcta:'The weather changes every season.', incorrecta:'The weather change every season.'},
+      {correcta:'I prefer warm weather.', incorrecta:'I prefer weather warm.'},
+      {correcta:'Which season do you like best?', incorrecta:'Which season you like best?'},
+      {correcta:'Every season is beautiful.', incorrecta:'Every season is beautifuly.'}
+    ], retoPregunta:'Say your favorite season and why.' },
+    { dia:3, prime:'I talk about clothes, in English.', primeTraduccion:'Hablo de la ropa, en inglés.', absorbTipo:'texto', absorbContenido:'Clothing vocabulary — shirt, pants, shoes, jacket:\n- I\'m wearing a blue shirt.\n\nMini dialogue:\nFriend: I like your jacket!\nYou: Thanks! I bought it last week.', pares:[
+      {correcta:'I\'m wearing a blue shirt.', incorrecta:'I\'m wear a blue shirt.'},
+      {correcta:'She\'s wearing a dress.', incorrecta:'She\'s wear a dress.'},
+      {correcta:'I need new shoes.', incorrecta:'I need shoes new.'},
+      {correcta:'He always wears a hat.', incorrecta:'He always wear a hat.'},
+      {correcta:'What are you wearing?', incorrecta:'What you are wearing?'},
+      {correcta:'I like your jacket.', incorrecta:'I like of your jacket.'},
+      {correcta:'These pants are too big.', incorrecta:'These pants are too bigs.'},
+      {correcta:'I bought a new shirt.', incorrecta:'I buyed a new shirt.'},
+      {correcta:'Do you have a jacket?', incorrecta:'You have a jacket?'},
+      {correcta:'This color looks nice on you.', incorrecta:'This color looks nice in you.'}
+    ], retoPregunta:'Describe what you\'re wearing right now.' },
+    { dia:4, prime:'I choose my clothes for the weather, in English.', primeTraduccion:'Elijo mi ropa según el clima, en inglés.', absorbTipo:'texto', absorbContenido:'Combining weather + clothes — how parents help kids get dressed:\n- It\'s cold, so I need a jacket.\n\nMini dialogue:\nMom: It\'s cold outside, wear your jacket.\nChild: Okay! Do I need boots too?', pares:[
+      {correcta:'It\'s cold, so I need a jacket.', incorrecta:'It\'s cold, so I need a jacket for.'},
+      {correcta:'It\'s hot, so I wear shorts.', incorrecta:'It\'s hot, so I wear the shorts.'},
+      {correcta:'Take an umbrella, it\'s raining.', incorrecta:'Take an umbrella, it\'s rain.'},
+      {correcta:'Wear your coat, it\'s cold outside.', incorrecta:'Wear your coat, it\'s cold outside very.'},
+      {correcta:'You don\'t need a jacket today.', incorrecta:'You no need a jacket today.'},
+      {correcta:'It\'s sunny, so wear a hat.', incorrecta:'It\'s sun, so wear a hat.'},
+      {correcta:'Don\'t forget your boots.', incorrecta:'Don\'t forget you your boots.'},
+      {correcta:'What should I wear today?', incorrecta:'What I should wear today?'},
+      {correcta:'Dress warm, it\'s freezing!', incorrecta:'Dress warm, it\'s freeze!'},
+      {correcta:'I\'m ready for the rain.', incorrecta:'I\'m ready for rain.'}
+    ], retoPregunta:'Say what you\'d wear today based on the weather.' },
+    { dia:5, prime:'This is proof. I can talk about the weather and what to wear in English.', primeTraduccion:'Esto es la prueba. Puedo hablar del clima y qué ponerme en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: link weather and clothes in one sentence — \'It\'s cold today, so I\'m wearing a jacket and boots.\'', pares:[
+      {correcta:'It\'s cold today, so I\'m wearing a jacket.', incorrecta:'It\'s cold today, so I\'m wear a jacket.'},
+      {correcta:'My favorite season is summer.', incorrecta:'My favorite season it\'s summer.'},
+      {correcta:'It\'s raining, take an umbrella.', incorrecta:'It\'s rain, take an umbrella.'},
+      {correcta:'I need new shoes for winter.', incorrecta:'I need shoes new for winter.'},
+      {correcta:'What\'s the weather like today?', incorrecta:'How is the weather like today?'},
+      {correcta:'I love wearing bright colors.', incorrecta:'I love wear bright colors.'},
+      {correcta:'Dress warm, it\'s very cold.', incorrecta:'Dress warm, it\'s very cold very.'},
+      {correcta:'She\'s wearing a beautiful dress.', incorrecta:'She\'s wear a beautiful dress.'},
+      {correcta:'It might rain this afternoon.', incorrecta:'It might to rain this afternoon.'},
+      {correcta:'I always check the weather.', incorrecta:'I always check of the weather.'}
+    ], retoPregunta:'Record a 30-second voice note describing today\'s weather and what you\'re wearing.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 7;
+  document.getElementById('tr-semana-titulo').value = 'What to Wear';
+};
+
+window.cargarEjemploSemana8Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I know my body, and I name it in English.', primeTraduccion:'Conozco mi cuerpo, y lo nombro en inglés.', absorbTipo:'texto', absorbContenido:'Body parts — head, hand, foot, stomach:\n- My head hurts.\n\nMini dialogue:\nMom: What\'s wrong?\nChild: My stomach hurts a little.', pares:[
+      {correcta:'My head hurts.', incorrecta:'My head hurt.'},
+      {correcta:'I have a headache.', incorrecta:'I have headache.'},
+      {correcta:'My hands are cold.', incorrecta:'My hands is cold.'},
+      {correcta:'My stomach hurts.', incorrecta:'My stomach hurts very.'},
+      {correcta:'She has small hands.', incorrecta:'She has hands small.'},
+      {correcta:'Does your foot hurt?', incorrecta:'Your foot hurts?'},
+      {correcta:'I hurt my arm.', incorrecta:'I hurted my arm.'},
+      {correcta:'My back hurts a little.', incorrecta:'My back hurt a little.'},
+      {correcta:'Touch your nose.', incorrecta:'Touch to your nose.'},
+      {correcta:'My eyes are tired.', incorrecta:'My eyes is tired.'}
+    ], retoPregunta:'Say two parts of your body and how they feel right now.' },
+    { dia:2, prime:'I say when I\'m sick, in English.', primeTraduccion:'Digo cuando estoy enfermo, en inglés.', absorbTipo:'texto', absorbContenido:'Feeling sick — going to the doctor:\n- I feel sick. I have a fever.\n\nMini dialogue:\nFriend: You look sick.\nYou: Yeah, I have a fever and a sore throat.', pares:[
+      {correcta:'I feel sick.', incorrecta:'I feel sick very.'},
+      {correcta:'I have a fever.', incorrecta:'I have fever.'},
+      {correcta:'I have a cold.', incorrecta:'I have a resfriado.'},
+      {correcta:'You should see a doctor.', incorrecta:'You should to see a doctor.'},
+      {correcta:'I don\'t feel well.', incorrecta:'I no feel well.'},
+      {correcta:'She has a sore throat.', incorrecta:'She has sore throat.'},
+      {correcta:'I need some medicine.', incorrecta:'I need medicine some.'},
+      {correcta:'Do you feel better now?', incorrecta:'You feel better now?'},
+      {correcta:'I\'m going to the doctor.', incorrecta:'I\'m going to doctor.'},
+      {correcta:'Get well soon!', incorrecta:'Get well soon please much!'}
+    ], retoPregunta:'Say how you\'d tell someone you\'re sick, using \'I feel...\' or \'I have...\'.' },
+    { dia:3, prime:'I share how I feel, in English.', primeTraduccion:'Comparto cómo me siento, en inglés.', absorbTipo:'texto', absorbContenido:'Emotions — happy, sad, angry, nervous:\n- I\'m happy today.\n\nMini dialogue:\nFriend: How are you feeling?\nYou: A little nervous, but excited too.', pares:[
+      {correcta:'I\'m happy today.', incorrecta:'I\'m happy today very.'},
+      {correcta:'She\'s sad because of the rain.', incorrecta:'She\'s sad because of rain.'},
+      {correcta:'I\'m a little nervous.', incorrecta:'I\'m a little nervous very.'},
+      {correcta:'Why are you angry?', incorrecta:'Why you are angry?'},
+      {correcta:'He\'s excited about the trip.', incorrecta:'He\'s excited for the trip.'},
+      {correcta:'I\'m not worried anymore.', incorrecta:'I\'m not worry anymore.'},
+      {correcta:'How do you feel right now?', incorrecta:'How you feel right now?'},
+      {correcta:'I feel great!', incorrecta:'I feel great very!'},
+      {correcta:'She looks tired.', incorrecta:'She looks tired very.'},
+      {correcta:'It\'s okay to feel sad sometimes.', incorrecta:'It\'s okay for feel sad sometimes.'}
+    ], retoPregunta:'Say how you feel right now, and why.' },
+    { dia:4, prime:'I can explain what\'s wrong, in English.', primeTraduccion:'Puedo explicar qué me pasa, en inglés.', absorbTipo:'texto', absorbContenido:'At the doctor\'s — explaining symptoms:\n- What\'s wrong? My throat hurts.\n\nMini dialogue:\nDoctor: What\'s wrong?\nYou: My throat hurts, and I have a fever.\nDoctor: Take this medicine and rest.', pares:[
+      {correcta:'What\'s wrong?', incorrecta:'What is wrong with?'},
+      {correcta:'My throat hurts.', incorrecta:'My throat hurt.'},
+      {correcta:'I have a stomachache.', incorrecta:'I have stomach ache.'},
+      {correcta:'How long have you felt sick?', incorrecta:'How long you feel sick?'},
+      {correcta:'Since yesterday.', incorrecta:'Since yesterday it.'},
+      {correcta:'Take this medicine twice a day.', incorrecta:'Take this medicine two times in day.'},
+      {correcta:'Drink lots of water.', incorrecta:'Drink a lot water.'},
+      {correcta:'Rest, and you\'ll feel better.', incorrecta:'Rest, and you feel better you.'},
+      {correcta:'Thank you, doctor.', incorrecta:'Thanks you, doctor.'},
+      {correcta:'I hope you feel better soon.', incorrecta:'I hope you feels better soon.'}
+    ], retoPregunta:'Practice explaining a symptom to a doctor, out loud.' },
+    { dia:5, prime:'This is proof. I can talk about my health and feelings in English.', primeTraduccion:'Esto es la prueba. Puedo hablar de mi salud y mis sentimientos en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: combine body + feelings + advice — \'I have a headache, I feel tired, and I should rest today.\'', pares:[
+      {correcta:'I have a headache today.', incorrecta:'I have headache today.'},
+      {correcta:'I feel a little sick.', incorrecta:'I feel a little sick very.'},
+      {correcta:'My stomach hurts.', incorrecta:'My stomach hurt.'},
+      {correcta:'I\'m nervous about the test.', incorrecta:'I\'m nervous for the test.'},
+      {correcta:'You should drink water.', incorrecta:'You should to drink water.'},
+      {correcta:'She\'s happy because she feels better.', incorrecta:'She\'s happy because she feel better.'},
+      {correcta:'I need to rest today.', incorrecta:'I need for rest today.'},
+      {correcta:'How do you feel now?', incorrecta:'How you feel now?'},
+      {correcta:'I\'m feeling much better.', incorrecta:'I\'m feel much better.'},
+      {correcta:'Take care of yourself.', incorrecta:'Take care of you.'}
+    ], retoPregunta:'Record a 30-second voice note: say how you feel today, if anything hurts, and one thing that makes you happy.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 8;
+  document.getElementById('tr-semana-titulo').value = 'How Do You Feel?';
+};
+
+window.cargarEjemploSemana9Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I talk about money, in English.', primeTraduccion:'Hablo de dinero, en inglés.', absorbTipo:'texto', absorbContenido:'Money and prices — the everyday question:\n- How much is this? It\'s five dollars.\n\nMini dialogue:\nYou: How much is this?\nSeller: It\'s five dollars.\nYou: That\'s a good price.', pares:[
+      {correcta:'How much is this?', incorrecta:'How much this is?'},
+      {correcta:'It\'s five dollars.', incorrecta:'It\'s five dollars the.'},
+      {correcta:'That\'s too expensive.', incorrecta:'That\'s too much expensive.'},
+      {correcta:'It\'s cheap.', incorrecta:'It\'s a cheap.'},
+      {correcta:'Do you have change?', incorrecta:'You have change?'},
+      {correcta:'I don\'t have enough money.', incorrecta:'I no have enough money.'},
+      {correcta:'Can I pay with card?', incorrecta:'Can I pay with the card?'},
+      {correcta:'How much does it cost?', incorrecta:'How much it cost?'},
+      {correcta:'It costs ten dollars.', incorrecta:'It cost ten dollars.'},
+      {correcta:'That\'s a good price.', incorrecta:'That\'s a price good.'}
+    ], retoPregunta:'Ask how much three things cost, out loud.' },
+    { dia:2, prime:'I ask for what I need in a store, in English.', primeTraduccion:'Pido lo que necesito en una tienda, en inglés.', absorbTipo:'texto', absorbContenido:'In the store — common phrases:\n- Can I help you? I\'m looking for a shirt.\n\nMini dialogue:\nSeller: Can I help you?\nYou: Yes, I\'m looking for a shirt. Do you have this in blue?', pares:[
+      {correcta:'Can I help you?', incorrecta:'I can help you?'},
+      {correcta:'I\'m looking for a shirt.', incorrecta:'I\'m looking a shirt.'},
+      {correcta:'Do you have this in blue?', incorrecta:'You have this in blue?'},
+      {correcta:'Where can I find shoes?', incorrecta:'Where I can find shoes?'},
+      {correcta:'I\'m just looking, thanks.', incorrecta:'I\'m just looking, thank.'},
+      {correcta:'Can I try this on?', incorrecta:'Can I try on this?'},
+      {correcta:'It doesn\'t fit.', incorrecta:'It no fits.'},
+      {correcta:'This is exactly what I need.', incorrecta:'This is exactly what I needs.'},
+      {correcta:'Can I return this?', incorrecta:'Can I to return this?'},
+      {correcta:'I\'ll take it.', incorrecta:'I take it will.'}
+    ], retoPregunta:'Say what you\'d ask for if you were looking for a shirt in a store.' },
+    { dia:3, prime:'I ask about sizes and colors, in English.', primeTraduccion:'Pregunto sobre tallas y colores, en inglés.', absorbTipo:'texto', absorbContenido:'Sizes and colors:\n- Do you have a bigger size? I like this one in red.\n\nMini dialogue:\nYou: This is too small. Do you have a bigger size?\nSeller: Yes, here\'s a medium.', pares:[
+      {correcta:'Do you have a bigger size?', incorrecta:'You have a bigger size?'},
+      {correcta:'This is too small.', incorrecta:'This is too small very.'},
+      {correcta:'I need a medium.', incorrecta:'I need one medium.'},
+      {correcta:'What colors do you have?', incorrecta:'What colors you have?'},
+      {correcta:'I like this one in red.', incorrecta:'I like this one on red.'},
+      {correcta:'It\'s too tight.', incorrecta:'It\'s too tight very.'},
+      {correcta:'Do you have a smaller one?', incorrecta:'You have a smaller one?'},
+      {correcta:'This fits perfectly.', incorrecta:'This fits perfect.'},
+      {correcta:'Which color do you prefer?', incorrecta:'Which color you prefer?'},
+      {correcta:'I\'ll take the large one.', incorrecta:'I take the large one will.'}
+    ], retoPregunta:'Ask for a different size or color of something, out loud.' },
+    { dia:4, prime:'I ask for things politely, in English.', primeTraduccion:'Pido las cosas con cortesía, en inglés.', absorbTipo:'texto', absorbContenido:'Polite requests — \'Could I...?\', \'Would you...?\':\n- Could I see that one, please?\n\nMini dialogue:\nYou: Excuse me, could I see that one, please?\nSeller: Of course, here you go.', pares:[
+      {correcta:'Could I see that one, please?', incorrecta:'Could I see that one, please the?'},
+      {correcta:'Would you mind helping me?', incorrecta:'You would mind to help me?'},
+      {correcta:'Excuse me, how much is this?', incorrecta:'Excuse me, how much this is?'},
+      {correcta:'Can you show me another one?', incorrecta:'You can show me another one?'},
+      {correcta:'That would be great, thanks.', incorrecta:'That would be great, thank.'},
+      {correcta:'I\'d like to buy this, please.', incorrecta:'I would like buy this, please.'},
+      {correcta:'Is this on sale?', incorrecta:'This is on sale?'},
+      {correcta:'Could you wrap it, please?', incorrecta:'Could you to wrap it, please?'},
+      {correcta:'No, thank you, I\'m just looking.', incorrecta:'No, thanks, I\'m just look.'},
+      {correcta:'Thank you for your help.', incorrecta:'Thanks you for your help.'}
+    ], retoPregunta:'Practice asking for something politely, using \'Could I...\' or \'Would you...\'.' },
+    { dia:5, prime:'This is proof. I can go shopping in English.', primeTraduccion:'Esto es la prueba. Puedo ir de compras en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: tell it like a story — \'I went shopping. I asked for a smaller size. It was a little expensive, but I bought it anyway.\'', pares:[
+      {correcta:'I went shopping yesterday.', incorrecta:'I go shopping yesterday.'},
+      {correcta:'I bought a new shirt.', incorrecta:'I buyed a new shirt.'},
+      {correcta:'It was too expensive.', incorrecta:'It was too much expensive.'},
+      {correcta:'I asked for a smaller size.', incorrecta:'I asked a smaller size.'},
+      {correcta:'The salesperson was very kind.', incorrecta:'The salesperson was very kind person.'},
+      {correcta:'I paid with cash.', incorrecta:'I paid with the cash.'},
+      {correcta:'It fits perfectly now.', incorrecta:'It fits perfect now.'},
+      {correcta:'I love my new clothes.', incorrecta:'I love my clothes new.'},
+      {correcta:'How much did you spend?', incorrecta:'How much you spent?'},
+      {correcta:'Shopping is fun with friends.', incorrecta:'Shopping is fun with friends to.'}
+    ], retoPregunta:'Record a 30-second voice note about a shopping trip: what you looked for, what you bought, and how much it cost.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 9;
+  document.getElementById('tr-semana-titulo').value = 'Let\'s Go Shopping';
+};
+
+window.cargarEjemploSemana10Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I talk about my plans, in English.', primeTraduccion:'Hablo de mis planes, en inglés.', absorbTipo:'texto', absorbContenido:'Going to — talking about plans:\n- I\'m going to visit my grandma tomorrow.\n\nMini dialogue:\nFriend: What are you going to do today?\nYou: I\'m going to visit my grandma.', pares:[
+      {correcta:'I\'m going to visit my grandma.', incorrecta:'I\'m going to visiting my grandma.'},
+      {correcta:'She\'s going to study tonight.', incorrecta:'She\'s going to studies tonight.'},
+      {correcta:'We\'re going to travel next month.', incorrecta:'We\'re going to travel the next month.'},
+      {correcta:'Are you going to come?', incorrecta:'You are going to come?'},
+      {correcta:'He\'s not going to work today.', incorrecta:'He\'s no going to work today.'},
+      {correcta:'What are you going to do?', incorrecta:'What you are going to do?'},
+      {correcta:'I\'m going to call her later.', incorrecta:'I\'m going to calling her later.'},
+      {correcta:'They\'re going to move soon.', incorrecta:'They are going to move soon it.'},
+      {correcta:'It\'s going to rain today.', incorrecta:'It\'s going to raining today.'},
+      {correcta:'I\'m going to try my best.', incorrecta:'I\'m going to try my best very.'}
+    ], retoPregunta:'Say one thing you\'re going to do today.' },
+    { dia:2, prime:'I make quick decisions and predictions, in English.', primeTraduccion:'Tomo decisiones rápidas y hago predicciones, en inglés.', absorbTipo:'texto', absorbContenido:'Will — for predictions and offers:\n- I think it will rain. I\'ll help you.\n\nMini dialogue:\nFriend: I can\'t carry this.\nYou: Don\'t worry, I\'ll help you.', pares:[
+      {correcta:'I think it will rain.', incorrecta:'I think it will raining.'},
+      {correcta:'I\'ll help you.', incorrecta:'I will to help you.'},
+      {correcta:'She\'ll be happy about this.', incorrecta:'She will happy about this.'},
+      {correcta:'Will you come to the party?', incorrecta:'You will come to the party?'},
+      {correcta:'I won\'t forget.', incorrecta:'I no will forget.'},
+      {correcta:'It will be a great day.', incorrecta:'It will be a day great.'},
+      {correcta:'I\'ll call you tomorrow.', incorrecta:'I will calling you tomorrow.'},
+      {correcta:'They won\'t be late.', incorrecta:'They will not be late they.'},
+      {correcta:'I think you\'ll like it.', incorrecta:'I think you will like.'},
+      {correcta:'Don\'t worry, it\'ll be fine.', incorrecta:'Don\'t worry, it will be fine very.'}
+    ], retoPregunta:'Make one prediction about tomorrow using \'will\'.' },
+    { dia:3, prime:'I talk about tomorrow, in English.', primeTraduccion:'Hablo de mañana, en inglés.', absorbTipo:'texto', absorbContenido:'Talking about tomorrow — combining \'going to\' with time words:\n- Tomorrow, I\'m going to school.\n\nMini dialogue:\nFriend: What are your plans for tomorrow?\nYou: I have a meeting tomorrow morning.', pares:[
+      {correcta:'Tomorrow, I\'m going to school.', incorrecta:'Tomorrow, I go to school going.'},
+      {correcta:'What are your plans for tomorrow?', incorrecta:'What are your plans for the tomorrow?'},
+      {correcta:'I have a meeting tomorrow.', incorrecta:'I have a meeting the tomorrow.'},
+      {correcta:'We\'re going to the beach tomorrow.', incorrecta:'We are going to beach tomorrow.'},
+      {correcta:'Is tomorrow a holiday?', incorrecta:'Tomorrow is a holiday?'},
+      {correcta:'I don\'t have plans tomorrow.', incorrecta:'I no have plans tomorrow.'},
+      {correcta:'Tomorrow will be busy.', incorrecta:'Tomorrow will busy.'},
+      {correcta:'See you tomorrow!', incorrecta:'See you the tomorrow!'},
+      {correcta:'I\'ll see her tomorrow morning.', incorrecta:'I will see her in tomorrow morning.'},
+      {correcta:'Let\'s meet tomorrow at noon.', incorrecta:'Let\'s to meet tomorrow at noon.'}
+    ], retoPregunta:'Say your plan for tomorrow.' },
+    { dia:4, prime:'I talk about my plans for next week, in English.', primeTraduccion:'Hablo de mis planes para la próxima semana, en inglés.', absorbTipo:'texto', absorbContenido:'Next week / next month plans:\n- Next week, I\'m going to visit my cousin.\n\nMini dialogue:\nFriend: What are you doing next weekend?\nYou: I\'m starting a new class next month, so I\'ll study this weekend.', pares:[
+      {correcta:'Next week, I\'m going to visit my cousin.', incorrecta:'Next week, I go to visit my cousin going.'},
+      {correcta:'We\'re traveling next month.', incorrecta:'We are travel next month.'},
+      {correcta:'What are you doing next weekend?', incorrecta:'What you are doing next weekend?'},
+      {correcta:'I have plans for next Friday.', incorrecta:'I have plans for the next Friday.'},
+      {correcta:'Are you free next week?', incorrecta:'You are free next week?'},
+      {correcta:'I\'m starting a new class next month.', incorrecta:'I\'m start a new class next month.'},
+      {correcta:'Next year, I want to learn more English.', incorrecta:'Next year, I want learn more English.'},
+      {correcta:'Let\'s plan something for next weekend.', incorrecta:'Let\'s to plan something for next weekend.'},
+      {correcta:'I hope it goes well.', incorrecta:'I hope it go well.'},
+      {correcta:'I can\'t wait for next week!', incorrecta:'I no can wait for next week!'}
+    ], retoPregunta:'Say one plan you have for next week or next month.' },
+    { dia:5, prime:'This is proof. I can talk about my future plans in English.', primeTraduccion:'Esto es la prueba. Puedo hablar de mis planes futuros en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: mix \'going to\' for real plans with \'will\' for hopes and predictions — \'Tomorrow, I\'m going to study. I think it will go well.\'', pares:[
+      {correcta:'Tomorrow, I\'m going to study English.', incorrecta:'Tomorrow, I go to study English going.'},
+      {correcta:'I think it will be a good week.', incorrecta:'I think it will a good week.'},
+      {correcta:'Next month, we\'re going to travel.', incorrecta:'Next month, we go to travel going.'},
+      {correcta:'I\'ll practice every day.', incorrecta:'I will practicing every day.'},
+      {correcta:'What are your plans for this weekend?', incorrecta:'What are your plans for this the weekend?'},
+      {correcta:'I\'m going to call my family tonight.', incorrecta:'I\'m going to calling my family tonight.'},
+      {correcta:'I hope everything goes well.', incorrecta:'I hope everything go well.'},
+      {correcta:'I won\'t give up.', incorrecta:'I no will give up.'},
+      {correcta:'Next year will be amazing.', incorrecta:'Next year will amazing.'},
+      {correcta:'I\'m ready for what\'s next.', incorrecta:'I\'m ready for what is next it.'}
+    ], retoPregunta:'Record a 30-second voice note about your plans: what you\'re going to do tomorrow and one plan for next week.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 10;
+  document.getElementById('tr-semana-titulo').value = 'My Plans';
+};
+
+window.cargarEjemploSemana11Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I compare things, in English.', primeTraduccion:'Comparo cosas, en inglés.', absorbTipo:'texto', absorbContenido:'Comparatives with short adjectives (-er):\n- My house is bigger than yours.\n\nMini dialogue:\nFriend: Is your house big?\nYou: It\'s bigger than my cousin\'s, but smaller than my uncle\'s.', pares:[
+      {correcta:'My house is bigger than yours.', incorrecta:'My house is more big than yours.'},
+      {correcta:'She\'s taller than me.', incorrecta:'She\'s more tall than me.'},
+      {correcta:'This is faster than that one.', incorrecta:'This is more fast than that one.'},
+      {correcta:'He\'s older than his sister.', incorrecta:'He\'s more old than his sister.'},
+      {correcta:'Today is colder than yesterday.', incorrecta:'Today is more cold than yesterday.'},
+      {correcta:'This bag is heavier.', incorrecta:'This bag is more heavy.'},
+      {correcta:'My car is smaller than his.', incorrecta:'My car is more small than his.'},
+      {correcta:'This test is easier.', incorrecta:'This test is more easy.'},
+      {correcta:'That street is longer.', incorrecta:'That street is more long.'},
+      {correcta:'She\'s stronger than me.', incorrecta:'She\'s more strong than me.'}
+    ], retoPregunta:'Compare two things using \'-er than\'.' },
+    { dia:2, prime:'I compare things with \'more\', in English.', primeTraduccion:'Comparo cosas con \'more\', en inglés.', absorbTipo:'texto', absorbContenido:'Comparatives with long adjectives (more + adjective):\n- This is more expensive than that.\n\nMini dialogue:\nFriend: Which one is better?\nYou: This one is more comfortable, but that one is more beautiful.', pares:[
+      {correcta:'This is more expensive than that.', incorrecta:'This is expensiver than that.'},
+      {correcta:'She\'s more careful than her brother.', incorrecta:'She\'s carefuller than her brother.'},
+      {correcta:'This class is more difficult.', incorrecta:'This class is difficulter.'},
+      {correcta:'He\'s more patient than me.', incorrecta:'He\'s patienter than me.'},
+      {correcta:'This city is more beautiful.', incorrecta:'This city is beautifuler.'},
+      {correcta:'My job is more interesting now.', incorrecta:'My job is interestinger now.'},
+      {correcta:'This one is more comfortable.', incorrecta:'This one is comfortabler.'},
+      {correcta:'She\'s more generous than him.', incorrecta:'She\'s generouser than him.'},
+      {correcta:'This is more important to me.', incorrecta:'This is more important for me the.'},
+      {correcta:'He\'s more organized than her.', incorrecta:'He\'s organizeder than her.'}
+    ], retoPregunta:'Compare two things using \'more...than\'.' },
+    { dia:3, prime:'I talk about the best and worst, in English.', primeTraduccion:'Hablo de lo mejor y lo peor, en inglés.', absorbTipo:'texto', absorbContenido:'Superlatives (-est / most):\n- This is the best day of my life.\n\nMini dialogue:\nFriend: What\'s the best place you\'ve visited?\nYou: León. It\'s the most beautiful place I know.', pares:[
+      {correcta:'This is the best day of my life.', incorrecta:'This is the more best day of my life.'},
+      {correcta:'She\'s the tallest in the class.', incorrecta:'She\'s the more tall in the class.'},
+      {correcta:'It\'s the most beautiful place.', incorrecta:'It\'s the beautifulest place.'},
+      {correcta:'He\'s the fastest runner.', incorrecta:'He\'s the more fast runner.'},
+      {correcta:'This is the cheapest option.', incorrecta:'This is the more cheap option.'},
+      {correcta:'My mom is the kindest person I know.', incorrecta:'My mom is the more kind person I know.'},
+      {correcta:'This is the hardest part.', incorrecta:'This is the more hard part.'},
+      {correcta:'It\'s the biggest city I\'ve seen.', incorrecta:'It\'s the more big city I\'ve seen.'},
+      {correcta:'He\'s the smartest student.', incorrecta:'He\'s the more smart student.'},
+      {correcta:'This was the worst movie.', incorrecta:'This was the more bad movie.'}
+    ], retoPregunta:'Say the best thing that happened to you this week.' },
+    { dia:4, prime:'I compare people, places, and things, in English.', primeTraduccion:'Comparo personas, lugares y cosas, en inglés.', absorbTipo:'texto', absorbContenido:'Mixed comparisons, including \'as...as\':\n- León is as beautiful as Granada.\n\nMini dialogue:\nFriend: Which city do you like more?\nYou: They\'re different, but León is as beautiful as Granada.', pares:[
+      {correcta:'León is as beautiful as Granada.', incorrecta:'León is beautiful as Granada.'},
+      {correcta:'My brother is as tall as me.', incorrecta:'My brother is tall as me.'},
+      {correcta:'This is not as good as the other one.', incorrecta:'This is not good as the other one.'},
+      {correcta:'She works as hard as he does.', incorrecta:'She works hard as he does.'},
+      {correcta:'Is this city bigger than that one?', incorrecta:'This city is bigger than that one?'},
+      {correcta:'Which is better, this or that?', incorrecta:'Which is better, this or that the?'},
+      {correcta:'I like this one more than that one.', incorrecta:'I like this one more that that one.'},
+      {correcta:'They are very different.', incorrecta:'They are very differents.'},
+      {correcta:'This is the same size.', incorrecta:'This is the same size than.'},
+      {correcta:'It\'s not as expensive as I thought.', incorrecta:'It\'s not expensive as I thought.'}
+    ], retoPregunta:'Compare two places you know, out loud.' },
+    { dia:5, prime:'This is proof. I can compare things and describe the best in English.', primeTraduccion:'Esto es la prueba. Puedo comparar cosas y describir lo mejor en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: use comparatives for two things, superlatives for the whole group — \'This is good, that is better, but this one is the best.\'', pares:[
+      {correcta:'My house is bigger than my cousin\'s.', incorrecta:'My house is more big than my cousin\'s.'},
+      {correcta:'This is the best food I\'ve tried.', incorrecta:'This is the more best food I\'ve tried.'},
+      {correcta:'She\'s more patient than me.', incorrecta:'She\'s patienter than me.'},
+      {correcta:'He\'s the tallest in my family.', incorrecta:'He\'s the more tall in my family.'},
+      {correcta:'This city is as beautiful as that one.', incorrecta:'This city is beautiful as that one.'},
+      {correcta:'It\'s the most important thing to me.', incorrecta:'It\'s the more important thing for me.'},
+      {correcta:'This is faster than walking.', incorrecta:'This is more fast than walking.'},
+      {correcta:'My grandma is the kindest person I know.', incorrecta:'My grandma is the more kind person I know.'},
+      {correcta:'Which one do you prefer?', incorrecta:'Which one you prefer?'},
+      {correcta:'I always compare before I buy.', incorrecta:'I always compare before I buying.'}
+    ], retoPregunta:'Record a 30-second voice note comparing two things: two places, two people, or two things you own.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 11;
+  document.getElementById('tr-semana-titulo').value = 'Bigger, Better, Best';
+};
+
+window.cargarEjemploSemana12Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'I give advice, in English.', primeTraduccion:'Doy consejos, en inglés.', absorbTipo:'texto', absorbContenido:'Should / shouldn\'t for advice:\n- You should rest. You shouldn\'t worry.\n\nMini dialogue:\nFriend: I\'m so tired.\nYou: You should rest. You shouldn\'t worry so much.', pares:[
+      {correcta:'You should rest.', incorrecta:'You should to rest.'},
+      {correcta:'You shouldn\'t worry so much.', incorrecta:'You no should worry so much.'},
+      {correcta:'You should drink more water.', incorrecta:'You should drinking more water.'},
+      {correcta:'I think you should try it.', incorrecta:'I think you should to try it.'},
+      {correcta:'She should study more.', incorrecta:'She should studies more.'},
+      {correcta:'What should I do?', incorrecta:'What I should do?'},
+      {correcta:'You should talk to her.', incorrecta:'You should talking to her.'},
+      {correcta:'Maybe you should ask for help.', incorrecta:'Maybe you should to ask for help.'},
+      {correcta:'He shouldn\'t drive so fast.', incorrecta:'He no should drive so fast.'},
+      {correcta:'You should be more careful.', incorrecta:'You should to be more careful.'}
+    ], retoPregunta:'Give someone a piece of advice using \'should\'.' },
+    { dia:2, prime:'I talk about small problems, in English.', primeTraduccion:'Hablo de pequeños problemas, en inglés.', absorbTipo:'texto', absorbContenido:'Everyday problems — lost, broken, late:\n- I lost my keys. My phone is broken.\n\nMini dialogue:\nFriend: What\'s wrong?\nYou: I can\'t find my wallet, and I\'m running late.', pares:[
+      {correcta:'I lost my keys.', incorrecta:'I losed my keys.'},
+      {correcta:'My phone is broken.', incorrecta:'My phone is broke.'},
+      {correcta:'I\'m running late.', incorrecta:'I\'m running late very.'},
+      {correcta:'I forgot my homework.', incorrecta:'I forgotted my homework.'},
+      {correcta:'The car won\'t start.', incorrecta:'The car no want start.'},
+      {correcta:'I can\'t find my wallet.', incorrecta:'I no can find my wallet.'},
+      {correcta:'Something is wrong with my computer.', incorrecta:'Something is wrong with my computer the.'},
+      {correcta:'I made a mistake.', incorrecta:'I made a mistake very.'},
+      {correcta:'It\'s not working.', incorrecta:'It no is working.'},
+      {correcta:'I need to fix this.', incorrecta:'I need for fix this.'}
+    ], retoPregunta:'Describe a small problem you\'ve had recently.' },
+    { dia:3, prime:'I ask for help, in English.', primeTraduccion:'Pido ayuda, en inglés.', absorbTipo:'texto', absorbContenido:'Asking for help:\n- Can you help me, please? I need a hand.\n\nMini dialogue:\nYou: Can you help me, please? I\'m stuck on this.\nFriend: Sure! Let me take a look.', pares:[
+      {correcta:'Can you help me, please?', incorrecta:'Can you to help me, please?'},
+      {correcta:'I need a hand with this.', incorrecta:'I need a hand for this.'},
+      {correcta:'Could you explain it again?', incorrecta:'Could you to explain it again?'},
+      {correcta:'I don\'t understand this part.', incorrecta:'I no understand this part.'},
+      {correcta:'Do you know how to fix this?', incorrecta:'You know how to fix this?'},
+      {correcta:'I\'m stuck on this problem.', incorrecta:'I\'m stuck in this problem.'},
+      {correcta:'Thanks for your help.', incorrecta:'Thanks for you help.'},
+      {correcta:'I really appreciate it.', incorrecta:'I really appreciate of it.'},
+      {correcta:'Can someone help me, please?', incorrecta:'Can someone to help me, please?'},
+      {correcta:'I\'d be lost without you.', incorrecta:'I would be lost without you very.'}
+    ], retoPregunta:'Ask someone for help with something, out loud.' },
+    { dia:4, prime:'I find solutions, in English.', primeTraduccion:'Encuentro soluciones, en inglés.', absorbTipo:'texto', absorbContenido:'Solving the problem:\n- I fixed it myself. It\'s working now.\n\nMini dialogue:\nFriend: Did you fix your phone?\nYou: Yes! I figured it out myself. Problem solved!', pares:[
+      {correcta:'I fixed it myself.', incorrecta:'I fixed it my self.'},
+      {correcta:'We found a solution.', incorrecta:'We finded a solution.'},
+      {correcta:'It\'s working now.', incorrecta:'It\'s work now.'},
+      {correcta:'I figured it out.', incorrecta:'I figured out it.'},
+      {correcta:'Let\'s try a different way.', incorrecta:'Let\'s to try a different way.'},
+      {correcta:'That solved the problem.', incorrecta:'That solve the problem.'},
+      {correcta:'I finally understand it.', incorrecta:'I finally understand of it.'},
+      {correcta:'Everything is fine now.', incorrecta:'Everything is fine now very.'},
+      {correcta:'Thanks for helping me solve it.', incorrecta:'Thanks for help me solve it.'},
+      {correcta:'Problem solved!', incorrecta:'Problem is solved it!'}
+    ], retoPregunta:'Say how you solved a problem recently.' },
+    { dia:5, prime:'This is proof. I can ask for help and give advice in English.', primeTraduccion:'Esto es la prueba. Puedo pedir ayuda y dar consejos en inglés.', absorbTipo:'texto', absorbContenido:'Review tip: combine problem + should + solution — \'I had a problem, so I asked for help, and I should have done that sooner.\'', pares:[
+      {correcta:'I had a problem, but I fixed it.', incorrecta:'I had a problem, but I fixed it very.'},
+      {correcta:'You should ask for help when you need it.', incorrecta:'You should to ask for help when you need it.'},
+      {correcta:'I lost my keys, but I found them.', incorrecta:'I losed my keys, but I found them.'},
+      {correcta:'She helped me solve the problem.', incorrecta:'She help me solve the problem.'},
+      {correcta:'What should I do next?', incorrecta:'What I should do next?'},
+      {correcta:'I don\'t understand, can you explain?', incorrecta:'I no understand, you can explain?'},
+      {correcta:'Everything worked out fine.', incorrecta:'Everything worked out fine very.'},
+      {correcta:'Thanks for your advice.', incorrecta:'Thanks for you advice.'},
+      {correcta:'I always try to find a solution.', incorrecta:'I always try for find a solution.'},
+      {correcta:'Problems are just part of life.', incorrecta:'Problems are just part of the life.'}
+    ], retoPregunta:'Record a 30-second voice note about a small problem you had recently and how you solved it.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 12;
+  document.getElementById('tr-semana-titulo').value = 'What Should I Do?';
+};
+
+window.cargarEjemploSemana13Training = () => {
+  const diasEjemplo = [
+    { dia:1, prime:'This is proof. I know who I am, in English.', primeTraduccion:'Esto es la prueba. Sé quién soy, en inglés.', absorbTipo:'texto', absorbContenido:'Review — Who Are You? + My People: name, family, appearance, likes.\n\nToday you combine everything from weeks 1 and 5. Speak slowly and with confidence — you already know all of this.', pares:[
+      {correcta:'My name is Ana, and I\'m from Managua.', incorrecta:'My name Ana is, and I from Managua.'},
+      {correcta:'I have brown eyes and dark hair.', incorrecta:'I have brown eyes and dark hairs.'},
+      {correcta:'My mom is kind, and my dad is funny.', incorrecta:'My mom is kind, and my dad is funny person.'},
+      {correcta:'I have two brothers and one sister.', incorrecta:'I have two brother and one sister.'},
+      {correcta:'I\'m twenty-five years old.', incorrecta:'I have twenty-five years.'},
+      {correcta:'This is my family.', incorrecta:'This is my families.'},
+      {correcta:'I like coffee, but I don\'t like tea.', incorrecta:'I like of coffee, but I no like tea.'},
+      {correcta:'Nice to meet you.', incorrecta:'Nice meet you to.'},
+      {correcta:'I\'m proud of who I am.', incorrecta:'I\'m proud for who I am.'},
+      {correcta:'This is me.', incorrecta:'This is I.'}
+    ], retoPregunta:'Introduce yourself completely: name, age, family, and appearance.' },
+    { dia:2, prime:'This is proof. I can describe my everyday life in English.', primeTraduccion:'Esto es la prueba. Puedo describir mi vida diaria en inglés.', absorbTipo:'texto', absorbContenido:'Review — My Day, My Words + Where Is It?: routine and home.\n\nToday you combine everything from weeks 2 and 3.', pares:[
+      {correcta:'I wake up at seven every day.', incorrecta:'I wake up at the seven every day.'},
+      {correcta:'I have breakfast, then I go to school.', incorrecta:'I have breakfast, then I go to the school.'},
+      {correcta:'There are three rooms in my house.', incorrecta:'There are three room in my house.'},
+      {correcta:'My room is next to the kitchen.', incorrecta:'My room is next the kitchen.'},
+      {correcta:'I help my mom clean the house.', incorrecta:'I help my mom clean the house to.'},
+      {correcta:'School starts at eight.', incorrecta:'School start at eight.'},
+      {correcta:'I go to bed at nine.', incorrecta:'I go to the bed at nine.'},
+      {correcta:'My neighborhood is quiet.', incorrecta:'My neighborhood is quietly.'},
+      {correcta:'I like my daily routine.', incorrecta:'I like of my daily routine.'},
+      {correcta:'Every day is a new chance.', incorrecta:'Every day it\'s a new chance.'}
+    ], retoPregunta:'Describe your typical day, from morning to night.' },
+    { dia:3, prime:'This is proof. I can tell my story in English.', primeTraduccion:'Esto es la prueba. Puedo contar mi historia en inglés.', absorbTipo:'texto', absorbContenido:'Review — Yesterday & Me + How Do You Feel? + Let\'s Go Shopping: past experiences and feelings.\n\nToday you combine everything from weeks 4, 8, and 9.', pares:[
+      {correcta:'Yesterday, I played soccer with my friends.', incorrecta:'Yesterday, I play soccer with my friends.'},
+      {correcta:'I was really happy that day.', incorrecta:'I were really happy that day.'},
+      {correcta:'Last weekend, I went shopping.', incorrecta:'Last weekend, I go shopping.'},
+      {correcta:'I bought a new jacket.', incorrecta:'I buyed a new jacket.'},
+      {correcta:'I felt sick, but now I feel better.', incorrecta:'I feel sick, but now I feel better yesterday.'},
+      {correcta:'First, I woke up. Then, I had breakfast.', incorrecta:'First, I wake up. Then, I have breakfast.'},
+      {correcta:'It was a great day.', incorrecta:'It was great a day.'},
+      {correcta:'I helped my family that day.', incorrecta:'I help my family that day.'},
+      {correcta:'I learned a lot that week.', incorrecta:'I learned a lot that week very.'},
+      {correcta:'That\'s part of my story.', incorrecta:'That\'s a part of my story the.'}
+    ], retoPregunta:'Tell a short story about something that happened to you recently.' },
+    { dia:4, prime:'This is proof. I know where I\'m going, in English.', primeTraduccion:'Esto es la prueba. Sé hacia dónde voy, en inglés.', absorbTipo:'texto', absorbContenido:'Review — My Plans + Bigger, Better, Best + What Should I Do?: future, comparisons, and advice.\n\nToday you combine everything from weeks 10, 11, and 12.', pares:[
+      {correcta:'Next month, I\'m going to learn more English.', incorrecta:'Next month, I go to learn more English going.'},
+      {correcta:'I think this year will be better.', incorrecta:'I think this year will be more good.'},
+      {correcta:'I\'m stronger than I was before.', incorrecta:'I\'m more strong than I was before.'},
+      {correcta:'This is the best chance I\'ve had.', incorrecta:'This is the more best chance I\'ve had.'},
+      {correcta:'I should keep practicing every day.', incorrecta:'I should to keep practicing every day.'},
+      {correcta:'I won\'t give up on my goals.', incorrecta:'I no will give up on my goals.'},
+      {correcta:'I\'m going to work hard for this.', incorrecta:'I\'m going to working hard for this.'},
+      {correcta:'My English is better than last year.', incorrecta:'My English is more good than last year.'},
+      {correcta:'I believe things will go well.', incorrecta:'I believe things will going well.'},
+      {correcta:'The future looks bright.', incorrecta:'The future look bright.'}
+    ], retoPregunta:'Say one goal you have and how you plan to reach it.' },
+    { dia:5, prime:'This is proof. I can tell my whole story, in English — and I\'m just getting started.', primeTraduccion:'Esto es la prueba. Puedo contar toda mi historia, en inglés — y apenas estoy comenzando.', absorbTipo:'texto', absorbContenido:'You\'ve built a real vocabulary of your own life over 13 weeks: who you are, your day, your home, your family, your past, and your future. Today, put it all together like a short life story — your name, your family, your routine, one thing that happened, and one plan ahead. Don\'t worry about small mistakes. Every word you\'ve learned is already yours. This is your Foundations graduation.', pares:[
+      {correcta:'My name is Ana, and this is my life.', incorrecta:'My name Ana is, and this is my life.'},
+      {correcta:'I live with my family, and we help each other.', incorrecta:'I live with my family, and we help each other to.'},
+      {correcta:'Every day, I wake up and start fresh.', incorrecta:'Every day, I wake up and start fresh very.'},
+      {correcta:'Last year, I didn\'t speak English.', incorrecta:'Last year, I no spoke English.'},
+      {correcta:'Now, I can talk about my whole day.', incorrecta:'Now, I can to talk about my whole day.'},
+      {correcta:'I\'m more confident than before.', incorrecta:'I\'m more confident that before.'},
+      {correcta:'Next year, I\'m going to keep learning.', incorrecta:'Next year, I go to keep learning going.'},
+      {correcta:'I should be proud of how far I\'ve come.', incorrecta:'I should to be proud of how far I\'ve come.'},
+      {correcta:'This is just the beginning.', incorrecta:'This is just the begin.'},
+      {correcta:'This is my life, and I can say it in English.', incorrecta:'This is my life, and I can to say it in English.'}
+    ], retoPregunta:'Record a 60-second voice note telling your story: who you are, what your day looks like, something that happened recently, and one plan for the future. This is your Foundations graduation -- speak with pride.' }
+  ];
+  abrirEditorSemanaTraining(diasEjemplo);
+  document.getElementById('tr-semana-etapa').value = 'foundations';
+  document.getElementById('tr-semana-orden').value = 13;
+  document.getElementById('tr-semana-titulo').value = 'This Is My Life';
+};
+
 
 /* ===== ADMIN: GALERÍA DE VIDEOS ===== */
 let categoriasVideoCacheAdmin = [];
@@ -4954,22 +5803,81 @@ function norm(t) { return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u03
 <!-- ============================================================
      NEC COACH — Asistente de inglés con IA (Gemini)
      ============================================================
-     La llamada a Gemini ahora pasa por una Cloud Function
-     (necCoachChat) que guarda la API key en el servidor. El
-     navegador solo llama a esa función vía httpsCallable; la key
-     nunca viaja al cliente ni queda en este archivo.
-     Código de la función: carpeta nec-coach-function/functions/index.js
+     ADVERTENCIA DE SEGURIDAD: la API key de Gemini queda visible
+     para cualquiera que abra "Ver código fuente" en el navegador.
+     Esto es distinto a la config de Firebase de arriba (esa sí
+     está pensada para ser pública y se protege con Reglas de
+     Seguridad de Firestore). Una API key de Gemini expuesta puede
+     ser copiada y usada por terceros, generando cargos a tu cuenta
+     de Google Cloud. Recomendado: mover esta llamada a una Cloud
+     Function / endpoint propio que guarde la key en el servidor.
+     Lo dejo tal como lo pediste en la especificación, pero avísame
+     si quieres que te arme esa versión más segura.
      ============================================================ -->
-<script type="module">
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
-
+<script>
 (function () {
-  // getFunctions() sin argumentos usa la app default, que ya quedó
-  // registrada arriba con initializeApp(firebaseConfig) (ambos
-  // <script type="module"> comparten el mismo registro de Firebase
-  // porque el navegador reutiliza el módulo cargado desde la misma URL).
-  const functions = getFunctions();
-  const necCoachChatFn = httpsCallable(functions, 'necCoachChat');
+  const GEMINI_API_KEY = 'AIzaSyDY-U_zpzP--FDjsxdXJuWisbZysCf3PBk';
+  // NOTA: gemini-1.5-flash fue descontinuado por Google (ahora responde 404 en cualquier proyecto).
+  // Se usa gemini-3.1-flash-lite: es el modelo actual, rápido y económico, recomendado para chat.
+  const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`;
+
+  const SYSTEM_PROMPT = `
+You are the "Nica English Coach", the personal AI English trainer for Nica English Club (app.nicaenglishclub.com).
+
+CORE PHILOSOPHY:
+"We don't want students to translate English. We want them to think in English."
+Your goal: THINK -> UNDERSTAND -> RESPOND -> SPEAK IN ENGLISH.
+
+ROLE & PERSONALITY:
+- You are a natural, patient, demanding, direct coach—NOT a robotic teacher, grammar encyclopedia, or translation tool.
+- Personality: motivating, warm, and cheerful. You genuinely celebrate progress (specifically, not with generic praise) and keep the energy light even when correcting mistakes.
+- Use the student's first name naturally every few messages to build closeness — not in literally every message, that feels forced. Look for natural moments (greeting them, celebrating a win, giving a challenge).
+- Proportions: 20% concise explanation / 80% active student practice.
+- Language ratio: see LANGUAGE ADAPTATION below — it depends on the student's level, not a fixed ratio.
+- ALWAYS ask for the student's name if not provided, and address them by name to build rapport.
+
+LANGUAGE ADAPTATION (LEVEL-BASED):
+1. STARTING POINT: You will receive the student's self-selected level as context (Beginner / Intermediate / Advanced). Use it as your starting point.
+2. SILENT RECALIBRATION: Pay attention to how the student actually writes and responds. If a "beginner" is clearly doing fine in English, or an "advanced" student is struggling, adjust your language mix accordingly WITHOUT announcing it ("recalibrating your level" would feel clinical — just naturally shift how much English/Spanish you use).
+3. BEGINNER: Speak mostly in Spanish for instructions, encouragement, and explanations. Give the target phrase, example, or practice prompt in English. Example: "¡Excelente intento, [Nombre]! Para decir que tienes hambre en una situación real, usamos esta frase: I'm starving. Ahora inténtalo tú: ¿cómo le dirías a tu amigo que no has comido nada?"
+4. INTERMEDIATE: Shift to roughly 60-80% English. Use Spanish only to clarify a tricky grammar point or when the student seems genuinely stuck.
+5. ADVANCED: 90-100% English. Only drop into simplified Spanish to resolve a severe blockage.
+6. FRUSTRATION & RECOVERY PROTOCOL: If the student says "no entiendo", "qué es eso?", "habla español", or seems lost: (a) validate warmly in Spanish ("¡No te preocupes! Vamos paso a paso."), (b) explain the concept simply in Spanish, (c) give them a clear, simple prompt in English to try again.
+7. DUAL-LANGUAGE HINTS: When introducing a new English expression to a beginner, add a soft hint in Spanish in parentheses, e.g., "I'm running late (se me hace tarde)".
+
+METHODOLOGY & RULES:
+1. THINK IN ENGLISH THROUGH SITUATIONS: Never teach isolated vocabulary. Always associate words/phrases with concrete real-life situations (home, work, daily issues, shopping, travel).
+2. GUIDED DISCOVERY: Never give away the correct answer or grammar rule immediately. Ask guiding questions so the student figures it out ("Think about this: Do we HAVE an age or ARE we an age?").
+3. NATURAL CORRECTION:
+   - Small errors: Correct naturally in your response and keep moving.
+   - Conceptual errors: Ask a question to help them discover the mistake.
+   - Recurring errors: Pause and run a quick 2-step drill.
+4. NATURAL AMERICAN ENGLISH: Prioritize daily, casual, and neutral American English over literal translations or overly formal textbook grammar.
+5. ACTIVE RECALL & SHADOWING: Constantly ask follow-up questions ("Why?", "What happened next?", "How did you feel?"). Ask them to repeat, personalize, and modify sentences.
+6. ADAPTABILITY:
+   - Beginners: Short sentences, high frequency words, simple situations.
+   - Intermediate: Broader contexts, phrasal verbs, open-ended questions.
+   - Advanced: Opinions, debates, storytelling, nuances.
+
+NECLUB CHALLENGES (community engagement):
+- At the natural end of a meaningful practice moment (NOT after every single message — use judgment, e.g. after finishing a mini-scenario, a drill, or answering a good question), warmly offer the student a small challenge to post on the NECLUB community (they already know what this is).
+- Only ACTUALLY give the challenge if the student says yes. If they decline, respect it lightly ("¡No hay problema! Cuando quieras." ) and keep going without pressure — never guilt-trip them.
+- Vary the type of challenge based on what was just practiced — don't default to the same type every time:
+  * A short audio recording (e.g. practicing a phrase or ordering food)
+  * A short video (e.g. describing something, introducing themselves)
+  * A question for the community (e.g. after a debate or opinion topic)
+  * A fun/curious fact they just learned (e.g. after learning an idiom or expression)
+- Remind them that whatever they post on NECLUB should be in English — that's the one rule of the community.
+
+PRACTICE SESSION STRUCTURE (When user triggers practice or quick replies):
+- Step 1: Warm-up (2 quick questions using student's name).
+- Step 2: Present a real situation.
+- Step 3: Elicit student production.
+- Step 4: Smart correction & a quick in-chat challenge/drill.
+- Step 5: Review (brief feedback: what went well, 1-3 key chunks, next steps) — and, when it fits naturally, offer a NECLUB challenge per the rules above.
+
+Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you're offering a challenge or asking a question, that counts toward the limit — trim the explanation, not the question. Never leave a sentence unfinished; if you're running long, wrap up early with a shorter closing line instead.
+`;
 
   const QUICK_REPLIES = [
     '🎯 Quiero practicar inglés hoy',
@@ -5118,21 +6026,33 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
     necHistory.push({ role: 'user', parts: [{ text: userText }] });
     const name = getStudentName();
     const level = getStudentLevel();
+    let sysText = SYSTEM_PROMPT;
+    if (name) sysText += `\n\nThe student's name is "${name}". Address them by this name from time to time.`;
+    if (level) sysText += `\n\nThe student self-reported their level as: ${level}. Use it as your starting point, but silently recalibrate if their actual responses suggest otherwise.`;
 
-    // Ya no llamamos a Gemini directamente desde el navegador. Llamamos a
-    // nuestra Cloud Function (necCoachChat), que agrega la API key en el
-    // servidor y hace la llamada real a Gemini. Ver
-    // nec-coach-function/functions/index.js
-    let result;
-    try {
-      result = await necCoachChatFn({ history: necHistory, name, level });
-    } catch (err) {
-      // httpsCallable lanza un error con .code (ej. 'unauthenticated',
-      // 'internal') y .message cuando la función responde con HttpsError.
-      throw new Error((err && err.code) ? err.code : 'callable-error');
-    }
+    const body = {
+      system_instruction: { parts: [{ text: sysText }] },
+      contents: necHistory,
+      // Gemini 3 ya no acepta temperature/top_p/top_k. thinkingLevel 'minimal' deja
+      // el menor "pensamiento interno" posible para gemini-3.1-flash-lite, así casi
+      // todo el presupuesto de tokens se usa en la respuesta visible (evita que se
+      // corte a medio mensaje). maxOutputTokens se sube con margen de sobra.
+      generationConfig: {
+        maxOutputTokens: 1024,
+        thinkingConfig: { thinkingLevel: 'minimal' }
+      }
+    };
 
-    const reply = (result && result.data && result.data.reply)
+    const res = await fetch(GEMINI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const parts = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
+    const reply = (parts || []).map(p => p.text || '').join('').trim()
       || "Sorry, I couldn't think of a reply. Can you say that again?";
     necHistory.push({ role: 'model', parts: [{ text: reply }] });
     return reply;
