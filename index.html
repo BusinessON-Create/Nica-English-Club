@@ -110,14 +110,11 @@ a { color: inherit; }
 .dashboard-shell .week-card, .dashboard-shell .ring-card { margin-bottom:22px; }
 
 .hero-banner {
-  padding:34px 22px;
+  padding:26px 22px;
   border-radius: var(--r-xl);
   margin-top:18px;
   position:relative;
   overflow:hidden;
-  aspect-ratio: 2.2 / 1;
-  min-height:260px;
-  display:flex; flex-direction:column; justify-content:flex-end;
   background-image:
     linear-gradient(180deg, rgba(6,6,8,.32) 0%, rgba(6,6,8,.5) 45%, rgba(6,6,8,.92) 100%),
     url('https://images.unsplash.com/photo-1637181416864-134c9228e691?q=80&w=1600&auto=format&fit=crop');
@@ -126,17 +123,18 @@ a { color: inherit; }
   border:1px solid var(--border2);
   box-shadow: var(--shadow-card);
 }
-.avatar-ring { width:88px; height:88px; border-radius:50%; padding:3px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); overflow:hidden; flex-shrink:0; box-shadow: 0 0 0 1px rgba(240,180,41,.25), 0 8px 22px rgba(240,180,41,.28); position:relative; z-index:1; }
+.avatar-ring { width:76px; height:76px; border-radius:50%; padding:3px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); overflow:hidden; flex-shrink:0; box-shadow: 0 0 0 1px rgba(240,180,41,.25), 0 8px 22px rgba(240,180,41,.28); position:relative; z-index:1; }
 .avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--bg); display:block; }
-.avatar-default { width:100%; height:100%; border-radius:50%; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:26px; font-weight:700; border:3px solid var(--bg); }
+.avatar-default { width:100%; height:100%; border-radius:50%; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:24px; font-weight:700; border:3px solid var(--bg); }
 .welcome-eyebrow { font-size:10px; color:var(--gold); letter-spacing:2px; font-weight:700; position:relative; z-index:1; }
-.welcome-name { font-family:'Playfair Display'; font-weight:700; font-size:30px; color:#fff; margin-top:3px; position:relative; z-index:1; text-shadow: 0 2px 12px rgba(0,0,0,.5); }
+.welcome-name-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:3px; }
+.welcome-name { font-family:'Playfair Display'; font-weight:700; font-size:26px; color:#fff; position:relative; z-index:1; text-shadow: 0 2px 12px rgba(0,0,0,.5); }
+.online-pill-sm { display:inline-flex; align-items:center; gap:5px; background:rgba(0,214,143,.14); border:1px solid rgba(0,214,143,.4); color:var(--green); font-size:9px; font-weight:700; padding:4px 9px; border-radius:99px; letter-spacing:.3px; position:relative; z-index:1; white-space:nowrap; }
 .welcome-sub { font-size:13px; color:var(--muted); margin-top:5px; position:relative; z-index:1; }
 .hero-banner .profile-row, .hero-banner .info-badges-row, .hero-banner .student-id-badge, .hero-banner .status-row { position:relative; z-index:1; }
 .hero-nav-btns { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 .hero-nav-btns .neclub-launch-btn, .hero-nav-btns .tr-launch-btn { margin-top:0; }
-.status-row { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:14px; }
-@media (max-width:600px){ .hero-banner{ aspect-ratio:auto; min-height:0; } }
+.status-row { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:12px; }
 
 .stats-row { display:flex; align-items:stretch; background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); margin:22px 0; overflow:hidden; }
 .stat-pill { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 10px; text-align:center; position:relative; transition: background .2s var(--ease); }
@@ -980,7 +978,10 @@ a { color: inherit; }
             <div class="avatar-ring" id="avatar-container"></div>
             <div>
               <p class="welcome-eyebrow">WELCOME BACK</p>
-              <h2 id="nombre-alumno-ui" class="welcome-name">Estudiante</h2>
+              <div class="welcome-name-row">
+                <h2 id="nombre-alumno-ui" class="welcome-name">Estudiante</h2>
+                <span class="online-pill-sm"><span class="online-dot"></span> En línea</span>
+              </div>
               <p class="student-id-badge" id="student-id-badge"></p>
               <p class="welcome-sub">Sigue entrenando tu inglés. Tú puedes.</p>
             </div>
@@ -991,7 +992,6 @@ a { color: inherit; }
           </div>
         </div>
         <div class="status-row">
-          <span class="online-pill"><span class="online-dot"></span> En línea</span>
           <div class="info-badges-row" id="info-badges-row"></div>
         </div>
       </div>
