@@ -107,21 +107,44 @@ a { color: inherit; }
 .btn-salir:hover { color: var(--red); border-color: rgba(255,92,92,.35); background:rgba(255,92,92,.06); }
 
 .dashboard-shell { max-width:1180px; width:100%; margin:0 auto; padding:0 18px 48px; }
+.dashboard-shell .week-card, .dashboard-shell .ring-card { margin-bottom:22px; }
 
-.hero-banner { padding:26px 0 0; }
-.avatar-ring { width:68px; height:68px; border-radius:50%; padding:3px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); overflow:hidden; flex-shrink:0; }
+.hero-banner {
+  padding:34px 22px;
+  border-radius: var(--r-xl);
+  margin-top:18px;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(180deg, rgba(8,8,10,.35) 0%, rgba(8,8,10,.55) 55%, rgba(8,8,10,.88) 100%),
+    linear-gradient(180deg, #2b2340 0%, #5a3d4a 32%, #b1623f 52%, #d99a4e 62%, #2a2230 78%, #0d0c12 100%);
+  border:1px solid var(--border2);
+  box-shadow: var(--shadow-card);
+}
+.hero-banner::before {
+  content:'';
+  position:absolute; left:0; right:0; bottom:0; height:42%;
+  background:
+    radial-gradient(ellipse 60% 100% at 30% 100%, rgba(0,0,0,.55), transparent 70%),
+    linear-gradient(180deg, transparent, rgba(5,5,8,.65));
+  clip-path: polygon(0% 100%, 0% 55%, 12% 45%, 22% 58%, 34% 30%, 46% 52%, 58% 20%, 70% 48%, 82% 38%, 100% 60%, 100% 100%);
+  pointer-events:none;
+}
+.avatar-ring { width:88px; height:88px; border-radius:50%; padding:3px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); overflow:hidden; flex-shrink:0; box-shadow: 0 0 0 1px rgba(240,180,41,.25), 0 8px 22px rgba(240,180,41,.28); position:relative; z-index:1; }
 .avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--bg); display:block; }
-.avatar-default { width:100%; height:100%; border-radius:50%; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:22px; font-weight:700; border:3px solid var(--bg); }
-.welcome-eyebrow { font-size:9.5px; color:var(--gold); letter-spacing:1.5px; font-weight:700; }
-.welcome-name { font-family:'Playfair Display'; font-size:25px; color:#fff; margin-top:2px; }
-.welcome-sub { font-size:13px; color:var(--muted); margin-top:4px; }
+.avatar-default { width:100%; height:100%; border-radius:50%; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:26px; font-weight:700; border:3px solid var(--bg); }
+.welcome-eyebrow { font-size:10px; color:var(--gold); letter-spacing:2px; font-weight:700; position:relative; z-index:1; }
+.welcome-name { font-family:'Playfair Display'; font-weight:700; font-size:30px; color:#fff; margin-top:3px; position:relative; z-index:1; }
+.welcome-sub { font-size:13px; color:var(--muted); margin-top:5px; position:relative; z-index:1; }
+.hero-banner .profile-row, .hero-banner .info-badges-row, .hero-banner .student-id-badge { position:relative; z-index:1; }
 
-.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0; }
-.stat-pill { background: var(--card); border:1px solid var(--border); border-radius:var(--r); padding:16px 10px; text-align:center; transition: border-color .2s var(--ease), transform .2s var(--ease), background .2s var(--ease); }
-.stat-pill:hover { border-color: var(--border2); transform: translateY(-2px); background:var(--card-hover); }
+.stats-row { display:flex; align-items:stretch; background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); margin:22px 0; overflow:hidden; }
+.stat-pill { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 10px; text-align:center; position:relative; transition: background .2s var(--ease); }
+.stat-pill:not(:first-child)::before { content:''; position:absolute; left:0; top:18%; bottom:18%; width:1px; background:var(--border2); }
+.stat-pill:hover { background:var(--card-hover); }
 .stat-icon { width:26px; height:26px; margin:0 auto 8px; border-radius:8px; background:var(--gold-dim); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:11px; }
-.stat-num { font-family:'Playfair Display',serif; font-size:26px; color:var(--gold); line-height:1; }
-.stat-label { font-size:8px; color:var(--muted); margin-top:6px; letter-spacing:.5px; line-height:1.4; }
+.stat-num { font-family:'Playfair Display',serif; font-size:28px; color:var(--gold); line-height:1; }
+.stat-label { font-size:8.5px; color:var(--muted); margin-top:7px; letter-spacing:.8px; line-height:1.4; text-transform:uppercase; }
 
 /* CTA REFERIDOS */
 .referral-card { display:flex; align-items:center; gap:14px; text-decoration:none; width:100%; text-align:left; cursor:pointer; font-family:inherit; background: linear-gradient(120deg, rgba(37,211,102,.10), var(--card) 45%); border:1px solid rgba(37,211,102,.30); border-radius: var(--r-lg); padding:16px 18px; margin-bottom:20px; transition: transform .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease); }
@@ -133,12 +156,17 @@ a { color: inherit; }
 .referral-arrow { color:#25D366; font-size:13px; flex-shrink:0; }
 
 /* BANNER PROYECTADO */
-.banner-projection { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border); background: var(--card); aspect-ratio: 2.2/1; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom:20px; }
+.banner-projection-wrap { margin-bottom:22px; }
+.banner-projection-eyebrow { display:flex; align-items:center; gap:7px; font-size:9.5px; letter-spacing:1.8px; color:var(--gold); font-weight:700; text-transform:uppercase; margin-bottom:10px; }
+.banner-projection-eyebrow i { font-size:10px; }
+.banner-projection { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--gold2); background: var(--card); aspect-ratio: 2.2/1; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 14px 34px rgba(0,0,0,.4), 0 0 0 1px rgba(240,180,41,.06); }
 .banner-projection img, .banner-projection iframe { width: 100%; height: 100%; object-fit: cover; border: none; }
 .banner-default-text { text-align: center; padding: 20px; }
 .banner-default-text i { color:var(--gold); font-size:20px; margin-bottom:10px; display:block; }
 .banner-default-text h2 { font-family: 'Playfair Display'; color: var(--gold); font-size: 20px; margin-bottom: 5px; letter-spacing: .5px; }
 .banner-default-text p { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; }
+.banner-projection-link { position:absolute; top:12px; right:12px; z-index:3; display:inline-flex; align-items:center; gap:6px; background:rgba(8,8,10,.72); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.18); color:#fff; font-size:10.5px; font-weight:700; padding:6px 12px; border-radius:99px; text-decoration:none; pointer-events:none; }
+.banner-projection-link i { color:#ff4c4c; font-size:11px; }
 
 /* GRÁFICO DE BARRAS */
 .week-card { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; margin-bottom:20px; }
@@ -157,8 +185,27 @@ a { color: inherit; }
 .graph-label { font-size: 9.5px; color: var(--muted); font-weight: 700; flex:1; text-align: center; transition: color .3s var(--ease); }
 .graph-label.active { color: var(--gold); }
 
+/* ===== NUEVO: racha como círculo de progreso + días con check ===== */
+.streak-new { display:flex; align-items:center; gap:18px; margin-top:18px; flex-wrap:wrap; }
+.streak-ring-wrap { position:relative; width:76px; height:76px; flex-shrink:0; }
+.streak-ring-wrap svg { width:100%; height:100%; transform:rotate(-90deg); }
+.streak-ring-icon { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:22px; }
+.streak-ring-icon i { animation: pulseSoft 1.8s ease infinite; }
+.streak-copy { flex:1; min-width:150px; }
+.streak-copy .n { font-family:'Playfair Display'; font-size:19px; color:#fff; }
+.streak-copy .n b { color:var(--gold); }
+.streak-days-row { display:flex; gap:9px; margin-top:6px; }
+.streak-day { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
+.streak-day-circle { width:30px; height:30px; border-radius:50%; background:var(--card2); border:1px solid var(--border2); color:var(--muted-dim); display:flex; align-items:center; justify-content:center; font-size:11px; transition: all .25s var(--ease); }
+.streak-day-circle.done { background:linear-gradient(135deg, var(--gold3), var(--gold2)); border-color:transparent; color:#1a1400; box-shadow: 0 0 14px var(--gold-glow); }
+.streak-day-label { font-size:9.5px; color:var(--muted); font-weight:700; }
+.streak-day-label.active { color:var(--gold); }
+@media (max-width:480px){ .streak-days-row{ display:none; } }
+
 .ring-card { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; margin-bottom:24px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
 .ring-copy { flex:1; min-width:160px; }
+.ring-progress-track { width:100%; max-width:220px; height:5px; border-radius:99px; background:var(--border2); overflow:hidden; margin-top:9px; }
+.ring-progress-fill { height:100%; background:linear-gradient(90deg, var(--gold2), var(--gold3)); border-radius:99px; transition:width 1s var(--ease); }
 .btn-continuar { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:700; font-size:12.5px; border:none; padding:11px 18px; border-radius:12px; cursor:pointer; font-family:inherit; transition: transform .15s var(--ease), box-shadow .15s var(--ease); white-space:nowrap; }
 .btn-continuar:hover { transform: translateY(-1px); box-shadow: 0 10px 24px var(--gold-glow); }
 
@@ -723,8 +770,9 @@ a { color: inherit; }
 .presence-dot.online { background:var(--green); box-shadow:0 0 6px var(--green); }
 
 /* ===== COMPARTIR ===== */
-.share-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px 18px; margin-bottom:20px; flex-wrap:wrap; }
-.share-bar p { color:var(--muted); font-size:12px; }
+.share-bar { display:flex; align-items:center; justify-content:space-between; gap:14px; background:var(--card); border:1px solid var(--border); border-left:3px solid var(--gold2); border-radius:var(--r-lg); padding:18px 20px; margin:22px 0; flex-wrap:wrap; }
+.share-bar p { color:var(--muted); font-size:13px; display:flex; align-items:center; gap:10px; }
+.share-bar p i.fa-people-group, .share-bar p i.fa-users { color:var(--gold2); font-size:15px; }
 .share-bar b { color:#fff; }
 .btn-share { display:inline-flex; align-items:center; gap:8px; background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold3); font-weight:700; font-size:12px; padding:10px 16px; border-radius:99px; cursor:pointer; font-family:inherit; transition: transform .15s var(--ease); white-space:nowrap; }
 .btn-share:hover { transform: translateY(-1px); }
@@ -948,7 +996,7 @@ a { color: inherit; }
 
       <!-- COMPARTIR -->
       <div class="share-bar">
-        <p>Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
+        <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
         <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
       </div>
 
@@ -959,9 +1007,9 @@ a { color: inherit; }
           <p class="stat-label">DÍAS<br>ESTA SEMANA</p>
         </div>
         <div class="stat-pill">
-          <div class="stat-icon"><i class="fa-solid fa-crown"></i></div>
+          <div class="stat-icon"><i class="fa-solid fa-chart-simple"></i></div>
           <div class="stat-num" id="stat-total">0</div>
-          <p class="stat-label">TOTAL<br>ACCESOS</p>
+          <p class="stat-label">ACCESOS</p>
         </div>
         <div class="stat-pill">
           <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
@@ -971,18 +1019,24 @@ a { color: inherit; }
       </div>
 
       <!-- BANNER AREA -->
-      <div id="banner-area" class="banner-projection">
-          <div class="banner-default-text">
-              <i class="fa-solid fa-play"></i>
-              <h2>NICA ENGLISH CLUB</h2>
+      <div class="banner-projection-wrap">
+        <p class="banner-projection-eyebrow"><i class="fa-solid fa-sparkles"></i> Today's training</p>
+        <div style="position:relative;">
+          <span class="banner-projection-link"><i class="fa-brands fa-youtube"></i> Ver en YouTube</span>
+          <div id="banner-area" class="banner-projection">
+              <div class="banner-default-text">
+                  <i class="fa-solid fa-play"></i>
+                  <h2>NICA ENGLISH CLUB</h2>
               <p>train your english</p>
           </div>
+          </div>
+        </div>
       </div>
 
       <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
       <div class="week-card">
         <div class="card-eyebrow-row">
-          <p class="card-eyebrow">Streak graph (curva semanal)</p>
+          <p class="card-eyebrow">Your training streak</p>
           <div class="racha-badge"><i class="fa-solid fa-fire"></i><b id="racha-badge-num">0</b><span>días<br>racha</span></div>
         </div>
         <div class="graph-container" id="streak-graph"></div>
@@ -999,6 +1053,7 @@ a { color: inherit; }
         <div class="ring-copy">
           <h3 id="ring-msg" style="color:#fff; font-size:16.5px; margin-bottom:2px; font-family:'Playfair Display';">¡Comienza tu racha!</h3>
           <p id="ring-sub" style="font-size:12px; color:var(--muted);">Completa los 7 días de la semana.</p>
+          <div class="ring-progress-track"><div id="ring-progress-fill" class="ring-progress-fill" style="width:0%;"></div></div>
         </div>
         <button class="btn-continuar" onclick="document.getElementById('recursos-section').scrollIntoView({behavior:'smooth'})">Continuar <i class="fa-solid fa-arrow-right"></i></button>
       </div>
@@ -1901,6 +1956,8 @@ function renderUI(alumno) {
   const pct = Math.min((diasLogueados/7)*100, 100);
   document.getElementById('ring-pct').innerText = Math.round(pct) + "%";
   document.getElementById('ring-circle').style.strokeDashoffset = 226 - (226 * pct/100);
+  const ringFill = document.getElementById('ring-progress-fill');
+  if (ringFill) ringFill.style.width = pct + '%';
   const msgs = ['Día 1: ¡Empieza!','Día 2: ¡Sigue así!','Día 3: ¡Vas bien!','Día 4: ¡Mitad!','Día 5: ¡Excelente!','Día 6: ¡Falta 1!','<i class="fa-solid fa-trophy tr-icon-bounce" style="color:var(--gold2); margin-right:6px;"></i>META 7/7'];
   document.getElementById('ring-msg').innerHTML = msgs[Math.min(diasLogueados,6)];
 
@@ -1924,16 +1981,36 @@ function renderGraph(diasSemana) {
   const lunes = getMonday(managuaNow());
   const hoyStr = getLocalDateStr(managuaNow());
   const dias = ['L','M','M','J','V','S','D'];
-  let bars = '', labels = '';
+  let dayItems = '';
+  let activosCount = 0;
   for (let i = 0; i < 7; i++) {
     const d = new Date(lunes);
     d.setDate(lunes.getDate() + i);
     const dStr = getLocalDateStr(d);
     const isActive = diasSemana.includes(dStr) && dStr <= hoyStr;
-    bars += `<div class="bar-col"><div class="bar ${isActive ? 'active' : ''}" style="height:${isActive ? '100%' : '20%'}; animation-delay:${i*0.05}s;"></div></div>`;
-    labels += `<span class="graph-label ${isActive ? 'active' : ''}">${dias[i]}</span>`;
+    if (isActive) activosCount++;
+    dayItems += `<div class="streak-day">
+        <div class="streak-day-circle ${isActive ? 'done' : ''}">${isActive ? '<i class="fa-solid fa-check"></i>' : ''}</div>
+        <span class="streak-day-label ${isActive ? 'active' : ''}">${dias[i]}</span>
+      </div>`;
   }
-  container.innerHTML = `<div class="bar-chart">${bars}</div><div class="graph-labels-row">${labels}</div>`;
+  const pct = Math.min(activosCount / 7, 1);
+  const r = 32, circ = 2 * Math.PI * r;
+  const offset = circ - (pct * circ);
+  container.innerHTML = `
+    <div class="streak-new">
+      <div class="streak-ring-wrap">
+        <svg viewBox="0 0 76 76">
+          <circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--border2)" stroke-width="6"/>
+          <circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--gold)" stroke-width="6" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" style="transition:1s var(--ease); stroke-linecap:round;"/>
+        </svg>
+        <div class="streak-ring-icon"><i class="fa-solid fa-fire"></i></div>
+      </div>
+      <div class="streak-copy">
+        <p class="n"><b>${activosCount}</b> días consecutivos</p>
+        <div class="streak-days-row">${dayItems}</div>
+      </div>
+    </div>`;
 }
 
 function horarioEstaActivoAhora(horario) {
