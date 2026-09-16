@@ -268,6 +268,16 @@ a { color: inherit; }
 @keyframes necMicPulse { 0%,100% { box-shadow:0 0 0 0 rgba(226,55,68,.5); } 50% { box-shadow:0 0 0 6px rgba(226,55,68,0); } }
 .nec-speak-btn { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; margin-left:3px; border:none; background:none; color:inherit; opacity:.75; cursor:pointer; font-size:12px; vertical-align:middle; padding:0; }
 .nec-speak-btn:hover { opacity:1; }
+.nec-mic-bubble { display:none; align-items:center; gap:10px; margin:0 12px 8px; padding:10px 14px; border-radius:14px; background:#e23744; color:#fff; font-size:12.5px; font-weight:600; cursor:pointer; box-shadow:0 2px 10px rgba(226,55,68,.35); }
+.nec-mic-bubble.active { display:flex; }
+.nec-mic-bars { display:flex; align-items:center; gap:2px; height:16px; flex-shrink:0; }
+.nec-mic-bars span { width:3px; border-radius:2px; background:#fff; display:inline-block; animation:necMicBar 0.9s ease-in-out infinite; }
+.nec-mic-bars span:nth-child(1) { height:6px; animation-delay:0s; }
+.nec-mic-bars span:nth-child(2) { height:12px; animation-delay:.15s; }
+.nec-mic-bars span:nth-child(3) { height:16px; animation-delay:.3s; }
+.nec-mic-bars span:nth-child(4) { height:10px; animation-delay:.45s; }
+.nec-mic-bars span:nth-child(5) { height:14px; animation-delay:.6s; }
+@keyframes necMicBar { 0%,100% { transform:scaleY(.4); } 50% { transform:scaleY(1); } }
 
 /* MENTALIDAD NEC */
 .mindset-card { position:relative; border-radius:var(--r-xl); overflow:hidden; padding:32px 26px; min-height:170px; display:flex; flex-direction:column; justify-content:flex-end; background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.25)), linear-gradient(135deg, #2a2210, #1a1a1a); border:1px solid var(--border); }
@@ -1537,6 +1547,10 @@ a { color: inherit; }
     <button class="nec-coach-close" onclick="necCoachClose()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
   </div>
   <div class="nec-coach-messages" id="nec-coach-messages"></div>
+  <div class="nec-mic-bubble" id="nec-mic-bubble" onclick="window.necCoachToggleMic()">
+    <div class="nec-mic-bars"><span></span><span></span><span></span><span></span><span></span></div>
+    <span>Escuchando... toca para terminar</span>
+  </div>
   <div class="nec-coach-inputbar">
     <input type="text" id="nec-coach-input" placeholder="Escribe tu mensaje..." autocomplete="off">
     <button class="nec-coach-mic" id="nec-coach-mic-btn" onclick="window.necCoachToggleMic()" title="Hablar"><i class="fa-solid fa-microphone"></i></button>
@@ -6497,6 +6511,7 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
   let necListening = false;
 
   function necMicBtn() { return document.getElementById('nec-coach-mic-btn'); }
+  function necMicBubble() { return document.getElementById('nec-mic-bubble'); }
 
   if (!NecSpeechRecognition) {
     const btn = necMicBtn();
@@ -6508,12 +6523,8 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     necRecognizer.maxAlternatives = 1;
 
     necRecognizer.onresult = (ev) => {
-      const said = ev.results[0][0].transcript;
-      const input = $input();
-      if (input) {
-        input.value = said;
-        input.focus();
-      }
+      const said = (ev.results[0][0].transcript || '').trim();
+      if (said) necUserSend(said); // se envía directo al chat, se siente como una nota de voz
     };
     necRecognizer.onerror = (ev) => {
       console.error('NEC Coach / Speech recognition error:', ev.error);
@@ -6521,23 +6532,28 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     necRecognizer.onend = () => {
       necListening = false;
       const btn = necMicBtn();
+      const bubble = necMicBubble();
       if (btn) btn.classList.remove('listening');
+      if (bubble) bubble.classList.remove('active');
     };
   }
 
   window.necCoachToggleMic = function () {
     if (!necRecognizer) return;
     const btn = necMicBtn();
+    const bubble = necMicBubble();
     if (necListening) {
       necRecognizer.stop();
       necListening = false;
       if (btn) btn.classList.remove('listening');
+      if (bubble) bubble.classList.remove('active');
       return;
     }
     try {
       necRecognizer.start();
       necListening = true;
       if (btn) btn.classList.add('listening');
+      if (bubble) bubble.classList.add('active');
     } catch (e) {
       console.error('NEC Coach / no se pudo iniciar el micrófono:', e);
     }
