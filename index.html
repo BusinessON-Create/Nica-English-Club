@@ -528,6 +528,36 @@ a { color: inherit; }
 /* Insignia verificada (contenido oficial del club) */
 .neclub-verified { color:#4d9fff; margin-left:4px; font-size:12px; }
 
+/* ===== NECLUB: FLASHES — franja en movimiento con las fotos/videos ya publicados abajo ===== */
+.neclub-flashes-wrap { margin-bottom:18px; }
+.neclub-flashes-wrap .carousel-track { padding:6px 2px 10px; gap:10px; }
+.neclub-flash-card { width:104px; aspect-ratio:9/16; border-radius:16px; position:relative; overflow:hidden; cursor:pointer; background:#000; border:1px solid var(--border2); }
+.neclub-flash-card img, .neclub-flash-card video { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+.neclub-flash-card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 52%, rgba(0,0,0,.78) 100%); pointer-events:none; }
+.neclub-flash-avatar { position:absolute; top:8px; left:8px; width:28px; height:28px; border-radius:50%; overflow:hidden; border:2px solid var(--gold3); box-shadow:0 2px 8px rgba(0,0,0,.5); background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-weight:700; font-size:10.5px; z-index:2; }
+.neclub-flash-avatar img { width:100%; height:100%; object-fit:cover; }
+.neclub-flash-name { position:absolute; left:8px; right:8px; bottom:7px; color:#fff; font-size:10.5px; font-weight:700; line-height:1.25; z-index:2; text-shadow:0 1px 4px rgba(0,0,0,.6); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.neclub-flash-card.carrusel-activo { border-color: var(--gold3); box-shadow: 0 10px 26px rgba(0,0,0,.5), 0 0 16px rgba(240,180,41,.22); }
+@media (min-width:680px) { .neclub-flash-card { width:118px; } }
+
+/* Visor de Flashes en pantalla completa: pasa solo, con barritas de progreso arriba, tipo historia real */
+.neclub-flash-viewer { position:fixed; inset:0; z-index:970; display:none; flex-direction:column; background:#000; }
+.neclub-flash-viewer.open { display:flex; }
+.neclub-flash-viewer-bars { display:flex; gap:4px; padding:10px 10px 0; flex-shrink:0; }
+.neclub-flash-viewer-bar { flex:1; height:3px; border-radius:99px; background:rgba(255,255,255,.28); overflow:hidden; }
+.neclub-flash-viewer-bar-fill { height:100%; width:0%; background:#fff; border-radius:99px; }
+.neclub-flash-viewer-topbar { display:flex; align-items:center; gap:10px; padding:12px 14px; flex-shrink:0; }
+.neclub-flash-viewer-headtext { flex:1; min-width:0; }
+.neclub-flash-viewer-nombre { color:#fff; font-weight:700; font-size:13px; }
+.neclub-flash-viewer-meta { color:rgba(255,255,255,.65); font-size:11px; }
+.neclub-flash-viewer-close { background:rgba(255,255,255,.1); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.neclub-flash-viewer-stage { flex:1; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:0; }
+.neclub-flash-viewer-stage img, .neclub-flash-viewer-stage video { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; }
+.neclub-flash-viewer-zone { position:absolute; top:0; bottom:0; width:32%; z-index:3; cursor:pointer; }
+.neclub-flash-viewer-zone.left { left:0; }
+.neclub-flash-viewer-zone.right { right:0; }
+.neclub-flash-viewer-openpost { margin:0 auto 22px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); color:#fff; font-size:12px; font-weight:700; padding:9px 18px; border-radius:99px; cursor:pointer; display:flex; align-items:center; gap:6px; flex-shrink:0; font-family:inherit; z-index:4; position:relative; }
+
 /* Tarjeta de "Historia" (PDF) dentro del feed */
 .neclub-story-cover { position:relative; border-radius:14px; overflow:hidden; margin-bottom:10px; cursor:pointer; border:1px solid var(--border2); background:#000; }
 .neclub-story-cover img { width:100%; max-height:320px; object-fit:cover; display:block; opacity:.85; }
@@ -1217,6 +1247,7 @@ a { color: inherit; }
     </nav>
     <div class="neclub-new-posts-bar" id="neclub-new-posts-bar" onclick="irArribaFeedNeclub()" style="display:none;"><i class="fa-solid fa-arrow-up"></i> New posts</div>
     <div class="neclub-shell" id="neclub-shell">
+      <div class="neclub-flashes-wrap" id="neclub-flashes-wrap" style="display:none;"></div>
       <div class="neclub-composer">
         <div class="neclub-composer-row">
           <div class="neclub-avatar" id="neclub-avatar-composer"></div>
@@ -1803,6 +1834,24 @@ a { color: inherit; }
     <button class="neclub-lightbox-close" onclick="cerrarLightboxNeclub()" title="Close"><i class="fa-solid fa-xmark"></i></button>
   </div>
   <div class="neclub-lightbox-stage" id="neclub-lightbox-stage" onclick="if(event.target===this) cerrarLightboxNeclub()"></div>
+</div>
+
+<!-- NECLUB: visor de Flashes en pantalla completa (fotos/videos ya publicados abajo, en modo historia) -->
+<div class="neclub-flash-viewer" id="neclub-flash-viewer">
+  <div class="neclub-flash-viewer-bars" id="neclub-flash-viewer-bars"></div>
+  <div class="neclub-flash-viewer-topbar">
+    <div class="neclub-avatar" id="neclub-flash-viewer-avatar" style="width:32px; height:32px;"></div>
+    <div class="neclub-flash-viewer-headtext">
+      <div class="neclub-flash-viewer-nombre" id="neclub-flash-viewer-nombre"></div>
+      <div class="neclub-flash-viewer-meta" id="neclub-flash-viewer-meta"></div>
+    </div>
+    <button class="neclub-flash-viewer-close" onclick="cerrarFlashesNeclub()" title="Close"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="neclub-flash-viewer-stage" id="neclub-flash-viewer-stage">
+    <div class="neclub-flash-viewer-zone left" onclick="flashAnterior()"></div>
+    <div class="neclub-flash-viewer-zone right" onclick="flashSiguiente()"></div>
+  </div>
+  <button class="neclub-flash-viewer-openpost" onclick="irAlPostDesdeFlash()"><i class="fa-solid fa-comment"></i> View post &amp; comments</button>
 </div>
 
 <script type="module">
@@ -2528,6 +2577,7 @@ function renderFeedNeclub() {
   cont.innerHTML = neclubPostsCache.map(p => renderNeclubPostHTML(p, miId)).join('');
   inicializarAutoplayVideosNeclub();
   neclubFeedPintadoAlMenosUnaVez = true;
+  renderFlashesNeclub();
 }
 
 // Aplica SOLO lo que cambió en Firestore (nuevo post, post borrado, o like/comentario en uno existente)
@@ -2571,6 +2621,7 @@ function aplicarCambiosFeedNeclub(cambios) {
     });
     inicializarAutoplayVideosNeclub(); // re-observa (incluye los nuevos); no reinicia los videos que ya estaban
   }
+  renderFlashesNeclub(); // agrega/quita flashes según los cambios, sin rebarajar el orden ya mostrado
 }
 function actualizarLikesYComentariosNeclub(nodo, p, miId) {
   const yaLike = miId && (p.likes||[]).includes(miId);
@@ -2587,6 +2638,165 @@ function actualizarLikesYComentariosNeclub(nodo, p, miId) {
     if (span) span.innerText = p.comentariosCount || 0;
   }
 }
+
+/* ===== NECLUB: FLASHES — franja en movimiento con las fotos/videos que YA están publicados abajo.
+   No es una publicación aparte: se arma solo con neclubPostsCache filtrando foto/video.
+   El orden es "punto medio": pondera fuerte a favor de lo reciente, pero no es 100% fijo (se
+   rebaraja solo al entrar a NECLUB, no en cada actualización en vivo del feed). ===== */
+let neclubFlashesOrden = null; // array de ids en el orden que se está mostrando ahora mismo
+
+// Shuffle ponderado: los posts más recientes tienen mucho más chance de salir primero,
+// pero no es un orden 100% fijo — cada entrada a NECLUB se ve ligeramente distinta.
+function ordenPonderadoFlashes(posts) {
+  const restantes = posts.map((p, i) => ({ p, peso: Math.pow(0.82, i) + 0.06 }));
+  const resultado = [];
+  while (restantes.length) {
+    const totalPeso = restantes.reduce((s, r) => s + r.peso, 0);
+    let r = Math.random() * totalPeso;
+    let idx = restantes.findIndex(item => (r -= item.peso) < 0);
+    if (idx === -1) idx = restantes.length - 1;
+    resultado.push(restantes.splice(idx, 1)[0].p);
+  }
+  return resultado;
+}
+
+function renderNeclubFlashCardHTML(p) {
+  const fondo = p.tipo === 'video'
+    ? `<video src="${p.archivoUrl}" muted playsinline preload="metadata" oncontextmenu="return false"></video>`
+    : `<img src="${p.archivoUrl}" loading="lazy" oncontextmenu="return false" draggable="false">`;
+  return `<div class="neclub-flash-card carousel-item" onclick="abrirFlashesNeclub('${p.id}')">
+    ${fondo}
+    <div class="neclub-flash-avatar">${avatarHtmlNeclub(p.autorFoto, p.autorNombre)}</div>
+    <div class="neclub-flash-name">${escNeclub(p.autorNombre || 'Student')}</div>
+  </div>`;
+}
+
+// forzarNuevoOrden = true: rebaraja todo (se usa al entrar a NECLUB).
+// forzarNuevoOrden = false/omitido: conserva el orden actual y solo agrega al frente los posts
+// nuevos que hayan llegado en vivo (ya son los más recientes), y quita los que expiraron/borraron.
+function renderFlashesNeclub(forzarNuevoOrden) {
+  const wrap = document.getElementById('neclub-flashes-wrap');
+  if (!wrap) return;
+  const candidatos = neclubPostsCache.filter(p => (p.tipo === 'foto' || p.tipo === 'video') && p.archivoUrl);
+  if (!candidatos.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; neclubFlashesOrden = null; return; }
+
+  if (forzarNuevoOrden || !neclubFlashesOrden) {
+    neclubFlashesOrden = ordenPonderadoFlashes(candidatos).map(p => p.id);
+  } else {
+    neclubFlashesOrden = neclubFlashesOrden.filter(id => candidatos.some(p => p.id === id)); // quita expirados/borrados
+    candidatos.forEach(p => { if (!neclubFlashesOrden.includes(p.id)) neclubFlashesOrden.unshift(p.id); }); // nuevos van al frente
+  }
+
+  const mapaPosts = {};
+  candidatos.forEach(p => { mapaPosts[p.id] = p; });
+  const itemsHtml = neclubFlashesOrden.map(id => renderNeclubFlashCardHTML(mapaPosts[id])).join('');
+  wrap.style.display = '';
+  wrap.innerHTML = carruselHTML('neclub-flashes-track', itemsHtml);
+  iniciarCarruselAvanzado('neclub-flashes-track', 0.4);
+}
+
+/* ===== NECLUB: visor de Flashes en pantalla completa — pasa solo (foto ~5s, video hasta que termine),
+   con barritas de progreso arriba tipo historia real, y se puede tocar los costados para navegar. ===== */
+let neclubFlashViewerLista = [];
+let neclubFlashViewerIndex = 0;
+let neclubFlashViewerTimer = null;
+let neclubFlashViewerRAF = null;
+
+window.abrirFlashesNeclub = (postId) => {
+  if (!neclubFlashesOrden || !neclubFlashesOrden.length) return;
+  pausarTodosLosVideosNeclub();
+  const mapaPosts = {};
+  neclubPostsCache.forEach(p => { mapaPosts[p.id] = p; });
+  neclubFlashViewerLista = neclubFlashesOrden.map(id => mapaPosts[id]).filter(Boolean);
+  const idx = neclubFlashViewerLista.findIndex(p => p.id === postId);
+  neclubFlashViewerIndex = idx === -1 ? 0 : idx;
+  document.getElementById('neclub-flash-viewer').classList.add('open');
+  pintarBarrasFlash();
+  mostrarFlashActual();
+};
+
+function pintarBarrasFlash() {
+  const cont = document.getElementById('neclub-flash-viewer-bars');
+  cont.innerHTML = neclubFlashViewerLista.map(() => `<div class="neclub-flash-viewer-bar"><div class="neclub-flash-viewer-bar-fill"></div></div>`).join('');
+}
+
+function mostrarFlashActual() {
+  clearTimeout(neclubFlashViewerTimer);
+  cancelAnimationFrame(neclubFlashViewerRAF);
+  const p = neclubFlashViewerLista[neclubFlashViewerIndex];
+  if (!p) { cerrarFlashesNeclub(); return; }
+
+  document.getElementById('neclub-flash-viewer-avatar').innerHTML = avatarHtmlNeclub(p.autorFoto, p.autorNombre);
+  document.getElementById('neclub-flash-viewer-nombre').innerText = p.autorNombre || 'Student';
+  document.getElementById('neclub-flash-viewer-meta').innerText = tiempoRelativoNeclub(p.fecha);
+
+  const barras = document.querySelectorAll('#neclub-flash-viewer-bars .neclub-flash-viewer-bar');
+  barras.forEach((b, i) => {
+    b.classList.toggle('visto', i < neclubFlashViewerIndex);
+    const fill = b.querySelector('.neclub-flash-viewer-bar-fill');
+    if (fill) fill.style.width = i < neclubFlashViewerIndex ? '100%' : '0%';
+  });
+  const fillActual = barras[neclubFlashViewerIndex] ? barras[neclubFlashViewerIndex].querySelector('.neclub-flash-viewer-bar-fill') : null;
+
+  const stage = document.getElementById('neclub-flash-viewer-stage');
+  stage.querySelectorAll('img, video').forEach(el => el.remove());
+
+  if (p.tipo === 'video') {
+    const video = document.createElement('video');
+    video.src = p.archivoUrl;
+    video.autoplay = true; video.playsInline = true; video.controls = false;
+    video.oncontextmenu = () => false;
+    stage.insertBefore(video, stage.firstChild);
+    video.addEventListener('loadedmetadata', () => {
+      const duracionMs = (isFinite(video.duration) && video.duration > 0) ? Math.min(video.duration * 1000, 60000) : 8000;
+      animarBarraFlash(fillActual, duracionMs);
+    });
+    video.addEventListener('ended', () => window.flashSiguiente());
+  } else {
+    const img = document.createElement('img');
+    img.src = p.archivoUrl;
+    img.draggable = false;
+    img.oncontextmenu = () => false;
+    stage.insertBefore(img, stage.firstChild);
+    animarBarraFlash(fillActual, 5000);
+  }
+}
+
+function animarBarraFlash(fillEl, duracionMs) {
+  if (!fillEl) { neclubFlashViewerTimer = setTimeout(() => window.flashSiguiente(), duracionMs); return; }
+  const inicio = performance.now();
+  function paso(ahora) {
+    const prog = Math.min(1, (ahora - inicio) / duracionMs);
+    fillEl.style.width = (prog * 100).toFixed(1) + '%';
+    if (prog < 1) { neclubFlashViewerRAF = requestAnimationFrame(paso); }
+    else { neclubFlashViewerTimer = setTimeout(() => window.flashSiguiente(), 40); }
+  }
+  neclubFlashViewerRAF = requestAnimationFrame(paso);
+}
+
+window.flashSiguiente = () => {
+  if (neclubFlashViewerIndex < neclubFlashViewerLista.length - 1) { neclubFlashViewerIndex++; mostrarFlashActual(); }
+  else cerrarFlashesNeclub();
+};
+window.flashAnterior = () => {
+  if (neclubFlashViewerIndex > 0) { neclubFlashViewerIndex--; mostrarFlashActual(); }
+  else mostrarFlashActual(); // ya está en el primero: solo lo reinicia
+};
+window.cerrarFlashesNeclub = () => {
+  clearTimeout(neclubFlashViewerTimer);
+  cancelAnimationFrame(neclubFlashViewerRAF);
+  const overlay = document.getElementById('neclub-flash-viewer');
+  overlay.classList.remove('open');
+  document.getElementById('neclub-flash-viewer-stage').querySelectorAll('img, video').forEach(el => el.remove());
+  inicializarAutoplayVideosNeclub(); // reanuda el video del muro que esté centrado, si lo hay
+};
+window.irAlPostDesdeFlash = () => {
+  const p = neclubFlashViewerLista[neclubFlashViewerIndex];
+  cerrarFlashesNeclub();
+  if (!p) return;
+  const nodo = document.getElementById('neclub-post-' + p.id);
+  if (nodo) nodo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
 
 /* ===== NECLUB: solo reproducir el video que está centrado en la pantalla (como Reels/TikTok) ===== */
 let neclubVideoObserver = null;
@@ -6542,6 +6752,9 @@ function showScreen(id, opciones = {}) {
   const pantallaAnterior = document.querySelector('.screen.active');
   if (pantallaAnterior && pantallaAnterior.id === 's-neclub' && id !== 's-neclub' && typeof pausarTodosLosVideosNeclub === 'function') {
     pausarTodosLosVideosNeclub();
+  }
+  if ((!pantallaAnterior || pantallaAnterior.id !== 's-neclub') && id === 's-neclub' && typeof renderFlashesNeclub === 'function') {
+    renderFlashesNeclub(true); // se rebaraja el orden de los Flashes cada vez que se entra a NECLUB
   }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   el.classList.add('active');
