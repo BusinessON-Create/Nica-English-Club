@@ -531,7 +531,7 @@ a { color: inherit; }
 /* ===== NECLUB: FLASHES — franja en movimiento con las fotos/videos ya publicados abajo ===== */
 .neclub-flashes-wrap { margin-bottom:18px; }
 .neclub-flashes-wrap .carousel-track { padding:6px 2px 10px; gap:10px; }
-.neclub-flash-card { width:104px; aspect-ratio:9/16; border-radius:16px; position:relative; overflow:hidden; cursor:pointer; background:#000; border:1px solid var(--border2); }
+.neclub-flash-card { width:104px; aspect-ratio:9/16; border-radius:16px; position:relative; overflow:hidden; cursor:pointer; background:#000; border:1px solid var(--border2); -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; -webkit-user-select:none; user-select:none; }
 .neclub-flash-card img, .neclub-flash-card video { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
 .neclub-flash-card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 52%, rgba(0,0,0,.78) 100%); pointer-events:none; }
 .neclub-flash-avatar { position:absolute; top:8px; left:8px; width:28px; height:28px; border-radius:50%; overflow:hidden; border:2px solid var(--gold3); box-shadow:0 2px 8px rgba(0,0,0,.5); background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-weight:700; font-size:10.5px; z-index:2; }
@@ -550,10 +550,10 @@ a { color: inherit; }
 .neclub-flash-viewer-headtext { flex:1; min-width:0; }
 .neclub-flash-viewer-nombre { color:#fff; font-weight:700; font-size:13px; }
 .neclub-flash-viewer-meta { color:rgba(255,255,255,.65); font-size:11px; }
-.neclub-flash-viewer-close { background:rgba(255,255,255,.1); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.neclub-flash-viewer-close { background:rgba(255,255,255,.1); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; -webkit-tap-highlight-color: transparent; }
 .neclub-flash-viewer-stage { flex:1; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:0; }
 .neclub-flash-viewer-stage img, .neclub-flash-viewer-stage video { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; }
-.neclub-flash-viewer-zone { position:absolute; top:0; bottom:0; width:32%; z-index:3; cursor:pointer; }
+.neclub-flash-viewer-zone { position:absolute; top:0; bottom:0; width:32%; z-index:3; cursor:pointer; -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; outline:none; -webkit-user-select:none; user-select:none; touch-action: manipulation; }
 .neclub-flash-viewer-zone.left { left:0; }
 .neclub-flash-viewer-zone.right { right:0; }
 .neclub-flash-viewer-openpost { margin:0 auto 22px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); color:#fff; font-size:12px; font-weight:700; padding:9px 18px; border-radius:99px; cursor:pointer; display:flex; align-items:center; gap:6px; flex-shrink:0; font-family:inherit; z-index:4; position:relative; }
