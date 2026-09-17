@@ -905,6 +905,16 @@ a { color: inherit; }
 .res-accordion[open] .group-head .chev { transform: rotate(90deg); }
 
 /* ===== PERFIL ===== */
+.perfil-section { border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:20px; }
+.perfil-section:last-child { border-bottom:none; padding-bottom:0; margin-bottom:0; }
+.perfil-section-title { font-size:10px; color:var(--gold3); letter-spacing:1.5px; font-weight:700; text-transform:uppercase; margin-bottom:12px; }
+.perfil-stats-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.perfil-pass-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; background:var(--card2); border:1px solid var(--border2); color:var(--text); font-family:inherit; font-size:13px; font-weight:600; padding:12px 14px; border-radius:12px; cursor:pointer; transition:border-color .15s var(--ease), background .15s var(--ease); }
+.perfil-pass-toggle:hover { border-color:var(--gold2); }
+.perfil-pass-toggle .lbl-left i { color:var(--gold2); margin-right:8px; }
+.perfil-pass-toggle .chevron { color:var(--muted); transition:transform .2s var(--ease); }
+.perfil-pass-toggle.open .chevron { transform:rotate(180deg); }
+
 .profile-avatar-edit { position:relative; width:88px; height:88px; margin:0 auto 18px; }
 .profile-avatar-edit img, .profile-avatar-edit .avatar-default { width:88px; height:88px; border-radius:50%; object-fit:cover; }
 .profile-avatar-edit .avatar-default { display:flex; align-items:center; justify-content:center; background:var(--card2); color:var(--gold); font-size:28px; font-weight:700; }
@@ -1587,25 +1597,44 @@ a { color: inherit; }
       <label for="perfil-foto-input"><i class="fa-solid fa-camera"></i></label>
       <input type="file" id="perfil-foto-input" accept="image/*" onchange="subirFotoPerfil(event)">
     </div>
-    <p class="form-hint" style="text-align:center;" id="perfil-nombre-txt"></p>
+    <p class="form-hint" style="text-align:center; margin-bottom:2px;" id="perfil-nombre-txt"></p>
     <p class="student-id-badge" style="text-align:center; margin-bottom:14px;" id="perfil-id-txt"></p>
-    <div class="info-badges-row" id="perfil-info-badges" style="justify-content:center; margin-bottom:16px;"></div>
-    <p class="form-hint">Número de WhatsApp (con código de país, ej: +505...)</p>
-    <div class="input-shell">
-      <i class="fa-brands fa-whatsapp input-icon"></i>
-      <input type="tel" id="perfil-whatsapp" class="field-input" placeholder="+505 8888 8888">
+    <div class="info-badges-row" id="perfil-info-badges" style="justify-content:center; margin-bottom:22px;"></div>
+
+    <div class="perfil-section">
+      <p class="perfil-section-title">Tu progreso</p>
+      <div class="perfil-stats-row" id="perfil-stats-row"></div>
+      <div class="tr-badges-row" id="perfil-badges-row" style="margin-top:10px;"></div>
     </div>
-    <button class="btn-login btn-outline-gold" style="margin-bottom:20px;" onclick="guardarWhatsappPerfil()">Guardar WhatsApp</button>
-    <p class="form-hint">Nueva contraseña</p>
-    <div class="input-shell">
-      <i class="fa-solid fa-lock input-icon"></i>
-      <input type="password" id="perfil-pass-nueva" class="field-input" placeholder="Nueva contraseña">
+
+    <div class="perfil-section">
+      <p class="perfil-section-title">Contacto</p>
+      <p class="form-hint" style="margin-bottom:8px;">Número de WhatsApp (con código de país, ej: +505...)</p>
+      <div class="input-shell">
+        <i class="fa-brands fa-whatsapp input-icon"></i>
+        <input type="tel" id="perfil-whatsapp" class="field-input" placeholder="+505 8888 8888">
+      </div>
+      <button class="btn-login btn-outline-gold" onclick="guardarWhatsappPerfil()">Guardar WhatsApp</button>
     </div>
-    <div class="input-shell">
-      <i class="fa-solid fa-lock input-icon"></i>
-      <input type="password" id="perfil-pass-confirmar" class="field-input" placeholder="Confirmar contraseña">
+
+    <div class="perfil-section">
+      <p class="perfil-section-title">Seguridad</p>
+      <button type="button" class="perfil-pass-toggle" id="perfil-pass-toggle" onclick="perfilTogglePass()">
+        <span class="lbl-left"><i class="fa-solid fa-lock"></i>Actualizar contraseña</span>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </button>
+      <div id="perfil-pass-fields" style="display:none; margin-top:12px;">
+        <div class="input-shell">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" id="perfil-pass-nueva" class="field-input" placeholder="Nueva contraseña">
+        </div>
+        <div class="input-shell">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" id="perfil-pass-confirmar" class="field-input" placeholder="Confirmar contraseña">
+        </div>
+        <button class="btn-login" onclick="guardarPassPerfil()">Actualizar contraseña</button>
+      </div>
     </div>
-    <button class="btn-login" onclick="guardarPassPerfil()">Guardar contraseña</button>
   </div>
 </div>
 
@@ -5992,7 +6021,37 @@ window.abrirPerfil = () => {
   document.getElementById('perfil-whatsapp').value = sessionActiva.whatsapp || '';
   document.getElementById('perfil-pass-nueva').value = '';
   document.getElementById('perfil-pass-confirmar').value = '';
+  const passFields = document.getElementById('perfil-pass-fields');
+  const passToggle = document.getElementById('perfil-pass-toggle');
+  if (passFields) passFields.style.display = 'none';
+  if (passToggle) passToggle.classList.remove('open');
+  const p = trProgresoActual || {};
+  const statsEl = document.getElementById('perfil-stats-row');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div class="tr-metric-box"><div class="num">${p.rachaSemanas||0}</div><div class="lbl">Week streak <i class="fa-solid fa-fire tr-icon-fire"></i></div></div>
+      <div class="tr-metric-box"><div class="num">${p.palabrasPracticadas||0}</div><div class="lbl">Phrases practiced</div></div>`;
+  }
+  const perfilBadgesEl = document.getElementById('perfil-badges-row');
+  if (perfilBadgesEl) {
+    const ganadas = p.medallas || [];
+    const chips = TR_MEDALLAS.filter(m => ganadas.includes(m.id)).map(m => `<span class="tr-badge-chip"><i class="fa-solid ${m.icono}"></i> ${m.nombre}</span>`);
+    perfilBadgesEl.innerHTML = chips.length ? chips.join('') : `<span class="tr-badge-chip" style="opacity:.55;"><i class="fa-solid fa-lock"></i> No badges yet — keep training!</span>`;
+  }
   document.getElementById('modal-perfil-bg').classList.add('open');
+};
+window.perfilTogglePass = function () {
+  const fields = document.getElementById('perfil-pass-fields');
+  const btn = document.getElementById('perfil-pass-toggle');
+  const abrir = fields.style.display === 'none';
+  fields.style.display = abrir ? 'block' : 'none';
+  btn.classList.toggle('open', abrir);
+  if (!abrir) {
+    document.getElementById('perfil-pass-nueva').value = '';
+    document.getElementById('perfil-pass-confirmar').value = '';
+  } else {
+    document.getElementById('perfil-pass-nueva').focus();
+  }
 };
 window.cerrarPerfil = () => document.getElementById('modal-perfil-bg').classList.remove('open');
 window.guardarWhatsappPerfil = async () => {
