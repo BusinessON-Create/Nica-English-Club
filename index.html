@@ -3460,7 +3460,7 @@ function trRenderListening(ej, progreso) {
   return `<div class="tr-step-card">
     <span class="tr-circuit-tag"><i class="fa-solid fa-ear-listen"></i> Listening</span>
     <p class="tr-tot-progress">Listen and choose what you heard — ${progreso}</p>
-    <button type="button" class="tr-listen-btn" id="tr-listen-btn" onclick="trReproducirListening(this,'${escNeclub(ej.par.correcta).replace(/'/g,"&#39;")}')"><i class="fa-solid fa-volume-high"></i></button>
+    <button type="button" class="tr-listen-btn" id="tr-listen-btn" data-texto="${escNeclub(ej.par.correcta)}" onclick="trReproducirListening(this,this.dataset.texto)"><i class="fa-solid fa-volume-high"></i></button>
     <div class="tr-tot-pair" id="tr-tot-pair">
       <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '1' : '0'}" onclick="trResponderOpcion(this)">${escNeclub(opA)}</button>
       <button class="tr-tot-opt" data-correcta="${izqEsCorrecta ? '0' : '1'}" onclick="trResponderOpcion(this)">${escNeclub(opB)}</button>
@@ -3559,14 +3559,15 @@ function trRenderOrdenar(ej, progreso) {
     ${ej.traduccion ? `<p class="tr-prime-trans" style="margin-bottom:14px;"><i class="fa-solid fa-language"></i> ${escNeclub(ej.traduccion)}</p>` : ''}
     <div class="tr-ord-answer" id="tr-ord-answer"></div>
     <div class="tr-ord-bank" id="tr-ord-bank">
-      ${barajadas.map(w => `<button type="button" class="tr-ord-chip" id="tr-ord-w${w.id}" onclick="trTocarPalabraOrdenar(${w.id}, '${escNeclub(w.texto).replace(/'/g, "&#39;")}')">${escNeclub(w.texto)}</button>`).join('')}
+      ${barajadas.map(w => `<button type="button" class="tr-ord-chip" id="tr-ord-w${w.id}" data-texto="${escNeclub(w.texto)}" onclick="trTocarPalabraOrdenar(${w.id}, this)">${escNeclub(w.texto)}</button>`).join('')}
     </div>
     <button class="btn-login btn-outline-gold" type="button" onclick="trReiniciarOrdenar()" style="margin-top:4px;">Reset</button>
   </div>`;
 }
-window.trTocarPalabraOrdenar = (id, texto) => {
-  const chip = document.getElementById('tr-ord-w' + id);
+window.trTocarPalabraOrdenar = (id, chipEl) => {
+  const chip = chipEl || document.getElementById('tr-ord-w' + id);
   if (!chip || chip.classList.contains('used')) return;
+  const texto = chip.dataset.texto;
   chip.classList.add('used');
   trOrdenarRespuesta.push({ id, texto });
   const ans = document.getElementById('tr-ord-answer');
