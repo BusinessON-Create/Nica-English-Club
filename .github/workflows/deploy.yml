@@ -24,22 +24,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare publish folder
-        run: |
-          mkdir -p _site
-          cp -r . _site
-          rm -rf _site/.git _site/.github
-
-      - name: Stamp build version
+      - name: Prepare publish folder and stamp version
         run: |
           BUILD_VERSION="$(date -u +'%Y%m%d%H%M%S')"
           echo "Stamping version: $BUILD_VERSION"
-          sed -i "s/__BUILD_VERSION__/${BUILD_VERSION}/g" _site/index.html
+          SITE_DIR="$RUNNER_TEMP/_site"
+          mkdir -p "$SITE_DIR"
+          cp -r . "$SITE_DIR"
+          rm -rf "$SITE_DIR/.git" "$SITE_DIR/.github"
+          sed -i "s/__BUILD_VERSION__/${BUILD_VERSION}/g" "$SITE_DIR/index.html"
+          echo "SITE_DIR=$SITE_DIR" >> "$GITHUB_ENV"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: ${{ env.SITE_DIR }}
 
   deploy:
     needs: build
