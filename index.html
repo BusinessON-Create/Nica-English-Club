@@ -3008,13 +3008,58 @@ async function limpiarNeclubExpirados() {
 }
 
 /* ===== TRAINING ROOM — programa de 5 días/semana, progreso individual, "programación mental" ===== */
+/*
+  ===== PLAN MAESTRO DEL PROGRAMA (12 meses ≈ 52 semanas, 4 etapas × 13 semanas) =====
+  Léeme antes de cargar o modificar semanas. Este bloque es la fuente de verdad del plan;
+  cuando se publique una semana nueva desde el panel Admin, actualiza el estado (✅/⏳) aquí.
+  Progresión pensada como "programación" gradual: cada etapa sube un nivel CEFR y reutiliza
+  el vocabulario/gramática de la etapa anterior en situaciones más exigentes.
+
+  ETAPA 1 — FOUNDATIONS (nivel A1) — 13 semanas — ESTADO: ✅ ya cargada en Firestore
+    Lo básico para sobrevivir en inglés: alfabeto, saludos, presente simple, verbo to be,
+    números, familia, rutina mínima. (Si hace falta revisar/actualizar el contenido real de
+    estas 13 semanas, decírselo a Claude en una próxima sesión — el contenido vive en Firestore,
+    no en este archivo, así que hay que repasarlo desde el panel.)
+
+  ETAPA 2 — EVERYDAY ENGLISH (nivel A2) — 13 semanas — ESTADO: ⏳ en construcción
+    Vida diaria real: rutinas, familia, casa, comida, compras, transporte, clima, salud,
+    trabajo, tiempo libre, planes, teléfono/tecnología, viajes. Aquí el alumno empieza a
+    describir su día a día con naturalidad, no solo frases sueltas.
+      Semana 1  — Daily Routines (rutinas diarias)                         ✅ contenido listo, pendiente de cargar en panel
+      Semana 2  — Family & Relationships (familia y relaciones)            ✅ contenido listo, pendiente de cargar en panel
+      Semana 3  — Home & Household (la casa)                               ✅ contenido listo, pendiente de cargar en panel
+      Semana 4  — Food & Restaurants (comida y restaurantes)               ✅ contenido listo, pendiente de cargar en panel
+      Semana 5  — Shopping & Money (compras y dinero)                      ✅ contenido listo, pendiente de cargar en panel
+      Semana 6  — Directions & Transportation (direcciones y transporte)   ✅ contenido listo, pendiente de cargar en panel
+      Semana 7  — Weather & Seasons (clima y estaciones)                   ⏳ en espera, sin contenido definido aún
+      Semana 8  — Health & Body (salud y cuerpo)                           ⏳ en espera, sin contenido definido aún
+      Semana 9  — Work & Jobs (trabajo)                                    ⏳ en espera, sin contenido definido aún
+      Semana 10 — Hobbies & Free Time (pasatiempos)                        ⏳ en espera, sin contenido definido aún
+      Semana 11 — Making Plans & Invitations (planes e invitaciones)       ⏳ en espera, sin contenido definido aún
+      Semana 12 — Phone Calls & Technology (llamadas y tecnología)         ⏳ en espera, sin contenido definido aún
+      Semana 13 — Travel & Vacations (viajes — cierra la etapa, repaso)    ⏳ en espera, sin contenido definido aún
+
+  ETAPA 3 — CONFIDENCE (nivel B1) — 13 semanas — ESTADO: ⏳ sin planear todavía
+    Objetivo: opiniones, pasado/futuro con más matices, manejar conversaciones imprevistas,
+    resolver problemas en inglés (reclamos, citas médicas, entrevistas). Se planea cuando
+    Everyday English esté avanzado.
+
+  ETAPA 4 — FLUENCY MODE (nivel B2) — 13 semanas — ESTADO: ⏳ sin planear todavía
+    Objetivo: debates, expresiones idiomáticas, fluidez natural en temas sociales/profesionales.
+    Cierre del programa de 12 meses. Se planea cuando Confidence esté avanzado.
+
+  Cada semana en el editor de Admin lleva 5 días: prime (frase + traducción + contenido de
+  lectura), pares correcto/incorrecto (This-or-That, listening, armar oración), vocabulario
+  es-en (match), y el día 5 agrega el reto de voz por WhatsApp. Publicar las semanas de forma
+  gradual (no todas de golpe) para ir probando que cada una funcione bien en el Training Room.
+*/
 const TR_ETAPAS = ['foundations','everyday','confidence','fluency'];
 const TR_ETAPA_LABEL = { foundations:'Foundations', everyday:'Everyday English', confidence:'Confidence', fluency:'Fluency Mode' };
 // Total real de semanas planeadas por etapa. Mientras una etapa no tenga número aquí (o el
 // alumno no haya llegado a ese orden), el sistema NUNCA la marca como "completada" solo porque
 // no encontró la siguiente semana en la biblioteca — eso solo significa "aún no la hemos publicado".
-// Actualiza este mapa cuando definamos el total final de cada etapa.
-const TR_ETAPA_TOTAL_SEMANAS = { foundations: 13 };
+// Plan actual: 4 etapas × 13 semanas ≈ 52 semanas ≈ 12 meses. Ajustar aquí si el plan cambia.
+const TR_ETAPA_TOTAL_SEMANAS = { foundations: 13, everyday: 13, confidence: 13, fluency: 13 };
 const WA_TRAINING = '50581481862';
 let trYaEscuchado = false;
 let trProgresoActual = null;
@@ -3376,7 +3421,7 @@ function trCantidadesCircuito(total) {
   return { pares: 3, listening: 2 };
 }
 const TR_MATCH_MIN = 4;   // mínimo de pares de vocabulario para armar una ronda de Match
-const TR_MATCH_MAX = 6;   // máximo de tarjetas por ronda (para que quepan bien en una pantalla de celular)
+const TR_MATCH_MAX = 10;  // máximo de tarjetas por ronda — el grid es una lista vertical con scroll, no una cuadrícula fija, así que soporta las 10 sin apretar la pantalla
 function trConstruirCircuito(dia, diaNum) {
   const tipos = trTiposDisponiblesPorDia(diaNum);
   const paresValidos = (dia.pares || []).filter(p => p && p.correcta && p.incorrecta);
@@ -4892,7 +4937,7 @@ window.cambiarDiaEditorTraining = (d) => {
   [1,2,3,4,5].forEach(n => { const el = document.getElementById('tr-day-block-'+n); if (el) el.style.display = (n===d ? 'block' : 'none'); });
 };
 const TR_PARES_MAX = 10;
-const TR_VOCAB_MAX = 8;
+const TR_VOCAB_MAX = 10;
 function bloqueDiaHtmlTraining(n, dia) {
   dia = dia || {};
   const paresBase = (dia.pares && dia.pares.length) ? dia.pares : Array.from({length:TR_PARES_MAX},()=>({correcta:'',incorrecta:''}));
@@ -4912,7 +4957,7 @@ function bloqueDiaHtmlTraining(n, dia) {
     <textarea id="tr-d${n}-contenido" class="admin-input" rows="3" placeholder="Contenido a consumir (texto, link de YouTube, o URL de audio)">${dia.absorbContenido||''}</textarea>
     <p class="admin-label" style="font-size:11px;">This or That — hasta ${TR_PARES_MAX} pares (frase correcta vs incorrecta). Deja vacíos los que no uses.</p>
     ${paresHtml}
-    <p class="admin-label" style="font-size:11px; margin-top:14px;">Vocabulary Match — hasta ${TR_VOCAB_MAX} pares (palabra en español → traducción en inglés). Se necesitan mínimo ${TR_MATCH_MIN} para que aparezca el juego de emparejar tarjetas ese día. Deja vacíos los que no uses.</p>
+    <p class="admin-label" style="font-size:11px; margin-top:14px;">Vocabulary Match — hasta ${TR_VOCAB_MAX} pares (palabra en español → traducción en inglés). Se necesitan mínimo ${TR_MATCH_MIN} para que aparezca el juego de emparejar tarjetas ese día; las ${TR_VOCAB_MAX} que llenes aparecen juntas en pantalla. Deja vacíos los que no uses.</p>
     ${vocabHtml}
     <p class="form-hint" style="margin:4px 0 10px; font-size:11px;"><i class="fa-solid fa-circle-info"></i> Con la frase de Mindset y estos pares, el sistema arma solo los juegos de listening, match, armar oración y speaking — no hace falta llenar nada más.</p>
     <textarea id="tr-d${n}-reto" class="admin-input" rows="2" placeholder="Pregunta/frase del reto de voz — solo se usa el Día 5 (envío al coach)">${dia.retoPregunta||''}</textarea>
