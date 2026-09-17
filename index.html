@@ -169,6 +169,11 @@ a { color: inherit; }
 
 /* GRÁFICO DE BARRAS */
 .week-card { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; margin-bottom:20px; }
+.week-card.compact { padding:12px 16px; margin-bottom:14px; }
+.week-card.compact .streak-new { margin-top:8px; gap:12px; }
+.week-card.compact .streak-ring-wrap { width:42px; height:42px; }
+.week-card.compact .streak-copy .n { font-size:13px; }
+.week-card.compact .streak-days-row { display:none; }
 .card-eyebrow-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
 .card-eyebrow { font-size:10px; color:var(--muted); letter-spacing:1.5px; font-weight:700; text-transform:uppercase; }
 .racha-badge { display:flex; align-items:center; gap:8px; background:var(--gold-dim); border:1px solid rgba(240,180,41,.25); border-radius:99px; padding:6px 12px 6px 10px; }
@@ -755,6 +760,7 @@ a { color: inherit; }
 .notif-bell-btn:hover { color:var(--gold); border-color: var(--gold-dim); background:var(--gold-dim); }
 .notif-badge { position:absolute; top:-3px; right:-3px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:var(--red); color:#fff; font-size:9px; font-weight:800; display:none; align-items:center; justify-content:center; border:2px solid var(--bg); }
 .notif-badge.show { display:flex; }
+.notif-bell-btn.tiene-pendientes { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); color: var(--gold); }
 .notif-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); z-index:590; display:none; align-items:center; justify-content:center; padding:20px; animation: fadeIn .2s var(--ease) both; }
 .notif-backdrop.open { display:flex; }
 .notif-dropdown { position:relative; width:340px; max-width:100%; max-height:100%; overflow-y:auto; background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow:var(--shadow-card); padding:14px; animation: fadeUp .25s var(--ease) both; }
@@ -966,7 +972,7 @@ a { color: inherit; }
       </a>
       <div class="nav-actions">
         <div class="notif-wrap">
-          <button class="notif-bell-btn" onclick="toggleNotifDropdown()" title="Actividades">
+          <button class="notif-bell-btn" id="btn-actividades-bell" onclick="toggleNotifDropdown()" title="Actividades">
             <i class="fa-solid fa-list-check"></i>
             <span class="notif-badge" id="notif-badge">0</span>
           </button>
@@ -1008,22 +1014,13 @@ a { color: inherit; }
         <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
       </div>
 
-      <div class="stats-row">
-        <div class="stat-pill">
-          <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
-          <div class="stat-num" id="stat-dias">0</div>
-          <p class="stat-label">DÍAS<br>ESTA SEMANA</p>
+      <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
+      <div class="week-card compact">
+        <div class="card-eyebrow-row">
+          <p class="card-eyebrow">Your training streak</p>
+          <div class="racha-badge"><i class="fa-solid fa-fire"></i><b id="racha-badge-num">0</b><span>días<br>racha</span></div>
         </div>
-        <div class="stat-pill">
-          <div class="stat-icon"><i class="fa-solid fa-chart-simple"></i></div>
-          <div class="stat-num" id="stat-total">0</div>
-          <p class="stat-label">ACCESOS</p>
-        </div>
-        <div class="stat-pill">
-          <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
-          <div class="stat-num" id="stat-semanas">0</div>
-          <p class="stat-label">LOGROS<br>OBTENIDOS</p>
-        </div>
+        <div class="graph-container" id="streak-graph"></div>
       </div>
 
       <!-- BANNER AREA -->
@@ -1041,15 +1038,6 @@ a { color: inherit; }
         </div>
       </div>
 
-      <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
-      <div class="week-card">
-        <div class="card-eyebrow-row">
-          <p class="card-eyebrow">Your training streak</p>
-          <div class="racha-badge"><i class="fa-solid fa-fire"></i><b id="racha-badge-num">0</b><span>días<br>racha</span></div>
-        </div>
-        <div class="graph-container" id="streak-graph"></div>
-      </div>
-
       <div class="ring-card">
         <div style="position:relative; width:64px; height:64px; flex-shrink:0;">
           <svg width="64" height="64" viewBox="0 0 84 84" style="transform:rotate(-90deg)">
@@ -1063,7 +1051,7 @@ a { color: inherit; }
           <p id="ring-sub" style="font-size:12px; color:var(--muted);">Completa los 7 días de la semana.</p>
           <div class="ring-progress-track"><div id="ring-progress-fill" class="ring-progress-fill" style="width:0%;"></div></div>
         </div>
-        <button class="btn-continuar" onclick="document.getElementById('recursos-section').scrollIntoView({behavior:'smooth'})">Continuar <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn-continuar" onclick="showScreen('s-training')">Continuar <i class="fa-solid fa-arrow-right"></i></button>
       </div>
 
       <!-- TOP 3 SEMANAL -->
@@ -1082,35 +1070,11 @@ a { color: inherit; }
         <div id="retos-list"></div>
       </div>
 
-      <div id="actividades-card" style="display:none; margin-bottom:24px;">
-        <div class="section-head">
-          <h2>Actividades de la semana</h2>
-        </div>
-        <div id="actividades-list"></div>
-      </div>
-
-      <div id="recursos-section">
-        <div class="section-head">
-          <h2>Recursos y clases</h2>
-        </div>
-        <div id="favoritos-galeria"></div>
-        <div class="cat-tabs-row" id="cat-tabs-row"></div>
-        <div id="contenedor-galeria"></div>
-      </div>
-
       <div class="mindset-card">
         <span class="mindset-badge"><i class="fa-solid fa-crown"></i> Mentalidad NEC</span>
         <h3 id="mindset-titulo">Entrena tu mente, domina tu inglés.</h3>
         <p id="mindset-frase">Disciplina hoy, libertad mañana.</p>
         <button class="btn-ver-mas" type="button" onclick="abrirModalPractica()">Envía una práctica</button>
-      </div>
-
-      <!-- GALERÍA DE VIDEOS -->
-      <div class="video-gallery-section" id="video-gallery-section" style="display:none;">
-        <div class="section-head">
-          <h2><i class="fa-solid fa-clapperboard" style="color:var(--gold); margin-right:6px;"></i>Galería de videos</h2>
-        </div>
-        <div id="video-gallery-container"></div>
       </div>
     </div>
   </div>
@@ -1217,6 +1181,24 @@ a { color: inherit; }
       <div id="tr-content"><p class="tr-lock-msg">Loading your progress...</p></div>
       <div class="tr-metric-grid" id="tr-metric-grid"></div>
       <div class="tr-badges-row" id="tr-badges-row"></div>
+
+      <!-- RECURSOS Y CLASES (movido desde la pantalla principal) -->
+      <div id="recursos-section" style="margin-top:26px;">
+        <div class="section-head">
+          <h2>Recursos y clases</h2>
+        </div>
+        <div id="favoritos-galeria"></div>
+        <div class="cat-tabs-row" id="cat-tabs-row"></div>
+        <div id="contenedor-galeria"></div>
+      </div>
+
+      <!-- GALERÍA DE VIDEOS (movido desde la pantalla principal) -->
+      <div class="video-gallery-section" id="video-gallery-section" style="display:none; margin-top:26px;">
+        <div class="section-head">
+          <h2><i class="fa-solid fa-clapperboard" style="color:var(--gold); margin-right:6px;"></i>Galería de videos</h2>
+        </div>
+        <div id="video-gallery-container"></div>
+      </div>
     </div>
   </div>
 
@@ -1957,9 +1939,9 @@ function renderUI(alumno) {
   const idBadge = document.getElementById('student-id-badge');
   if (idBadge) idBadge.innerText = alumno.identidad ? `ID: ${alumno.identidad}` : '';
   renderInfoBadges(alumno);
-  document.getElementById('stat-dias').innerText = diasLogueados;
-  document.getElementById('stat-total').innerText = alumno.total_logins || 0;
-  document.getElementById('stat-semanas').innerText = Math.floor((alumno.total_logins||0)/7);
+  const elStatDias = document.getElementById('stat-dias'); if (elStatDias) elStatDias.innerText = diasLogueados;
+  const elStatTotal = document.getElementById('stat-total'); if (elStatTotal) elStatTotal.innerText = alumno.total_logins || 0;
+  const elStatSemanas = document.getElementById('stat-semanas'); if (elStatSemanas) elStatSemanas.innerText = Math.floor((alumno.total_logins||0)/7);
   const pct = Math.min((diasLogueados/7)*100, 100);
   document.getElementById('ring-pct').innerText = Math.round(pct) + "%";
   document.getElementById('ring-circle').style.strokeDashoffset = 226 - (226 * pct/100);
@@ -2168,7 +2150,7 @@ function escucharActividades() {
       .map(d => ({id:d.id, ...d.data()}))
       .filter(a => a.semana === lunesStr)
       .filter(a => !a.destinatarios || !a.destinatarios.length || (miId && a.destinatarios.includes(miId)));
-    renderActividades();
+    renderActividadesPendientesIndicator();
     renderNotifBadge();
     if (document.getElementById('notif-dropdown')?.classList.contains('open')) renderNotifList();
   });
@@ -2180,7 +2162,7 @@ window.toggleCheckActividad = async (id, ev) => {
   const checks = { ...checksDeAlumno() };
   checks[id] = !checks[id];
   sessionActiva.checks_actividades = checks;
-  renderActividades();
+  renderActividadesPendientesIndicator();
   if (document.getElementById('notif-dropdown')?.classList.contains('open')) renderNotifList();
   try { await updateDoc(doc(db,'alumnos',sessionActiva.id), { [`checks_actividades.${id}`]: checks[id] }); }
   catch (e) { console.error(e); }
@@ -2192,12 +2174,13 @@ function itemActividadHTML(a, conCheck) {
   const enlaceHtml = a.enlace ? `<a class="activity-link-btn" href="${a.enlace.replace(/"/g,'&quot;')}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir enlace</a>` : '';
   return `<div class="activity-card ${hecho?'done':''}"><div class="activity-icon"><i class="fa-solid fa-list-check"></i></div><div class="activity-body"><h4>${a.titulo}</h4><p>${a.descripcion || ''}</p>${enlaceHtml}</div>${checkBtn}</div>`;
 }
-function renderActividades() {
-  const card = document.getElementById('actividades-card');
-  const list = document.getElementById('actividades-list');
-  if (!ultimasActividades.length) { card.style.display='none'; return; }
-  card.style.display='block';
-  list.innerHTML = ultimasActividades.map(a => itemActividadHTML(a, true)).join('');
+// Aro amarillo en el ícono de "Actividades" mientras quede al menos una actividad de la semana sin marcar como completada.
+function renderActividadesPendientesIndicator() {
+  const btn = document.getElementById('btn-actividades-bell');
+  if (!btn) return;
+  const checks = checksDeAlumno();
+  const hayPendientes = ultimasActividades.some(a => !checks[a.id]);
+  btn.classList.toggle('tiene-pendientes', hayPendientes);
 }
 
 /* ===== SONIDO "DING" DE NOTIFICACIÓN (generado con WebAudio, no depende de archivos) ===== */
