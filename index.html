@@ -224,12 +224,21 @@ a { color: inherit; }
 .streak-copy .n { font-family:'Playfair Display'; font-size:19px; color:#fff; }
 .streak-copy .n b { color:var(--gold); }
 .streak-days-row { display:flex; gap:9px; margin-top:6px; }
-.streak-day { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
-.streak-day-circle { width:30px; height:30px; border-radius:50%; background:var(--card2); border:1px solid var(--border2); color:var(--muted-dim); display:flex; align-items:center; justify-content:center; font-size:11px; transition: all .25s var(--ease); }
+.streak-day { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; min-width:0; }
+.streak-day-circle { width:30px; height:30px; border-radius:50%; background:var(--card2); border:1px solid var(--border2); color:var(--muted-dim); display:flex; align-items:center; justify-content:center; font-size:11px; transition: all .25s var(--ease); flex-shrink:0; }
 .streak-day-circle.done { background:linear-gradient(135deg, var(--gold3), var(--gold2)); border-color:transparent; color:#1a1400; box-shadow: 0 0 14px var(--gold-glow); }
 .streak-day-label { font-size:9.5px; color:var(--muted); font-weight:700; }
 .streak-day-label.active { color:var(--gold); }
-@media (max-width:480px){ .streak-days-row{ display:none; } }
+@media (max-width:480px){
+  .streak-days-row{ gap:5px; }
+  .streak-day-circle{ width:25px; height:25px; font-size:9.5px; }
+  .streak-day-label{ font-size:8px; }
+}
+@media (max-width:360px){
+  .streak-days-row{ gap:3px; }
+  .streak-day-circle{ width:22px; height:22px; font-size:9px; }
+  .streak-day-label{ font-size:7.5px; }
+}
 
 .ring-card { background: var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; margin-bottom:24px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
 .ring-copy { flex:1; min-width:160px; }
@@ -548,7 +557,7 @@ a { color: inherit; }
 .tr-launch-btn:hover { transform: translateY(-1px); background:var(--gold-dim); }
 .tr-shell { max-width:560px; margin:0 auto; padding:16px 14px 90px; overflow-x:hidden; }
 .tr-stagepath { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:4px; }
-.tr-stage-node { flex:1; text-align:center; position:relative; }
+.tr-stage-node { flex:1; min-width:0; text-align:center; position:relative; }
 .tr-stage-node .dot { width:30px; height:30px; border-radius:50%; background:var(--card2); border:2px solid var(--border2); display:flex; align-items:center; justify-content:center; margin:0 auto 6px; font-size:12px; color:var(--muted); }
 .tr-stage-node.done .dot { background:var(--gold); border-color:var(--gold); color:#000; }
 .tr-stage-node.current .dot { background:var(--gold-dim); border-color:var(--gold2); color:var(--gold2); box-shadow:0 0 0 4px rgba(240,180,41,.12); }
@@ -560,7 +569,7 @@ a { color: inherit; }
 .tr-week-card h3 { font-family:'Playfair Display'; color:#fff; font-size:18px; margin-bottom:4px; }
 .tr-week-card .tr-etapa-tag { font-size:10px; font-weight:700; color:var(--gold3); text-transform:uppercase; letter-spacing:.5px; }
 .tr-steps { display:flex; justify-content:space-between; margin:16px 0 4px; }
-.tr-step-chip { flex:1; text-align:center; padding:8px 4px; font-size:10px; font-weight:700; color:var(--muted-dim); border-bottom:2px solid var(--border2); }
+.tr-step-chip { flex:1; min-width:0; text-align:center; padding:8px 4px; font-size:10px; font-weight:700; color:var(--muted-dim); border-bottom:2px solid var(--border2); }
 .tr-step-chip.done { color:var(--gold2); border-color:var(--gold2); }
 .tr-step-chip.active { color:#fff; border-color:var(--gold); }
 .tr-step-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 20px; text-align:center; }
@@ -591,7 +600,7 @@ a { color: inherit; }
 .tr-confirm-btn.ready { border-color:var(--gold2); color:var(--gold2); }
 .tr-daycomplete { text-align:center; padding:30px 16px; }
 .tr-daycomplete i { font-size:44px; color:var(--gold); margin-bottom:10px; }
-.tr-metric-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+.tr-metric-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:16px; }
 .tr-metric-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; text-align:center; }
 .tr-metric-box .num { font-family:'Playfair Display'; font-size:24px; color:var(--gold2); }
 .tr-metric-box .lbl { font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.3px; }
