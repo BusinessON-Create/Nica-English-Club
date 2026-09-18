@@ -558,6 +558,27 @@ a { color: inherit; }
 .neclub-flash-viewer-zone.right { right:0; }
 .neclub-flash-viewer-openpost { margin:0 auto 22px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); color:#fff; font-size:12px; font-weight:700; padding:9px 18px; border-radius:99px; cursor:pointer; display:flex; align-items:center; gap:6px; flex-shrink:0; font-family:inherit; z-index:4; position:relative; }
 
+/* ===== NECLUB: modo visitante público (?ver=neclub) — oculta lo que no aplica a alguien sin cuenta ===== */
+body.neclub-visitante #s-neclub .btn-salir[title="Volver al panel"] { display:none; }
+body.neclub-visitante .neclub-composer { display:none; }
+
+/* Modal "enganche" — invita a suscribirse cuando el visitante toca algo bloqueado */
+.neclub-enganche-bg { position:fixed; inset:0; z-index:980; background:rgba(0,0,0,.72); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:18px; }
+.neclub-enganche-bg.open { display:flex; }
+.neclub-enganche-card { position:relative; width:100%; max-width:400px; background:linear-gradient(180deg, var(--card2) 0%, var(--card) 100%); border:1px solid var(--border2); border-radius:22px; padding:28px 24px 24px; box-shadow:0 24px 60px rgba(0,0,0,.6); animation: fadeUp .3s var(--ease) both; }
+.neclub-enganche-close { position:absolute; top:16px; right:16px; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid var(--border2); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; }
+.neclub-enganche-close:hover { color:#fff; border-color:var(--gold2); }
+.neclub-enganche-logo { width:64px; height:64px; border-radius:50%; margin-bottom:16px; }
+.neclub-enganche-card h3 { font-family:'Playfair Display'; font-size:23px; color:#fff; margin-bottom:12px; line-height:1.2; }
+.neclub-enganche-card p { color:var(--muted); font-size:14px; line-height:1.55; margin-bottom:16px; }
+.neclub-enganche-lista { list-style:none; padding:0; margin:0 0 22px; display:flex; flex-direction:column; gap:9px; }
+.neclub-enganche-lista li { display:flex; align-items:center; gap:9px; color:var(--text); font-size:13px; }
+.neclub-enganche-lista li i { color:var(--gold3); font-size:12px; }
+.neclub-enganche-btn-primario { width:100%; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:800; font-size:14.5px; border:none; padding:14px; border-radius:99px; cursor:pointer; font-family:inherit; margin-bottom:10px; transition: transform .15s var(--ease); }
+.neclub-enganche-btn-primario:hover { transform: translateY(-1px); }
+.neclub-enganche-btn-secundario { width:100%; background:transparent; color:var(--muted); font-weight:600; font-size:13px; border:1px solid var(--border2); padding:12px; border-radius:99px; cursor:pointer; font-family:inherit; }
+.neclub-enganche-btn-secundario:hover { color:#fff; border-color:var(--border2); }
+
 /* Tarjeta de "Historia" (PDF) dentro del feed */
 .neclub-story-cover { position:relative; border-radius:14px; overflow:hidden; margin-bottom:10px; cursor:pointer; border:1px solid var(--border2); background:#000; }
 .neclub-story-cover img { width:100%; max-height:320px; object-fit:cover; display:block; opacity:.85; }
@@ -1063,7 +1084,7 @@ a { color: inherit; }
         <div style="margin-top:30px;">
           <div class="input-shell">
             <i class="fa-solid fa-user input-icon"></i>
-            <input type="text" id="login-nombre" class="field-input" placeholder="Nombre de usuario">
+            <input type="email" id="login-nombre" class="field-input" placeholder="Correo electrónico" autocomplete="username">
           </div>
           <div class="input-shell">
             <i class="fa-solid fa-lock input-icon"></i>
@@ -1236,13 +1257,13 @@ a { color: inherit; }
         <button class="btn-salir" onclick="showScreen('s-student')" title="Volver al panel"><i class="fa-solid fa-arrow-left"></i></button>
         <button class="btn-salir" onclick="irArribaFeedNeclub()" title="Inicio"><i class="fa-solid fa-house"></i></button>
         <div class="notif-wrap">
-          <button class="notif-bell-btn" onclick="toggleNeclubNotifDropdown()" title="Notificaciones de NECLUB">
+          <button class="notif-bell-btn" onclick="neclubModoVisitante ? abrirModalEnganche('campana') : toggleNeclubNotifDropdown()" title="Notificaciones de NECLUB">
             <i class="fa-solid fa-bell"></i>
             <span class="notif-badge" id="neclub-notif-badge">0</span>
           </button>
         </div>
-        <button class="btn-salir" onclick="abrirChatFlotante()" title="Mensajes"><i class="fa-solid fa-comments"></i><span class="chat-notif-badge">0</span></button>
-        <button class="nav-avatar-chip" onclick="abrirPerfil()" title="Mi perfil"></button>
+        <button class="btn-salir" onclick="neclubModoVisitante ? abrirModalEnganche('mensajes') : abrirChatFlotante()" title="Mensajes"><i class="fa-solid fa-comments"></i><span class="chat-notif-badge">0</span></button>
+        <button class="nav-avatar-chip" onclick="neclubModoVisitante ? abrirModalEnganche('perfil') : abrirPerfil()" title="Mi perfil"></button>
       </div>
     </nav>
     <div class="neclub-new-posts-bar" id="neclub-new-posts-bar" onclick="irArribaFeedNeclub()" style="display:none;"><i class="fa-solid fa-arrow-up"></i> New posts</div>
@@ -1386,7 +1407,10 @@ a { color: inherit; }
           <input type="hidden" id="alumno-id-edicion">
           <input type="hidden" id="alumno-identidad-edicion">
           <input type="text" id="alumno-nombre" class="admin-input" placeholder="Nombre completo del alumno">
-          <input type="text" id="alumno-pass" class="admin-input" placeholder="Contraseña">
+          <div id="alumno-cuenta-vinculada-aviso" style="display:none; font-size:12px; color:var(--gold3); margin:-2px 0 10px;"><i class="fa-solid fa-circle-check"></i> Cuenta ya vinculada — para cambiar su acceso usa "Enviar restablecimiento de contraseña".</div>
+          <input type="email" id="alumno-correo" class="admin-input" placeholder="Correo del alumno (para su acceso)" autocomplete="off">
+          <p class="form-hint" id="alumno-pass-hint" style="margin-top:-6px; margin-bottom:10px;">No necesitas crear una contraseña: al guardar, se le enviará automáticamente un correo a este alumno para que configure su propia contraseña.</p>
+          <button type="button" class="btn-login btn-outline-gold" id="btn-reset-pass-alumno" style="display:none; margin-bottom:10px;" onclick="enviarResetPassAlumno()"><i class="fa-solid fa-envelope"></i> Enviar restablecimiento de contraseña</button>
           <input type="url" id="alumno-foto" class="admin-input" placeholder="URL Foto Perfil">
           <p class="admin-label"><i class="fa-solid fa-gem"></i> Plan de suscripción</p>
           <select id="alumno-plan" class="admin-input">
@@ -1604,20 +1628,12 @@ a { color: inherit; }
   <div class="modal-box modal-box-form" style="position:relative;">
     <button class="modal-close-x" onclick="cerrarModalOlvide()"><i class="fa-solid fa-xmark"></i></button>
     <h3 style="color:#fff; font-family:'Playfair Display'; font-size:21px;">Restablecer contraseña</h3>
-    <p class="form-hint" style="margin-top:10px;">Completa tus datos y te enviaremos la solicitud por WhatsApp para restablecer tu contraseña.</p>
+    <p class="form-hint" style="margin-top:10px;">Escribe el correo con el que ingresas al portal y te enviaremos un enlace para crear una nueva contraseña.</p>
     <div class="input-shell">
-      <i class="fa-solid fa-user input-icon"></i>
-      <input type="text" id="olvide-nombre" class="field-input" placeholder="Nombre y apellido">
+      <i class="fa-solid fa-envelope input-icon"></i>
+      <input type="email" id="olvide-email" class="field-input" placeholder="Tu correo electrónico" autocomplete="username">
     </div>
-    <div class="input-shell">
-      <i class="fa-solid fa-id-card input-icon"></i>
-      <input type="text" id="olvide-id" class="field-input" placeholder="Número de ID de estudiante (ej: NEC260001GM)">
-    </div>
-    <div class="input-shell">
-      <i class="fa-brands fa-whatsapp input-icon"></i>
-      <input type="tel" id="olvide-whatsapp" class="field-input" placeholder="Tu WhatsApp con código de país (ej: +505 8888 8888)">
-    </div>
-    <button class="btn-whatsapp" onclick="enviarOlvide()"><i class="fa-brands fa-whatsapp"></i> Solicitar restablecimiento</button>
+    <button class="btn-login" id="btn-enviar-olvide" onclick="enviarOlvide()"><i class="fa-solid fa-paper-plane"></i> Enviar enlace de restablecimiento</button>
   </div>
 </div>
 
@@ -1854,9 +1870,26 @@ a { color: inherit; }
   <button class="neclub-flash-viewer-openpost" onclick="irAlPostDesdeFlash()"><i class="fa-solid fa-comment"></i> View post &amp; comments</button>
 </div>
 
+<!-- NECLUB: modal "enganche" para visitantes sin cuenta (modo ?ver=neclub) -->
+<div class="neclub-enganche-bg" id="neclub-enganche-bg" onclick="if(event.target===this) cerrarModalEnganche()">
+  <div class="neclub-enganche-card">
+    <button class="neclub-enganche-close" onclick="cerrarModalEnganche()" title="Close"><i class="fa-solid fa-xmark"></i></button>
+    <img class="neclub-enganche-logo" id="neclub-enganche-logo" src="" alt="Nica English Club">
+    <h3>Aplica a tu cupo</h3>
+    <p id="neclub-enganche-texto">Te llevamos al formulario oficial de admisión. Cuéntanos tu nivel y tu objetivo — el equipo te contacta por WhatsApp para confirmar tu coach y tu cupo.</p>
+    <ul class="neclub-enganche-lista">
+      <li><i class="fa-solid fa-check"></i> Respuesta en menos de 24 horas</li>
+      <li><i class="fa-solid fa-check"></i> Sin compromiso hasta confirmar tu cupo</li>
+      <li><i class="fa-solid fa-check"></i> Coach asignado según tu nivel</li>
+    </ul>
+    <button class="neclub-enganche-btn-primario" onclick="window.open('https://app.nicaenglishclub.com/nica-english-club-admision/','_blank')">Continuar a la admisión</button>
+    <button class="neclub-enganche-btn-secundario" onclick="window.open('https://wa.me/50583267703','_blank')">Prefiero preguntar por WhatsApp primero</button>
+  </div>
+</div>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
@@ -1876,6 +1909,39 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const functionsInstance = getFunctions(app, 'us-central1');
 const CORREO_ADMIN = "95gusmg@gmail.com";
+
+// ===== Crear cuentas de Firebase Auth desde el panel de admin, SIN cerrar la sesión del admin =====
+// Truco estándar de Firebase: createUserWithEmailAndPassword firma automáticamente al
+// nuevo usuario en la instancia de "auth" que se le pasa. Si usáramos el "auth" principal
+// (con el que el admin inició sesión), el admin quedaría desconectado y logueado como el
+// alumno nuevo. Por eso creamos una app secundaria desechable solo para este paso.
+async function crearCuentaAuthSecundaria(correo, contrasena) {
+  const secondaryApp = initializeApp(firebaseConfig, 'Secondary-' + Date.now());
+  const secondaryAuth = getAuth(secondaryApp);
+  try {
+    const cred = await createUserWithEmailAndPassword(secondaryAuth, correo, contrasena);
+    return cred;
+  } finally {
+    try { await signOut(secondaryAuth); } catch (e) {}
+    try { await deleteApp(secondaryApp); } catch (e) {}
+  }
+}
+// Genera una contraseña aleatoria y segura para cuentas creadas desde el panel de admin.
+// El alumno nunca la ve ni la usa: inmediatamente después se le envía un correo de
+// restablecimiento (sendPasswordResetEmail) para que defina la suya propia.
+function generarPasswordSegura(longitud = 20) {
+  const alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*';
+  const valoresAleatorios = new Uint32Array(longitud);
+  crypto.getRandomValues(valoresAleatorios);
+  return Array.from(valoresAleatorios, v => alfabeto[v % alfabeto.length]).join('');
+}
+function mensajeErrorAuth(e) {
+  const code = e && e.code || '';
+  if (code === 'auth/email-already-in-use') return 'Ese correo ya tiene una cuenta creada en el portal.';
+  if (code === 'auth/invalid-email') return 'El correo no es válido.';
+  if (code === 'auth/weak-password') return 'La contraseña debe tener al menos 6 caracteres.';
+  return 'No se pudo completar la operación. Intenta de nuevo.';
+}
 let sessionActiva = null;
 window.getSessionActiva = () => sessionActiva; // permite que el widget NEC Coach (fuera del módulo) lea el nombre del alumno
 
@@ -1937,6 +2003,11 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 async function restaurarSesion(user) {
+  const parametrosUrl = new URLSearchParams(location.search);
+  if (parametrosUrl.get('ver') === 'neclub') {
+    await iniciarModoVisitanteNeclub();
+    return;
+  }
   const esperaMinima = new Promise(res => setTimeout(res, 1500));
   const sesionGuardada = localStorage.getItem('nica_sesion_activa') === 'true';
   const alumnoIdGuardado = localStorage.getItem('nica_alumno_id');
@@ -2022,6 +2093,8 @@ function aplicarLogo() {
     el.classList.add('has-image');
     el.innerHTML = `<img src="${LOGO_DEFAULT}" alt="Logo NicaEnglish Club" onerror="this.parentElement.classList.remove('has-image'); this.parentElement.innerHTML='NEC';">`;
   });
+  const logoEnganche = document.getElementById('neclub-enganche-logo');
+  if (logoEnganche) logoEnganche.src = LOGO_DEFAULT;
 }
 
 document.getElementById('btn-entrar').addEventListener('click', async () => {
@@ -2044,15 +2117,10 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
 
   try {
     await signOut(auth);
-    await signInAnonymously(auth);
-    const snap = await getDocs(collection(db,'alumnos'));
+    const cred = await signInWithEmailAndPassword(auth, entrada, pass);
+    const snap = await getDocs(query(collection(db,'alumnos'), where('uid','==', cred.user.uid), limit(1)));
     let found = null;
-    snap.forEach(d => {
-      const data = d.data();
-      if ((data.usuario === norm(entrada) || data.nombre === entrada) && data.pass == pass) {
-        found = {id:d.id, ...data};
-      }
-    });
+    snap.forEach(d => { found = { id: d.id, ...d.data() }; });
     if (found) {
       localStorage.setItem('nica_sesion_activa', 'true');
       localStorage.setItem('nica_alumno_id', found.id);
@@ -2081,7 +2149,7 @@ document.getElementById('btn-entrar').addEventListener('click', async () => {
         setTimeout(() => showModal('¡Bienvenido de nuevo!', frase, 'fa-hand'), 900);
       }
     } else { errEl.style.display='block'; await signOut(auth); }
-  } catch(e) { console.error(e); }
+  } catch(e) { console.error(e); errEl.style.display='block'; }
 });
 
 function huboInactividad24h(alumno) {
@@ -2494,7 +2562,7 @@ function escucharNeclub() {
     neclubUltimoTopId = topId;
     aplicarCambiosFeedNeclub(cambios);
   });
-  limpiarNeclubExpirados();
+  limpiarNeclubExpirados(); // solo el alumno hace esta limpieza de mantenimiento, el visitante público no
   escucharNeclubNotifs();
 }
 window.irArribaFeedNeclub = () => {
@@ -2539,15 +2607,20 @@ function renderNeclubPostHTML(p, miId) {
       ${(p.texto && !esHistoria) ? `<p class="neclub-post-texto">${escNeclub(p.texto)}</p>` : ''}
       ${mediaHtml}
       <div class="neclub-post-actions">
-        <button class="neclub-action-btn ${yaLike?'liked':''}" onclick="toggleLikeNeclub('${p.id}')"><i class="fa-solid fa-heart"></i> <span>${(p.likes||[]).length}</span></button>
+        <button class="neclub-action-btn ${yaLike?'liked':''}" onclick="${neclubModoVisitante ? `abrirModalEnganche('like')` : `toggleLikeNeclub('${p.id}')`}"><i class="fa-solid fa-heart"></i> <span>${(p.likes||[]).length}</span></button>
         <button class="neclub-action-btn" onclick="toggleComentariosNeclub('${p.id}')"><i class="fa-solid fa-comment"></i> <span>${p.comentariosCount||0}</span></button>
       </div>
       <div class="neclub-comments" id="neclub-comments-${p.id}">
         <div id="neclub-comments-list-${p.id}"></div>
+        ${neclubModoVisitante ? `
+        <div class="neclub-comment-input-row" onclick="abrirModalEnganche('comentar')" style="cursor:pointer;">
+          <div style="flex:1; padding:9px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--muted-dim); font-size:12.5px;">Write a comment in English...</div>
+          <button class="neclub-comment-send" type="button" style="pointer-events:none;"><i class="fa-solid fa-lock"></i></button>
+        </div>` : `
         <div class="neclub-comment-input-row">
           <input type="text" id="neclub-comment-input-${p.id}" placeholder="Write a comment in English..." maxlength="300" onkeydown="if(event.key==='Enter') enviarComentarioNeclub('${p.id}');">
           <button class="neclub-comment-send" onclick="enviarComentarioNeclub('${p.id}')"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
+        </div>`}
       </div>
     </div>`;
 }
@@ -2797,6 +2870,46 @@ window.irAlPostDesdeFlash = () => {
   const nodo = document.getElementById('neclub-post-' + p.id);
   if (nodo) nodo.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
+
+/* ===== NECLUB: modo visitante público — enlace ?ver=neclub, sin necesidad de cuenta =====
+   neclubModoVisitante se activa una sola vez al cargar la página (ver restaurarSesion).
+   Todo lo que requiere cuenta (mensajes, notificaciones, perfil, like, comentar) abre
+   el modal de enganche en vez de su función real. Los comentarios SÍ se pueden ver
+   (solo lectura), solo no se puede escribir uno nuevo. */
+let neclubModoVisitante = false;
+
+const NECLUB_ENGANCHE_TEXTOS = {
+  like:      'Reacciona y comenta como ellos — únete a NECLUB y sé parte de la conversación en inglés.',
+  comentar:  'Únete a la conversación — como alumno de NECLUB puedes comentar y practicar tu inglés con el grupo.',
+  mensajes:  'Habla directo con tu coach y tus compañeros de club — únete para desbloquear los mensajes.',
+  campana:   'Recibe tus propias notificaciones de NECLUB — únete al club para no perderte nada.',
+  perfil:    'Arma tu perfil, tu racha y tu progreso — únete a NECLUB y empieza tu camino.',
+  general:   'Te llevamos al formulario oficial de admisión. Cuéntanos tu nivel y tu objetivo — el equipo te contacta por WhatsApp para confirmar tu coach y tu cupo.'
+};
+window.abrirModalEnganche = (contexto) => {
+  const texto = NECLUB_ENGANCHE_TEXTOS[contexto] || NECLUB_ENGANCHE_TEXTOS.general;
+  const p = document.getElementById('neclub-enganche-texto');
+  if (p) p.innerText = texto;
+  document.getElementById('neclub-enganche-bg').classList.add('open');
+};
+window.cerrarModalEnganche = () => {
+  document.getElementById('neclub-enganche-bg').classList.remove('open');
+};
+
+// Se llama desde restaurarSesion() cuando la URL trae ?ver=neclub — entra directo a NECLUB
+// en modo solo-lectura, con una sesión anónima de Firebase por detrás (invisible para el visitante).
+async function iniciarModoVisitanteNeclub() {
+  neclubModoVisitante = true;
+  document.body.classList.add('neclub-visitante');
+  const esperaMinima = new Promise(res => setTimeout(res, 1200));
+  try { if (!auth.currentUser) await signInAnonymously(auth); }
+  catch (e) { console.error('No se pudo iniciar la sesión de visitante:', e); }
+  await esperaMinima;
+  document.getElementById('loading').style.display = 'none';
+  nicaHomeScreen = 's-neclub';
+  showScreen('s-neclub', { replace: true, noHistory: true });
+  escucharNeclub();
+}
 
 /* ===== NECLUB: solo reproducir el video que está centrado en la pantalla (como Reels/TikTok) ===== */
 let neclubVideoObserver = null;
@@ -3211,6 +3324,7 @@ window.borrarPostNeclub = async (postId, archivoPath) => {
   await borrarPostNeclubCompleto(postId, archivoPath, post ? post.coverPath : null);
 };
 async function limpiarNeclubExpirados() {
+  if (neclubModoVisitante) return; // el visitante público nunca borra ni escribe nada, solo el alumno hace esta limpieza
   try {
     const snap = await getDocs(query(collection(db,'neclub_posts'), where('expiraEn','<=', Timestamp.now()), limit(20)));
     for (const d of snap.docs) await borrarPostNeclubCompleto(d.id, d.data().archivoPath);
@@ -4724,7 +4838,8 @@ function cargarDatosAdmin() {
       const horarioTxt = (data.horario && data.horario.dias) ? `${data.horario.dias} · ${data.horario.franja}` : 'Sin horario';
       const planTxt = data.plan || 'Sin plan';
       const estaVerificado = !!data.verificado;
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}${estaVerificado ? ' <i class="fa-solid fa-circle-check" style="color:#4d9fff; font-size:12px;" title="Verificado en NECLUB"></i>' : ''}<br><small style="color:var(--gold3); font-family:'DM Mono',monospace;">${data.identidad || 'Sin ID'}</small><br><small style="color:var(--muted)">P: ${data.pass} · ${planTxt} · ${horarioTxt}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:${estaVerificado ? 'var(--blue)' : 'var(--muted)'}; border-color:${estaVerificado ? 'rgba(77,159,255,0.2)' : 'var(--border2)'}" title="${estaVerificado ? 'Quitar verificado de NECLUB' : 'Dar verificado en NECLUB'}" onclick="toggleVerificadoAlumno('${d.id}', ${estaVerificado})"><i class="fa-solid fa-circle-check"></i></button><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
+      const cuentaTxt = data.uid ? `<span style="color:#3ddc84;"><i class="fa-solid fa-circle-check"></i> ${data.email}</span>` : `<span style="color:var(--red);"><i class="fa-solid fa-triangle-exclamation"></i> Sin cuenta vinculada</span>`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}${estaVerificado ? ' <i class="fa-solid fa-circle-check" style="color:#4d9fff; font-size:12px;" title="Verificado en NECLUB"></i>' : ''}<br><small style="color:var(--gold3); font-family:'DM Mono',monospace;">${data.identidad || 'Sin ID'}</small><br><small style="color:var(--muted)">${cuentaTxt} · ${planTxt} · ${horarioTxt}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:${estaVerificado ? 'var(--blue)' : 'var(--muted)'}; border-color:${estaVerificado ? 'rgba(77,159,255,0.2)' : 'var(--border2)'}" title="${estaVerificado ? 'Quitar verificado de NECLUB' : 'Dar verificado en NECLUB'}" onclick="toggleVerificadoAlumno('${d.id}', ${estaVerificado})"><i class="fa-solid fa-circle-check"></i></button><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
     });
     renderTop3AdminSlots();
     renderDestPicker();
@@ -6313,28 +6428,118 @@ window.prepararEdicionAlumno = (id) => {
   document.getElementById('alumno-id-edicion').value = id;
   document.getElementById('alumno-identidad-edicion').value = a.identidad || '';
   document.getElementById('alumno-nombre').value = a.nombre || '';
-  document.getElementById('alumno-pass').value = a.pass || '';
+  document.getElementById('alumno-correo').value = a.email || '';
   document.getElementById('alumno-foto').value = a.foto || '';
   document.getElementById('alumno-plan').value = a.plan || '';
   document.getElementById('alumno-horario-dias').value = (a.horario && a.horario.dias) || '';
   document.getElementById('alumno-horario-franja').value = (a.horario && a.horario.franja) || '';
   document.getElementById('btn-guardar-alumno').innerText = "Actualizar Alumno";
+
+  // Si ya tiene cuenta de Firebase Auth (uid), bloqueamos correo/contraseña de este
+  // formulario — su acceso ya está creado y solo se cambia con "restablecer contraseña".
+  const yaVinculado = !!a.uid;
+  document.getElementById('alumno-cuenta-vinculada-aviso').style.display = yaVinculado ? 'block' : 'none';
+  document.getElementById('alumno-correo').disabled = yaVinculado;
+  document.getElementById('alumno-pass-hint').style.display = yaVinculado ? 'none' : 'block';
+  document.getElementById('btn-reset-pass-alumno').style.display = (yaVinculado && a.email) ? 'block' : 'none';
+};
+window.enviarResetPassAlumno = async () => {
+  const id = document.getElementById('alumno-id-edicion').value;
+  const a = alumnosCacheAdmin.find(x => x.id === id);
+  if (!a || !a.email) return;
+  try {
+    await sendPasswordResetEmail(auth, a.email);
+    showModal('Enviado', `Se envió un correo a ${a.email} para que restablezca su contraseña.`);
+  } catch (e) {
+    console.error(e);
+    showModal('No se pudo enviar', mensajeErrorAuth(e));
+  }
 };
 window.registrarAlumno = async () => {
-  const n = document.getElementById('alumno-nombre').value, p = document.getElementById('alumno-pass').value, f = document.getElementById('alumno-foto').value, id = document.getElementById('alumno-id-edicion').value;
+  const n = document.getElementById('alumno-nombre').value.trim();
+  const correo = document.getElementById('alumno-correo').value.trim().toLowerCase();
+  const f = document.getElementById('alumno-foto').value;
+  const id = document.getElementById('alumno-id-edicion').value;
   const plan = document.getElementById('alumno-plan').value;
   const diasH = document.getElementById('alumno-horario-dias').value;
   const franjaH = document.getElementById('alumno-horario-franja').value;
   const horario = (diasH && franjaH) ? { dias: diasH, franja: franjaH } : null;
-  if(!n || !p) return;
-  if(id) {
-    await updateDoc(doc(db, 'alumnos', id), { nombre:n, pass:p, foto:f, usuario:norm(n), plan, horario });
+  if (!n) { showModal('Falta información', 'Escribe el nombre del alumno.'); return; }
+
+  const btn = document.getElementById('btn-guardar-alumno');
+  const textoOriginalBtn = btn.innerText;
+  let correoParaAviso = null; // si se crea/vincula una cuenta nueva, aquí queda el correo para el aviso final
+
+  if (id) {
+    // Editando un alumno que ya existe
+    const actual = alumnosCacheAdmin.find(a => a.id === id);
+    const yaVinculado = actual && !!actual.uid;
+    if (yaVinculado) {
+      // Su cuenta ya existe: solo se actualizan datos de perfil, nunca correo/contraseña aquí.
+      await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario });
+    } else {
+      // Alumno antiguo sin cuenta todavía: hay que vincularlo a una cuenta nueva de Firebase Auth.
+      // Solo pedimos su correo: la contraseña se genera en código y nunca se maneja manualmente;
+      // el alumno la define él mismo desde el correo que le llega.
+      if (!correo) { showModal('Falta información', 'Este alumno todavía no tiene cuenta. Escribe su correo para crear su acceso al portal.'); return; }
+      btn.disabled = true; btn.innerText = 'Vinculando cuenta…';
+      try {
+        const passwordTemporal = generarPasswordSegura();
+        const cred = await crearCuentaAuthSecundaria(correo, passwordTemporal);
+        await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, uid: cred.user.uid, email: correo });
+        await sendPasswordResetEmail(auth, correo);
+        correoParaAviso = correo;
+      } catch (e) {
+        console.error(e);
+        showModal('No se pudo vincular la cuenta', mensajeErrorAuth(e));
+        btn.disabled = false; btn.innerText = textoOriginalBtn;
+        return;
+      }
+    }
   } else {
-    const idsExistentes = alumnosCacheAdmin.map(a => a.identidad).filter(Boolean);
-    const identidad = generarIdentidadUnica(n, idsExistentes);
-    await addDoc(collection(db,'alumnos'), { nombre:n, pass:p, foto:f, usuario:norm(n), plan, horario, identidad, logins:0, total_logins:0, dias_semana:[] });
+    // Alumno completamente nuevo: se crea su cuenta de Firebase Auth (con contraseña aleatoria
+    // generada en código, nunca escrita a mano) y su documento juntos. Justo después se envía
+    // el correo de restablecimiento para que el alumno configure su propia contraseña.
+    if (!correo) { showModal('Falta información', 'Escribe el correo del alumno nuevo.'); return; }
+    btn.disabled = true; btn.innerText = 'Creando cuenta…';
+    try {
+      const passwordTemporal = generarPasswordSegura();
+      const cred = await crearCuentaAuthSecundaria(correo, passwordTemporal);
+      const idsExistentes = alumnosCacheAdmin.map(a => a.identidad).filter(Boolean);
+      const identidad = generarIdentidadUnica(n, idsExistentes);
+      await addDoc(collection(db,'alumnos'), { nombre:n, foto:f, usuario:norm(n), plan, horario, identidad, uid: cred.user.uid, email: correo, logins:0, total_logins:0, dias_semana:[] });
+      await sendPasswordResetEmail(auth, correo);
+      correoParaAviso = correo;
+    } catch (e) {
+      console.error(e);
+      showModal('No se pudo crear el alumno', mensajeErrorAuth(e));
+      btn.disabled = false; btn.innerText = textoOriginalBtn;
+      return;
+    }
   }
-  location.reload();
+
+  // Limpiamos el formulario para el siguiente registro sin recargar la página:
+  // la lista de alumnos ya se actualiza sola en vivo (onSnapshot), y así el
+  // aviso de confirmación de abajo alcanza a mostrarse.
+  document.getElementById('alumno-id-edicion').value = '';
+  document.getElementById('alumno-identidad-edicion').value = '';
+  document.getElementById('alumno-nombre').value = '';
+  document.getElementById('alumno-correo').value = '';
+  document.getElementById('alumno-correo').disabled = false;
+  document.getElementById('alumno-foto').value = '';
+  document.getElementById('alumno-plan').value = '';
+  document.getElementById('alumno-horario-dias').value = '';
+  document.getElementById('alumno-horario-franja').value = '';
+  document.getElementById('alumno-cuenta-vinculada-aviso').style.display = 'none';
+  document.getElementById('alumno-pass-hint').style.display = 'block';
+  document.getElementById('btn-reset-pass-alumno').style.display = 'none';
+  btn.disabled = false; btn.innerText = 'Crear Alumno';
+
+  if (correoParaAviso) {
+    showModal('Alumno registrado', `Alumno registrado. Se ha enviado un correo a ${correoParaAviso} para que configure su contraseña.`);
+  } else {
+    showModal('Actualizado', 'Los datos del alumno se actualizaron correctamente.');
+  }
 };
 window.prepararEdicionEnlace = (id, t, u) => {
   document.getElementById('enlace-id-edicion').value = id; document.getElementById('link-titulo').value = t; document.getElementById('link-url').value = u; document.getElementById('btn-guardar-enlace').innerText = "Actualizar Enlace";
@@ -6469,10 +6674,20 @@ window.subirFotoPerfil = async (ev) => {
 window.guardarPassPerfil = async () => {
   const p1 = document.getElementById('perfil-pass-nueva').value;
   const p2 = document.getElementById('perfil-pass-confirmar').value;
-  if (!p1 || p1.length < 4) { showModal('Atención', 'La contraseña debe tener al menos 4 caracteres.'); return; }
+  if (!p1 || p1.length < 6) { showModal('Atención', 'La contraseña debe tener al menos 6 caracteres.'); return; }
   if (p1 !== p2) { showModal('Atención', 'Las contraseñas no coinciden.'); return; }
-  await updateDoc(doc(db,'alumnos',sessionActiva.id), { pass: p1 });
-  sessionActiva.pass = p1;
+  try {
+    // La contraseña ahora vive en Firebase Auth, no en el documento de Firestore.
+    await updatePassword(auth.currentUser, p1);
+  } catch (e) {
+    console.error(e);
+    if (e.code === 'auth/requires-recent-login') {
+      showModal('Vuelve a iniciar sesión', 'Por seguridad, cierra sesión y vuelve a entrar antes de cambiar tu contraseña.');
+    } else {
+      showModal('No se pudo actualizar', 'No se pudo cambiar la contraseña. Intenta de nuevo.');
+    }
+    return;
+  }
   cerrarPerfil();
   showModal("Éxito", "Contraseña actualizada.");
 };
@@ -6665,22 +6880,33 @@ window.enviarMensajeChat = async () => {
   }
 };
 
-/* ===== OLVIDÉ MI CONTRASEÑA (WhatsApp) ===== */
+/* ===== OLVIDÉ MI CONTRASEÑA (autogestión por correo, vía Firebase Auth) ===== */
 window.abrirModalOlvide = () => {
-  document.getElementById('olvide-nombre').value = '';
-  document.getElementById('olvide-id').value = '';
-  document.getElementById('olvide-whatsapp').value = '';
+  document.getElementById('olvide-email').value = '';
   document.getElementById('modal-olvide-bg').classList.add('open');
 };
 window.cerrarModalOlvide = () => document.getElementById('modal-olvide-bg').classList.remove('open');
-window.enviarOlvide = () => {
-  const nombre = document.getElementById('olvide-nombre').value.trim();
-  const idAlumno = document.getElementById('olvide-id').value.trim();
-  const whatsapp = document.getElementById('olvide-whatsapp').value.trim();
-  if (!nombre || !idAlumno || !whatsapp) { showModal('Falta información', 'Completa tu nombre, tu ID de estudiante y tu WhatsApp con código de país.'); return; }
-  const mensaje = `Hola, olvidé mi contraseña de NicaEnglish Club y necesito restablecerla.\nNombre: ${nombre}\nID de estudiante: ${idAlumno}\nWhatsApp: ${whatsapp}`;
-  window.open(`https://wa.me/${WA_SOPORTE}?text=${encodeURIComponent(mensaje)}`, '_blank');
+window.enviarOlvide = async () => {
+  const email = document.getElementById('olvide-email').value.trim().toLowerCase();
+  if (!email) { showModal('Falta información', 'Escribe tu correo electrónico.'); return; }
+  const btn = document.getElementById('btn-enviar-olvide');
+  const textoOriginal = btn.innerText;
+  btn.disabled = true; btn.innerText = 'Enviando…';
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (e) {
+    // Si el correo no tiene cuenta, no lo revelamos (evita filtrar qué correos existen):
+    // mostramos el mismo mensaje de éxito que si sí se hubiera enviado.
+    if (e && e.code !== 'auth/user-not-found') {
+      console.error(e);
+      btn.disabled = false; btn.innerText = textoOriginal;
+      showModal('No se pudo enviar', mensajeErrorAuth(e));
+      return;
+    }
+  }
+  btn.disabled = false; btn.innerText = textoOriginal;
   cerrarModalOlvide();
+  showModal('Correo enviado', `Si ${email} tiene una cuenta en el portal, te llegará un enlace para crear una nueva contraseña.`);
 };
 
 /* ===== REFERIR A UN AMIGO (WhatsApp) ===== */
