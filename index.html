@@ -1594,6 +1594,11 @@ body.neclub-visitante .neclub-composer { display:none; }
           <input type="text" id="eflink-icono-custom" class="admin-input" placeholder="Ej: fa-solid fa-chalkboard" style="display:none;">
           <p class="admin-label"><i class="fa-solid fa-link"></i> URL</p>
           <input type="url" id="eflink-url" class="admin-input" placeholder="https://...">
+          <label class="dest-all-row" style="margin-top:4px;">
+            <input type="checkbox" id="eflink-nueva-pestana">
+            <span style="color:#fff; font-weight:700;">Abrir en pestaña nueva (en vez de ventana dentro de la app)</span>
+          </label>
+          <p class="form-hint" style="margin-top:-4px;">Recomendado para herramientas colaborativas en vivo (ej. Excalidraw) que no funcionan bien dentro de un iframe. Para el resto, déjalo sin marcar.</p>
           <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
           <div class="dest-picker">
             <label class="dest-all-row"><input type="radio" name="eflink-dest-modo" id="eflink-dest-todos" value="todos" checked onchange="toggleEflinkDestModo()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
@@ -4896,6 +4901,10 @@ function renderDrawerEflinks() {
 window.abrirHerramienta = (id) => {
   const e = eflinksCache.find(x => x.id === id);
   if (!e || !e.url) return;
+  if (e.abrirNuevaPestana) {
+    window.open(e.url, '_blank');
+    return;
+  }
   document.getElementById('modal-iframe-tool-frame').src = e.url;
   document.getElementById('modal-iframe-tool-bg').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -5503,6 +5512,7 @@ window.prepararEdicionEflink = (id) => {
   eflinkEditandoId = id;
   document.getElementById('eflink-nombre').value = data.nombre || '';
   document.getElementById('eflink-url').value = data.url || '';
+  document.getElementById('eflink-nueva-pestana').checked = !!data.abrirNuevaPestana;
   const iconoSelect = document.getElementById('eflink-icono-select');
   const esPreset = Array.from(iconoSelect.options).some(o => o.value === data.icono);
   if (esPreset) {
@@ -5534,10 +5544,11 @@ window.guardarEflink = async () => {
   if (!icono) { showModal('Falta información', 'Elige un ícono, o escribe uno en modo avanzado.'); return; }
   const destRes = obtenerDestinatariosPorModo('eflink-dest-modo', 'eflink-dest-grupo-select', 'eflink-dest-check');
   if (!destRes.ok) { showModal('Falta información', destRes.msg); return; }
+  const abrirNuevaPestana = !!document.getElementById('eflink-nueva-pestana').checked;
   if (eflinkEditandoId) {
-    await updateDoc(doc(db,'enlaces_fijos', eflinkEditandoId), { nombre, url, icono, destinatarios: destRes.destinatarios });
+    await updateDoc(doc(db,'enlaces_fijos', eflinkEditandoId), { nombre, url, icono, destinatarios: destRes.destinatarios, abrirNuevaPestana });
   } else {
-    await addDoc(collection(db,'enlaces_fijos'), { nombre, url, icono, destinatarios: destRes.destinatarios, activo: true, creadoEn: Date.now() });
+    await addDoc(collection(db,'enlaces_fijos'), { nombre, url, icono, destinatarios: destRes.destinatarios, activo: true, abrirNuevaPestana, creadoEn: Date.now() });
   }
   const eraEdicion = !!eflinkEditandoId;
   cancelarEdicionEflink();
@@ -5547,6 +5558,7 @@ window.cancelarEdicionEflink = () => {
   eflinkEditandoId = null;
   document.getElementById('eflink-nombre').value = '';
   document.getElementById('eflink-url').value = '';
+  document.getElementById('eflink-nueva-pestana').checked = false;
   document.getElementById('eflink-icono-select').value = 'fa-solid fa-chalkboard';
   document.getElementById('eflink-icono-custom').style.display = 'none';
   document.getElementById('eflink-icono-custom').value = '';
