@@ -143,6 +143,30 @@ a { color: inherit; }
 .chat-notif-badge.show { display:flex; }
 .btn-salir:hover { color: var(--red); border-color: rgba(255,92,92,.35); background:rgba(255,92,92,.06); }
 
+/* ============ HAMBURGUESA + SIDE DRAWER ============ */
+.hamburger-btn { position:relative; }
+.hamburger-btn .hamb-dot { position:absolute; top:5px; right:5px; width:9px; height:9px; border-radius:50%; background:var(--red); border:2px solid var(--bg); display:none; }
+.hamburger-btn.has-notif { color:var(--gold); border-color:var(--gold2); background:var(--gold-dim); box-shadow:0 0 0 3px var(--gold-dim); }
+.hamburger-btn.has-notif .hamb-dot { display:block; animation: pulseSoft 1.6s ease infinite; }
+
+.side-drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter: blur(2px); z-index:199; opacity:0; pointer-events:none; transition: opacity .3s var(--ease); }
+.side-drawer-overlay.open { opacity:1; pointer-events:auto; }
+
+.side-drawer { position:fixed; top:0; right:0; height:100vh; width:78vw; max-width:300px; background:var(--card); border-left:1px solid var(--border2); z-index:200; display:flex; flex-direction:column; transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1); box-shadow: -12px 0 34px rgba(0,0,0,.4); }
+.side-drawer.open { transform: translateX(0); }
+.side-drawer-head { display:flex; align-items:center; justify-content:space-between; padding:18px 18px 16px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.side-drawer-head span { font-weight:800; font-size:14px; color:#fff; letter-spacing:.3px; }
+.side-drawer-close { background:rgba(255,255,255,.03); border:1px solid var(--border2); color:var(--muted); width:32px; height:32px; border-radius:50%; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: color .2s var(--ease), border-color .2s var(--ease); }
+.side-drawer-close:hover { color:var(--red); border-color:rgba(255,92,92,.35); }
+.side-drawer-list { display:flex; flex-direction:column; padding:10px 10px; overflow-y:auto; flex:1; }
+.side-drawer-item { position:relative; display:flex; align-items:center; gap:14px; padding:14px 12px; border-radius:var(--r-sm); background:transparent; border:none; color:var(--text); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; text-align:left; width:100%; transition: background .2s var(--ease), color .2s var(--ease); }
+.side-drawer-item:hover { background:var(--card-hover); }
+.side-drawer-item i { width:20px; text-align:center; color:var(--gold); font-size:15px; flex-shrink:0; }
+.side-drawer-item .drawer-item-badge { margin-left:auto; min-width:18px; height:18px; padding:0 5px; border-radius:99px; background:var(--red); color:#fff; font-size:9.5px; font-weight:800; display:none; align-items:center; justify-content:center; }
+.side-drawer-item .drawer-item-badge.show { display:flex; }
+.side-drawer-item.logout-item { color:var(--red); margin-top:6px; border-top:1px solid var(--border); border-radius:0; padding-top:16px; }
+.side-drawer-item.logout-item i { color:var(--red); }
+
 .dashboard-shell { max-width:640px; width:100%; margin:0 auto; padding:0 18px 48px; }
 .dashboard-shell .week-card { margin-bottom:22px; }
 
@@ -1124,17 +1148,29 @@ body.neclub-visitante .neclub-composer { display:none; }
         <div class="nav-logo-box app-logo">NEC</div>
       </a>
       <div class="nav-actions">
-        <div class="notif-wrap">
-          <button class="notif-bell-btn" id="btn-actividades-bell" onclick="toggleNotifDropdown()" title="Actividades">
-            <i class="fa-solid fa-list-check"></i>
-            <span class="notif-badge" id="notif-badge">0</span>
-          </button>
-        </div>
         <button class="btn-salir" onclick="abrirChatFlotante()" title="Mensajes"><i class="fa-solid fa-comments"></i><span class="chat-notif-badge" id="chat-notif-badge">0</span></button>
-        <button class="nav-avatar-chip" id="avatar-mini" onclick="abrirPerfil()" title="Mi perfil"></button>
-        <button onclick="cerrarSesion()" class="btn-salir" title="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+        <button class="btn-salir hamburger-btn" id="btn-hamburger" onclick="toggleSideDrawer()" title="Menú">
+          <i class="fa-solid fa-bars"></i>
+          <span class="hamb-dot" id="hamb-dot"></span>
+        </button>
       </div>
     </nav>
+
+    <!-- SIDE DRAWER: menú lateral (Perfil, NECLUB, Training room, Actividades, Logout) -->
+    <div class="side-drawer-overlay" id="side-drawer-overlay" onclick="toggleSideDrawer(false)"></div>
+    <div class="side-drawer" id="side-drawer">
+      <div class="side-drawer-head">
+        <span>Menú</span>
+        <button class="side-drawer-close" onclick="toggleSideDrawer(false)" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="side-drawer-list">
+        <button class="side-drawer-item" onclick="toggleSideDrawer(false); abrirPerfil();"><i class="fa-solid fa-user"></i> Perfil</button>
+        <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-neclub');"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
+        <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-training');"><i class="fa-solid fa-brain"></i> Training room</button>
+        <button class="side-drawer-item" onclick="toggleSideDrawer(false); toggleNotifDropdown();"><i class="fa-solid fa-list-check"></i> Actividades<span class="drawer-item-badge" id="notif-badge">0</span></button>
+        <button class="side-drawer-item logout-item" onclick="toggleSideDrawer(false); cerrarSesion();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
 
     <div class="dashboard-shell">
       <div class="hero-banner">
@@ -1963,6 +1999,7 @@ window.necCallCoach = async function (history, name, level) {
 };
 let latidoInterval = null;
 let ultimasActividades = [];
+let hayActividadesSinCompletar = false; // usado por updateHamburgerHighlight() para resaltar la hamburguesa
 let ultimosRetos = [];
 let reunionesCache = [];
 let unsubChat = null;
@@ -2486,12 +2523,15 @@ function itemActividadHTML(a, conCheck) {
   return `<div class="activity-card ${hecho?'done':''}"><div class="activity-icon"><i class="fa-solid fa-list-check"></i></div><div class="activity-body"><h4>${a.titulo}</h4><p>${a.descripcion || ''}</p>${enlaceHtml}</div>${checkBtn}</div>`;
 }
 // Aro amarillo en el ícono de "Actividades" mientras quede al menos una actividad de la semana sin marcar como completada.
+// El botón #btn-actividades-bell vivía en el header y ya no existe (se movió al drawer),
+// pero seguimos calculando "hayPendientes" porque también alimenta el highlight de la hamburguesa.
 function renderActividadesPendientesIndicator() {
-  const btn = document.getElementById('btn-actividades-bell');
-  if (!btn) return;
   const checks = checksDeAlumno();
   const hayPendientes = ultimasActividades.some(a => !checks[a.id]);
-  btn.classList.toggle('tiene-pendientes', hayPendientes);
+  hayActividadesSinCompletar = hayPendientes;
+  const btn = document.getElementById('btn-actividades-bell');
+  if (btn) btn.classList.toggle('tiene-pendientes', hayPendientes);
+  updateHamburgerHighlight();
 }
 
 /* ===== SONIDO "DING" DE NOTIFICACIÓN (generado con WebAudio, no depende de archivos) ===== */
@@ -6826,7 +6866,43 @@ function marcarChatVisto() {
   sessionActiva.chat_visto = ahora;
   document.querySelectorAll('.chat-notif-badge').forEach(b => b.classList.remove('show'));
   updateDoc(doc(db,'alumnos',sessionActiva.id), { chat_visto: ahora }).catch(()=>{});
+  updateHamburgerHighlight();
 }
+
+/* ===== MENÚ LATERAL (hamburguesa) — dashboard del alumno ===== */
+window.toggleSideDrawer = function (forceState) {
+  const drawer = document.getElementById('side-drawer');
+  const overlay = document.getElementById('side-drawer-overlay');
+  if (!drawer || !overlay) return;
+  const abrir = typeof forceState === 'boolean' ? forceState : !drawer.classList.contains('open');
+  drawer.classList.toggle('open', abrir);
+  overlay.classList.toggle('open', abrir);
+  document.body.style.overflow = abrir ? 'hidden' : '';
+};
+
+// El ícono de hamburguesa se resalta si hay actividades sin ver, actividades sin completar, o mensajes sin leer.
+function updateHamburgerHighlight() {
+  const burger = document.getElementById('btn-hamburger');
+  if (!burger) return;
+  const notifBadge = document.getElementById('notif-badge');
+  const chatBadge = document.getElementById('chat-notif-badge');
+  const hayPendientes = (notifBadge && notifBadge.classList.contains('show')) || (chatBadge && chatBadge.classList.contains('show')) || hayActividadesSinCompletar;
+  burger.classList.toggle('has-notif', !!hayPendientes);
+}
+// Observa los badges de Actividades y Mensajes para actualizar el highlight en tiempo real,
+// sin depender de tocar cada función que ya los actualiza en distintas partes del código.
+(function initHamburgerNotifWatcher() {
+  const watch = () => {
+    const notifBadge = document.getElementById('notif-badge');
+    const chatBadge = document.getElementById('chat-notif-badge');
+    if (!notifBadge || !chatBadge) { setTimeout(watch, 500); return; }
+    const obs = new MutationObserver(updateHamburgerHighlight);
+    obs.observe(notifBadge, { attributes: true, attributeFilter: ['class'] });
+    obs.observe(chatBadge, { attributes: true, attributeFilter: ['class'] });
+    updateHamburgerHighlight();
+  };
+  document.addEventListener('DOMContentLoaded', watch);
+})();
 
 function escucharPresenciaAlumnos() {
   onSnapshot(collection(db,'alumnos'), snap => {
