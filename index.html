@@ -1193,7 +1193,7 @@ body.neclub-visitante .neclub-composer { display:none; }
       <div class="hero-banner">
         <div class="profile-row" style="display:flex; align-items:flex-start; gap:15px; justify-content:space-between; flex-wrap:wrap;">
           <div style="display:flex; align-items:center; gap:15px;">
-            <div class="avatar-ring" id="avatar-container"></div>
+            <div class="avatar-ring" id="avatar-container" onclick="abrirPerfil()" style="cursor:pointer;" title="Mi perfil"></div>
             <div>
               <p class="welcome-eyebrow">WELCOME BACK</p>
               <div class="welcome-name-row">
@@ -1203,10 +1203,6 @@ body.neclub-visitante .neclub-composer { display:none; }
               <p class="student-id-badge" id="student-id-badge"></p>
               <p class="welcome-sub">Sigue entrenando tu inglés. Tú puedes.</p>
             </div>
-          </div>
-          <div class="hero-nav-btns">
-            <button class="tr-launch-btn" onclick="showScreen('s-training')" title="Ir a Training Room"><i class="fa-solid fa-brain"></i> Training Room</button>
-            <button class="neclub-launch-btn" onclick="showScreen('s-neclub')" title="Ir a NECLUB"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
           </div>
         </div>
         <div class="status-row">
@@ -4883,6 +4879,8 @@ function escucharEflinks() {
   onSnapshot(collection(db,'enlaces_fijos'), snap => {
     eflinksCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
     renderDrawerEflinks();
+  }, err => {
+    console.error('No se pudo leer enlaces_fijos (revisa las reglas de Firestore para el rol alumno):', err);
   });
 }
 function eflinksActivosParaMi() {
