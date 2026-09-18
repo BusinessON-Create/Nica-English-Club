@@ -98,13 +98,14 @@ a { color: inherit; }
 .btn-login:active { transform: translateY(4px); box-shadow: 0 0 0 #8a5c10, 0 2px 6px rgba(0,0,0,.2); }
 .btn-login:disabled { box-shadow:none; opacity:.5; transform:none; cursor:default; }
 
-.btn-google { width:100%; padding:14px; background:#fff; color:#1f1f1f; font-weight:700; border:1px solid rgba(0,0,0,.08); border-radius:var(--r-sm); cursor:pointer; font-family:inherit; font-size:14px; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 6px 16px rgba(0,0,0,.18); transition: transform .1s var(--ease), box-shadow .1s var(--ease), filter .15s var(--ease); }
-.btn-google i { color:#4285F4; font-size:16px; }
-.btn-google:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.24); filter:brightness(.98); }
-.btn-google:active { transform: translateY(2px); box-shadow:0 2px 6px rgba(0,0,0,.16); }
-.btn-google:disabled { opacity:.6; cursor:default; transform:none; }
+.btn-google { width:100%; padding:11px; background:transparent; color:var(--muted); font-weight:600; border:1px solid var(--border); border-radius:var(--r-sm); cursor:pointer; font-family:inherit; font-size:12.5px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:none; transition: transform .1s var(--ease), box-shadow .1s var(--ease), filter .15s var(--ease), background .15s var(--ease), color .15s var(--ease); }
+.btn-google i { color:#4285F4; font-size:14px; }
+.btn-google:hover { background:rgba(255,255,255,.04); color:#fff; border-color:rgba(255,255,255,.25); }
+.btn-google:active { transform: scale(.98); }
+.btn-google:disabled { opacity:.5; cursor:default; transform:none; }
 .login-divider { display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:1px; }
 .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.login-welcome { text-align:center; font-family:'Playfair Display'; font-size:19px; font-weight:700; color:#fff; margin-bottom:18px; }
 
 .cta-card {
   background: linear-gradient(180deg, var(--card) 0%, var(--canvas) 100%);
@@ -1090,8 +1091,7 @@ body.neclub-visitante .neclub-composer { display:none; }
         <h1 class="brand-title">Nica<span>English</span>Club</h1>
         <p style="text-align:center; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin-top:5px;">Natural Language Acquisition</p>
         <div style="margin-top:30px;">
-          <button class="btn-google" id="btn-google-entrar"><i class="fa-brands fa-google"></i> Acceder con Google</button>
-          <div class="login-divider"><span>o con tu correo y contraseña</span></div>
+          <p class="login-welcome">Welcome!</p>
           <div class="input-shell">
             <i class="fa-solid fa-user input-icon"></i>
             <input type="email" id="login-nombre" class="field-input" placeholder="Correo electrónico" autocomplete="username">
@@ -1103,6 +1103,8 @@ body.neclub-visitante .neclub-composer { display:none; }
           <button class="btn-login" id="btn-entrar">Ingresar al Portal</button>
           <div id="login-error" style="color:var(--red); font-size:12px; margin-top:10px; text-align:center; display:none;">Credenciales incorrectas.</div>
           <p style="text-align:center; margin-top:14px;"><a href="#" onclick="abrirModalOlvide(); return false;" style="color:var(--gold3); font-size:12.5px; text-decoration:none; font-weight:600;">¿Olvidaste tu contraseña?</a></p>
+          <div class="login-divider"><span>o continúa con</span></div>
+          <button class="btn-google" id="btn-google-entrar"><i class="fa-brands fa-google"></i> Acceder con Google</button>
         </div>
       </div>
       <div class="cta-card">
@@ -1899,7 +1901,7 @@ body.neclub-visitante .neclub-composer { display:none; }
 
 <script type="module">
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
@@ -1915,6 +1917,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+// Mantiene la sesión guardada en el navegador aunque se cierre la pestaña/ventana,
+// para que el alumno no tenga que volver a escribir su contraseña cada vez que entra.
+// Solo se cierra sesión si el usuario da clic en "Cerrar sesión" explícitamente.
+setPersistence(auth, browserLocalPersistence).catch((e) => console.error('No se pudo fijar la persistencia de sesión:', e));
 const db = getFirestore(app);
 const storage = getStorage(app);
 const functionsInstance = getFunctions(app, 'us-central1');
