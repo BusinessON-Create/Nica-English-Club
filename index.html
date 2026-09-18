@@ -2964,7 +2964,11 @@ window.irAlPostDesdeFlash = () => {
    Todo lo que requiere cuenta (mensajes, notificaciones, perfil, like, comentar) abre
    el modal de enganche en vez de su función real. Los comentarios SÍ se pueden ver
    (solo lectura), solo no se puede escribir uno nuevo. */
-let neclubModoVisitante = false;
+// neclubModoVisitante se expone en window (no con "let") porque los botones del NECLUB
+// lo leen desde atributos onclick="..." en el HTML, los cuales corren FUERA del scope de
+// este <script type="module"> — un "let" aquí sería invisible para ellos y tiraría
+// "ReferenceError: neclubModoVisitante is not defined" al tocar esos botones.
+window.neclubModoVisitante = false;
 
 const NECLUB_ENGANCHE_TEXTOS = {
   like:      'Reacciona y comenta como ellos — únete a NECLUB y sé parte de la conversación en inglés.',
