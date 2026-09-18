@@ -2047,6 +2047,91 @@ function mensajeErrorAuth(e) {
 let sessionActiva = null;
 window.getSessionActiva = () => sessionActiva; // permite que el widget NEC Coach (fuera del módulo) lea el nombre del alumno
 
+/* =====================================================================================
+   CACHÉ DE DATOS EN LOCALSTORAGE (independiente del cache-busting de CÓDIGO de arriba)
+   =====================================================================================
+   El cache-busting de arriba (APP_BUILD_VERSION) garantiza que el CÓDIGO (html/js) esté
+   siempre al día. Esto es aparte: guarda los DATOS (perfil, recursos, actividades, etc.)
+   para que la próxima vez que el alumno abra la app, se pinte la pantalla al instante con
+   lo último que se vio, mientras Firebase confirma en segundo plano y actualiza sin
+   parpadeos si algo cambió ("stale-while-revalidate"). Se guarda por alumno (nunca se
+   mezcla el caché de un alumno con el de otro en el mismo celular).
+   NEC_CACHE_VERSION es la versión del *esquema* de estos datos: si el día de mañana se
+   cambia la forma de algún dato guardado acá, se sube este número y todo el caché viejo
+   queda huérfano (se ignora y se limpia solo), sin tocar el build version del código. */
+const NEC_CACHE_VERSION = 'v1';
+function necCacheKey(nombre, alumnoId) {
+  return `nec_cache_${NEC_CACHE_VERSION}_${alumnoId || 'anon'}_${nombre}`;
+}
+function necGuardarCache(nombre, alumnoId, data) {
+  if (!alumnoId) return;
+  try { localStorage.setItem(necCacheKey(nombre, alumnoId), JSON.stringify({ data, guardadoEn: Date.now() })); } catch (e) { /* localStorage lleno o no disponible: no bloquea la app */ }
+}
+function necLeerCache(nombre, alumnoId) {
+  if (!alumnoId) return null;
+  try {
+    const raw = localStorage.getItem(necCacheKey(nombre, alumnoId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return (parsed && Object.prototype.hasOwnProperty.call(parsed, 'data')) ? parsed.data : null;
+  } catch (e) { return null; }
+}
+function necBorrarCacheAlumno(alumnoId) {
+  if (!alumnoId) return;
+  try {
+    const prefijo = necCacheKey('', alumnoId);
+    Object.keys(localStorage).filter(k => k.startsWith(prefijo)).forEach(k => localStorage.removeItem(k));
+  } catch (e) {}
+}
+// Limpieza de una sola vez al cargar: borra cualquier caché de datos de una versión de
+// esquema anterior (huérfano), para no ir acumulando basura en el LocalStorage del alumno.
+(function necLimpiarCacheDatosViejo() {
+  try {
+    Object.keys(localStorage).forEach(k => {
+      if (k.startsWith('nec_cache_') && !k.startsWith(`nec_cache_${NEC_CACHE_VERSION}_`)) localStorage.removeItem(k);
+    });
+  } catch (e) {}
+})();
+// Pinta al instante, con lo último guardado en este celular, la pantalla principal del
+// alumno (recursos, banner, mentalidad, top3, actividades, retos) ANTES de que lleguen
+// los listeners en vivo de Firebase. Si algo cambió, los listeners lo actualizan solos
+// unos instantes después, sin que el alumno vea una pantalla vacía mientras tanto.
+function pintarDesdeCacheAlumno(alumnoId) {
+  if (!alumnoId) return;
+
+  const recursosCache = necLeerCache('recursos', alumnoId);
+  if (Array.isArray(recursosCache) && recursosCache.length) {
+    ultimosRecursos = recursosCache;
+    renderTabsCategorias();
+    renderRecursos();
+  }
+
+  const bannerCache = necLeerCache('banner', alumnoId);
+  if (bannerCache) renderBanner(bannerCache);
+
+  const mentalidadCache = necLeerCache('mentalidad', alumnoId);
+  if (mentalidadCache) renderMentalidad(mentalidadCache);
+
+  const top3Cache = necLeerCache('top3', alumnoId);
+  if (top3Cache) renderTop3(top3Cache);
+
+  // Las actividades solo se pintan desde caché si son de la semana actual — si ya
+  // cambió la semana, es mejor esperar el dato real que mostrar tareas viejas.
+  const actividadesCache = necLeerCache('actividades', alumnoId);
+  const lunesActual = getLocalDateStr(getMonday(managuaNow()));
+  if (actividadesCache && actividadesCache.semana === lunesActual && Array.isArray(actividadesCache.items)) {
+    ultimasActividades = actividadesCache.items;
+    renderActividadesPendientesIndicator();
+    renderNotifBadge();
+  }
+
+  const retosCache = necLeerCache('retos', alumnoId);
+  if (Array.isArray(retosCache) && retosCache.length) {
+    ultimosRetos = retosCache;
+    renderRetos();
+  }
+}
+
 // Puente seguro para el widget NEC Coach: llama a la Cloud Function
 // necCoachChat (la key de Gemini vive solo en el servidor, nunca aquí).
 // Requiere sesión iniciada (aunque sea anónima) porque la función exige auth.
@@ -2114,19 +2199,38 @@ async function restaurarSesion(user) {
     await iniciarModoVisitanteNeclub();
     return;
   }
-  const esperaMinima = new Promise(res => setTimeout(res, 1500));
   const sesionGuardada = localStorage.getItem('nica_sesion_activa') === 'true';
   const alumnoIdGuardado = localStorage.getItem('nica_alumno_id');
+  const perfilCacheado = alumnoIdGuardado ? necLeerCache('perfil', alumnoIdGuardado) : null;
+  // Si ya conocemos a este alumno en este celular, el splash es solo para el branding
+  // (350ms); si es la primera vez, esperamos la respuesta real de Firebase como antes.
+  const esperaMinima = new Promise(res => setTimeout(res, perfilCacheado ? 350 : 1500));
   let destino = null;
 
   if (sesionGuardada && user) {
     if (user.email && user.email.toLowerCase() === CORREO_ADMIN) {
       destino = { screen: 's-admin' };
     } else if (alumnoIdGuardado) {
-      try {
-        const snap = await getDoc(doc(db, 'alumnos', alumnoIdGuardado));
-        if (snap.exists()) destino = { screen: 's-student', alumno: { id: snap.id, ...snap.data() } };
-      } catch (e) { console.error('No se pudo restaurar la sesión del alumno:', e); }
+      if (perfilCacheado) {
+        // Pintamos de una con el perfil guardado; el doc real se pide en paralelo y
+        // reemplaza en silencio si algo cambió, sin bloquear la pantalla.
+        destino = { screen: 's-student', alumno: perfilCacheado };
+        getDoc(doc(db, 'alumnos', alumnoIdGuardado)).then(snap => {
+          if (!snap.exists()) return;
+          const fresco = { id: snap.id, ...snap.data() };
+          necGuardarCache('perfil', alumnoIdGuardado, fresco);
+          if (sessionActiva && sessionActiva.id === fresco.id) { sessionActiva = fresco; renderUI(fresco); }
+        }).catch(e => console.error('No se pudo refrescar el perfil del alumno:', e));
+      } else {
+        try {
+          const snap = await getDoc(doc(db, 'alumnos', alumnoIdGuardado));
+          if (snap.exists()) {
+            const fresco = { id: snap.id, ...snap.data() };
+            necGuardarCache('perfil', alumnoIdGuardado, fresco);
+            destino = { screen: 's-student', alumno: fresco };
+          }
+        } catch (e) { console.error('No se pudo restaurar la sesión del alumno:', e); }
+      }
     }
   }
 
@@ -2143,6 +2247,7 @@ async function restaurarSesion(user) {
     renderUI(sessionActiva);
     nicaHomeScreen = 's-student';
     showScreen('s-student', { replace: true });
+    pintarDesdeCacheAlumno(sessionActiva.id); // pantalla lista al instante con lo último guardado
     escucharRecursos();
     escucharBanner();
     escucharMentalidad();
@@ -2159,6 +2264,7 @@ async function restaurarSesion(user) {
     iniciarLatido(sessionActiva.id);
     restaurarPantallaGuardada('s-student');
   } else {
+    if (alumnoIdGuardado) necBorrarCacheAlumno(alumnoIdGuardado);
     localStorage.removeItem('nica_sesion_activa');
     localStorage.removeItem('nica_alumno_id');
     localStorage.removeItem('nica_ultima_pantalla');
@@ -2211,11 +2317,13 @@ async function entrarComoAlumno(found) {
   localStorage.setItem('nica_alumno_id', found.id);
   localStorage.removeItem('nica_ultima_pantalla');
   sessionActiva = found;
+  necGuardarCache('perfil', found.id, found);
   const inactivo24h = huboInactividad24h(found);
   await registrarAcceso(found);
   renderUI(found);
   nicaHomeScreen = 's-student';
   showScreen('s-student', { replace: true });
+  pintarDesdeCacheAlumno(found.id); // si este alumno ya había entrado antes en este celular, se ve listo al toque
   escucharRecursos();
   escucharBanner();
   escucharMentalidad();
@@ -2456,16 +2564,22 @@ function generarIdentidadUnica(nombreCompleto, idsExistentes) {
 }
 function escucharBanner() {
     onSnapshot(doc(db, 'config', 'banner'), (d) => {
-        const area = document.getElementById('banner-area');
         if (!d.exists() || !d.data().url) return;
-        const url = d.data().url;
-        const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]{11})/);
-        if (ytMatch) {
-            area.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0" allowfullscreen></iframe>`;
-        } else {
-            area.innerHTML = `<img src="${resolverUrlDrive(url)}">`;
-        }
+        const data = d.data();
+        renderBanner(data);
+        if (sessionActiva) necGuardarCache('banner', sessionActiva.id, data);
     });
+}
+function renderBanner(data) {
+    const area = document.getElementById('banner-area');
+    if (!area || !data || !data.url) return;
+    const url = data.url;
+    const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]{11})/);
+    if (ytMatch) {
+        area.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0" allowfullscreen></iframe>`;
+    } else {
+        area.innerHTML = `<img src="${resolverUrlDrive(url)}">`;
+    }
 }
 
 /* ===== GALERÍA DE VIDEOS (categorías con carrusel automático) ===== */
@@ -2528,31 +2642,43 @@ function escucharMentalidad() {
   onSnapshot(doc(db,'config','mentalidad'), d => {
     if (!d.exists()) return;
     const data = d.data();
-    const tEl = document.getElementById('mindset-titulo');
-    const fEl = document.getElementById('mindset-frase');
-    if (data.titulo && tEl) tEl.innerText = data.titulo;
-    if (data.frase && fEl) fEl.innerText = data.frase;
+    renderMentalidad(data);
+    if (sessionActiva) necGuardarCache('mentalidad', sessionActiva.id, data);
   });
+}
+function renderMentalidad(data) {
+  if (!data) return;
+  const tEl = document.getElementById('mindset-titulo');
+  const fEl = document.getElementById('mindset-frase');
+  if (data.titulo && tEl) tEl.innerText = data.titulo;
+  if (data.frase && fEl) fEl.innerText = data.frase;
 }
 
 /* ===== TOP 3 SEMANAL ===== */
 function escucharTop3() {
   onSnapshot(doc(db,'config','top3'), d => {
-    const card = document.getElementById('top3-card');
-    const list = document.getElementById('top3-list');
-    if (!d.exists() || !d.data().items || !d.data().items.length) { card.style.display='none'; return; }
-    const items = d.data().items;
-    card.style.display='block';
-    const orden = [1,0,2]; // visual: 2do - 1ro - 3ro (como un podio real)
-    list.innerHTML = `<div class="top3-podium">${orden.filter(i => items[i]).map(i => {
-      const it = items[i];
-      const rank = i + 1;
-      const foto = resolverUrlDrive(it.foto || '');
-      const avatar = foto ? `<img src="${foto}" class="top3-avatar">` : `<div class="top3-avatar-default">${(it.nombre||'?').charAt(0).toUpperCase()}</div>`;
-      const corona = rank === 1 ? `<i class="fa-solid fa-crown top3-crown"></i>` : '';
-      return `<div class="top3-podium-item rank-${rank}"><div class="top3-avatar-ring">${corona}${avatar}</div><div class="top3-name">${it.nombre}</div><div class="top3-base">${rank}</div></div>`;
-    }).join('')}</div>`;
+    if (!d.exists() || !d.data().items || !d.data().items.length) { const card = document.getElementById('top3-card'); if (card) card.style.display='none'; return; }
+    const data = d.data();
+    renderTop3(data);
+    if (sessionActiva) necGuardarCache('top3', sessionActiva.id, data);
   });
+}
+function renderTop3(data) {
+  const card = document.getElementById('top3-card');
+  const list = document.getElementById('top3-list');
+  if (!card || !list) return;
+  if (!data || !data.items || !data.items.length) { card.style.display='none'; return; }
+  const items = data.items;
+  card.style.display='block';
+  const orden = [1,0,2]; // visual: 2do - 1ro - 3ro (como un podio real)
+  list.innerHTML = `<div class="top3-podium">${orden.filter(i => items[i]).map(i => {
+    const it = items[i];
+    const rank = i + 1;
+    const foto = resolverUrlDrive(it.foto || '');
+    const avatar = foto ? `<img src="${foto}" class="top3-avatar">` : `<div class="top3-avatar-default">${(it.nombre||'?').charAt(0).toUpperCase()}</div>`;
+    const corona = rank === 1 ? `<i class="fa-solid fa-crown top3-crown"></i>` : '';
+    return `<div class="top3-podium-item rank-${rank}"><div class="top3-avatar-ring">${corona}${avatar}</div><div class="top3-name">${it.nombre}</div><div class="top3-base">${rank}</div></div>`;
+  }).join('')}</div>`;
 }
 
 /* ===== ACTIVIDADES DE LA SEMANA + NOTIFICACIONES (campanita) ===== */
@@ -2567,6 +2693,10 @@ function escucharActividades() {
     renderActividadesPendientesIndicator();
     renderNotifBadge();
     if (document.getElementById('notif-dropdown')?.classList.contains('open')) renderNotifList();
+    // Guardamos junto con la semana a la que corresponden: así, la próxima vez que se
+    // abra la app, solo se pintan desde caché si siguen siendo de la semana actual
+    // (si ya es otra semana, mejor esperar el dato real que mostrar tareas viejas).
+    if (sessionActiva) necGuardarCache('actividades', sessionActiva.id, { semana: lunesStr, items: ultimasActividades });
   });
 }
 function checksDeAlumno() { return (sessionActiva && sessionActiva.checks_actividades) || {}; }
@@ -2638,6 +2768,7 @@ function escucharRetos() {
     }
     primeraCargaRetos = false;
     encolarRetosFullscreenNoVistos();
+    if (sessionActiva) necGuardarCache('retos', sessionActiva.id, ultimosRetos);
   });
 }
 function renderRetos() {
@@ -5025,6 +5156,7 @@ function escucharRecursos() {
     });
     renderTabsCategorias();
     renderRecursos();
+    if (sessionActiva) necGuardarCache('recursos', sessionActiva.id, ultimosRecursos);
   });
 }
 
@@ -6888,7 +7020,7 @@ window.resetearAsistenciaSemanal = async () => {
     showModal("Hecho", "Semana reiniciada.");
   }
 };
-window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); localStorage.removeItem('nica_sesion_activa'); localStorage.removeItem('nica_alumno_id'); localStorage.removeItem('nica_ultima_pantalla'); signOut(auth).then(() => location.reload()); };
+window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); if (sessionActiva) necBorrarCacheAlumno(sessionActiva.id); localStorage.removeItem('nica_sesion_activa'); localStorage.removeItem('nica_alumno_id'); localStorage.removeItem('nica_ultima_pantalla'); signOut(auth).then(() => location.reload()); };
 window.switchTab = (n, b) => {
   document.querySelectorAll('.admin-menu-card').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
