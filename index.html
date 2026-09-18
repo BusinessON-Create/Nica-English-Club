@@ -426,6 +426,22 @@ a { color: inherit; }
 .dest-all-row { display:flex; align-items:center; gap:8px; padding:6px 4px 10px; border-bottom:1px solid var(--border2); margin-bottom:8px; }
 .dest-row { display:flex; align-items:center; gap:8px; padding:5px 4px; font-size:12.5px; color:var(--text); }
 .dest-row input, .dest-all-row input { accent-color: var(--gold2); width:15px; height:15px; }
+
+/* ===== Switch ON/OFF reusable (herramientas internas y futuros usos) ===== */
+.switch-toggle { position:relative; display:inline-block; width:42px; height:23px; flex-shrink:0; cursor:pointer; }
+.switch-toggle input { opacity:0; width:0; height:0; position:absolute; }
+.switch-toggle .slider { position:absolute; inset:0; background:rgba(255,255,255,.15); border:1px solid var(--border2); transition:.2s var(--ease); border-radius:99px; }
+.switch-toggle .slider:before { content:""; position:absolute; height:17px; width:17px; left:2px; top:2px; background:#fff; transition:.2s var(--ease); border-radius:50%; }
+.switch-toggle input:checked + .slider { background: linear-gradient(135deg, var(--gold3), var(--gold2)); border-color:var(--gold2); }
+.switch-toggle input:checked + .slider:before { transform: translateX(19px); }
+
+/* ===== Modal fullscreen genérico para "herramientas internas" (iframe) ===== */
+.modal-iframe-tool-bg { position:fixed; inset:0; background:#000; z-index:1100; display:none; flex-direction:column; }
+.modal-iframe-tool-bg.open { display:flex; }
+.modal-iframe-tool-bg iframe { flex:1; width:100%; height:100%; border:none; background:#000; }
+.modal-iframe-tool-head { position:absolute; top:0; right:0; padding:14px; z-index:1101; }
+.modal-iframe-tool-close { width:38px; height:38px; border-radius:50%; border:1px solid var(--border2); background:rgba(20,20,20,.75); backdrop-filter: blur(6px); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition: color .2s var(--ease), border-color .2s var(--ease); }
+.modal-iframe-tool-close:hover { color:var(--red); border-color:rgba(255,92,92,.35); }
 .admin-subtab-row { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
 .admin-subtab-btn { padding:8px 14px; border-radius:99px; border:1px solid var(--border2); background:var(--card2); color:var(--muted); font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit; }
 .admin-subtab-btn.active { color:var(--gold); border-color:var(--gold2); background:var(--gold-dim); }
@@ -1168,6 +1184,7 @@ body.neclub-visitante .neclub-composer { display:none; }
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-neclub');"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-training');"><i class="fa-solid fa-brain"></i> Training room</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); toggleNotifDropdown();"><i class="fa-solid fa-list-check"></i> Actividades<span class="drawer-item-badge" id="notif-badge">0</span></button>
+        <div id="drawer-eflinks-container"></div>
         <button class="side-drawer-item logout-item" onclick="toggleSideDrawer(false); cerrarSesion();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
       </div>
     </div>
@@ -1423,6 +1440,7 @@ body.neclub-visitante .neclub-composer { display:none; }
           <button class="admin-menu-card" id="btn-tab-videos" onclick="switchTab('videos',this)"><i class="fa-solid fa-clapperboard"></i><span>Videos</span></button>
           <button class="admin-menu-card" id="btn-tab-chat" onclick="switchTab('chat',this)"><i class="fa-solid fa-comments"></i><span>Chat</span></button>
           <button class="admin-menu-card" id="btn-tab-meet" onclick="switchTab('meet',this)"><i class="fa-solid fa-video"></i><span>Reunión Meet</span></button>
+          <button class="admin-menu-card" id="btn-tab-internaltools" onclick="switchTab('internaltools',this)"><i class="fa-solid fa-toolbox"></i><span>Internal tools</span></button>
           <button class="admin-menu-card" id="btn-tab-neclub" onclick="switchTab('neclub',this)"><i class="fa-solid fa-hashtag"></i><span>NECLUB</span></button>
           <button class="admin-menu-card" id="btn-tab-training" onclick="switchTab('training',this)"><i class="fa-solid fa-brain"></i><span>Training Room</span></button>
         </div>
@@ -1558,6 +1576,41 @@ body.neclub-visitante .neclub-composer { display:none; }
           </div>
           <button class="btn-login" id="btn-enviar-meet" onclick="enviarMeet()"><i class="fa-solid fa-video"></i> Enviar enlace de Meet</button>
           <div id="lista-reuniones-ui" style="margin-top:20px;"></div>
+        </div>
+        <div id="tab-internaltools" class="tab-content" style="padding:20px; display:none;">
+          <p class="form-hint">Botones fijos y reusables que aparecen en el menú lateral del alumno (junto a Actividades, Perfil, etc.). Cada uno abre su URL en una ventana completa dentro de la app. No expiran — vos los enciendes/apagas con el switch cuando quieras. Podés crear los que necesites, sin límite.</p>
+          <p class="admin-label"><i class="fa-solid fa-pen"></i> Nombre</p>
+          <input type="text" id="eflink-nombre" class="admin-input" placeholder="Ej: Pizarra, Zoom de tarea, Formulario...">
+          <p class="admin-label"><i class="fa-solid fa-icons"></i> Ícono</p>
+          <select id="eflink-icono-select" class="admin-input" onchange="toggleEflinkIconoCustom()">
+            <option value="fa-solid fa-chalkboard">🖊️ Pizarra</option>
+            <option value="fa-solid fa-video">🎥 Video / Llamada</option>
+            <option value="fa-solid fa-file-lines">📄 Documento</option>
+            <option value="fa-solid fa-calendar-days">📅 Calendario</option>
+            <option value="fa-solid fa-graduation-cap">🎓 Clase</option>
+            <option value="fa-solid fa-headset">🎧 Soporte</option>
+            <option value="fa-solid fa-gamepad">🎮 Juego / Actividad</option>
+            <option value="fa-solid fa-music">🎵 Audio</option>
+            <option value="fa-solid fa-image">🖼️ Imagen / Galería</option>
+            <option value="fa-solid fa-link">🔗 Enlace genérico</option>
+            <option value="custom">⚙️ Otro (avanzado — escribir clase de FontAwesome)</option>
+          </select>
+          <input type="text" id="eflink-icono-custom" class="admin-input" placeholder="Ej: fa-solid fa-chalkboard" style="display:none;">
+          <p class="admin-label"><i class="fa-solid fa-link"></i> URL</p>
+          <input type="url" id="eflink-url" class="admin-input" placeholder="https://...">
+          <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
+          <div class="dest-picker">
+            <label class="dest-all-row"><input type="radio" name="eflink-dest-modo" id="eflink-dest-todos" value="todos" checked onchange="toggleEflinkDestModo()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
+            <label class="dest-all-row"><input type="radio" name="eflink-dest-modo" id="eflink-dest-modo-grupo" value="grupo" onchange="toggleEflinkDestModo()"> <span style="color:#fff; font-weight:700;">Por grupo (horario)</span></label>
+            <label class="dest-all-row" style="border-bottom:none; margin-bottom:0; padding-bottom:6px;"><input type="radio" name="eflink-dest-modo" id="eflink-dest-modo-individual" value="individual" onchange="toggleEflinkDestModo()"> <span style="color:#fff; font-weight:700;">Alumnos específicos</span></label>
+            <select id="eflink-dest-grupo-select" class="admin-input" style="display:none; margin-top:8px;"></select>
+            <div id="eflink-dest-lista-alumnos" style="display:none;"></div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn-login" id="btn-guardar-eflink" onclick="guardarEflink()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar herramienta</button>
+            <button class="btn-login btn-outline-gold" id="btn-cancelar-eflink" onclick="cancelarEdicionEflink()" style="display:none; flex:0 0 auto; padding-left:18px; padding-right:18px;">Cancelar</button>
+          </div>
+          <div id="lista-eflinks-ui" style="margin-top:20px;"></div>
         </div>
         <div id="tab-neclub" class="tab-content" style="padding:20px; display:none;">
           <p class="admin-label"><i class="fa-solid fa-book-open"></i> Publicar historia (PDF, se ve como libro)</p>
@@ -1716,6 +1769,14 @@ body.neclub-visitante .neclub-composer { display:none; }
     </div>
     <button class="btn-whatsapp" onclick="enviarSoporte()"><i class="fa-brands fa-whatsapp"></i> Enviar solicitud</button>
   </div>
+</div>
+
+<!-- MODAL: HERRAMIENTA INTERNA (iframe fullscreen, genérico y reusable) -->
+<div class="modal-iframe-tool-bg" id="modal-iframe-tool-bg">
+  <div class="modal-iframe-tool-head">
+    <button class="modal-iframe-tool-close" onclick="cerrarModalHerramienta()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <iframe id="modal-iframe-tool-frame" src="about:blank" allow="camera; microphone; fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
 </div>
 
 <!-- MODAL: PERFIL -->
@@ -2005,6 +2066,9 @@ let reunionesCache = [];
 let unsubChat = null;
 let primeraCargaRetos = true;
 let primeraCargaReuniones = true;
+let eflinksCache = []; // "Internal tools": enlaces fijos ON/OFF vistos por el alumno
+let eflinksAdminCache = []; // mismo dato pero cacheado para el panel admin (editar/borrar)
+let eflinkEditandoId = null; // id del enlace fijo que se está editando en el panel admin (null = creando uno nuevo)
 
 const MENSAJES_MOTIVACIONALES = [
   "¡Han pasado más de 24 horas! Tu inglés te está esperando.",
@@ -2086,6 +2150,7 @@ async function restaurarSesion(user) {
     escucharActividades();
     escucharRetos();
     escucharReuniones();
+    escucharEflinks();
     escucharNeclub();
     escucharTraining();
     escucharGaleriaVideos();
@@ -2158,6 +2223,7 @@ async function entrarComoAlumno(found) {
   escucharActividades();
   escucharRetos();
   escucharReuniones();
+  escucharEflinks();
   escucharNeclub();
   escucharTraining();
   escucharGaleriaVideos();
@@ -4677,6 +4743,39 @@ window.unirseAMeet = () => {
   if (activa && activa.url) window.open(activa.url, '_blank');
 };
 setInterval(renderMeetFloat, 30000);
+
+/* ===== "Internal tools": enlaces fijos ON/OFF (genérico y reusable, sin expiración) =====
+   A diferencia de Meet, viven en la colección 'enlaces_fijos' como VARIOS documentos
+   (uno por botón), cada uno con { nombre, icono, url, activo, destinatarios }.
+   Se muestran como ítems del drawer lateral y abren un iframe fullscreen al tocarlos. */
+function escucharEflinks() {
+  onSnapshot(collection(db,'enlaces_fijos'), snap => {
+    eflinksCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    renderDrawerEflinks();
+  });
+}
+function eflinksActivosParaMi() {
+  const miId = sessionActiva ? sessionActiva.id : null;
+  return eflinksCache.filter(e => e.activo && (!e.destinatarios || !e.destinatarios.length || (miId && e.destinatarios.includes(miId))));
+}
+function renderDrawerEflinks() {
+  const cont = document.getElementById('drawer-eflinks-container');
+  if (!cont) return;
+  const activos = eflinksActivosParaMi();
+  cont.innerHTML = activos.map(e => `<button class="side-drawer-item" onclick="toggleSideDrawer(false); abrirHerramienta('${e.id}')"><i class="${e.icono || 'fa-solid fa-link'}"></i> ${e.nombre || 'Herramienta'}</button>`).join('');
+}
+window.abrirHerramienta = (id) => {
+  const e = eflinksCache.find(x => x.id === id);
+  if (!e || !e.url) return;
+  document.getElementById('modal-iframe-tool-frame').src = e.url;
+  document.getElementById('modal-iframe-tool-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+window.cerrarModalHerramienta = () => {
+  document.getElementById('modal-iframe-tool-bg').classList.remove('open');
+  document.getElementById('modal-iframe-tool-frame').src = 'about:blank';
+  document.body.style.overflow = '';
+};
 function renderNotifBadge() {
   const badge = document.getElementById('notif-badge');
   if (!badge || !sessionActiva) return;
@@ -4979,6 +5078,7 @@ function cargarDatosAdmin() {
   });
   escucharRetosAdmin();
   escucharReunionesAdmin();
+  escucharEflinksAdmin();
   escucharNeclubAdmin();
   escucharSemanasTrainingAdmin();
   escucharProgresoTrainingAdmin();
@@ -4995,9 +5095,11 @@ function renderDestPicker() {
   renderDestPickerEn('dest-lista-alumnos', 'dest-check');
   renderDestPickerEn('reto-dest-lista-alumnos', 'reto-dest-check');
   renderDestPickerEn('meet-dest-lista-alumnos', 'meet-dest-check');
+  renderDestPickerEn('eflink-dest-lista-alumnos', 'eflink-dest-check');
   renderGrupoSelect('dest-grupo-select');
   renderGrupoSelect('reto-dest-grupo-select');
   renderGrupoSelect('meet-dest-grupo-select');
+  renderGrupoSelect('eflink-dest-grupo-select');
 }
 function renderDestPickerEn(contId, claseCheck) {
   const cont = document.getElementById(contId);
@@ -5215,6 +5317,115 @@ window.enviarMeet = async () => {
   document.getElementById('meet-dest-lista-alumnos').style.display = 'none';
   document.querySelectorAll('.meet-dest-check').forEach(chk => chk.checked = false);
   showModal('Éxito', 'Enlace de Google Meet enviado. Se eliminará solo en 3 horas.');
+};
+
+/* ===== ADMIN: "Internal tools" — enlaces fijos ON/OFF (genérico y reusable) =====
+   Cada documento en 'enlaces_fijos' es un botón independiente: { nombre, icono, url, activo, destinatarios }.
+   A diferencia de Meet, NO expiran: se prenden/apagan a mano con el switch, y se pueden crear
+   tantos como se quiera desde este panel, sin tocar código. */
+window.toggleEflinkDestModo = () => {
+  const modoEl = document.querySelector('input[name="eflink-dest-modo"]:checked');
+  const modo = modoEl ? modoEl.value : 'todos';
+  document.getElementById('eflink-dest-grupo-select').style.display = modo === 'grupo' ? 'block' : 'none';
+  document.getElementById('eflink-dest-lista-alumnos').style.display = modo === 'individual' ? 'block' : 'none';
+};
+window.toggleEflinkIconoCustom = () => {
+  const esCustom = document.getElementById('eflink-icono-select').value === 'custom';
+  document.getElementById('eflink-icono-custom').style.display = esCustom ? 'block' : 'none';
+};
+function escucharEflinksAdmin() {
+  onSnapshot(collection(db,'enlaces_fijos'), snap => {
+    eflinksAdminCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    renderListaEflinksAdmin();
+  });
+}
+function renderListaEflinksAdmin() {
+  const list = document.getElementById('lista-eflinks-ui');
+  if (!list) return;
+  if (!eflinksAdminCache.length) { list.innerHTML = `<p class="form-hint" style="margin-top:16px;">Aún no has creado ninguna herramienta.</p>`; return; }
+  list.innerHTML = eflinksAdminCache.map(data => {
+    const destTxt = (!data.destinatarios || !data.destinatarios.length) ? 'Todos los alumnos' : `${data.destinatarios.length} alumno(s)`;
+    return `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border); gap:10px;">
+      <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+        <i class="${data.icono || 'fa-solid fa-link'}" style="color:var(--gold); font-size:16px; width:20px; text-align:center; flex-shrink:0;"></i>
+        <div style="min-width:0;">
+          <div style="color:#fff; font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:150px;">${data.nombre || 'Sin nombre'}</div>
+          <small style="color:var(--muted);">${destTxt}</small>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+        <label class="switch-toggle" title="Activar/Desactivar">
+          <input type="checkbox" ${data.activo ? 'checked' : ''} onchange="toggleEflinkActivo('${data.id}', this.checked)">
+          <span class="slider"></span>
+        </label>
+        <button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionEflink('${data.id}')"><i class="fa-solid fa-pen"></i></button>
+        <button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('enlaces_fijos','${data.id}')"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.toggleEflinkActivo = async (id, activo) => {
+  await updateDoc(doc(db,'enlaces_fijos', id), { activo });
+};
+window.prepararEdicionEflink = (id) => {
+  const data = eflinksAdminCache.find(e => e.id === id);
+  if (!data) return;
+  eflinkEditandoId = id;
+  document.getElementById('eflink-nombre').value = data.nombre || '';
+  document.getElementById('eflink-url').value = data.url || '';
+  const iconoSelect = document.getElementById('eflink-icono-select');
+  const esPreset = Array.from(iconoSelect.options).some(o => o.value === data.icono);
+  if (esPreset) {
+    iconoSelect.value = data.icono;
+    document.getElementById('eflink-icono-custom').style.display = 'none';
+  } else {
+    iconoSelect.value = 'custom';
+    document.getElementById('eflink-icono-custom').style.display = 'block';
+    document.getElementById('eflink-icono-custom').value = data.icono || '';
+  }
+  const todos = !data.destinatarios || !data.destinatarios.length;
+  document.getElementById('eflink-dest-todos').checked = todos;
+  document.getElementById('eflink-dest-modo-grupo').checked = false;
+  document.getElementById('eflink-dest-modo-individual').checked = !todos;
+  document.getElementById('eflink-dest-grupo-select').style.display = 'none';
+  document.getElementById('eflink-dest-lista-alumnos').style.display = todos ? 'none' : 'block';
+  document.querySelectorAll('.eflink-dest-check').forEach(chk => { chk.checked = !todos && data.destinatarios.includes(chk.value); });
+  document.getElementById('btn-guardar-eflink').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar cambios';
+  document.getElementById('btn-cancelar-eflink').style.display = 'block';
+  document.getElementById('btn-tab-internaltools').scrollIntoView({behavior:'smooth', block:'start'});
+};
+window.guardarEflink = async () => {
+  const nombre = document.getElementById('eflink-nombre').value.trim();
+  const url = document.getElementById('eflink-url').value.trim();
+  const iconoSelectVal = document.getElementById('eflink-icono-select').value;
+  const icono = iconoSelectVal === 'custom' ? document.getElementById('eflink-icono-custom').value.trim() : iconoSelectVal;
+  if (!nombre) { showModal('Falta información', 'Escribe un nombre para la herramienta.'); return; }
+  if (!url || !/^https?:\/\//i.test(url)) { showModal('Falta información', 'Escribe una URL válida (debe empezar con http:// o https://).'); return; }
+  if (!icono) { showModal('Falta información', 'Elige un ícono, o escribe uno en modo avanzado.'); return; }
+  const destRes = obtenerDestinatariosPorModo('eflink-dest-modo', 'eflink-dest-grupo-select', 'eflink-dest-check');
+  if (!destRes.ok) { showModal('Falta información', destRes.msg); return; }
+  if (eflinkEditandoId) {
+    await updateDoc(doc(db,'enlaces_fijos', eflinkEditandoId), { nombre, url, icono, destinatarios: destRes.destinatarios });
+  } else {
+    await addDoc(collection(db,'enlaces_fijos'), { nombre, url, icono, destinatarios: destRes.destinatarios, activo: true, creadoEn: Date.now() });
+  }
+  const eraEdicion = !!eflinkEditandoId;
+  cancelarEdicionEflink();
+  showModal('Éxito', eraEdicion ? 'Herramienta actualizada.' : 'Herramienta creada. Ya está visible para los alumnos correspondientes (si la dejaste activada).');
+};
+window.cancelarEdicionEflink = () => {
+  eflinkEditandoId = null;
+  document.getElementById('eflink-nombre').value = '';
+  document.getElementById('eflink-url').value = '';
+  document.getElementById('eflink-icono-select').value = 'fa-solid fa-chalkboard';
+  document.getElementById('eflink-icono-custom').style.display = 'none';
+  document.getElementById('eflink-icono-custom').value = '';
+  document.getElementById('eflink-dest-todos').checked = true;
+  document.getElementById('eflink-dest-grupo-select').style.display = 'none';
+  document.getElementById('eflink-dest-lista-alumnos').style.display = 'none';
+  document.querySelectorAll('.eflink-dest-check').forEach(c => c.checked = false);
+  document.getElementById('btn-guardar-eflink').innerHTML = '<i class="fa-solid fa-plus"></i> Agregar herramienta';
+  document.getElementById('btn-cancelar-eflink').style.display = 'none';
 };
 
 /* ===== ADMIN: MODERACIÓN DE NECLUB ===== */
