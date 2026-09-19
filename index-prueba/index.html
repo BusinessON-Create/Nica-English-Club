@@ -1332,7 +1332,7 @@ body.tr-room-lock { overflow:hidden; }
       </div>
       <div class="side-drawer-list">
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); abrirPerfil();"><i class="fa-solid fa-user"></i> Perfil</button>
-        <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-neclub');"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
+        <button class="side-drawer-item" onclick="toggleSideDrawer(false); abrirNeclub();"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-training');"><i class="fa-solid fa-brain"></i> Training room</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); toggleNotifDropdown();"><i class="fa-solid fa-list-check"></i> Actividades<span class="drawer-item-badge" id="notif-badge">0</span></button>
         <div id="drawer-eflinks-container"></div>
@@ -1448,60 +1448,6 @@ body.tr-room-lock { overflow:hidden; }
   </div>
 
   <!-- NECLUB SCREEN — mini red social interna (feed, estilo Instagram/Facebook) -->
-  <div id="s-neclub" class="screen">
-    <nav class="stu-nav">
-      <div class="brand-link" style="cursor:pointer;" onclick="irArribaFeedNeclub()">
-        <div class="nav-logo-box app-logo" style="width:32px; height:32px; border-radius:9px;"></div>
-        <span style="color:#fff; font-weight:800; font-size:14.5px; margin-left:9px; letter-spacing:.3px;">NECLUB</span>
-      </div>
-      <div class="nav-actions">
-        <button class="btn-salir" onclick="showScreen('s-student')" title="Volver al panel"><i class="fa-solid fa-arrow-left"></i></button>
-        <button class="btn-salir" onclick="irArribaFeedNeclub()" title="Inicio"><i class="fa-solid fa-house"></i></button>
-        <div class="notif-wrap">
-          <button class="notif-bell-btn" onclick="neclubModoVisitante ? abrirModalEnganche('campana') : toggleNeclubNotifDropdown()" title="Notificaciones de NECLUB">
-            <i class="fa-solid fa-bell"></i>
-            <span class="notif-badge" id="neclub-notif-badge">0</span>
-          </button>
-        </div>
-        <button class="btn-salir" onclick="neclubModoVisitante ? abrirModalEnganche('mensajes') : abrirChatFlotante()" title="Mensajes"><i class="fa-solid fa-comments"></i><span class="chat-notif-badge">0</span></button>
-        <button class="nav-avatar-chip" onclick="neclubModoVisitante ? abrirModalEnganche('perfil') : abrirPerfil()" title="Mi perfil"></button>
-      </div>
-    </nav>
-    <div class="neclub-new-posts-bar" id="neclub-new-posts-bar" onclick="irArribaFeedNeclub()" style="display:none;"><i class="fa-solid fa-arrow-up"></i> New posts</div>
-    <div class="neclub-shell" id="neclub-shell">
-      <div class="neclub-flashes-wrap" id="neclub-flashes-wrap" style="display:none;"></div>
-      <div class="neclub-composer">
-        <div class="neclub-composer-row">
-          <div class="neclub-avatar" id="neclub-avatar-composer"></div>
-          <textarea id="neclub-texto" placeholder="Ask a question, start a debate, share your story... in English!" maxlength="500" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; actualizarEstadoPublicarNeclub();"></textarea>
-        </div>
-        <p class="neclub-composer-hint">Posts, photos, videos and audios disappear automatically after 7 days.</p>
-        <div class="neclub-preview-wrap" id="neclub-preview-wrap" style="display:none;">
-          <button class="neclub-preview-remove" onclick="quitarArchivoNeclub()"><i class="fa-solid fa-xmark"></i></button>
-          <div id="neclub-preview-inner"></div>
-        </div>
-        <input type="file" id="neclub-file-foto" accept="image/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'foto')">
-        <input type="file" id="neclub-file-video" accept="video/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'video')">
-        <input type="file" id="neclub-file-audio" accept="audio/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'audio')">
-        <div class="neclub-composer-actions">
-          <div class="neclub-media-btns">
-            <label class="neclub-media-btn foto" for="neclub-file-foto" title="Photo"><i class="fa-solid fa-image"></i></label>
-            <label class="neclub-media-btn video" for="neclub-file-video" title="Video (max 1 min)"><i class="fa-solid fa-video"></i></label>
-            <label class="neclub-media-btn audio" for="neclub-file-audio" title="Audio (max 2 min)"><i class="fa-solid fa-microphone"></i></label>
-          </div>
-          <button class="neclub-publish-btn" id="neclub-publish-btn" disabled onclick="publicarNeclub()">Post</button>
-        </div>
-        <div id="neclub-post-progreso-wrap" style="display:none; margin-top:10px; max-width:calc(100% - 52px); margin-left:52px;">
-          <div style="background:rgba(255,255,255,.08); border-radius:99px; height:6px; overflow:hidden;">
-            <div id="neclub-post-progreso-bar" style="background:linear-gradient(135deg, var(--gold3), var(--gold2)); height:100%; width:0%; transition:width .2s linear;"></div>
-          </div>
-          <p id="neclub-post-progreso-texto" style="font-size:11px; color:var(--muted-dim); margin-top:5px;">Subiendo... 0%</p>
-        </div>
-      </div>
-
-      <div id="neclub-feed"></div>
-    </div>
-  </div>
 
   <!-- TRAINING ROOM SCREEN — programa de 5 días por semana, progreso individual -->
   <div id="s-training" class="screen">
@@ -2217,6 +2163,7 @@ async function restaurarSesion(user) {
     escucharRetos();
     escucharReuniones();
     escucharEflinks();
+    precargarPanelNeclubHTML(); // arranca en segundo plano, sin bloquear la pantalla
     escucharNeclub();
     escucharTraining();
     escucharGaleriaVideos();
@@ -2293,6 +2240,7 @@ async function entrarComoAlumno(found) {
   escucharRetos();
   escucharReuniones();
   escucharEflinks();
+  precargarPanelNeclubHTML(); // arranca en segundo plano, sin bloquear la pantalla
   escucharNeclub();
   escucharTraining();
   escucharGaleriaVideos();
@@ -2304,6 +2252,29 @@ async function entrarComoAlumno(found) {
     setTimeout(() => showModal('¡Bienvenido de nuevo!', frase, 'fa-hand'), 900);
   }
 }
+// ===== PRECARGA EN SEGUNDO PLANO DEL FEED DE NECLUB =====
+// A diferencia del panel de admin (que se trae recién al tocarlo), NECLUB arranca a
+// "escuchar" novedades apenas el alumno inicia sesión, así que su HTML se pide de
+// una vez en segundo plano (sin bloquear la pantalla principal) para que esté listo
+// tanto si el alumno toca la pestaña como si le llega una notificación sin haberla abierto.
+let neclubPanelPromise = null;
+function precargarPanelNeclubHTML() {
+  if (!neclubPanelPromise) {
+    neclubPanelPromise = fetch('neclub-panel.html')
+      .then(resp => {
+        if (!resp.ok) throw new Error('No se pudo cargar neclub-panel.html (' + resp.status + ')');
+        return resp.text();
+      })
+      .then(html => { document.getElementById('app-root').insertAdjacentHTML('beforeend', html); })
+      .catch(e => { neclubPanelPromise = null; throw e; }); // si falla, permite reintentar la próxima vez
+  }
+  return neclubPanelPromise;
+}
+window.abrirNeclub = async function () {
+  await precargarPanelNeclubHTML();
+  showScreen('s-neclub');
+};
+
 // ===== CARGA DIFERIDA DEL PANEL DE ADMIN =====
 // El HTML del panel de admin ya no viene incrustado en este archivo — vive en
 // admin-panel.html y se trae solo cuando alguien entra como admin (ningún alumno
@@ -2846,7 +2817,8 @@ function escucharNeclub() {
     neclubPostsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
     const topId = neclubPostsCache.length ? neclubPostsCache[0].id : null;
     if (neclubUltimoTopId && topId && topId !== neclubUltimoTopId && window.scrollY > 160) {
-      document.getElementById('neclub-new-posts-bar').style.display = 'flex';
+      const barraNuevoPost = document.getElementById('neclub-new-posts-bar');
+      if (barraNuevoPost) barraNuevoPost.style.display = 'flex';
     }
     neclubUltimoTopId = topId;
     aplicarCambiosFeedNeclub(cambios);
@@ -3204,6 +3176,7 @@ async function iniciarModoVisitanteNeclub() {
   try { if (!auth.currentUser) await signInAnonymously(auth); }
   catch (e) { console.error('No se pudo iniciar la sesión de visitante:', e); }
   await esperaMinima;
+  await precargarPanelNeclubHTML();
   document.getElementById('loading').style.display = 'none';
   nicaHomeScreen = 's-neclub';
   showScreen('s-neclub', { replace: true, noHistory: true });
@@ -3596,8 +3569,9 @@ window.toggleNeclubNotifDropdown = (forceClose) => {
     neclubNotifsCache.filter(n => !n.leido).forEach(n => updateDoc(doc(db,'neclub_notificaciones',n.id), { leido:true }).catch(()=>{}));
   }
 };
-window.irAPostDesdeNotifNeclub = (postId) => {
+window.irAPostDesdeNotifNeclub = async (postId) => {
   toggleNeclubNotifDropdown(true);
+  await precargarPanelNeclubHTML();
   showScreen('s-neclub');
   setTimeout(() => {
     const el = document.getElementById('neclub-post-'+postId);
