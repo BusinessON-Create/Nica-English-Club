@@ -126,6 +126,58 @@ a { color: inherit; }
 .btn-cta { width:100%; padding:15px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:800; border:none; border-radius:var(--r-sm); cursor:pointer; text-transform: uppercase; letter-spacing: 1px; font-family:inherit; font-size:12.5px; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
 .btn-cta:hover { transform: translateY(-1px); box-shadow: 0 14px 30px var(--gold-glow); }
 
+/* ============ LOGIN — pulido visual (solo estilos: misma paleta, mismos ids, misma lógica) ============
+   Todo va con prefijo #s-login para no afectar .btn-login / .field-input del resto de la app. */
+#s-login { background:
+    radial-gradient(60% 42% at 50% 4%, rgba(240,180,41,.13), transparent 70%),
+    radial-gradient(120% 90% at 50% -10%, #141118 0%, var(--bg) 55%); }
+#s-login .login-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0) 38%), var(--card);
+  border-color: rgba(240,180,41,.16);
+  padding: 40px 26px 28px;
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.06);
+}
+#s-login .logo-mark, #s-login .logo-mark.has-image { box-shadow: none; background: transparent; }
+#s-login .logo-mark img { filter: drop-shadow(0 0 18px rgba(240,180,41,.35)); }
+#s-login .brand-title { font-size: 30px; letter-spacing: -.01em; }
+#s-login .login-tagline { text-align:center; font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:#9a9aa2; margin-top:8px; }
+#s-login .login-welcome { font-size:23px; margin-bottom:6px; }
+#s-login .login-sub { text-align:center; font-size:13.5px; color:var(--muted); margin-bottom:24px; }
+
+#s-login .field-input { height:58px; padding:0 16px 0 50px; font-size:15px; background:#17171a; border:1px solid var(--border2); border-radius:16px; }
+#s-login .field-input::placeholder { color: var(--muted); }
+#s-login .field-input:hover { border-color:#3a3a42; }
+#s-login .field-input:focus { border-color: rgba(240,180,41,.65); background:#1a1a1e; box-shadow: 0 0 0 4px rgba(240,180,41,.12); }
+#s-login .field-input:-webkit-autofill { -webkit-text-fill-color: var(--text); caret-color: var(--text); box-shadow: 0 0 0 100px #17171a inset; }
+#s-login .input-icon { left:19px; font-size:15px; }
+#s-login #login-pass { padding-right: 52px; }
+#s-login .eye-toggle { position:absolute; right:8px; top:50%; transform:translateY(-50%); width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:none; border:0; border-radius:12px; color:var(--muted-dim); font-size:15px; cursor:pointer; transition: color .2s var(--ease); }
+#s-login .eye-toggle:hover { color: var(--text); }
+#s-login .eye-toggle[aria-pressed="true"] { color: var(--gold); }
+
+#s-login .btn-login {
+  height:56px; padding:0 16px; margin-top:4px; border-radius:16px; font-size:15.5px;
+  box-shadow: 0 14px 32px -12px rgba(200,138,26,.7), inset 0 1px 0 rgba(255,255,255,.4);
+  transition: transform .15s var(--ease), box-shadow .2s var(--ease), filter .2s var(--ease);
+}
+#s-login .btn-login:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 18px 38px -12px rgba(200,138,26,.8), inset 0 1px 0 rgba(255,255,255,.4); }
+#s-login .btn-login:active { transform: translateY(0) scale(.99); box-shadow: 0 8px 20px -10px rgba(200,138,26,.7), inset 0 1px 0 rgba(255,255,255,.3); }
+#s-login .btn-login:disabled { box-shadow:none; opacity:.5; transform:none; filter:none; }
+
+#s-login .login-divider { text-transform:none; letter-spacing:0; font-size:12.5px; color:var(--muted-dim); margin:18px 0 14px; gap:14px; }
+#s-login .login-divider::before { background: linear-gradient(90deg, transparent, var(--border2)); }
+#s-login .login-divider::after  { background: linear-gradient(270deg, transparent, var(--border2)); }
+
+#s-login .btn-google { height:54px; padding:0 16px; font-size:14.5px; color:#d9d9de; border-color:var(--border2); border-radius:16px; background:rgba(255,255,255,.02); gap:10px; }
+#s-login .btn-google i { font-size:16px; }
+#s-login .btn-google:hover { border-color: rgba(240,180,41,.4); background: rgba(240,180,41,.04); color:#fff; }
+
+/* Enlace discreto al sitio (reemplaza la tarjeta de planes; el CSS de .cta-card queda por si quieres volver) */
+.login-join { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:6px 10px; padding:16px 20px; border:1px solid var(--border2); border-radius:999px; font-size:13.5px; color:var(--muted); background:rgba(255,255,255,.015); animation: fadeUp .7s .25s both; }
+.login-join a { color:var(--gold); font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
+.login-join a i { font-size:11px; }
+.login-join a:hover { text-decoration:underline; text-underline-offset:4px; }
+
 /* ============ ESTUDIANTE ============ */
 .stu-nav { position:sticky; top:0; z-index:50; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; background: rgba(8,8,10,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom:1px solid var(--border); }
 .brand-link { display:flex; align-items:center; text-decoration:none; cursor:pointer; transition: opacity .2s var(--ease); }
@@ -1221,9 +1273,10 @@ body.tr-room-lock { overflow:hidden; }
       <div class="login-card">
         <div class="logo-mark app-logo">NEC</div>
         <h1 class="brand-title">Nica<span>English</span>Club</h1>
-        <p style="text-align:center; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin-top:5px;">Natural Language Acquisition</p>
+        <p class="login-tagline">Natural Language Acquisition</p>
         <div style="margin-top:30px;">
-          <p class="login-welcome">Welcome!</p>
+          <p class="login-welcome">Welcome back</p>
+          <p class="login-sub">Entra a tu espacio de entrenamiento.</p>
           <div class="input-shell">
             <i class="fa-solid fa-user input-icon"></i>
             <input type="email" id="login-nombre" class="field-input" placeholder="Correo electrónico" autocomplete="username">
@@ -1231,6 +1284,7 @@ body.tr-room-lock { overflow:hidden; }
           <div class="input-shell">
             <i class="fa-solid fa-lock input-icon"></i>
             <input type="password" id="login-pass" class="field-input" placeholder="Contraseña">
+            <button type="button" class="eye-toggle" id="login-eye" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye"></i></button>
           </div>
           <button class="btn-login" id="btn-entrar">Ingresar al Portal</button>
           <div id="login-error" style="color:var(--red); font-size:12px; margin-top:10px; text-align:center; display:none;">Credenciales incorrectas.</div>
@@ -1239,12 +1293,18 @@ body.tr-room-lock { overflow:hidden; }
           <button class="btn-google" id="btn-google-entrar"><i class="fa-brands fa-google"></i> Acceder con Google</button>
         </div>
       </div>
+      <div class="login-join">
+        <span>¿Aún no eres miembro?</span>
+        <a href="https://www.nicaenglishclub.com" target="_blank" rel="noopener">Conoce el club <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+      </div>
+      <!-- Tarjeta de planes anterior (para volver a ponerla, descomenta):
       <div class="cta-card">
         <div class="cta-badge"><i class="fa-solid fa-crown"></i> Beneficios Premium</div>
         <h3 style="color:#fff; margin-bottom:8px; font-family: 'Playfair Display'; font-size: 20px;">¿Listo para el siguiente nivel?</h3>
         <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Accede a tutorías personalizadas y material exclusivo de NicaEnglish.</p>
         <button class="btn-cta" onclick="window.open('https://sites.google.com/view/nicaenglishclub/planes','_blank')">Ver Planes Gold</button>
       </div>
+      -->
     </div>
   </div>
 
@@ -8227,6 +8287,22 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
       el.addEventListener('pointerleave', soltar);
     });
   }
+})();
+</script>
+<script>
+/* Ojo de contraseña del login: solo cambia el type del campo en el navegador, no toca Firebase */
+(function () {
+  var btn = document.getElementById('login-eye');
+  var input = document.getElementById('login-pass');
+  if (!btn || !input) return;
+  btn.addEventListener('click', function () {
+    var show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-pressed', String(show));
+    btn.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    btn.innerHTML = '<i class="fa-solid ' + (show ? 'fa-eye-slash' : 'fa-eye') + '"></i>';
+    input.focus();
+  });
 })();
 </script>
 </body>
