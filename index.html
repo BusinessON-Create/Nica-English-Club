@@ -2280,6 +2280,15 @@ function pintarDesdeCacheAlumno(alumnoId) {
     ultimosRetos = retosCache;
     renderRetos();
   }
+
+  // Galería de videos: se pinta al instante con lo último visto en este celular;
+  // el listener en vivo la reemplaza en cuanto Firebase responde, sin dejar la
+  // sala de videos "cargando" cada vez que el alumno entra.
+  const galeriaCache = necLeerCache('galeria_videos', alumnoId);
+  if (Array.isArray(galeriaCache) && galeriaCache.length) {
+    categoriasVideoCache = galeriaCache;
+    renderGaleriaVideos();
+  }
 }
 
 // Puente seguro para el widget NEC Coach: llama a la Cloud Function
@@ -2743,6 +2752,7 @@ function escucharGaleriaVideos() {
   onSnapshot(query(collection(db,'galeria_categorias'), orderBy('fecha','asc')), snap => {
     categoriasVideoCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
     renderGaleriaVideos();
+    if (sessionActiva) necGuardarCache('galeria_videos', sessionActiva.id, categoriasVideoCache);
   });
 }
 function renderGaleriaVideos() {
