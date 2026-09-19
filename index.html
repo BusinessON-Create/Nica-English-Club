@@ -184,6 +184,8 @@ a { color: inherit; }
   border:1px solid var(--border2);
   box-shadow: var(--shadow-card);
 }
+.avatar-ring, .avatar-ring * { -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; outline:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+.avatar-ring img { -webkit-user-drag:none; user-drag:none; }
 .avatar-ring { width:76px; height:76px; border-radius:50%; padding:3px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); overflow:hidden; flex-shrink:0; box-shadow: 0 0 0 1px rgba(240,180,41,.25), 0 8px 22px rgba(240,180,41,.28); position:relative; z-index:1; }
 .avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--bg); display:block; }
 .avatar-default { width:100%; height:100%; border-radius:50%; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:24px; font-weight:700; border:3px solid var(--bg); }
@@ -488,6 +490,9 @@ a { color: inherit; }
 .neclub-composer-row { display:flex; gap:12px; align-items:flex-start; width:100%; max-width:100%; }
 .neclub-avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-weight:700; font-size:14px; }
 .neclub-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+/* Cuenta oficial (NicaEnglish Club): logo en círculo con fondo negro, sin bordes */
+.neclub-avatar.oficial, .neclub-flash-avatar.oficial { background:#000; border:none; outline:none; }
+.neclub-avatar.oficial img, .neclub-flash-avatar.oficial img { object-fit:contain; transform:scale(1.15); }
 .neclub-composer textarea { flex:1 1 auto; width:100%; min-width:0; max-width:100%; min-height:44px; max-height:160px; padding:10px 0; background:transparent; border:none; color:var(--text); outline:none; font-family:inherit; font-size:14px; resize:none; line-height:1.4; box-sizing:border-box; word-break:break-word; }
 .neclub-composer-hint { font-size:11px; color:var(--muted-dim); margin:2px 0 10px 52px; max-width:calc(100% - 52px); box-sizing:border-box; }
 .neclub-preview-wrap { width:100%; max-width:calc(100% - 52px); margin:0 0 12px 52px; position:relative; display:block; box-sizing:border-box; }
@@ -1193,7 +1198,7 @@ body.neclub-visitante .neclub-composer { display:none; }
       <div class="hero-banner">
         <div class="profile-row" style="display:flex; align-items:flex-start; gap:15px; justify-content:space-between; flex-wrap:wrap;">
           <div style="display:flex; align-items:center; gap:15px;">
-            <div class="avatar-ring" id="avatar-container" onclick="abrirPerfil()" style="cursor:pointer;" title="Mi perfil"></div>
+            <div class="avatar-ring" id="avatar-container" onclick="abrirPerfil()" style="cursor:pointer;"></div>
             <div>
               <p class="welcome-eyebrow">WELCOME BACK</p>
               <div class="welcome-name-row">
@@ -1614,19 +1619,19 @@ body.neclub-visitante .neclub-composer { display:none; }
           <div id="lista-eflinks-ui" style="margin-top:20px;"></div>
         </div>
         <div id="tab-neclub" class="tab-content" style="padding:20px; display:none;">
-          <p class="admin-label"><i class="fa-solid fa-book-open"></i> Publicar historia (PDF, se ve como libro)</p>
-          <input type="text" id="neclub-historia-titulo" class="admin-input" placeholder="Título de la historia">
-          <input type="file" id="neclub-historia-pdf" class="admin-input" accept=".pdf,application/pdf" onchange="prepararHistoriaPdfAdmin(event)">
-          <div id="neclub-historia-cover-preview" style="display:none; margin-bottom:10px;"><img id="neclub-historia-cover-img" style="width:90px; border-radius:8px; border:1px solid var(--border2);"></div>
-          <label class="dest-all-row" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;"><input type="checkbox" id="neclub-historia-descargable"> <span style="color:#fff; font-weight:700;">Permitir que los alumnos la descarguen</span></label>
-          <button class="btn-login" id="btn-publicar-historia" onclick="publicarHistoriaPdfAdmin()" disabled>Publicar historia</button>
+          <p class="admin-label"><i class="fa-solid fa-bullhorn"></i> Publicar en NECLUB como cuenta oficial (foto, video o PDF)</p>
+          <input type="text" id="neclub-historia-titulo" class="admin-input" placeholder="Título del PDF (o texto que acompaña la foto/video — opcional)">
+          <input type="file" id="neclub-historia-pdf" class="admin-input" accept=".pdf,application/pdf,image/*,video/*" onchange="prepararHistoriaPdfAdmin(event)">
+          <div id="neclub-historia-cover-preview" style="display:none; margin-bottom:10px;"><img id="neclub-historia-cover-img" style="width:90px; border-radius:8px; border:1px solid var(--border2);"><video id="neclub-historia-video-preview" controls muted playsinline style="display:none; max-width:100%; max-height:200px; border-radius:8px; border:1px solid var(--border2);"></video></div>
+          <label class="dest-all-row" id="neclub-historia-descargable-row" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;"><input type="checkbox" id="neclub-historia-descargable"> <span style="color:#fff; font-weight:700;">Permitir que los alumnos la descarguen</span></label>
+          <button class="btn-login" id="btn-publicar-historia" onclick="publicarHistoriaPdfAdmin()" disabled>Publicar en NECLUB</button>
           <div id="neclub-historia-progreso-wrap" style="display:none; margin-top:10px;">
             <div style="background:rgba(255,255,255,.08); border-radius:99px; height:8px; overflow:hidden;">
               <div id="neclub-historia-progreso-bar" style="background:linear-gradient(135deg, var(--gold3), var(--gold2)); height:100%; width:0%; transition:width .2s linear;"></div>
             </div>
             <p id="neclub-historia-progreso-texto" style="font-size:11.5px; color:var(--muted-dim); margin-top:6px;">Subiendo... 0%</p>
           </div>
-          <p class="form-hint">Aparece en NECLUB marcada como <b>NicaEnglish Club <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i> Verificado</b> y no se autoborra a los 7 días como los posts normales.</p>
+          <p class="form-hint">Aparece en NECLUB marcada como <b>Nica English Club <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i> Verificado</b> y no se autoborra a los 7 días como los posts normales. Puedes subir una foto, un video (sin límite de 1 minuto) o un PDF.</p>
           <hr style="border-color:var(--border); margin:20px 0;">
           <p class="form-hint">Moderación de NECLUB: aquí puedes borrar cualquier publicación de cualquier alumno. Las publicaciones se autoborran solas a los 7 días de creadas (las historias en PDF no).</p>
           <div id="lista-neclub-ui"></div>
@@ -2842,6 +2847,11 @@ function avatarHtmlNeclub(foto, nombre) {
     ? `<img src="${url}" alt="${escNeclub(nombre)}" onerror="this.parentElement.innerHTML='${inicial}'">`
     : inicial;
 }
+// Cuenta oficial (NicaEnglish Club): siempre muestra el logo actual en círculo negro + check de verificado
+function esPostOficialNeclub(p) { return !!p && p.autorId === 'admin'; }
+function nombreAutorNeclub(p) { return esPostOficialNeclub(p) ? 'Nica English Club' : (p.autorNombre || 'Student'); }
+function avatarPostNeclub(p) { return avatarHtmlNeclub(esPostOficialNeclub(p) ? LOGO_DEFAULT : p.autorFoto, p.autorNombre); }
+const CHECK_OFICIAL_NECLUB = ' <i class="fa-solid fa-circle-check neclub-verified" title="Verified"></i>';
 function tiempoRelativoNeclub(fechaMs) {
   const seg = Math.max(0, Math.floor((Date.now() - (fechaMs||0)) / 1000));
   if (seg < 60) return 'just now';
@@ -2907,9 +2917,9 @@ function renderNeclubPostHTML(p, miId) {
   const badgeMap = { foto:'<i class="fa-solid fa-image"></i> Photo', video:'<i class="fa-solid fa-video"></i> Video', audio:'<i class="fa-solid fa-microphone"></i> Audio', pdf:'<i class="fa-solid fa-book-open"></i> Story' };
   return `<div class="neclub-post" id="neclub-post-${p.id}">
       <div class="neclub-post-head">
-        <div class="neclub-avatar">${avatarHtmlNeclub(p.autorFoto, p.autorNombre)}</div>
+        <div class="neclub-avatar${esPostOficialNeclub(p) ? ' oficial' : ''}">${avatarPostNeclub(p)}</div>
         <div class="neclub-post-headtext">
-          <div class="neclub-post-nombre">${escNeclub(p.autorNombre || 'Student')}<i class="fa-solid fa-circle-check neclub-verified" id="neclub-verified-${p.id}" title="Verified" style="${estaVerificado ? '' : 'display:none;'}"></i></div>
+          <div class="neclub-post-nombre">${escNeclub(nombreAutorNeclub(p))}<i class="fa-solid fa-circle-check neclub-verified" id="neclub-verified-${p.id}" title="Verified" style="${estaVerificado ? '' : 'display:none;'}"></i></div>
           <div class="neclub-post-meta">${tiempoRelativoNeclub(p.fecha)}${esHistoria ? '' : ` · disappears in ${Math.max(0, NECLUB_DIAS_VIDA - Math.floor((Date.now()-(p.fecha||0))/86400000))}d`}</div>
         </div>
         ${esMio ? `<button class="neclub-post-del" title="Delete" onclick="borrarPostNeclub('${p.id}','${(p.archivoPath||'').replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i></button>` : ''}
@@ -3050,8 +3060,8 @@ function renderNeclubFlashCardHTML(p) {
     : `<img src="${p.archivoUrl}" loading="lazy" oncontextmenu="return false" draggable="false">`;
   return `<div class="neclub-flash-card carousel-item" onclick="abrirFlashesNeclub('${p.id}')">
     ${fondo}
-    <div class="neclub-flash-avatar">${avatarHtmlNeclub(p.autorFoto, p.autorNombre)}</div>
-    <div class="neclub-flash-name">${escNeclub(p.autorNombre || 'Student')}</div>
+    <div class="neclub-flash-avatar${esPostOficialNeclub(p) ? ' oficial' : ''}">${avatarPostNeclub(p)}</div>
+    <div class="neclub-flash-name">${escNeclub(nombreAutorNeclub(p))}${esPostOficialNeclub(p) ? CHECK_OFICIAL_NECLUB : ''}</div>
   </div>`;
 }
 
@@ -3110,8 +3120,10 @@ function mostrarFlashActual() {
   const p = neclubFlashViewerLista[neclubFlashViewerIndex];
   if (!p) { cerrarFlashesNeclub(); return; }
 
-  document.getElementById('neclub-flash-viewer-avatar').innerHTML = avatarHtmlNeclub(p.autorFoto, p.autorNombre);
-  document.getElementById('neclub-flash-viewer-nombre').innerText = p.autorNombre || 'Student';
+  const avViewer = document.getElementById('neclub-flash-viewer-avatar');
+  avViewer.innerHTML = avatarPostNeclub(p);
+  avViewer.classList.toggle('oficial', esPostOficialNeclub(p));
+  document.getElementById('neclub-flash-viewer-nombre').innerHTML = escNeclub(nombreAutorNeclub(p)) + (esPostOficialNeclub(p) ? CHECK_OFICIAL_NECLUB : '');
   document.getElementById('neclub-flash-viewer-meta').innerText = tiempoRelativoNeclub(p.fecha);
 
   const barras = document.querySelectorAll('#neclub-flash-viewer-bars .neclub-flash-viewer-bar');
@@ -5584,7 +5596,7 @@ function escucharNeclubAdmin() {
       const archivoPathSafe = (data.archivoPath||'').replace(/'/g,"\\'");
       const coverPathSafe = (data.coverPath||'').replace(/'/g,"\\'");
       const estaVerificado = data.autorId === 'admin' ? true : (esAlumnoVerificado(data.autorId) || !!data.verificado);
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid ${iconoTipo[data.tipo]||'fa-comment'}" style="color:var(--gold); margin-right:6px;"></i><b>${data.autorNombre||'Alumno'}</b>${estaVerificado?' <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i>':''}: ${preview}${preview.length>=60?'…':''} <small style="color:var(--muted)">· ${(data.comentariosCount||0)} coment. · ${(data.likes||[]).length} likes</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarPostNeclubAdmin('${d.id}','${archivoPathSafe}','${coverPathSafe}')"><i class="fa-solid fa-trash"></i></button></div>`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:12.5px;"><i class="fa-solid ${iconoTipo[data.tipo]||'fa-comment'}" style="color:var(--gold); margin-right:6px;"></i><b>${data.autorId==='admin' ? 'Nica English Club' : (data.autorNombre||'Alumno')}</b>${estaVerificado?' <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i>':''}: ${preview}${preview.length>=60?'…':''} <small style="color:var(--muted)">· ${(data.comentariosCount||0)} coment. · ${(data.likes||[]).length} likes</small></span><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarPostNeclubAdmin('${d.id}','${archivoPathSafe}','${coverPathSafe}')"><i class="fa-solid fa-trash"></i></button></div>`;
     });
   });
 }
@@ -5614,13 +5626,50 @@ function esperarPdfWorker(intentos = 10) {
     })(intentos);
   });
 }
+function tipoArchivoAdminNeclub(file) {
+  const t = (file.type || '').toLowerCase(), n = (file.name || '').toLowerCase();
+  if (t === 'application/pdf' || /\.pdf$/.test(n)) return 'pdf';
+  if (t.startsWith('image/') || /\.(jpe?g|png|gif|webp|heic|heif|avif)$/.test(n)) return 'foto';
+  if (t.startsWith('video/') || /\.(mp4|mov|m4v|webm|3gp|avi|mkv)$/.test(n)) return 'video';
+  return null;
+}
+function limpiarPreviewHistoriaAdmin() {
+  const img = document.getElementById('neclub-historia-cover-img');
+  const vid = document.getElementById('neclub-historia-video-preview');
+  if (vid) { vid.pause(); vid.removeAttribute('src'); vid.load(); vid.style.display = 'none'; }
+  if (img) { img.removeAttribute('src'); img.style.display = 'block'; }
+  document.getElementById('neclub-historia-cover-preview').style.display = 'none';
+}
 window.prepararHistoriaPdfAdmin = async (ev) => {
   const file = ev.target.files[0];
   const btn = document.getElementById('btn-publicar-historia');
+  limpiarPreviewHistoriaAdmin();
   if (!file) { historiaPdfSeleccionada = null; btn.disabled = true; return; }
+  const tipo = tipoArchivoAdminNeclub(file);
+  if (!tipo) {
+    showModal('Archivo no compatible', 'Sube una foto, un video o un PDF.');
+    ev.target.value = ''; historiaPdfSeleccionada = null; btn.disabled = true; return;
+  }
+  // El check "permitir descargar" solo aplica a los PDF
+  document.getElementById('neclub-historia-descargable-row').style.display = (tipo === 'pdf') ? '' : 'none';
+
+  // FOTO o VIDEO: se publican tal cual (el admin no tiene el límite de 1 minuto de los alumnos)
+  if (tipo === 'foto' || tipo === 'video') {
+    historiaPdfSeleccionada = { file, tipo };
+    const objectUrl = URL.createObjectURL(file);
+    const img = document.getElementById('neclub-historia-cover-img');
+    const vid = document.getElementById('neclub-historia-video-preview');
+    if (tipo === 'foto') { img.src = objectUrl; img.style.display = 'block'; vid.style.display = 'none'; }
+    else { img.style.display = 'none'; vid.src = objectUrl; vid.style.display = 'block'; }
+    document.getElementById('neclub-historia-cover-preview').style.display = 'block';
+    btn.disabled = false;
+    return;
+  }
+
+  // PDF: igual que antes (genera la portada con la primera página)
   btn.disabled = true; btn.innerText = 'Cargando lector de PDF...';
   const listo = await esperarPdfWorker();
-  if (!listo) { showModal('Error', 'No se pudo cargar el lector de PDF (revisa tu conexión a internet e intenta de nuevo). Si el problema sigue, puede que tu red esté bloqueando cdnjs.cloudflare.com.'); btn.innerText = 'Publicar historia'; return; }
+  if (!listo) { showModal('Error', 'No se pudo cargar el lector de PDF (revisa tu conexión a internet e intenta de nuevo). Si el problema sigue, puede que tu red esté bloqueando cdnjs.cloudflare.com.'); btn.innerText = 'Publicar en NECLUB'; return; }
   btn.innerText = 'Generando portada...';
   try {
     const buf = await file.arrayBuffer();
@@ -5633,8 +5682,9 @@ window.prepararHistoriaPdfAdmin = async (ev) => {
     canvas.width = viewport.width; canvas.height = viewport.height;
     await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
     const coverBlob = await new Promise(res => canvas.toBlob(res, 'image/png', 0.9));
-    historiaPdfSeleccionada = { file, coverBlob };
-    document.getElementById('neclub-historia-cover-img').src = URL.createObjectURL(coverBlob);
+    historiaPdfSeleccionada = { file, coverBlob, tipo: 'pdf' };
+    const img = document.getElementById('neclub-historia-cover-img');
+    img.src = URL.createObjectURL(coverBlob); img.style.display = 'block';
     document.getElementById('neclub-historia-cover-preview').style.display = 'block';
     btn.disabled = false;
   } catch (e) {
@@ -5642,12 +5692,14 @@ window.prepararHistoriaPdfAdmin = async (ev) => {
     showModal('Error', 'No se pudo leer ese PDF. Intenta con otro archivo.');
     historiaPdfSeleccionada = null;
   }
-  btn.innerText = 'Publicar historia';
+  btn.innerText = 'Publicar en NECLUB';
 };
 window.publicarHistoriaPdfAdmin = async () => {
   const titulo = document.getElementById('neclub-historia-titulo').value.trim();
-  if (!titulo || !historiaPdfSeleccionada) { showModal('Falta información', 'Ponle un título y selecciona el archivo PDF.'); return; }
-  const descargable = document.getElementById('neclub-historia-descargable').checked;
+  if (!historiaPdfSeleccionada) { showModal('Falta información', 'Selecciona una foto, un video o un PDF.'); return; }
+  const tipo = historiaPdfSeleccionada.tipo || 'pdf';
+  if (tipo === 'pdf' && !titulo) { showModal('Falta información', 'Ponle un título al PDF.'); return; }
+  const descargable = tipo === 'pdf' && document.getElementById('neclub-historia-descargable').checked;
   const btn = document.getElementById('btn-publicar-historia');
   const progresoWrap = document.getElementById('neclub-historia-progreso-wrap');
   const progresoBar = document.getElementById('neclub-historia-progreso-bar');
@@ -5665,24 +5717,29 @@ window.publicarHistoriaPdfAdmin = async () => {
   }, 12000);
 
   try {
+    const nombreSeguro = (historiaPdfSeleccionada.file.name || 'archivo').replace(/[^a-zA-Z0-9._-]/g, '_');
     const base = `neclub/historia_${Date.now()}`;
-    const pdfPath = `${base}.pdf`;
-    const coverPath = `${base}_cover.png`;
+    const archivoPath = (tipo === 'pdf') ? `${base}.pdf` : `neclub/oficial_${Date.now()}_${nombreSeguro}`;
+    let coverUrl = '', coverPath = '';
 
-    // Subida de la portada (rápida, es solo una imagen)
-    progresoTexto.innerText = 'Subiendo portada...';
-    const coverRef = storageRef(storage, coverPath);
-    await uploadBytes(coverRef, historiaPdfSeleccionada.coverBlob);
-    const coverUrl = await getDownloadURL(coverRef);
+    // Solo los PDF llevan portada (imagen de la primera página)
+    if (tipo === 'pdf') {
+      coverPath = `${base}_cover.png`;
+      progresoTexto.innerText = 'Subiendo portada...';
+      const coverRef = storageRef(storage, coverPath);
+      await uploadBytes(coverRef, historiaPdfSeleccionada.coverBlob);
+      coverUrl = await getDownloadURL(coverRef);
+    }
 
-    // Subida del PDF con progreso real (esto es lo que puede tardar)
-    const pdfRef = storageRef(storage, pdfPath);
+    // Subida del archivo principal con progreso real (esto es lo que puede tardar)
+    const etiqueta = tipo === 'pdf' ? 'PDF' : (tipo === 'foto' ? 'foto' : 'video');
+    const archivoRef = storageRef(storage, archivoPath);
     const archivoUrl = await new Promise((resolve, reject) => {
-      const task = uploadBytesResumable(pdfRef, historiaPdfSeleccionada.file);
+      const task = uploadBytesResumable(archivoRef, historiaPdfSeleccionada.file);
       task.on('state_changed', (snap) => {
         const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
         progresoBar.style.width = pct + '%';
-        progresoTexto.innerText = `Subiendo PDF... ${pct}%`;
+        progresoTexto.innerText = `Subiendo ${etiqueta}... ${pct}%`;
       }, (err) => reject(err), async () => {
         try { resolve(await getDownloadURL(task.snapshot.ref)); } catch (e) { reject(e); }
       });
@@ -5690,30 +5747,34 @@ window.publicarHistoriaPdfAdmin = async () => {
 
     progresoTexto.innerText = 'Guardando publicación...';
     const ahora = Date.now();
-    await addDoc(collection(db,'neclub_posts'), {
-      autorId: 'admin', autorNombre: 'NicaEnglish Club', autorFoto: LOGO_DEFAULT, verificado: true,
-      tipo: 'pdf', texto: titulo, archivoUrl, archivoPath: pdfPath, coverUrl, coverPath, descargable,
+    const docNuevo = {
+      autorId: 'admin', autorNombre: 'Nica English Club', autorFoto: LOGO_DEFAULT, verificado: true,
+      tipo, texto: titulo, archivoUrl, archivoPath,
       likes: [], comentariosCount: 0, fecha: ahora,
-      expiraEn: Timestamp.fromMillis(ahora + 100*365*24*60*60*1000) // las historias oficiales no se autoborran
-    });
+      expiraEn: Timestamp.fromMillis(ahora + 100*365*24*60*60*1000) // lo oficial no se autoborra (para que sí expire, cambia este 100 años por NECLUB_DIAS_VIDA días)
+    };
+    if (tipo === 'pdf') { docNuevo.coverUrl = coverUrl; docNuevo.coverPath = coverPath; docNuevo.descargable = descargable; }
+    await addDoc(collection(db,'neclub_posts'), docNuevo);
+
     document.getElementById('neclub-historia-titulo').value = '';
     document.getElementById('neclub-historia-pdf').value = '';
     document.getElementById('neclub-historia-descargable').checked = false;
-    document.getElementById('neclub-historia-cover-preview').style.display = 'none';
+    document.getElementById('neclub-historia-descargable-row').style.display = '';
+    limpiarPreviewHistoriaAdmin();
     historiaPdfSeleccionada = null;
-    showModal('Éxito', 'Historia publicada en NECLUB.');
+    showModal('Éxito', 'Publicado en NECLUB como Nica English Club.');
   } catch (e) {
-    console.error('Error al publicar historia PDF:', e);
+    console.error('Error al publicar en NECLUB (admin):', e);
     const codigo = e && e.code ? e.code : '';
     let detalle = e && e.message ? e.message : 'Error desconocido.';
-    if (codigo === 'storage/unauthorized') detalle = 'Firebase Storage rechazó la subida (permisos). Revisa las reglas de Storage para permitir escritura en la carpeta "neclub/".';
+    if (codigo === 'storage/unauthorized') detalle = 'Firebase Storage rechazó la subida (permisos o tipo/tamaño de archivo). Revisa las reglas de Storage para permitir escritura en la carpeta "neclub/" de fotos, videos y PDF.';
     else if (codigo === 'storage/canceled') detalle = 'La subida fue cancelada.';
     else if (codigo === 'storage/retry-limit-exceeded' || codigo === 'storage/unknown') detalle = 'Se perdió la conexión durante la subida. Revisa tu internet e intenta de nuevo.';
     showModal('No se pudo publicar', `${detalle}${codigo ? ` (código: ${codigo})` : ''}`);
   } finally {
     clearTimeout(avisoLento);
     progresoWrap.style.display = 'none';
-    btn.disabled = false; btn.innerText = 'Publicar historia';
+    btn.disabled = false; btn.innerText = 'Publicar en NECLUB';
   }
 };
 
