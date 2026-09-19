@@ -1421,31 +1421,6 @@ body.tr-room-lock { overflow:hidden; }
   </div>
 
   <!-- MENSAJES: panel flotante (igual que NEC Coach) -->
-  <div id="s-chat" class="chat-float-panel">
-    <nav class="stu-nav">
-      <div class="nav-actions"><span style="color:#fff; font-weight:700; font-size:13.5px;"><i class="fa-solid fa-comments" style="color:var(--gold); margin-right:6px;"></i>Chat NEC</span><span class="chat-online-pill" id="chat-online-pill"><span class="online-dot"></span> <span id="chat-online-num">0</span> en línea</span></div>
-      <button class="btn-salir" onclick="cerrarChatFlotante()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
-    </nav>
-    <div class="chat-shell">
-      <div class="chat-tabs">
-        <button class="chat-tab-btn active" id="chat-tab-grupo" onclick="cambiarTabChat('grupo')"><i class="fa-solid fa-people-group"></i> Grupo (Todos)</button>
-        <button class="chat-tab-btn" id="chat-tab-privado" onclick="cambiarTabChat('privado')"><i class="fa-solid fa-user"></i> Privado</button>
-      </div>
-      <div class="chat-contacts" id="chat-contacts" style="flex-direction:column; align-items:stretch;">
-        <div style="display:flex; gap:8px; padding:0 0 10px;">
-          <input type="text" id="chat-buscar-codigo" placeholder="Buscar compañero por su ID de estudiante (ej: NEC260001GM)" style="flex:1; padding:10px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:12.5px;" onkeydown="if(event.key==='Enter') buscarAlumnoPorCodigo();">
-          <button class="chat-send-btn" style="width:40px; height:40px;" onclick="buscarAlumnoPorCodigo()"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </div>
-        <div style="display:flex; gap:8px; overflow-x:auto;" id="chat-contacts-online"></div>
-      </div>
-      <div class="chat-messages" id="chat-messages"></div>
-      <p class="chat-hint" id="chat-hint-txt">Please write in English <i class="fa-solid fa-language"></i> — messages are cleared periodically.</p>
-      <div class="chat-inputbar">
-        <input type="text" id="chat-input" placeholder="Type a message in English..." maxlength="300" onkeydown="if(event.key==='Enter') enviarMensajeChat();">
-        <button class="chat-send-btn" onclick="enviarMensajeChat()"><i class="fa-solid fa-paper-plane"></i></button>
-      </div>
-    </div>
-  </div>
 
   <!-- NECLUB SCREEN — mini red social interna (feed, estilo Instagram/Facebook) -->
 
@@ -2167,6 +2142,7 @@ async function restaurarSesion(user) {
     escucharNeclub();
     escucharTraining();
     escucharGaleriaVideos();
+    precargarPanelChatHTML(); // arranca en segundo plano, sin bloquear la pantalla
     escucharChat();
     escucharPresenciaAlumnos();
     iniciarLatido(sessionActiva.id);
@@ -2244,6 +2220,7 @@ async function entrarComoAlumno(found) {
   escucharNeclub();
   escucharTraining();
   escucharGaleriaVideos();
+  precargarPanelChatHTML(); // arranca en segundo plano, sin bloquear la pantalla
   escucharChat();
   escucharPresenciaAlumnos();
   iniciarLatido(found.id);
@@ -2252,6 +2229,24 @@ async function entrarComoAlumno(found) {
     setTimeout(() => showModal('¡Bienvenido de nuevo!', frase, 'fa-hand'), 900);
   }
 }
+// ===== PRECARGA EN SEGUNDO PLANO DEL PANEL DE CHAT =====
+// Mismo motivo que NECLUB: el chat empieza a "escuchar" mensajes nuevos desde el
+// login (para el contador de no leídos), así que su HTML se trae de fondo apenas
+// el alumno entra, sin bloquear la pantalla principal.
+let chatPanelPromise = null;
+function precargarPanelChatHTML() {
+  if (!chatPanelPromise) {
+    chatPanelPromise = fetch('chat-panel.html')
+      .then(resp => {
+        if (!resp.ok) throw new Error('No se pudo cargar chat-panel.html (' + resp.status + ')');
+        return resp.text();
+      })
+      .then(html => { document.getElementById('app-root').insertAdjacentHTML('beforeend', html); })
+      .catch(e => { chatPanelPromise = null; throw e; });
+  }
+  return chatPanelPromise;
+}
+
 // ===== PRECARGA EN SEGUNDO PLANO DEL FEED DE NECLUB =====
 // A diferencia del panel de admin (que se trae recién al tocarlo), NECLUB arranca a
 // "escuchar" novedades apenas el alumno inicia sesión, así que su HTML se pide de
@@ -7205,11 +7200,13 @@ function renderChatNotifBadge() {
   ).length;
   badges.forEach(badge => {
     badge.innerText = pendientes > 9 ? '9+' : pendientes;
-    badge.classList.toggle('show', pendientes > 0 && !document.getElementById('s-chat').classList.contains('open'));
+    const panelChat = document.getElementById('s-chat');
+    badge.classList.toggle('show', pendientes > 0 && !(panelChat && panelChat.classList.contains('open')));
   });
 }
-window.abrirChatFlotante = function () {
+window.abrirChatFlotante = async function () {
   document.activeElement?.blur(); // suelta el "highlight" del botón en móvil
+  await precargarPanelChatHTML();
   const panel = document.getElementById('s-chat');
   if (!panel) { console.error('No se encontró el panel de chat (#s-chat) en el DOM.'); return; }
   panel.classList.add('open');
