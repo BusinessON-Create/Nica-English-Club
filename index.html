@@ -250,6 +250,11 @@ a { color: inherit; }
 .banner-projection-eyebrow i { font-size:10px; }
 .banner-projection { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--gold2); background: var(--card); aspect-ratio: 2.2/1; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 14px 34px rgba(0,0,0,.4), 0 0 0 1px rgba(240,180,41,.06); }
 .banner-projection img, .banner-projection iframe { width: 100%; height: 100%; object-fit: cover; border: none; }
+.banner-thumb-wrap { position:relative; width:100%; height:100%; cursor:pointer; }
+.banner-thumb-wrap img { filter: saturate(.92) brightness(.85); }
+.banner-thumb-wrap::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+.banner-play-btn { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px; border-radius:50%; background:rgba(20,20,20,.55); border:1px solid rgba(255,255,255,.3); color:#fff; font-size:19px; display:flex; align-items:center; justify-content:center; z-index:1; transition: transform .15s var(--ease), background .15s var(--ease); }
+.banner-thumb-wrap:hover .banner-play-btn { transform:translate(-50%,-50%) scale(1.08); background:var(--gold); color:#000; }
 .banner-default-text { text-align: center; padding: 20px; }
 .banner-default-text i { color:var(--gold); font-size:20px; margin-bottom:10px; display:block; }
 .banner-default-text h2 { font-family: 'Playfair Display'; color: var(--gold); font-size: 20px; margin-bottom: 5px; letter-spacing: .5px; }
@@ -727,12 +732,19 @@ body.neclub-visitante .neclub-composer { display:none; }
 .tr-confirm-btn.ready { border-color:var(--gold2); color:var(--gold2); }
 .tr-daycomplete { text-align:center; padding:30px 16px; }
 .tr-daycomplete i { font-size:44px; color:var(--gold); margin-bottom:10px; }
-.tr-metric-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:16px; }
-.tr-metric-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; text-align:center; }
-.tr-metric-box .num { font-family:'Playfair Display'; font-size:24px; color:var(--gold2); }
-.tr-metric-box .lbl { font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.3px; }
+.tr-metric-grid { display:flex; flex-direction:column; gap:12px; margin-top:16px; }
+.tr-metric-hero { display:flex; align-items:center; gap:14px; background:linear-gradient(135deg, var(--card2), var(--card)); border:1px solid var(--gold-dim); border-radius:16px; padding:16px; }
+.tr-metric-hero > i { font-size:24px; color:var(--gold); flex-shrink:0; }
+.tr-metric-hero .num { font-family:'Playfair Display'; font-size:25px; color:var(--gold); line-height:1; }
+.tr-metric-hero .lbl { font-size:11px; color:var(--muted); margin-top:4px; }
+.tr-metric-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.tr-metric-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 8px; text-align:center; }
+.tr-metric-box .num { font-family:'Playfair Display'; font-size:19px; color:var(--gold2); }
+.tr-metric-box .lbl { font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.3px; }
 .tr-badges-row { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
 .tr-badge-chip { display:flex; align-items:center; gap:5px; background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); color:var(--gold3); font-size:10.5px; font-weight:700; padding:6px 12px; border-radius:99px; }
+.tr-badge-chip.locked { background:transparent; border-color:var(--border2); color:var(--muted-dim); font-weight:600; opacity:.75; }
+.tr-badge-chip.locked i { color:var(--muted-dim); }
 .tr-lock-msg { text-align:center; color:var(--muted); font-size:12.5px; padding:16px; }
 .tr-circuit-tag { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.05); border:1px solid var(--border2); color:var(--muted); font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; padding:5px 11px; border-radius:99px; margin-bottom:10px; }
 .tr-listen-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:88px; height:88px; margin:6px auto 18px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); border:none; border-radius:50%; color:#000; font-size:26px; cursor:pointer; box-shadow:0 10px 26px var(--gold-glow); transition: transform .15s var(--ease); }
@@ -861,7 +873,7 @@ body.neclub-visitante .neclub-composer { display:none; }
 .tr-translate-lang { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--gold3); margin-bottom:3px; display:block; }
 .tr-translate-word { color:#fff; font-size:15px; line-height:1.4; }
 .tr-translate-note { color:var(--muted); font-size:11.5px; text-align:center; padding:6px 0; }
-.tr-speak-btn { flex-shrink:0; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid var(--border2); color:var(--gold2); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:12.5px; transition: background .15s, transform .15s; }
+.tr-speak-btn { flex-shrink:0; width:32px; height:32px; border-radius:50%; background:var(--gold-dim); border:1px solid rgba(240,180,41,.25); color:var(--gold); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:12.5px; transition: background .15s, transform .15s; }
 .tr-speak-btn:hover { background:var(--gold-dim); transform:scale(1.06); }
 .tr-speak-btn.playing { color:#000; background:var(--gold); animation: pulseSoft 1s ease infinite; }
 .tr-inline-speak { margin-left:8px; }
@@ -1461,7 +1473,7 @@ body.theme-neumorph .side-drawer-item.logout-item { border-top-color: rgba(255,2
       </div>
 
       <!-- ACTIVIDADES DE LA SEMANA -->
-      <div id="retos-card" style="display:none; margin-bottom:24px;">
+      <div id="retos-card" style="display:none; margin-bottom:32px;">
         <div class="section-head">
           <h2><i class="fa-solid fa-bolt" style="color:var(--gold); margin-right:6px;"></i>Retos relámpago</h2>
         </div>
@@ -2852,11 +2864,24 @@ function renderBanner(data) {
     const url = data.url;
     const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]{11})/);
     if (ytMatch) {
-        area.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0" allowfullscreen></iframe>`;
+        // FIX: antes se incrustaba el iframe de YouTube ya "activo", el cual trae su propio
+        // overlay de título/canal — si el thumbnail del video ya tenía texto quemado (como
+        // "Shadowing Practice for Children"), se veían dos textos encimados y rotos.
+        // Ahora mostramos un thumbnail limpio con nuestro propio botón de play; el iframe
+        // real (con la UI de YouTube) solo aparece cuando el alumno decide reproducir.
+        area.innerHTML = `<div class="banner-thumb-wrap" onclick="reproducirBannerVideo('${ytMatch[1]}')">
+            <img src="https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg" alt="Today's training">
+            <div class="banner-play-btn"><i class="fa-solid fa-play"></i></div>
+          </div>`;
     } else {
         area.innerHTML = `<img src="${resolverUrlDrive(url)}">`;
     }
 }
+window.reproducirBannerVideo = function (vid) {
+    const area = document.getElementById('banner-area');
+    if (!area) return;
+    area.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+};
 
 /* ===== GALERÍA DE VIDEOS (categorías con carrusel automático) ===== */
 function extraerIdYoutube(url) {
@@ -4275,10 +4300,12 @@ function renderMetricsTraining() {
   if (!cont) return;
   const p = trProgresoActual;
   cont.innerHTML = `
-    <div class="tr-metric-box"><div class="num">${p.semanasCompletadas||0}</div><div class="lbl">Weeks done</div></div>
-    <div class="tr-metric-box"><div class="num">${p.rachaSemanas||0}</div><div class="lbl">Week streak <i class="fa-solid fa-fire tr-icon-fire"></i></div></div>
-    <div class="tr-metric-box"><div class="num">${p.retosEnviados||0}</div><div class="lbl">Voice challenges</div></div>
-    <div class="tr-metric-box"><div class="num">${p.palabrasPracticadas||0}</div><div class="lbl">Phrases practiced</div></div>`;
+    <div class="tr-metric-hero"><i class="fa-solid fa-fire"></i><div><div class="num">${p.rachaSemanas||0} weeks</div><div class="lbl">Current streak — keep it going</div></div></div>
+    <div class="tr-metric-row">
+      <div class="tr-metric-box"><div class="num">${p.semanasCompletadas||0}</div><div class="lbl">Weeks done</div></div>
+      <div class="tr-metric-box"><div class="num">${p.retosEnviados||0}</div><div class="lbl">Voice challenges</div></div>
+      <div class="tr-metric-box"><div class="num">${p.palabrasPracticadas||0}</div><div class="lbl">Phrases practiced</div></div>
+    </div>`;
 }
 function renderBadgesTraining() {
   const cont = document.getElementById('tr-badges-row');
@@ -4286,7 +4313,10 @@ function renderBadgesTraining() {
   const completadas = trProgresoActual.etapasCompletadas || [];
   const etapaChips = completadas.map(e => `<span class="tr-badge-chip"><i class="fa-solid fa-trophy tr-icon-bounce"></i> ${TR_ETAPA_LABEL[e]} completed</span>`);
   const medallasGanadas = trProgresoActual.medallas || [];
-  const medallaChips = TR_MEDALLAS.filter(m => medallasGanadas.includes(m.id)).map(m => `<span class="tr-badge-chip"><i class="fa-solid ${m.icono}"></i> ${m.nombre}</span>`);
+  const medallaChips = TR_MEDALLAS.map(m => {
+    const ganada = medallasGanadas.includes(m.id);
+    return `<span class="tr-badge-chip${ganada ? '' : ' locked'}"><i class="fa-solid ${ganada ? m.icono : 'fa-lock'}"></i> ${m.nombre}</span>`;
+  });
   cont.innerHTML = etapaChips.concat(medallaChips).join('');
 }
 
