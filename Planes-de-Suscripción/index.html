@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Planes · NicaEnglishClub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#060607; --card:#0f0f11; --card2:#141417; --field:#17171a;
+    --line:#26262b; --line2:#2f2f36;
+    --text:#e8e8f2; --white:#fff; --muted:#8a8a97; --dim:#6a6a74;
+    --gold:#f0b429; --gold2:#c8891a; --gold3:#ffd966;
+    --serif:"Playfair Display", Georgia, "Times New Roman", serif;
+    --sans:"DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:var(--sans); font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  body::before {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(70% 38% at 50% 0%, rgba(240,180,41,.14), transparent 70%),
+      radial-gradient(40% 30% at 90% 100%, rgba(200,138,26,.07), transparent 70%);
+  }
+  body.has-bar { padding-bottom:88px; }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--gold); outline-offset:3px; border-radius:8px; }
+
+  .wrap { position:relative; z-index:1; width:100%; max-width:1040px; margin:0 auto; padding:0 20px; }
+  section { position:relative; z-index:1; }
+
+  /* ---------- Header ---------- */
+  header .wrap { display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand { display:flex; align-items:center; gap:10px; font-family:var(--serif); font-weight:700; font-size:20px; color:var(--white); text-decoration:none; white-space:nowrap; }
+  .brand em { font-style:normal; color:var(--gold); }
+  .brand-logo { width:34px; height:auto; display:block; filter:drop-shadow(0 0 10px rgba(240,180,41,.3)); }
+  .top-link .short { display:none; }
+  .top-link { font-size:13.5px; font-weight:600; color:var(--gold); text-decoration:none; }
+  .top-link:hover { text-decoration:underline; text-underline-offset:4px; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    height:52px; padding:0 28px; border-radius:16px; border:0; cursor:pointer;
+    font:700 15.5px var(--sans); text-decoration:none;
+    transition:transform .15s var(--ease), box-shadow .2s var(--ease), filter .2s var(--ease), background .2s, border-color .2s;
+  }
+  .btn-gold {
+    background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#1c1305;
+    box-shadow:0 14px 32px -12px rgba(200,138,26,.7), inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .btn-gold:hover { transform:translateY(-1px); filter:brightness(1.05); box-shadow:0 18px 38px -12px rgba(200,138,26,.8), inset 0 1px 0 rgba(255,255,255,.4); }
+  .btn-gold:active { transform:translateY(0) scale(.99); }
+  .btn-line { background:transparent; color:#e6e6ec; border:1px solid var(--line2); }
+  .btn-line:hover { border-color:rgba(240,180,41,.5); background:rgba(240,180,41,.05); }
+  .btn-block { width:100%; }
+
+  /* ---------- Hero ---------- */
+  #hero { padding:52px 0 36px; text-align:center; }
+  #hero h1 {
+    font-family:var(--serif); font-weight:900; color:var(--white);
+    font-size:clamp(34px, 7vw, 58px); line-height:1.06; letter-spacing:-.02em;
+    max-width:16ch; margin:0 auto;
+  }
+  #hero .lead { max-width:46ch; margin:20px auto 0; color:var(--muted); font-size:17px; }
+  .hero-price {
+    display:inline-flex; flex-wrap:wrap; justify-content:center; gap:4px 14px;
+    margin-top:26px; padding:12px 22px; border-radius:999px;
+    border:1px solid rgba(240,180,41,.28); background:rgba(240,180,41,.06);
+    font-size:15px; color:#d8d8e0;
+  }
+  .hero-price b { color:var(--gold3); font-weight:700; }
+  .hero-cta { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:28px; }
+  .hero-cta .btn { flex:1 1 200px; max-width:260px; }
+  .hero-logo { display:block; width:88px; height:auto; margin:0 auto 18px; filter:drop-shadow(0 0 22px rgba(240,180,41,.35)); }
+  .foot-logo { display:block; width:44px; height:auto; margin:0 auto 10px; opacity:.9; }
+
+  .facts { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:44px; text-align:left; }
+  .fact { padding:16px; border:1px solid var(--line); border-radius:18px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)), var(--card); }
+  .fact svg { width:22px; height:22px; color:var(--gold); margin-bottom:10px; }
+  .fact h3 { font-size:14.5px; font-weight:700; color:var(--white); }
+  .fact p { font-size:13px; color:var(--muted); margin-top:2px; }
+
+  /* ---------- Optional: tutor comparison ---------- */
+  #tutor { margin:18px auto 0; max-width:640px; padding:16px 20px; border:1px dashed rgba(240,180,41,.4); border-radius:18px; text-align:center; font-size:15px; color:#d0d0d8; }
+  #tutor b { color:var(--gold3); }
+
+  /* ---------- Section headings ---------- */
+  .sec { padding:56px 0 8px; }
+  .sec h2 { font-family:var(--serif); font-weight:700; color:var(--white); font-size:clamp(26px, 4.6vw, 36px); line-height:1.15; letter-spacing:-.01em; }
+  .sec .sub { margin-top:10px; color:var(--muted); max-width:56ch; }
+  .center { text-align:center; }
+  .center .sub { margin-left:auto; margin-right:auto; }
+
+  .pill[hidden] { display:none; }
+  .pill { display:inline-block; margin-top:18px; padding:8px 16px; border-radius:999px; font-size:13.5px; font-weight:600; color:var(--gold3); background:rgba(240,180,41,.1); border:1px solid rgba(240,180,41,.3); }
+
+  /* ---------- Plans ---------- */
+  .plans { display:grid; gap:26px; margin-top:34px; }
+  .card {
+    position:relative; display:flex; flex-direction:column;
+    padding:28px 24px 24px; border-radius:26px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0) 36%), var(--card);
+    box-shadow:0 30px 70px -40px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .card.featured {
+    border-color:rgba(240,180,41,.7);
+    background:linear-gradient(180deg, rgba(240,180,41,.09), rgba(240,180,41,0) 45%), var(--card);
+    box-shadow:0 30px 80px -36px rgba(240,180,41,.35), inset 0 1px 0 rgba(255,255,255,.07);
+  }
+  .badge {
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    padding:7px 16px; border-radius:999px; white-space:nowrap;
+    background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#1c1305;
+    font-size:12.5px; font-weight:700; box-shadow:0 10px 24px -10px rgba(200,138,26,.8);
+  }
+  .card .kicker { font-size:13.5px; color:var(--muted); }
+  .card h3 { font-family:var(--serif); font-weight:700; font-size:26px; color:var(--white); margin-top:2px; display:flex; align-items:center; gap:10px; }
+  .card h3 svg { width:20px; height:20px; color:var(--gold); }
+  .card .desc { font-size:14.5px; color:var(--muted); margin-top:8px; }
+
+  .price { display:flex; flex-wrap:wrap; align-items:baseline; margin-top:20px; font-family:var(--serif); font-weight:900; color:var(--white); font-size:56px; line-height:1; letter-spacing:-.02em; }
+  .price .cur { font-size:26px; margin-right:2px; align-self:flex-start; margin-top:8px; color:var(--gold3); }
+  .price .cents { font-size:24px; align-self:flex-start; margin-top:8px; letter-spacing:0; }
+  .price .per { flex-basis:100%; margin:10px 0 0; font:500 14px var(--sans); color:var(--muted); letter-spacing:0; }
+
+  .units { margin-top:16px; border-top:1px solid var(--line); }
+  .units div { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px dashed var(--line); font-size:14px; color:var(--muted); }
+  .units b { color:var(--gold3); font-weight:700; }
+
+  .save { margin-top:14px; padding:12px 14px; border-radius:14px; background:rgba(240,180,41,.08); border:1px solid rgba(240,180,41,.25); font-size:13.5px; color:#e4d6ad; }
+  .save b { color:var(--gold3); }
+  .only-us { margin-top:14px; padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid var(--line2); font-size:13.5px; color:#cfcfd6; }
+
+  .checks { list-style:none; margin:18px 0 22px; display:grid; gap:11px; font-size:14.5px; color:#d0d0d8; }
+  .checks li { display:flex; gap:10px; align-items:flex-start; }
+  .checks svg { flex:none; width:18px; height:18px; margin-top:2px; color:var(--gold); }
+  .card .btn { margin-top:auto; }
+  .fine { margin-top:22px; text-align:center; font-size:13px; color:var(--dim); }
+
+  /* ---------- Duo comparison bars ---------- */
+  .duo-box { margin-top:30px; padding:26px 22px; border-radius:26px; border:1px solid var(--line); background:var(--card); }
+  .bars { display:grid; gap:18px; }
+  .bar-row .lab { display:flex; justify-content:space-between; align-items:baseline; gap:4px 12px; flex-wrap:wrap; font-size:14px; color:var(--muted); margin-bottom:8px; }
+  .bar-row .lab b { color:var(--white); font-size:15px; }
+  .track { height:16px; border-radius:99px; background:var(--field); overflow:hidden; }
+  .fill { height:100%; border-radius:99px; }
+  .fill.solo { width:100%; background:#3a3a42; }
+  .fill.duo { background:linear-gradient(90deg, var(--gold3), var(--gold2)); }
+  .duo-note { margin-top:20px; font-size:15px; color:#d0d0d8; }
+  .duo-note b { color:var(--gold3); }
+  .trio { display:grid; gap:12px; margin-top:22px; }
+  .trio div { padding:14px 16px; border-radius:16px; border:1px solid var(--line); background:var(--card2); font-size:14px; color:var(--muted); }
+  .trio strong { display:block; color:var(--white); font-size:14.5px; margin-bottom:2px; }
+
+  /* ---------- How it works + method ---------- */
+  .steps { list-style:none; display:grid; gap:14px; margin-top:26px; counter-reset:s; }
+  .steps li { counter-increment:s; display:flex; gap:16px; align-items:flex-start; padding:18px; border:1px solid var(--line); border-radius:20px; background:var(--card); }
+  .steps li::before {
+    content:counter(s); flex:none; width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font:700 16px var(--serif); color:#1c1305; background:linear-gradient(135deg, var(--gold3), var(--gold2));
+  }
+  .steps b { display:block; color:var(--white); font-size:16px; }
+  .steps span { font-size:14.5px; color:var(--muted); }
+
+  .flow { display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; list-style:none; }
+  .flow li { padding:10px 16px; border-radius:999px; border:1px solid var(--line2); background:var(--card); font-size:14px; font-weight:500; color:#d8d8e0; }
+  .flow li:nth-last-child(-n+2) { border-color:rgba(240,180,41,.45); color:var(--gold3); background:rgba(240,180,41,.06); }
+
+  /* ---------- Testimonials (optional) ---------- */
+  #testimonios .grid { display:grid; gap:14px; margin-top:26px; }
+  .quote { padding:22px; border-radius:22px; border:1px solid var(--line); background:var(--card); }
+  .quote p { font-family:var(--serif); font-size:17px; line-height:1.5; color:var(--white); }
+  .quote footer { margin-top:14px; font-size:13.5px; color:var(--muted); }
+  .quote footer b { color:var(--gold3); font-weight:600; }
+
+  /* ---------- FAQ ---------- */
+  .faq { margin-top:26px; display:grid; gap:10px; }
+  details { border:1px solid var(--line); border-radius:18px; background:var(--card); }
+  summary { list-style:none; cursor:pointer; padding:18px 20px; display:flex; justify-content:space-between; align-items:center; gap:14px; font-weight:600; color:var(--white); font-size:15.5px; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:""; flex:none; width:9px; height:9px; border-right:2px solid var(--gold); border-bottom:2px solid var(--gold); transform:rotate(45deg); transition:transform .2s var(--ease); margin-top:-4px; }
+  details[open] summary::after { transform:rotate(-135deg); margin-top:4px; }
+  details p { padding:0 20px 18px; font-size:14.5px; color:var(--muted); }
+  details p b { color:var(--gold3); font-weight:600; }
+
+  /* ---------- Final CTA ---------- */
+  .final { margin:56px 0 0; padding:36px 22px; text-align:center; border-radius:28px; border:1px solid rgba(240,180,41,.35); background:linear-gradient(180deg, rgba(240,180,41,.09), rgba(240,180,41,.01)); }
+  .final h2 { font-family:var(--serif); font-weight:700; font-size:clamp(26px,5vw,34px); color:var(--white); }
+  .final p { margin:10px auto 22px; max-width:44ch; color:var(--muted); }
+
+  footer.site { position:relative; z-index:1; margin-top:56px; padding:28px 20px 34px; text-align:center; font-size:13px; color:var(--dim); border-top:1px solid var(--line); }
+
+  /* ---------- Sticky bar (mobile) ---------- */
+  .bar {
+    position:fixed; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); z-index:50;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:10px 10px 10px 18px; border-radius:20px;
+    background:rgba(15,15,17,.88); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(240,180,41,.3); box-shadow:0 20px 40px -16px rgba(0,0,0,.9);
+    animation:up .35s var(--ease);
+  }
+  .bar[hidden] { display:none; }
+  .bar .t { font-size:13px; color:var(--muted); line-height:1.25; }
+  .bar .t b { display:block; font-size:16px; color:var(--white); font-family:var(--serif); }
+  .bar .btn { height:44px; padding:0 20px; font-size:14.5px; border-radius:14px; }
+  @keyframes up { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+
+  /* ---------- One orchestrated entrance (hero only) ---------- */
+  @media (prefers-reduced-motion:no-preference) {
+    #hero .rise { opacity:0; animation:up .7s var(--ease) forwards; }
+    #hero .rise:nth-child(1) { animation-delay:.02s; }
+    #hero .rise:nth-child(2) { animation-delay:.09s; }
+    #hero .rise:nth-child(3) { animation-delay:.16s; }
+    #hero .rise:nth-child(4) { animation-delay:.23s; }
+    #hero .rise:nth-child(5) { animation-delay:.30s; }
+  }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .bar { animation:none; } }
+
+  /* ---------- Celulares pequeños ---------- */
+  @media (max-width:420px) {
+    .wrap { padding:0 16px; }
+    .brand { font-size:18px; gap:8px; }
+    .brand-logo { width:30px; }
+    .top-link .long { display:none; }
+    .top-link .short { display:inline; }
+    #hero { padding-top:34px; }
+    .hero-logo { width:76px; }
+    .facts { gap:10px; }
+    .fact { padding:14px; }
+    .card { padding:26px 20px 22px; }
+    .price { font-size:50px; }
+    .duo-box { padding:22px 18px; }
+    .steps li { padding:16px; }
+    summary { padding:16px 18px; }
+  }
+
+  /* ---------- Desktop ---------- */
+  @media (min-width:860px) {
+    .facts { grid-template-columns:repeat(4,1fr); }
+    .card .desc { min-height:4.7em; }
+    .plans { grid-template-columns:repeat(3,1fr); align-items:stretch; }
+    .trio { grid-template-columns:repeat(3,1fr); }
+    #testimonios .grid { grid-template-columns:repeat(3,1fr); }
+    .duo-box { padding:34px 36px; }
+    .bar { display:none !important; }
+    body.has-bar { padding-bottom:0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#" data-sitio><img class="brand-logo" data-logo alt="" width="34" height="36"><span>Nica<em>English</em>Club</span></a>
+    <a class="top-link" href="#" data-sitio target="_blank" rel="noopener"><span class="long">Sitio principal</span><span class="short">Sitio</span></a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section id="hero">
+    <div class="wrap">
+      <img class="hero-logo rise" alt="Logo NicaEnglishClub" width="335" height="352" src="data:image/png;base64,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">
+      <h1 class="rise">No solo estudies inglés. Entrénalo.</h1>
+      <p class="lead rise">Sesiones en vivo por Google Meet, grupos de 5 a 8 personas y corrección directa en cada práctica.</p>
+      <div class="rise">
+        <p class="hero-price">
+          <span>Desde <b>$<span data-b="soloFull">69.99</span></b> al mes</span>
+          <span>Cada sesión en vivo te sale en <b>$<span data-b="soloSes">5.83</span></b></span>
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-gold" href="#planes">Ver planes</a>
+          <a class="btn btn-line" href="#como">Cómo funciona</a>
+        </div>
+      </div>
+
+      <div class="facts rise">
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          <h3>3 sesiones por semana</h3><p>En vivo, por Google Meet</p>
+        </div>
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4 1.8 4 4.5"/></svg>
+          <h3>Grupos de 5 a 8</h3><p>Cupos limitados por grupo</p>
+        </div>
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M2 20h20"/></svg>
+          <h3>Plataforma 24/7</h3><p>Práctica interactiva cuando quieras</p>
+        </div>
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+          <h3>Club de Conversación</h3><p>Comunidad dentro de la plataforma</p>
+        </div>
+      </div>
+
+      <!-- Opcional: se muestra solo si pones CONFIG.tutorPrivadoHora -->
+      <div id="tutor" hidden>
+        Con un tutor privado a <b>$<span data-b="tutorHora"></span> la hora</b>, 12 clases serían <b>$<span data-b="tutorMes"></span></b>.
+        Aquí, 12 sesiones en vivo son <b>$<span data-b="soloFull2"></span></b>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PLANES ================= -->
+  <section id="planes" class="sec">
+    <div class="wrap">
+      <div class="center">
+        <h2>Elige cómo quieres entrenar</h2>
+        <p class="sub">Todos los planes incluyen la plataforma de práctica 24/7 y el Club de Conversación.</p>
+        <!-- Opcional: se muestra solo si pones CONFIG.cuposTexto -->
+        <span class="pill" id="cupos" hidden></span>
+      </div>
+
+      <div class="plans">
+
+        <!-- SOLO -->
+        <article class="card">
+          <p class="kicker">Estudiante individual</p>
+          <h3>Solo Élite</h3>
+          <p class="desc">Para quien prefiere avanzar a su propio ritmo, con grupo y seguimiento.</p>
+          <div class="price"><span class="cur">$</span><span data-b="soloWhole">69</span><span class="cents" data-b="soloCents">.99</span><span class="per">USD / mes</span></div>
+          <div class="units">
+            <div><span>Por sesión en vivo</span><b>$<span data-b="soloSes">5.83</span></b></div>
+            <div><span>Por día</span><b>$<span data-b="soloDia">2.33</span></b></div>
+          </div>
+          <ul class="checks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span><b>3 sesiones semanales</b> por Google Meet</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Grupos de máx. <b>5 a 8 personas</b></span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Seguimiento semanal personalizado</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Plataforma de práctica 24/7</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Club de Conversación</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Material de estudio y grupo de WhatsApp</span></li>
+          </ul>
+          <a class="btn btn-line btn-block" href="#" data-reserva target="_blank" rel="noopener">Reservar mi lugar</a>
+        </article>
+
+        <!-- DUO -->
+        <article class="card featured">
+          <span class="badge">Mejor precio por persona</span>
+          <p class="kicker">Para 2 estudiantes</p>
+          <h3>Dúo Dinámico</h3>
+          <p class="desc">Entra con un amigo, tu pareja o un colega. Mismos beneficios, cada quien en su nivel.</p>
+          <div class="price"><span class="cur">$</span><span data-b="duoWhole">99</span><span class="cents" data-b="duoCents"></span><span class="per">USD / mes, los dos</span></div>
+          <div class="units">
+            <div><span>Por persona</span><b>$<span data-b="duoPP">49.50</span></b></div>
+            <div><span>Por sesión, por persona</span><b>$<span data-b="duoSes">4.13</span></b></div>
+            <div><span>Por día, por persona</span><b>$<span data-b="duoDia">1.65</span></b></div>
+          </div>
+          <p class="save">Ahorran <b>$<span data-b="duoAhorro">40.98</span> al mes</b> frente a dos planes Solo. Un solo pago mensual por ambas cuentas.</p>
+          <ul class="checks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span><b>Dos accesos</b> individuales e independientes</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span><b>3 sesiones semanales</b> por persona</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Cada uno con su propio test de nivelación</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Seguimiento semanal individual</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Plataforma 24/7 y Club de Conversación para los dos</span></li>
+          </ul>
+          <a class="btn btn-gold btn-block" href="#" data-reserva target="_blank" rel="noopener">Inscribir a nuestro dúo</a>
+        </article>
+
+        <!-- VIP -->
+        <article class="card">
+          <p class="kicker">Atención personalizada</p>
+          <h3>Uno a Uno VIP
+            <svg viewBox="0 0 40 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 22 L3 8 L12 14 L20 3 L28 14 L37 8 L35 22 Z"/><path d="M5 22 H35"/></svg>
+          </h3>
+          <p class="desc">Sesiones directas con tu coach para acelerar tu desarrollo personal o profesional.</p>
+          <div class="price"><span class="cur">$</span><span data-b="vipWhole">199</span><span class="cents" data-b="vipCents">.99</span><span class="per">USD / mes</span></div>
+          <div class="units">
+            <div><span>Por día</span><b>$<span data-b="vipDia">6.67</span></b></div>
+          </div>
+          <p class="only-us">Disponible por ahora solo para estudiantes en Estados Unidos.</p>
+          <ul class="checks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span><b>Sesiones 100% individuales</b> con tu coach</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Horario adaptado a tu agenda</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Enfoque temático según tu área o profesión</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Auditorías personalizadas de pronunciación</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Incluye plataforma 24/7 y Club de Conversación</span></li>
+          </ul>
+          <a class="btn btn-line btn-block" href="#" data-reserva target="_blank" rel="noopener">Solicitar admisión VIP</a>
+        </article>
+
+      </div>
+      <p class="fine">Precios en USD. Pueden variar según tu país; te confirmamos el precio exacto al reservar.</p>
+    </div>
+  </section>
+
+  <!-- ================= DUO: comparación ================= -->
+  <section class="sec">
+    <div class="wrap">
+      <h2>Entre dos, cada uno paga menos</h2>
+      <p class="sub">Mismo entrenamiento, dos cuentas separadas, un solo pago.</p>
+
+      <div class="duo-box">
+        <div class="bars">
+          <div class="bar-row">
+            <p class="lab"><span>Tú solo</span><b>$<span data-b="soloFull">69.99</span> al mes</b></p>
+            <div class="track"><div class="fill solo"></div></div>
+          </div>
+          <div class="bar-row">
+            <p class="lab"><span>Tú y un amigo</span><b>$<span data-b="duoPP">49.50</span> al mes, cada uno</b></p>
+            <div class="track"><div class="fill duo" id="duoFill" style="width:71%"></div></div>
+          </div>
+        </div>
+        <p class="duo-note">Cada uno se ahorra <b>$<span data-b="duoAhorroPP">20.49</span> al mes</b>. Entre los dos son <b>$<span data-b="duoAhorroAnio">492</span> menos al año</b>.</p>
+
+        <div class="trio">
+          <div><strong>Es más difícil faltar</strong>Cuando alguien te espera en la sesión, mantienes el ritmo.</div>
+          <div><strong>Cada quien en su nivel</strong>Cada uno hace su test y entra al grupo que le corresponde.</div>
+          <div><strong>Un solo pago</strong>Deciden quién paga, o se dividen la mensualidad.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CÓMO FUNCIONA ================= -->
+  <section id="como" class="sec">
+    <div class="wrap">
+      <h2>Cómo empiezas</h2>
+      <ol class="steps">
+        <li><div><b>Reserva tu lugar</b><span>Elige tu plan y completa el formulario de reservación.</span></div></li>
+        <li><div><b>Haz tu test de nivelación</b><span>Con eso te asignamos al grupo de tu nivel. Si son dos, cada quien hace el suyo.</span></div></li>
+        <li><div><b>Empieza a entrenar</b><span>Tres sesiones en vivo por semana, más práctica en la plataforma cuando quieras.</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= MÉTODO ================= -->
+  <section class="sec">
+    <div class="wrap">
+      <h2>Aquí el inglés se entrena, no se memoriza</h2>
+      <p class="sub">Usas el inglés desde el primer día. La gramática está al servicio de comunicarte, y cada práctica sigue el mismo ciclo:</p>
+      <ol class="flow">
+        <li>Situación</li><li>Comprender</li><li>Escuchar</li><li>Repetir</li><li>Usar</li><li>Corregir</li><li>Volver a usar</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIOS (opcional) ================= -->
+  <section id="testimonios" class="sec" hidden>
+    <div class="wrap">
+      <h2>Lo que dicen nuestros miembros</h2>
+      <div class="grid" id="testimonios-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="sec">
+    <div class="wrap">
+      <h2>Preguntas frecuentes</h2>
+      <div class="faq">
+        <details>
+          <summary>¿Cómo sé cuál es mi nivel?</summary>
+          <p>Al empezar haces un test de nivelación y con eso te asignamos al grupo que te corresponde.</p>
+        </details>
+        <details>
+          <summary>En el Plan Dúo, ¿tenemos que estar en el mismo nivel?</summary>
+          <p>No. Aunque hagan un solo pago, cada estudiante hace su test de forma independiente y entra al grupo de su nivel.</p>
+        </details>
+        <details>
+          <summary>¿Cómo se paga el Plan Dúo?</summary>
+          <p>Es un solo pago mensual de <b>$<span data-b="duoFull">99</span> USD</b>. Ustedes deciden si uno paga todo o si se dividen <b>$<span data-b="duoPP">49.50</span></b> cada uno.</p>
+        </details>
+        <details>
+          <summary>¿Qué pasa si mi compañero se retira?</summary>
+          <p>Puedes invitar a otra persona para el siguiente ciclo y mantener el Plan Dúo. Si sigues solo, tu plan pasa al precio de Solo Élite (<b>$<span data-b="soloFull">69.99</span></b>).</p>
+        </details>
+        <details>
+          <summary>¿Los precios son iguales en todos los países?</summary>
+          <p>Los precios están en USD y pueden variar según el país. Te confirmamos el precio exacto al reservar.</p>
+        </details>
+        <details>
+          <summary>¿Quién puede tomar el plan Uno a Uno VIP?</summary>
+          <p>Por ahora el plan VIP está disponible solo para estudiantes en Estados Unidos.</p>
+        </details>
+      </div>
+
+      <div class="final">
+        <h2>¿Listo para entrenar tu inglés?</h2>
+        <p>Reserva tu lugar y empieza con tu test de nivelación.</p>
+        <a class="btn btn-gold" href="#" data-reserva target="_blank" rel="noopener">Reservar mi lugar</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <img class="foot-logo" data-logo alt="" width="44" height="46">
+  <p>&copy; 2026 NicaEnglishClub. Todos los derechos reservados.</p>
+</footer>
+
+<!-- Barra fija en celular -->
+<div class="bar" id="bar" hidden>
+  <div class="t">Desde<b>$<span data-b="soloFull">69.99</span> / mes</b></div>
+  <a class="btn btn-gold" href="#planes">Ver planes</a>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN — aquí cambias todo sin tocar el resto del código
+   ===================================================================== */
+var CONFIG = {
+  reservaUrl: 'https://sites.google.com/view/nicaenglishclub/reservacion',
+  sitioUrl:   'https://sites.google.com/view/nicaenglishclub/inicio',
+
+  // Precios reales en USD. Todo lo demás (por sesión, por día, ahorros) se calcula solo.
+  precios: { solo: 69.99, duo: 99, vip: 199.99 },
+  sesionesPorMes: 12,          // 3 por semana x 4 semanas
+
+  // ---- OPCIONALES (déjalos en null / [] para ocultarlos; usa solo datos reales) ----
+  tutorPrivadoHora: null,      // ej. 15  -> compara con lo que cobra un tutor privado en tu mercado
+  cuposTexto: null,            // ej. 'Quedan 2 lugares en el grupo de las 7 pm'
+  testimonios: [],             // ej. [{ texto:'...', nombre:'Ana', detalle:'Miembro desde 2025' }]
+  barraFija: true              // barra "Desde $69.99 / mes" en celulares
+};
+
+(function () {
+  var C = CONFIG, P = C.precios, N = C.sesionesPorMes;
+  var $  = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var money = function (n) { return n.toFixed(2); };
+  var whole = function (n) { return String(Math.floor(n)); };
+  var cents = function (n) { var c = Math.round((n - Math.floor(n)) * 100); return c ? '.' + (c < 10 ? '0' + c : c) : ''; };
+
+  var duoPP = P.duo / 2;
+  var ahorro = 2 * P.solo - P.duo;
+  var v = {
+    soloFull: money(P.solo), soloFull2: money(P.solo),
+    soloWhole: whole(P.solo), soloCents: cents(P.solo),
+    soloSes: money(P.solo / N), soloDia: money(P.solo / 30),
+    duoFull: P.duo % 1 ? money(P.duo) : String(P.duo),
+    duoWhole: whole(P.duo), duoCents: cents(P.duo),
+    duoPP: money(duoPP), duoSes: money(duoPP / N), duoDia: money(duoPP / 30),
+    duoAhorro: money(ahorro), duoAhorroPP: money(P.solo - duoPP),
+    duoAhorroAnio: String(Math.round(ahorro * 12)),
+    vipWhole: whole(P.vip), vipCents: cents(P.vip), vipDia: money(P.vip / 30)
+  };
+  if (C.tutorPrivadoHora) {
+    v.tutorHora = String(C.tutorPrivadoHora);
+    v.tutorMes = String(Math.round(C.tutorPrivadoHora * N));
+  }
+  $$('[data-b]').forEach(function (el) {
+    var k = el.getAttribute('data-b');
+    if (v[k] !== undefined) el.textContent = v[k];
+  });
+
+  // Barra del Dúo proporcional al ahorro real
+  var fill = $('#duoFill');
+  if (fill) fill.style.width = Math.round(duoPP / P.solo * 100) + '%';
+
+  // Logo: una sola copia (la del hero) se reutiliza en header, footer y favicon
+  var heroLogo = $('.hero-logo');
+  if (heroLogo) {
+    $$('img[data-logo]').forEach(function (i) { i.src = heroLogo.src; });
+    var ic = document.createElement('link'); ic.rel = 'icon'; ic.href = heroLogo.src; document.head.appendChild(ic);
+  }
+
+  // Enlaces
+  $$('[data-reserva]').forEach(function (a) { a.href = C.reservaUrl; });
+  $$('[data-sitio]').forEach(function (a) { a.href = C.sitioUrl; });
+
+  // Opcionales
+  if (C.tutorPrivadoHora) $('#tutor').hidden = false;
+  if (C.cuposTexto) { var c = $('#cupos'); c.textContent = C.cuposTexto; c.hidden = false; }
+  if (C.testimonios && C.testimonios.length) {
+    var g = $('#testimonios-grid');
+    C.testimonios.forEach(function (t) {
+      var q = document.createElement('div'); q.className = 'quote';
+      var p = document.createElement('p'); p.textContent = '\u201C' + t.texto + '\u201D';
+      var f = document.createElement('footer');
+      var b = document.createElement('b'); b.textContent = t.nombre || '';
+      f.appendChild(b);
+      if (t.detalle) f.appendChild(document.createTextNode(' \u00B7 ' + t.detalle));
+      q.appendChild(p); q.appendChild(f); g.appendChild(q);
+    });
+    $('#testimonios').hidden = false;
+  }
+
+  // Barra fija: aparece cuando el hero sale de pantalla y se oculta al llegar a los planes
+  var bar = $('#bar');
+  if (C.barraFija && bar && 'IntersectionObserver' in window) {
+    var heroOut = false, plansIn = false;
+    var update = function () {
+      var show = heroOut && !plansIn;
+      bar.hidden = !show;
+      document.body.classList.toggle('has-bar', show);
+    };
+    new IntersectionObserver(function (e) { heroOut = !e[0].isIntersecting && e[0].boundingClientRect.top < 0; update(); }, { threshold: 0 }).observe($('#hero'));
+    new IntersectionObserver(function (e) { plansIn = e[0].isIntersecting; update(); }, { threshold: 0.15 }).observe($('#planes'));
+  }
+})();
+</script>
+</body>
+</html>
