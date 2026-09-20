@@ -457,7 +457,7 @@ a { color: inherit; }
 /* ===== MENSAJES (chat entre alumnos) — flotante, igual que NEC Coach ===== */
 .chat-float-panel { position:fixed; bottom:22px; right:22px; z-index:490; width:400px; max-width:92vw; height:min(640px, 80vh); background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow: var(--shadow-card); display:none; flex-direction:column; overflow:hidden; }
 .chat-float-panel.open { display:flex; animation: fadeUp .25s var(--ease) both; }
-.chat-float-panel .chat-shell { height:100%; max-width:100%; margin:0; }
+.chat-float-panel .chat-shell { height:100%; min-height:0; max-width:100%; margin:0; }
 @media (max-width:480px) { .chat-float-panel { bottom:0; right:0; width:100%; max-width:100%; height:100%; border-radius:0; } }
 @keyframes necMicPulse { 0%,100% { box-shadow:0 0 0 0 rgba(226,55,68,.5); } 50% { box-shadow:0 0 0 6px rgba(226,55,68,0); } }
 .nec-speak-btn { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; margin-left:3px; border:none; background:none; color:inherit; opacity:.75; cursor:pointer; font-size:12px; vertical-align:middle; padding:0; }
@@ -1135,27 +1135,23 @@ body.neclub-visitante .neclub-composer { display:none; }
 .profile-avatar-edit input[type=file] { display:none; }
 
 /* ===== CHAT (estilo WhatsApp) ===== */
-.chat-shell { display:flex; flex-direction:column; height:calc(100vh - 62px); max-width:720px; width:100%; margin:0 auto; }
+.chat-shell { display:flex; flex-direction:column; height:calc(100vh - 62px); min-height:0; max-width:720px; width:100%; margin:0 auto; }
 .chat-online-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(0,214,143,.1); border:1px solid rgba(0,214,143,.3); color:var(--green); font-size:10.5px; font-weight:700; padding:5px 11px; border-radius:99px; margin-left:8px; }
 .chat-tabs { display:flex; gap:8px; padding:10px 16px 0; }
 .chat-tab-btn { flex:1; padding:10px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:inherit; font-size:12px; font-weight:700; border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition: all .18s var(--ease); }
 .chat-tab-btn.active { color:var(--gold); border-color:var(--gold2); background:var(--gold-dim); }
 .chat-contacts { display:none; padding:10px 16px; gap:8px; overflow-x:auto; }
 .chat-contacts.open { display:flex; }
-.chat-contact-chip { flex:0 0 auto; display:flex; align-items:center; gap:7px; padding:7px 12px 7px 7px; background:var(--card); border:1px solid var(--border2); border-radius:99px; cursor:pointer; font-size:12px; color:var(--text); font-weight:600; transition: border-color .18s var(--ease); white-space:nowrap; }
-.chat-contact-chip.active { border-color:var(--gold2); color:var(--gold3); background:var(--gold-dim); }
-.chat-contact-chip .contact-avatar { width:22px; height:22px; border-radius:50%; overflow:hidden; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--gold); flex-shrink:0; position:relative; }
+.chat-contact-chip { flex:0 0 auto; padding:2px; background:var(--card); border:1px solid var(--border2); border-radius:50%; cursor:pointer; transition: border-color .18s var(--ease); }
+.chat-contact-chip.active { border-color:var(--gold2); background:var(--gold-dim); }
+.chat-contact-chip .contact-avatar { width:34px; height:34px; border-radius:50%; overflow:hidden; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--gold); flex-shrink:0; position:relative; }
 .chat-contact-chip .contact-avatar img { width:100%; height:100%; object-fit:cover; }
 .chat-contact-chip .presence-dot { position:absolute; bottom:-1px; right:-1px; margin:0; width:7px; height:7px; border:1.5px solid var(--card); }
 
-/* Fondo tipo "wallpaper" de WhatsApp: patrón sutil sobre el fondo oscuro de la app */
+/* Fondo negro puro de la plataforma (antes usaba el azul-negro típico de WhatsApp) */
 .chat-messages {
-  flex:1; overflow-y:auto; padding:14px 14px 16px; display:flex; flex-direction:column;
-  background-color:#0b141a;
-  background-image:
-    radial-gradient(circle at 12px 12px, rgba(255,255,255,.035) 1.4px, transparent 1.5px),
-    radial-gradient(circle at 32px 34px, rgba(255,255,255,.03) 1.2px, transparent 1.3px);
-  background-size: 44px 44px;
+  flex:1; min-height:0; overflow-y:auto; padding:14px 14px 16px; display:flex; flex-direction:column;
+  background-color:var(--canvas);
 }
 .chat-msg-row { display:flex; align-items:flex-end; gap:7px; max-width:100%; margin-top:2px; }
 .chat-msg-row.mine { flex-direction:row-reverse; }
@@ -1169,9 +1165,10 @@ body.neclub-visitante .neclub-composer { display:none; }
 .chat-conv-list { display:flex; flex-direction:column; }
 .chat-conv-row { display:flex; align-items:center; gap:12px; padding:11px 4px; cursor:pointer; border-bottom:1px solid var(--border2); transition: background .15s var(--ease); }
 .chat-conv-row:hover, .chat-conv-row:active { background:rgba(255,255,255,.03); }
-.chat-conv-avatar { position:relative; width:46px; height:46px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:var(--gold); }
+.chat-conv-avatar-wrap { position:relative; width:46px; height:46px; flex-shrink:0; }
+.chat-conv-avatar { width:100%; height:100%; border-radius:50%; overflow:hidden; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:var(--gold); }
 .chat-conv-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-.presence-dot-lg { position:absolute; bottom:0; right:0; width:12px; height:12px; border-radius:50%; border:2px solid var(--canvas); }
+.presence-dot-lg { position:absolute; bottom:1px; right:1px; width:12px; height:12px; border-radius:50%; border:2px solid var(--canvas); }
 .presence-dot-lg.online { background:var(--green); }
 .presence-dot-lg.offline { background:var(--muted-dim); }
 .chat-conv-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
@@ -1194,9 +1191,9 @@ body.neclub-visitante .neclub-composer { display:none; }
   content:""; position:absolute; top:0; left:-7px; width:10px; height:13px;
   background:#202c33; clip-path:polygon(100% 0, 0% 0, 100% 100%);
 }
-.chat-inputbar { display:flex; gap:10px; padding:12px 16px; border-top:1px solid var(--border); background:rgba(8,8,10,.9); }
+.chat-inputbar { display:flex; gap:10px; padding:14px 16px 18px; border-top:1px solid rgba(240,180,41,.15); background:rgba(8,8,10,.9); }
 .chat-inputbar input { flex:1; padding:12px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:13.5px; }
-.chat-send-btn { width:44px; height:44px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; cursor:pointer; flex-shrink:0; }
+.chat-send-btn { width:38px; height:38px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; cursor:pointer; flex-shrink:0; font-size:14px; }
 .chat-hint { text-align:center; font-size:10px; color:var(--muted); padding:6px 16px 0; }
 
 .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(10px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; }
@@ -6262,9 +6259,8 @@ function renderContactosChat() {
     const inicial = (a.nombre||'?').charAt(0).toUpperCase();
     const avatar = foto ? `<img src="${foto}">` : inicial;
     const activo = chatContactoActual && chatContactoActual.id === a.id;
-    return `<div class="chat-contact-chip ${activo?'active':''}" onclick="abrirChatPrivado('${a.id}','${(a.nombre||'').replace(/'/g,"&#39;")}')">
+    return `<div class="chat-contact-chip ${activo?'active':''}" title="${(a.nombre||'').replace(/"/g,'&quot;')}" onclick="abrirChatPrivado('${a.id}','${(a.nombre||'').replace(/'/g,"&#39;")}')">
       <span class="contact-avatar">${avatar}<span class="presence-dot online"></span></span>
-      ${a.nombre}
     </div>`;
   }).join('') || `<div class="notif-empty" style="padding:8px;">No hay compañeros conectados en este momento.</div>`;
 }
@@ -6333,7 +6329,7 @@ function renderListaConversacionesChat() {
     const mio = ultimo.uid === miId;
     const preview = ((mio ? 'Tú: ' : '') + (ultimo.texto || '')).replace(/</g,'&lt;');
     return `<div class="chat-conv-row" onclick="abrirChatPrivado('${otroId}','${nombre.replace(/'/g,"&#39;")}')">
-      <span class="chat-conv-avatar">${avatarHtmlNeclub(datos.foto, nombre)}<span class="presence-dot-lg ${enLinea ? 'online' : 'offline'}"></span></span>
+      <span class="chat-conv-avatar-wrap"><span class="chat-conv-avatar">${avatarHtmlNeclub(datos.foto, nombre)}</span><span class="presence-dot-lg ${enLinea ? 'online' : 'offline'}"></span></span>
       <div class="chat-conv-info">
         <span class="chat-conv-name">${nombre}</span>
         <span class="chat-conv-preview">${preview}</span>
