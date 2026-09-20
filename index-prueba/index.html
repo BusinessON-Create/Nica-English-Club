@@ -2286,7 +2286,14 @@ function precargarPanelNeclubHTML() {
         if (!resp.ok) throw new Error('No se pudo cargar neclub-panel.html (' + resp.status + ')');
         return resp.text();
       })
-      .then(html => { document.getElementById('app-root').insertAdjacentHTML('beforeend', html); })
+      .then(html => {
+        document.getElementById('app-root').insertAdjacentHTML('beforeend', html);
+        // La foto del alumno en el composer solo se puede pintar una vez que este HTML
+        // ya está en la página — antes fallaba en silencio porque intentaba pintarla
+        // apenas se iniciaba sesión, cuando este archivo todavía se estaba trayendo.
+        const avCont = document.getElementById('neclub-avatar-composer');
+        if (avCont && sessionActiva) avCont.innerHTML = avatarHtmlNeclub(sessionActiva.foto, sessionActiva.nombre);
+      })
       .catch(e => { neclubPanelPromise = null; throw e; }); // si falla, permite reintentar la próxima vez
   }
   return neclubPanelPromise;
@@ -2832,8 +2839,6 @@ let neclubFeedPintadoAlMenosUnaVez = false;
 function escucharNeclub() {
   if (neclubFeedYaEscuchado) return;
   neclubFeedYaEscuchado = true;
-  const avCont = document.getElementById('neclub-avatar-composer');
-  if (avCont && sessionActiva) avCont.innerHTML = avatarHtmlNeclub(sessionActiva.foto, sessionActiva.nombre);
   onSnapshot(query(collection(db,'neclub_posts'), where('expiraEn','>', Timestamp.now()), orderBy('expiraEn','desc'), limit(50)), snap => {
     const cambios = snap.docChanges();
     neclubPostsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));

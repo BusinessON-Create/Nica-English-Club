@@ -1062,7 +1062,22 @@ window.trOnTapMedallonSemana = (el) => {
   setTimeout(() => el.classList.remove('clicked'), 200);
   if (estado === 'current') { window.showScreen('s-training'); return; }
   const idx = el.dataset.idxDia;
-  if (idx !== '') abrirRepasoDia(parseInt(idx, 10));
+  if (idx !== '') window.abrirSelectorDiaSemana(parseInt(idx, 10));
+};
+// Semana ya completada (o en modo QA): antes saltaba directo al Día 1 nada más.
+// Ahora deja elegir cualquiera de los 5 días de esa semana para repasar/practicar.
+window.abrirSelectorDiaSemana = (idxDia1) => {
+  const nodos = window.trJourneyNodosCache || [];
+  const semana = nodos[idxDia1] ? nodos[idxDia1].semana : null;
+  const titulo = document.getElementById('tr-review-titulo');
+  const body = document.getElementById('tr-review-body');
+  titulo.textContent = semana ? (semana.titulo || 'Week') : 'Choose a day';
+  const botones = [0,1,2,3,4].map(i => {
+    const idx = idxDia1 + i;
+    return nodos[idx] ? `<button type="button" class="btn-login btn-outline-gold" style="margin-top:8px; width:100%;" onclick="abrirRepasoDia(${idx})">Day ${i+1}</button>` : '';
+  }).join('');
+  body.innerHTML = `<p class="tr-translate-note" style="margin-bottom:10px;"><i class="fa-solid fa-eye"></i> Choose a day to review or practice again.</p>${botones}`;
+  document.getElementById('modal-tr-review-bg').classList.add('open');
 };
 async function renderEnglishJourney() {
   const cont = document.getElementById('tr-journey-shell');
