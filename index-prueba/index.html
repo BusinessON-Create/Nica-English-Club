@@ -2,11 +2,12 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--Removido: Cache-Control, Pragma y Expires en no-cache bloqueaban el cacheo del navegador
     sin necesidad, ya que el sistema de APP_BUILD_VERSION (más abajo) ya se encarga de
     forzar la actualización cuando hay una versión nueva.-->
 <title>NicaEnglish Club — Portal</title>
+<meta name="description" content="Portal de NicaEnglish Club: practica inglés todos los días con English Journey, comparte tu progreso en NECLUB y conecta con tus compañeros.">
 <script>
   /* ===== AUTO-UPDATE: version sellada por GitHub Actions en cada deploy.
      No editar a mano — el workflow reemplaza __BUILD_VERSION__ al hacer push. ===== */
@@ -1268,7 +1269,7 @@ body.tr-room-lock { overflow:hidden; }
   <div class="spinner"></div>
 </div>
 
-<div id="app-root">
+<main id="app-root">
   <!-- LOGIN SCREEN -->
   <div id="s-login" class="screen">
     <div class="login-wrap">
@@ -1552,7 +1553,7 @@ body.tr-room-lock { overflow:hidden; }
     </div>
   </div>
 
-</div>
+</main>
 
 <!-- MODAL: REPASO DE DÍA (English Journey / Historial) -->
 <div class="modal-bg" id="modal-tr-review-bg">
@@ -1863,8 +1864,6 @@ body.tr-room-lock { overflow:hidden; }
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
@@ -1882,8 +1881,34 @@ const auth = getAuth(app);
 // Solo se cierra sesión si el usuario da clic en "Cerrar sesión" explícitamente.
 setPersistence(auth, browserLocalPersistence).catch((e) => console.error('No se pudo fijar la persistencia de sesión:', e));
 const db = getFirestore(app);
-const storage = getStorage(app);
-const functionsInstance = getFunctions(app, 'us-central1');
+// ===== CARGA DIFERIDA DE FIREBASE STORAGE Y FUNCTIONS =====
+// Estos dos solo hacen falta cuando alguien sube un archivo (foto, video, PDF) o usa el
+// chat de NEC Coach — nunca en la pantalla de login. Antes se cargaban siempre, de una,
+// aunque el 90%+ de las visitas (el login) no los toca para nada.
+let storageModulePromise = null;
+function cargarStorage() {
+  if (!storageModulePromise) {
+    storageModulePromise = import("https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js").then(mod => ({
+      storage: mod.getStorage(app),
+      storageRef: mod.ref,
+      uploadBytes: mod.uploadBytes,
+      uploadBytesResumable: mod.uploadBytesResumable,
+      getDownloadURL: mod.getDownloadURL,
+      deleteObject: mod.deleteObject,
+    })).catch(e => { storageModulePromise = null; throw e; });
+  }
+  return storageModulePromise;
+}
+let functionsModulePromise = null;
+function cargarFunctions() {
+  if (!functionsModulePromise) {
+    functionsModulePromise = import("https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js").then(mod => ({
+      functionsInstance: mod.getFunctions(app, 'us-central1'),
+      httpsCallable: mod.httpsCallable,
+    })).catch(e => { functionsModulePromise = null; throw e; });
+  }
+  return functionsModulePromise;
+}
 const CORREO_ADMIN = "95gusmg@gmail.com";
 
 // ===== Crear cuentas de Firebase Auth desde el panel de admin, SIN cerrar la sesión del admin =====
@@ -2071,6 +2096,7 @@ window.necCallCoach = async function (history, name, level) {
   if (!auth.currentUser) {
     await signInAnonymously(auth);
   }
+  const { functionsInstance, httpsCallable } = await cargarFunctions();
   const callCoach = httpsCallable(functionsInstance, 'necCoachChat');
   const res = await callCoach({ history, name, level });
   return res.data && res.data.reply;
@@ -3480,6 +3506,7 @@ window.publicarNeclub = async () => {
     if (neclubArchivoSeleccionado) {
       tipo = neclubArchivoSeleccionado.tipo;
       const archivoASubir = tipo === 'foto' ? await comprimirImagen(neclubArchivoSeleccionado.file) : neclubArchivoSeleccionado.file;
+      const { storage, storageRef, uploadBytesResumable, getDownloadURL } = await cargarStorage();
       archivoPath = `neclub/${sessionActiva.id}_${Date.now()}_${archivoASubir.name}`;
       const ref = storageRef(storage, archivoPath);
       archivoUrl = await new Promise((resolve, reject) => {
@@ -3681,11 +3708,14 @@ async function borrarPostNeclubCompleto(postId, archivoPath, coverPath) {
     const comSnap = await getDocs(collection(db,'neclub_posts',postId,'comentarios'));
     for (const c of comSnap.docs) await deleteDoc(c.ref);
   } catch (e) { console.error('No se pudieron borrar comentarios:', e); }
-  if (archivoPath) {
-    try { await deleteObject(storageRef(storage, archivoPath)); } catch (e) { /* puede que ya no exista */ }
-  }
-  if (coverPath) {
-    try { await deleteObject(storageRef(storage, coverPath)); } catch (e) { /* puede que ya no exista */ }
+  if (archivoPath || coverPath) {
+    const { storage, storageRef, deleteObject } = await cargarStorage();
+    if (archivoPath) {
+      try { await deleteObject(storageRef(storage, archivoPath)); } catch (e) { /* puede que ya no exista */ }
+    }
+    if (coverPath) {
+      try { await deleteObject(storageRef(storage, coverPath)); } catch (e) { /* puede que ya no exista */ }
+    }
   }
   try { await deleteDoc(doc(db,'neclub_posts',postId)); } catch (e) { console.error(e); }
 }
@@ -4564,6 +4594,7 @@ window.publicarHistoriaPdfAdmin = async () => {
   }, 12000);
 
   try {
+    const { storage, storageRef, uploadBytes, uploadBytesResumable, getDownloadURL } = await cargarStorage();
     const nombreSeguro = (historiaPdfSeleccionada.file.name || 'archivo').replace(/[^a-zA-Z0-9._-]/g, '_');
     const base = `neclub/historia_${Date.now()}`;
     const archivoPath = (tipo === 'pdf') ? `${base}.pdf` : `neclub/oficial_${Date.now()}_${nombreSeguro}`;
@@ -6038,6 +6069,7 @@ window.subirFotoPerfil = async (ev) => {
   if (!file || !sessionActiva) return;
   try {
     const archivoFinal = await comprimirImagen(file);
+    const { storage, storageRef, uploadBytes, getDownloadURL } = await cargarStorage();
     const path = `perfiles/${sessionActiva.id}_${Date.now()}`;
     const ref = storageRef(storage, path);
     await uploadBytes(ref, archivoFinal);
