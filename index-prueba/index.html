@@ -1957,6 +1957,34 @@ const NEC_CACHE_VERSION = 'v1';
 function necCacheKey(nombre, alumnoId) {
   return `nec_cache_${NEC_CACHE_VERSION}_${alumnoId || 'anon'}_${nombre}`;
 }
+// Comprime y redimensiona una foto ANTES de subirla (perfil y posts de NECLUB), para no
+// subir el archivo completo de la cámara (a veces 4-8 MB) cuando en pantalla se ve chiquito.
+// Si algo sale mal, o si la "compresión" terminara pesando más que el original, se sigue
+// con el archivo tal cual — nunca bloquea ni rompe la subida.
+function comprimirImagen(file, maxDim = 1600, calidad = 0.82) {
+  return new Promise((resolve) => {
+    if (!file.type || !file.type.startsWith('image/')) { resolve(file); return; }
+    const objUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+        else { width = Math.round(width * maxDim / height); height = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(objUrl);
+      canvas.toBlob(blob => {
+        if (!blob || blob.size >= file.size) { resolve(file); return; }
+        resolve(new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }));
+      }, 'image/jpeg', calidad);
+    };
+    img.onerror = () => { URL.revokeObjectURL(objUrl); resolve(file); };
+    img.src = objUrl;
+  });
+}
 function necGuardarCache(nombre, alumnoId, data) {
   if (!alumnoId) return;
   try { localStorage.setItem(necCacheKey(nombre, alumnoId), JSON.stringify({ data, guardadoEn: Date.now() })); } catch (e) { /* localStorage lleno o no disponible: no bloquea la app */ }
@@ -3451,10 +3479,11 @@ window.publicarNeclub = async () => {
     let archivoUrl = '', archivoPath = '', tipo = 'texto';
     if (neclubArchivoSeleccionado) {
       tipo = neclubArchivoSeleccionado.tipo;
-      archivoPath = `neclub/${sessionActiva.id}_${Date.now()}_${neclubArchivoSeleccionado.file.name}`;
+      const archivoASubir = tipo === 'foto' ? await comprimirImagen(neclubArchivoSeleccionado.file) : neclubArchivoSeleccionado.file;
+      archivoPath = `neclub/${sessionActiva.id}_${Date.now()}_${archivoASubir.name}`;
       const ref = storageRef(storage, archivoPath);
       archivoUrl = await new Promise((resolve, reject) => {
-        const task = uploadBytesResumable(ref, neclubArchivoSeleccionado.file);
+        const task = uploadBytesResumable(ref, archivoASubir);
         task.on('state_changed', (snap) => {
           const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
           progresoBar.style.width = pct + '%';
@@ -6008,9 +6037,10 @@ window.subirFotoPerfil = async (ev) => {
   const file = ev.target.files[0];
   if (!file || !sessionActiva) return;
   try {
+    const archivoFinal = await comprimirImagen(file);
     const path = `perfiles/${sessionActiva.id}_${Date.now()}`;
     const ref = storageRef(storage, path);
-    await uploadBytes(ref, file);
+    await uploadBytes(ref, archivoFinal);
     const url = await getDownloadURL(ref);
     await updateDoc(doc(db,'alumnos',sessionActiva.id), { foto: url });
     sessionActiva.foto = url;
