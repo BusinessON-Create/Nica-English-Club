@@ -56,8 +56,6 @@ import { collection, doc, getDoc, getDocs, onSnapshot, query, where, setDoc, upd
   es-en (match), y el día 5 agrega el reto de voz por WhatsApp. Publicar las semanas de forma
   gradual (no todas de golpe) para ir probando que cada una funcione bien en el Training Room.
 */
-const TR_ETAPAS = ['foundations','everyday','confidence','fluency'];
-const TR_ETAPA_LABEL = { foundations:'Foundations', everyday:'Everyday English', confidence:'Confidence', fluency:'Fluency Mode' };
 // Total real de semanas planeadas por etapa. Mientras una etapa no tenga número aquí (o el
 // alumno no haya llegado a ese orden), el sistema NUNCA la marca como "completada" solo porque
 // no encontró la siguiente semana en la biblioteca — eso solo significa "aún no la hemos publicado".
@@ -126,19 +124,10 @@ window.trSalirPractica = () => {
 };
 
 /* ===== TRAINING ROOM — Medallas (mismo sistema de logros que ya existe, ampliado) ===== */
-const TR_MEDALLAS = [
-  { id:'racha3',      nombre:'3-Week Streak',      icono:'fa-fire',              check: p => (p.rachaSemanas||0) >= 3 },
-  { id:'racha8',      nombre:'8-Week Streak',      icono:'fa-fire',              check: p => (p.rachaSemanas||0) >= 8 },
-  { id:'semanas5',    nombre:'5 Weeks Completed',  icono:'fa-trophy',            check: p => (p.semanasCompletadas||0) >= 5 },
-  { id:'semanas10',   nombre:'10 Weeks Completed', icono:'fa-trophy',            check: p => (p.semanasCompletadas||0) >= 10 },
-  { id:'frases100',   nombre:'100 Phrases',        icono:'fa-graduation-cap',    check: p => (p.palabrasPracticadas||0) >= 100 },
-  { id:'frases500',   nombre:'500 Phrases',        icono:'fa-graduation-cap',    check: p => (p.palabrasPracticadas||0) >= 500 },
-  { id:'speaking20',  nombre:'Speaking Master',    icono:'fa-microphone-lines',  check: p => (p.speakingExitosos||0) >= 20 },
-];
 async function trVerificarMedallas() {
   if (!trProgresoActual || !window.getSessionActiva()) return;
   const actuales = trProgresoActual.medallas || [];
-  const nuevas = TR_MEDALLAS.filter(m => !actuales.includes(m.id) && m.check(trProgresoActual));
+  const nuevas = window.TR_MEDALLAS.filter(m => !actuales.includes(m.id) && m.check(trProgresoActual));
   if (!nuevas.length) return;
   try {
     await updateDoc(doc(window.db,'entrenamiento_progreso', window.getSessionActiva().id), { medallas: arrayUnion(...nuevas.map(m => m.id)) });
@@ -299,7 +288,7 @@ function renderTrainingRoom() {
   const chips = pasos.map((p,i) => `<div class="tr-step-chip ${i<idxActual?'done':i===idxActual?'active':''}">${nombresPaso[p]}</div>`).join('');
 
   cont.innerHTML = `<div class="tr-week-card">
-    <span class="tr-etapa-tag">${TR_ETAPA_LABEL[trProgresoActual.etapaActual]}</span>
+    <span class="tr-etapa-tag">${window.TR_ETAPA_LABEL[trProgresoActual.etapaActual]}</span>
     <h3>${window.escNeclub(semanaEfectiva.titulo || 'Untitled week')}</h3>
     <div class="tr-daydots">${dots}</div>
     ${hayDiasParaRepasar ? `<p class="tr-daynav-hint"><i class="fa-solid fa-arrows-rotate"></i>Toca un día anterior para repasarlo</p>` : ''}
@@ -322,7 +311,7 @@ function renderCelebracionTraining(info) {
   // tipo === 'week' — celebración grande de "subir de nivel"
   const confetti = Array.from({length:10}).map(() => `<div class="tr-confetti-dot"></div>`).join('');
   const stageJumpHtml = info.subioDeEtapa
-    ? `<div class="tr-lu-stage-jump"><b>${window.escNeclub(TR_ETAPA_LABEL[info.etapaAnterior]||'')}</b><i class="fa-solid fa-arrow-right-long"></i><b>${window.escNeclub(TR_ETAPA_LABEL[info.etapaNueva]||'')}</b></div>`
+    ? `<div class="tr-lu-stage-jump"><b>${window.escNeclub(window.TR_ETAPA_LABEL[info.etapaAnterior]||'')}</b><i class="fa-solid fa-arrow-right-long"></i><b>${window.escNeclub(window.TR_ETAPA_LABEL[info.etapaNueva]||'')}</b></div>`
     : '';
   const nextHtml = info.siguienteTitulo
     ? `<p class="tr-lu-next"><i class="fa-solid fa-flag-checkered"></i> Next up: ${window.escNeclub(info.siguienteTitulo)}</p>`
@@ -347,7 +336,7 @@ function renderStagePathTraining() {
   const cont = document.getElementById('tr-stagepath');
   if (!cont) return;
   const completadas = trProgresoActual.etapasCompletadas || [];
-  cont.innerHTML = TR_ETAPAS.map(e => `<div class="tr-stage-node ${completadas.includes(e)?'done':e===trProgresoActual.etapaActual?'current':''}"><div class="dot">${completadas.includes(e) ? '<i class="fa-solid fa-check"></i>' : TR_ETAPAS.indexOf(e)+1}</div><span>${TR_ETAPA_LABEL[e]}</span></div>`).join('');
+  cont.innerHTML = window.TR_ETAPAS.map(e => `<div class="tr-stage-node ${completadas.includes(e)?'done':e===trProgresoActual.etapaActual?'current':''}"><div class="dot">${completadas.includes(e) ? '<i class="fa-solid fa-check"></i>' : window.TR_ETAPAS.indexOf(e)+1}</div><span>${window.TR_ETAPA_LABEL[e]}</span></div>`).join('');
 }
 function renderMetricsTraining() {
   const cont = document.getElementById('tr-metric-grid');
@@ -363,9 +352,9 @@ function renderBadgesTraining() {
   const cont = document.getElementById('tr-badges-row');
   if (!cont) return;
   const completadas = trProgresoActual.etapasCompletadas || [];
-  const etapaChips = completadas.map(e => `<span class="tr-badge-chip"><i class="fa-solid fa-trophy tr-icon-bounce"></i> ${TR_ETAPA_LABEL[e]} completed</span>`);
+  const etapaChips = completadas.map(e => `<span class="tr-badge-chip"><i class="fa-solid fa-trophy tr-icon-bounce"></i> ${window.TR_ETAPA_LABEL[e]} completed</span>`);
   const medallasGanadas = trProgresoActual.medallas || [];
-  const medallaChips = TR_MEDALLAS.filter(m => medallasGanadas.includes(m.id)).map(m => `<span class="tr-badge-chip"><i class="fa-solid ${m.icono}"></i> ${m.nombre}</span>`);
+  const medallaChips = window.TR_MEDALLAS.filter(m => medallasGanadas.includes(m.id)).map(m => `<span class="tr-badge-chip"><i class="fa-solid ${m.icono}"></i> ${m.nombre}</span>`);
   cont.innerHTML = etapaChips.concat(medallaChips).join('');
 }
 
@@ -429,7 +418,6 @@ function trCantidadesCircuito(total) {
   if (total >= 8) return { pares: 5, listening: 4 };
   return { pares: 3, listening: 2 };
 }
-const TR_MATCH_MIN = 4;   // mínimo de pares de vocabulario para armar una ronda de Match
 const TR_MATCH_MAX = 10;  // máximo de tarjetas por ronda — el grid es una lista vertical con scroll, no una cuadrícula fija, así que soporta las 10 sin apretar la pantalla
 function trConstruirCircuito(dia, diaNum) {
   const tipos = trTiposDisponiblesPorDia(diaNum);
@@ -447,7 +435,7 @@ function trConstruirCircuito(dia, diaNum) {
     // Solo armamos la ronda si hay suficientes pares como para que valga la pena emparejar
     // (con 1-3 sería demasiado obvio/corto). Si el día no tiene vocabulario cargado, simplemente
     // no aparece "Match" ese día — igual que "ordenar" se omite si la frase es muy corta.
-    if (vocabValido.length >= TR_MATCH_MIN) {
+    if (vocabValido.length >= window.TR_MATCH_MIN) {
       ejercicios.push({ tipo: 'match', pares: trBarajar(vocabValido).slice(0, TR_MATCH_MAX) });
     }
   }
@@ -797,9 +785,9 @@ window.completarDiaTraining = async () => {
     const etapaRealmenteTerminada = !siguiente && !!totalEtapa && ordenActual >= totalEtapa;
     if (!siguiente && etapaRealmenteTerminada) {
       if (!nuevasEtapasCompletadas.includes(nuevaEtapa)) nuevasEtapasCompletadas = [...nuevasEtapasCompletadas, nuevaEtapa];
-      const idx = TR_ETAPAS.indexOf(nuevaEtapa);
-      if (idx < TR_ETAPAS.length - 1) {
-        nuevaEtapa = TR_ETAPAS[idx+1];
+      const idx = window.TR_ETAPAS.indexOf(nuevaEtapa);
+      if (idx < window.TR_ETAPAS.length - 1) {
+        nuevaEtapa = window.TR_ETAPAS[idx+1];
         siguiente = await obtenerPrimeraSemanaDisponible(nuevaEtapa, 0);
       }
     }
@@ -1110,7 +1098,7 @@ async function renderEnglishJourney() {
 
   let nodos = []; // índice plano de días — misma estructura de siempre, la usan abrirRepasoDia()/trIniciarPracticaDesdeJourney() sin cambios.
 
-  const filasHtml = TR_ETAPAS.map((etapa, idx) => {
+  const filasHtml = window.TR_ETAPAS.map((etapa, idx) => {
     const semanasEtapa = todasSemanas.filter(s => s.etapa === etapa).sort((a,b) => (a.orden||0)-(b.orden||0));
     const esActiva = etapa === trProgresoActual.etapaActual;
     const esCompletada = etapasCompletadas.includes(etapa);
@@ -1118,7 +1106,7 @@ async function renderEnglishJourney() {
     const tagFila = estadoFila === 'active' ? 'Current stage'
       : estadoFila === 'done' ? '<i class="fa-solid fa-check" style="font-size:8px;"></i> Completed'
       : (qaAcceso ? '<i class="fa-solid fa-flask" style="font-size:8px;"></i> QA test access' : '<i class="fa-solid fa-lock" style="font-size:8px;"></i> Locked');
-    const cabecera = `<div class="tr-journey-stage-head"><span class="ic">${String(idx+1).padStart(2,'0')}</span><span class="titulo">${TR_ETAPA_LABEL[etapa]||etapa}</span><span class="tag">${tagFila}</span></div>`;
+    const cabecera = `<div class="tr-journey-stage-head"><span class="ic">${String(idx+1).padStart(2,'0')}</span><span class="titulo">${window.TR_ETAPA_LABEL[etapa]||etapa}</span><span class="tag">${tagFila}</span></div>`;
 
     if (!semanasEtapa.length) {
       return `<div class="tr-journey-stage ${estadoFila}">${cabecera}<p class="tr-journey-empty-row">Content for this stage isn't published yet.</p></div>`;
@@ -1220,5 +1208,6 @@ window.cerrarModalRepaso = () => {
 };
 
 
+window.getTrProgresoActual = () => trProgresoActual; // puente para abrirPerfil() en index.html
 
 export { escucharTraining };

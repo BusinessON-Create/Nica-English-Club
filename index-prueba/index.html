@@ -1921,6 +1921,25 @@ function mensajeErrorAuth(e) {
 let sessionActiva = null;
 window.getSessionActiva = () => sessionActiva; // permite que el widget NEC Coach (fuera del módulo) lea el nombre del alumno
 window.db = db; // puente para el módulo separado de Training Room / English Journey (training-journey.js)
+// Estas 4 las necesitan TANTO el editor de semanas del admin (acá abajo, en este mismo
+// archivo) COMO el motor de Training Room (training-journey.js) — por eso viven acá,
+// como única fuente, y training-journey.js las lee vía "window.".
+const TR_ETAPAS = ['foundations','everyday','confidence','fluency'];
+window.TR_ETAPAS = TR_ETAPAS;
+const TR_ETAPA_LABEL = { foundations:'Foundations', everyday:'Everyday English', confidence:'Confidence', fluency:'Fluency Mode' };
+window.TR_ETAPA_LABEL = TR_ETAPA_LABEL;
+const TR_MATCH_MIN = 4;   // mínimo de pares de vocabulario para armar una ronda de Match
+window.TR_MATCH_MIN = TR_MATCH_MIN;
+const TR_MEDALLAS = [
+  { id:'racha3',      nombre:'3-Week Streak',      icono:'fa-fire',              check: p => (p.rachaSemanas||0) >= 3 },
+  { id:'racha8',      nombre:'8-Week Streak',      icono:'fa-fire',              check: p => (p.rachaSemanas||0) >= 8 },
+  { id:'semanas5',    nombre:'5 Weeks Completed',  icono:'fa-trophy',            check: p => (p.semanasCompletadas||0) >= 5 },
+  { id:'semanas10',   nombre:'10 Weeks Completed', icono:'fa-trophy',            check: p => (p.semanasCompletadas||0) >= 10 },
+  { id:'frases100',   nombre:'100 Phrases',        icono:'fa-graduation-cap',    check: p => (p.palabrasPracticadas||0) >= 100 },
+  { id:'frases500',   nombre:'500 Phrases',        icono:'fa-graduation-cap',    check: p => (p.palabrasPracticadas||0) >= 500 },
+  { id:'speaking20',  nombre:'Speaking Master',    icono:'fa-microphone-lines',  check: p => (p.speakingExitosos||0) >= 20 },
+];
+window.TR_MEDALLAS = TR_MEDALLAS;
 
 /* =====================================================================================
    CACHÉ DE DATOS EN LOCALSTORAGE (independiente del cache-busting de CÓDIGO de arriba)
@@ -2267,7 +2286,14 @@ function precargarPanelChatHTML() {
         if (!resp.ok) throw new Error('No se pudo cargar chat-panel.html (' + resp.status + ')');
         return resp.text();
       })
-      .then(html => { document.getElementById('app-root').insertAdjacentHTML('beforeend', html); })
+      .then(html => {
+        document.getElementById('app-root').insertAdjacentHTML('beforeend', html);
+        // Si ya habían llegado mensajes por Firestore ANTES de que este HTML existiera, el
+        // primer intento de pintarlos se salteó en silencio (no había dónde dibujarlos).
+        // Repintamos ahora con lo que ya está en caché, así no hay que esperar un mensaje
+        // nuevo para que aparezca el cuadro de texto y la conversación.
+        if (sessionActiva) { renderChatMensajes(); renderChatNotifBadge(); }
+      })
       .catch(e => { chatPanelPromise = null; throw e; });
   }
   return chatPanelPromise;
@@ -2288,6 +2314,11 @@ function precargarPanelNeclubHTML() {
       })
       .then(html => {
         document.getElementById('app-root').insertAdjacentHTML('beforeend', html);
+        aplicarLogo(); // este HTML trae su propio ".app-logo" (el ícono de la esquina); aplicarLogo() ya corrió antes de que existiera, así que hay que repetirlo acá
+        // Si Firestore ya había mandado los posts ANTES de que este HTML existiera, el primer
+        // intento de pintar el muro se salteó en silencio (no había dónde dibujarlo). Con los
+        // datos ya en caché, ahora que el HTML está, lo pintamos de una vez.
+        if (neclubPostsCache.length && !neclubFeedPintadoAlMenosUnaVez) renderFeedNeclub();
         // La foto del alumno en el composer solo se puede pintar una vez que este HTML
         // ya está en la página — antes fallaba en silencio porque intentaba pintarla
         // apenas se iniciaba sesión, cuando este archivo todavía se estaba trayendo.
@@ -5928,7 +5959,7 @@ window.abrirPerfil = () => {
   const passToggle = document.getElementById('perfil-pass-toggle');
   if (passFields) passFields.style.display = 'none';
   if (passToggle) passToggle.classList.remove('open');
-  const p = trProgresoActual || {};
+  const p = (window.getTrProgresoActual && window.getTrProgresoActual()) || {};
   const statsEl = document.getElementById('perfil-stats-row');
   if (statsEl) {
     statsEl.innerHTML = `
