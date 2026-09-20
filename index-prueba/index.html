@@ -1164,6 +1164,20 @@ body.neclub-visitante .neclub-composer { display:none; }
 .chat-msg-avatar { width:26px; height:26px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:var(--gold); }
 .chat-msg-avatar img { width:100%; height:100%; object-fit:cover; }
 .chat-msg-avatar.spacer { visibility:hidden; }
+/* Lista de conversaciones privadas recientes (pantalla de inicio del chat privado, estilo WhatsApp
+   pero con los colores negros/dorados de la plataforma, no el azul de WhatsApp). */
+.chat-conv-list { display:flex; flex-direction:column; }
+.chat-conv-row { display:flex; align-items:center; gap:12px; padding:11px 4px; cursor:pointer; border-bottom:1px solid var(--border2); transition: background .15s var(--ease); }
+.chat-conv-row:hover, .chat-conv-row:active { background:rgba(255,255,255,.03); }
+.chat-conv-avatar { position:relative; width:46px; height:46px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:var(--gold); }
+.chat-conv-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+.presence-dot-lg { position:absolute; bottom:0; right:0; width:12px; height:12px; border-radius:50%; border:2px solid var(--canvas); }
+.presence-dot-lg.online { background:var(--green); }
+.presence-dot-lg.offline { background:var(--muted-dim); }
+.chat-conv-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.chat-conv-name { font-size:13.5px; font-weight:700; color:var(--text); }
+.chat-conv-preview { font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chat-conv-time { font-size:10.5px; color:var(--muted-dim); flex-shrink:0; align-self:flex-start; margin-top:2px; }
 .chat-msg { position:relative; max-width:74%; padding:7px 9px 9px 11px; border-radius:9px; font-size:13.5px; line-height:1.35; box-shadow:0 1px 1px rgba(0,0,0,.3); word-wrap:break-word; }
 .chat-msg .chat-author { display:block; font-size:11.5px; font-weight:700; margin-bottom:2px; }
 .chat-msg .chat-time { display:inline-block; float:right; margin:4px 0 -3px 8px; font-size:10px; opacity:.65; }
@@ -6293,6 +6307,41 @@ function datosAlumnoPorUid(uid) {
   const a = alumnosPresenciaCache.find(x => x.id === uid);
   return a ? { nombre: a.nombre, foto: a.foto || '' } : { nombre: null, foto: '' };
 }
+// Pantalla de inicio del chat privado: junta tus conversaciones a partir de los mensajes que
+// ya están en memoria (los últimos 400), se queda con el más reciente de cada persona, y arma
+// la lista — igual que la pantalla principal de WhatsApp, pero sin pedir nada nuevo a Firebase.
+function renderListaConversacionesChat() {
+  const miId = sessionActiva.id;
+  const porContacto = {};
+  todosLosMensajesChat.forEach(m => {
+    if (!m.destinatario) return;
+    if (m.uid !== miId && m.destinatario !== miId) return;
+    const otroId = m.uid === miId ? m.destinatario : m.uid;
+    if (!porContacto[otroId] || (m.fecha||0) > (porContacto[otroId].fecha||0)) porContacto[otroId] = m;
+  });
+  const lista = Object.keys(porContacto)
+    .map(otroId => ({ otroId, ultimo: porContacto[otroId] }))
+    .sort((a,b) => (b.ultimo.fecha||0) - (a.ultimo.fecha||0));
+  if (!lista.length) {
+    return `<div class="notif-empty">Aún no tienes conversaciones privadas. Busca a un compañero arriba para empezar.</div>`;
+  }
+  return `<div class="chat-conv-list">${lista.map(({ otroId, ultimo }) => {
+    const datos = datosAlumnoPorUid(otroId);
+    const alumnoCompleto = alumnosPresenciaCache.find(a => a.id === otroId);
+    const enLinea = alumnoCompleto ? estaEnLinea(alumnoCompleto) : false;
+    const nombre = (datos.nombre || ultimo.autor || 'Compañero').replace(/</g,'&lt;');
+    const mio = ultimo.uid === miId;
+    const preview = ((mio ? 'Tú: ' : '') + (ultimo.texto || '')).replace(/</g,'&lt;');
+    return `<div class="chat-conv-row" onclick="abrirChatPrivado('${otroId}','${nombre.replace(/'/g,"&#39;")}')">
+      <span class="chat-conv-avatar">${avatarHtmlNeclub(datos.foto, nombre)}<span class="presence-dot-lg ${enLinea ? 'online' : 'offline'}"></span></span>
+      <div class="chat-conv-info">
+        <span class="chat-conv-name">${nombre}</span>
+        <span class="chat-conv-preview">${preview}</span>
+      </div>
+      <span class="chat-conv-time">${horaChat(ultimo.fecha)}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
 function horaChat(ms) {
   if (!ms) return '';
   return new Date(ms).toLocaleTimeString('es-NI', { hour:'2-digit', minute:'2-digit' });
@@ -6308,7 +6357,7 @@ function renderChatMensajes() {
     const yo = sessionActiva.id, otro = chatContactoActual.id;
     visibles = todosLosMensajesChat.filter(m => m.destinatario && ((m.uid===yo && m.destinatario===otro) || (m.uid===otro && m.destinatario===yo)));
   } else {
-    cont.innerHTML = `<div class="notif-empty">Selecciona un compañero para iniciar un chat privado.</div>`;
+    cont.innerHTML = renderListaConversacionesChat();
     return;
   }
   cont.innerHTML = visibles.length ? visibles.map((m, i) => {
