@@ -8,6 +8,14 @@
     forzar la actualización cuando hay una versión nueva.-->
 <title>NicaEnglish Club — Portal</title>
 <meta name="description" content="Portal de NicaEnglish Club: practica inglés todos los días con English Journey, comparte tu progreso en NECLUB y conecta con tus compañeros.">
+<!-- Preconnect: adelanta la conexión (DNS + TLS) a los dominios que la pantalla de login
+     necesita sí o sí, para que cuando el navegador pida el archivo real, la conexión ya
+     esté lista en vez de abrirse recién en ese momento. Solo los 4 que el login realmente
+     usa — no todos los dominios que la app usa en otras pantallas. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://www.gstatic.com">
 <script>
   /* ===== AUTO-UPDATE: version sellada por GitHub Actions en cada deploy.
      No editar a mano — el workflow reemplaza __BUILD_VERSION__ al hacer push. ===== */
