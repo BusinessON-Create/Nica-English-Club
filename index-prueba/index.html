@@ -2315,6 +2315,7 @@ function precargarPanelNeclubHTML() {
       .then(html => {
         document.getElementById('app-root').insertAdjacentHTML('beforeend', html);
         aplicarLogo(); // este HTML trae su propio ".app-logo" (el ícono de la esquina); aplicarLogo() ya corrió antes de que existiera, así que hay que repetirlo acá
+        pintarAvatarChips(); // este HTML también trae su propio ".nav-avatar-chip" (tu foto, arriba a la izquierda de NECLUB), vacío hasta ahora por el mismo motivo
         // Si Firestore ya había mandado los posts ANTES de que este HTML existiera, el primer
         // intento de pintar el muro se salteó en silencio (no había dónde dibujarlo). Con los
         // datos ya en caché, ahora que el HTML está, lo pintamos de una vez.
@@ -2480,13 +2481,21 @@ function renderUI(alumno) {
   if (rachaEl) rachaEl.innerText = diasLogueados;
 
   // Avatar mini en el header (dashboard y NECLUB)
+  pintarAvatarChips();
+
+  renderGraph(diasValidos);
+}
+// Aparte de renderUI() porque también hay que llamarla de nuevo cuando el HTML de NECLUB
+// llega tarde (en segundo plano) y trae su propio ".nav-avatar-chip" vacío.
+function pintarAvatarChips() {
+  if (!sessionActiva) return;
+  const initial = sessionActiva.nombre.charAt(0).toUpperCase();
+  const fotoFinal = resolverUrlDrive(sessionActiva.foto || '');
   document.querySelectorAll('.nav-avatar-chip').forEach(mini => {
     mini.innerHTML = fotoFinal
       ? `<img src="${fotoFinal}" class="avatar-mini-img" onerror="this.parentElement.innerHTML='<div class=\\'avatar-mini-default\\'>${initial}</div>'">`
       : `<div class="avatar-mini-default">${initial}</div>`;
   });
-
-  renderGraph(diasValidos);
 }
 
 function renderGraph(diasSemana) {
