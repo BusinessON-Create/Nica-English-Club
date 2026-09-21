@@ -741,7 +741,7 @@ body.neclub-visitante .neclub-composer { display:none; }
 /* ===== TRAINING ROOM ===== */
 .tr-launch-btn { display:inline-flex; align-items:center; gap:6px; background:transparent; color:var(--gold2); font-weight:700; font-size:10.5px; padding:6px 12px; border-radius:99px; border:1px solid var(--gold2); cursor:pointer; font-family:inherit; letter-spacing:.3px; margin-top:8px; transition: transform .15s var(--ease), background .15s var(--ease); }
 .tr-launch-btn:hover { transform: translateY(-1px); background:var(--gold-dim); }
-#s-training { min-height:100vh; background:radial-gradient(circle at top, #1f180a 0%, #09090b 60%, #000000 100%); background-attachment:fixed; }
+#s-training { min-height:100vh; background:var(--bg); }
 .tr-shell { max-width:640px; width:100%; margin:0 auto; padding:24px 16px 100px; overflow-x:hidden; }
 .tr-stagepath { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:4px; }
 .tr-stage-node { flex:1; min-width:0; text-align:center; position:relative; }
@@ -1124,7 +1124,8 @@ body.neclub-visitante .neclub-composer { display:none; }
 .video-cat-head { display:flex; align-items:center; gap:9px; margin-bottom:13px; min-width:0; }
 .video-cat-head i { color:var(--gold); font-size:13px; }
 .video-cat-head h3 { font-size:13.5px; color:#fff; font-weight:700; min-width:0; overflow-wrap:anywhere; }
-.video-card { text-decoration:none; cursor:pointer; background:var(--card); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; transition: border-color .2s var(--ease), transform .2s var(--ease); display:block; }
+.video-card { text-decoration:none; cursor:pointer; background:var(--card); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; transition: border-color .2s var(--ease), transform .2s var(--ease); display:block; position:relative; }
+.video-card .res-fav-btn { top:8px; right:8px; }
 .video-card:hover { border-color:var(--gold2); transform:translateY(-3px); }
 .video-thumb-wrap { position:relative; width:100%; aspect-ratio:16/9; background:#000; }
 .video-thumb-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
@@ -1254,8 +1255,8 @@ body.tr-room-lock { overflow:hidden; }
 .tr-portal-text em { display:block; font-style:normal; font-size:11.5px; line-height:1.35; color:var(--muted); margin-top:5px; }
 
 /* --- Las salas (pantalla completa): mismo fondo OLED plano de toda la app, sin tema propio por sala --- */
-.tr-room { position:fixed; inset:0; z-index:60; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; visibility:hidden; opacity:0; clip-path:inset(0px 0px 0px 0px round 0px); background:var(--bg); transition: clip-path .55s cubic-bezier(.32,.72,0,1), opacity .2s linear .32s, visibility 0s linear .55s; }
-.tr-room.open { visibility:visible; opacity:1; transition: clip-path .65s cubic-bezier(.32,.72,0,1), opacity .15s linear, visibility 0s; }
+.tr-room { position:fixed; inset:0; z-index:60; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; visibility:hidden; opacity:0; background:var(--bg); }
+.tr-room.open { visibility:visible; opacity:1; }
 .tr-room-bar { position:sticky; top:0; z-index:8; display:flex; align-items:center; gap:12px; padding:calc(10px + env(safe-area-inset-top)) 16px 10px; background:rgba(8,8,10,.72); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.06); }
 .tr-room-bar-title { color:#fff; font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:8px; }
 .tr-room-bar-title i { color:var(--gold); }
@@ -1269,10 +1270,6 @@ body.tr-room-lock { overflow:hidden; }
 .tr-room #recursos-section, .tr-room .video-gallery-section { margin-top:20px !important; }
 /* Sala de Recursos: filtros de categoría fijos arriba al hacer scroll (funcional, no decorativo) */
 .tr-room .cat-tabs-row { position:sticky; top:calc(58px + env(safe-area-inset-top)); z-index:6; margin:0 -16px; padding:10px 16px 16px; background:rgba(8,8,10,.72); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); -webkit-mask-image:linear-gradient(#000 72%, transparent); mask-image:linear-gradient(#000 72%, transparent); }
-@media (prefers-reduced-motion: reduce) {
-  .tr-room { clip-path:none !important; transition: opacity .2s linear, visibility 0s linear .2s; }
-  .tr-room.open { transition: opacity .2s linear; }
-}
 </style>
 </head>
 <body>
@@ -1536,6 +1533,8 @@ body.tr-room-lock { overflow:hidden; }
         <div class="section-head">
           <h2><i class="fa-solid fa-clapperboard" style="color:var(--gold); margin-right:6px;"></i>Galería de videos</h2>
         </div>
+        <div id="video-favoritos"></div>
+        <div class="cat-tabs-row" id="video-cat-tabs-row"></div>
         <div id="video-gallery-container"></div>
       </div>
         </div>
@@ -2691,27 +2690,84 @@ function escucharGaleriaVideos() {
     if (sessionActiva) necGuardarCache('galeria_videos', sessionActiva.id, categoriasVideoCache);
   });
 }
-function renderGaleriaVideos() {
-  const section = document.getElementById('video-gallery-section');
-  const cont = document.getElementById('video-gallery-container');
-  if (!section || !cont) return;
-  const conVideos = categoriasVideoCache.filter(c => c.videos && c.videos.length);
-  if (!conVideos.length) { section.style.display='none'; cont.innerHTML=''; return; }
-  section.style.display='block';
-  cont.innerHTML = conVideos.map(cat => {
-    const itemsHtml = cat.videos.map(v => `
+/* FAVORITOS DE VIDEOS (Sala 02) — se guardan localmente por alumno, igual que los de Sala 01 (no toca Firestore) */
+let categoriaVideoActual = 'todas';
+function claveFavoritosVideos() {
+  const uid = (sessionActiva && sessionActiva.id) ? sessionActiva.id : 'invitado';
+  return `nec_favoritos_videos_${uid}`;
+}
+function getFavoritosVideos() {
+  try { return JSON.parse(localStorage.getItem(claveFavoritosVideos())) || []; } catch (e) { return []; }
+}
+function esFavoritoVideo(id) { return getFavoritosVideos().includes(id); }
+window.toggleFavoritoVideo = (id, ev) => {
+  if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+  let favs = getFavoritosVideos();
+  favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
+  try { localStorage.setItem(claveFavoritosVideos(), JSON.stringify(favs)); } catch (e) {}
+  renderGaleriaVideos();
+};
+window.seleccionarCategoriaVideo = (id) => {
+  categoriaVideoActual = id;
+  renderGaleriaVideos();
+};
+function tarjetaVideoHTML(v) {
+  const activo = esFavoritoVideo(v.youtubeId);
+  return `
       <a class="video-card" onclick="abrirVideoPlayer('${v.youtubeId}', '${(v.titulo||'').replace(/'/g,"&#39;")}'); return false;" href="#">
+        <button type="button" class="res-fav-btn ${activo ? 'active' : ''}" onclick="toggleFavoritoVideo('${v.youtubeId}', event)" title="${activo ? 'Quitar de favoritos' : 'Marcar como favorito'}">
+          <i class="fa-${activo ? 'solid' : 'regular'} fa-star"></i>
+        </button>
         <div class="video-thumb-wrap">
           <img src="https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg" alt="${v.titulo||''}" loading="lazy">
           <div class="video-play-badge"><i class="fa-solid fa-play"></i></div>
         </div>
         <div class="video-card-title">${v.titulo||''}</div>
-      </a>`).join('');
-    return `<div class="video-cat-block">
+      </a>`;
+}
+function renderGaleriaVideos() {
+  const section = document.getElementById('video-gallery-section');
+  const cont = document.getElementById('video-gallery-container');
+  if (!section || !cont) return;
+  const conVideos = categoriasVideoCache.filter(c => c.videos && c.videos.length);
+  if (!conVideos.length) {
+    section.style.display='none'; cont.innerHTML='';
+    const favVacio = document.getElementById('video-favoritos'); if (favVacio) favVacio.innerHTML = '';
+    const tabsVacio = document.getElementById('video-cat-tabs-row'); if (tabsVacio) tabsVacio.innerHTML = '';
+    return;
+  }
+  section.style.display='block';
+
+  // Si la categoría elegida ya no existe (el admin la borró o la dejó sin videos), volvemos a "Todas"
+  if (categoriaVideoActual !== 'todas' && !conVideos.some(c => c.id === categoriaVideoActual)) categoriaVideoActual = 'todas';
+
+  // Pestañas de categoría (mismo estilo que Sala 01)
+  const tabsCont = document.getElementById('video-cat-tabs-row');
+  if (tabsCont) {
+    const tabs = [{ id:'todas', nombre:'Todas', icon:'fa-layer-group' }, ...conVideos.map(c => ({ id:c.id, nombre:c.nombre, icon:'fa-film' }))];
+    tabsCont.innerHTML = tabs.map(t => `<button type="button" class="cat-tab-btn ${categoriaVideoActual===t.id?'active':''}" onclick="seleccionarCategoriaVideo('${t.id}')"><i class="fa-solid ${t.icon}"></i> ${t.nombre}</button>`).join('');
+  }
+
+  // Mis favoritos (arriba, sin importar la pestaña; sin repetir si un video está en dos categorías)
+  const favCont = document.getElementById('video-favoritos');
+  if (favCont) {
+    const vistos = new Set();
+    const favoritos = [];
+    conVideos.forEach(cat => cat.videos.forEach(v => {
+      if (esFavoritoVideo(v.youtubeId) && !vistos.has(v.youtubeId)) { vistos.add(v.youtubeId); favoritos.push(v); }
+    }));
+    favCont.innerHTML = favoritos.length ? `<div class="resource-group favoritos">
+      <div class="group-head"><i class="fa-solid fa-star"></i><h3>Mis favoritos</h3></div>
+      ${galeriaGridHTML(favoritos.map(tarjetaVideoHTML).join(''))}
+    </div>` : '';
+  }
+
+  // Solo se muestra la categoría elegida (o todas, agrupadas por categoría)
+  const visibles = categoriaVideoActual === 'todas' ? conVideos : conVideos.filter(c => c.id === categoriaVideoActual);
+  cont.innerHTML = visibles.map(cat => `<div class="video-cat-block">
       <div class="video-cat-head"><i class="fa-solid fa-film"></i><h3>${cat.nombre}</h3></div>
-      ${galeriaGridHTML(itemsHtml)}
-    </div>`;
-  }).join('');
+      ${galeriaGridHTML(cat.videos.map(tarjetaVideoHTML).join(''))}
+    </div>`).join('');
 }
 window.abrirVideoPlayer = (youtubeId, titulo) => {
   document.getElementById('video-player-titulo').innerText = titulo || '';
@@ -2955,9 +3011,13 @@ let neclubFeedPintadoAlMenosUnaVez = false;
 function escucharNeclub() {
   if (neclubFeedYaEscuchado) return;
   neclubFeedYaEscuchado = true;
-  onSnapshot(query(collection(db,'neclub_posts'), where('expiraEn','>', Timestamp.now()), orderBy('expiraEn','desc'), limit(50)), snap => {
+  onSnapshot(query(collection(db,'neclub_posts'), orderBy('fecha','desc'), limit(60)), snap => {
     const cambios = snap.docChanges();
-    neclubPostsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    const ahoraMs = Date.now();
+    // Orden por fecha (lo más nuevo primero, sea oficial o de alumno); los expirados se ocultan aquí
+    neclubPostsCache = snap.docs
+      .map(d => ({ id:d.id, ...d.data() }))
+      .filter(p => (p.expiraEn?.toMillis?.() ?? Infinity) > ahoraMs);
     const topId = neclubPostsCache.length ? neclubPostsCache[0].id : null;
     if (neclubUltimoTopId && topId && topId !== neclubUltimoTopId && window.scrollY > 160) {
       const barraNuevoPost = document.getElementById('neclub-new-posts-bar');
@@ -6949,36 +7009,22 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
 })();
 </script>
 <script>
-/* ===== TRAINING ROOM: salas 3D — solo visual. No lee ni escribe datos: únicamente abre/cierra las salas,
-   inclina las tarjetas y muestra la tarjeta de videos cuando la galería tiene contenido. ===== */
+/* ===== TRAINING ROOM: abre/cierra las salas al instante (sin animación) y muestra la
+   tarjeta de videos solo cuando la galería tiene contenido. ===== */
 (function () {
   var abierta = null, historyPush = false;
-  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var FULL = 'inset(0px 0px 0px 0px round 0px)';
   function $(id) { return document.getElementById(id); }
-  function clipDesde(card) {
-    var r = card.getBoundingClientRect(), w = window.innerWidth, h = window.innerHeight;
-    return 'inset(' + Math.max(0, r.top) + 'px ' + Math.max(0, w - r.right) + 'px ' + Math.max(0, h - r.bottom) + 'px ' + Math.max(0, r.left) + 'px round 22px)';
-  }
   window.abrirSalaTraining = function (id) {
     if (abierta) return;
     var room = $('tr-room-' + id), card = $('tr-portal-' + id);
     if (!room || !card) return;
-    abierta = { room: room, card: card };
+    abierta = { room: room };
     document.body.classList.add('tr-room-lock');
     room.scrollTop = 0;
-    if (reduce) { room.classList.add('open'); }
-    else {
-      room.style.transition = 'none';
-      room.style.clipPath = clipDesde(card);   // arranca con la forma de la tarjeta...
-      void room.offsetWidth;
-      room.style.transition = '';
-      room.classList.add('open');
-      room.style.clipPath = FULL;              // ...y se expande hasta llenar la pantalla
-    }
+    room.classList.add('open');
     try { history.pushState({ screen: 's-training', sala: id }, '', '#s-training'); historyPush = true; } catch (e) { historyPush = false; }
   };
-  function cerrarInterno(inmediato) {
+  function cerrarInterno() {
     if (!abierta) return;
     var a = abierta; abierta = null; historyPush = false;
     document.body.classList.remove('tr-room-lock');
@@ -6986,14 +7032,7 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     if (modalVideoGaleria && modalVideoGaleria.classList.contains('open') && typeof window.cerrarVideoPlayer === 'function') {
       window.cerrarVideoPlayer();
     }
-    if (reduce || inmediato) {
-      a.room.style.transition = 'none'; a.room.classList.remove('open'); a.room.style.clipPath = '';
-      void a.room.offsetWidth; a.room.style.transition = '';
-      return;
-    }
-    a.room.style.clipPath = clipDesde(a.card);  // se encoge de vuelta a su tarjeta
     a.room.classList.remove('open');
-    setTimeout(function () { if (!a.room.classList.contains('open')) a.room.style.clipPath = ''; }, 700);
   }
   window.cerrarSalaTraining = function () {
     if (!abierta) return;
@@ -7002,10 +7041,10 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
   window.addEventListener('popstate', function () { if (abierta) cerrarInterno(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') window.cerrarSalaTraining(); });
 
-  // Si el alumno sale del Training Room por otro camino, se cierra la sala sin animación
+  // Si el alumno sale del Training Room por otro camino, se cierra la sala
   var st = $('s-training');
   if (st && window.MutationObserver) {
-    new MutationObserver(function () { if (abierta && !st.classList.contains('active')) cerrarInterno(true); })
+    new MutationObserver(function () { if (abierta && !st.classList.contains('active')) cerrarInterno(); })
       .observe(st, { attributes: true, attributeFilter: ['class'] });
   }
 
