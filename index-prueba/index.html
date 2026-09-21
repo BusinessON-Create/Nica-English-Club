@@ -3,11 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) - App Portal -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6VCQK2ZNPX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6VCQK2ZNPX');
+</script>
 <!--Removido: Cache-Control, Pragma y Expires en no-cache bloqueaban el cacheo del navegador
     sin necesidad, ya que el sistema de APP_BUILD_VERSION (más abajo) ya se encarga de
     forzar la actualización cuando hay una versión nueva.-->
-<title>NicaEnglish Club — Portal</title>
-<meta name="description" content="Portal de NicaEnglish Club: practica inglés todos los días con English Journey, comparte tu progreso en NECLUB y conecta con tus compañeros.">
+<title>Nica English Club — Login del Portal de Estudiantes</title>
+<meta name="description" content="Inicia sesión en el portal de Nica English Club para practicar inglés a diario con English Journey y conectar con la comunidad NECLUB.">
 <!-- Preconnect: adelanta la conexión (DNS + TLS) a los dominios que la pantalla de login
      necesita sí o sí, para que cuando el navegador pida el archivo real, la conexión ya
      esté lista en vez de abrirse recién en ese momento. Solo los 4 que el login realmente
@@ -889,6 +897,10 @@ body.neclub-visitante .neclub-composer { display:none; }
 .tr-nav-icon-btn.gold:hover { box-shadow:0 6px 16px rgba(240,180,41,.18); }
 .tr-nav-icon-btn.gold.has-new::after { content:''; position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--card); }
 .tr-nav-icon-btn { position:relative; }
+/* Badge de "semanas completadas" sobre el botón de English Journey — señal visible de que
+   ahí hay progreso guardado y se puede entrar a repasar. */
+.tr-journey-badge { position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-size:9px; font-weight:800; font-family:'DM Mono',monospace; display:none; align-items:center; justify-content:center; border:2px solid var(--bg); line-height:1; }
+.tr-journey-badge.show { display:flex; }
 .tr-nav-search-wrap { display:none; flex:1; min-width:0; max-width:340px; position:relative; align-items:center; animation: fadeIn .18s var(--ease); }
 .tr-nav-search-wrap.open { display:flex; }
 .tr-nav-search-wrap .tr-search-input { width:100%; min-width:0; height:38px; background:var(--card2); border:1px solid var(--border2); border-radius:12px; color:var(--text); padding:0 40px 0 14px; font-size:13px; font-family:inherit; box-sizing:border-box; }
@@ -1138,11 +1150,11 @@ body.neclub-visitante .neclub-composer { display:none; }
 .chat-shell { display:flex; flex-direction:column; height:calc(100vh - 62px); min-height:0; max-width:720px; width:100%; margin:0 auto; }
 .chat-online-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(0,214,143,.1); border:1px solid rgba(0,214,143,.3); color:var(--green); font-size:10.5px; font-weight:700; padding:5px 11px; border-radius:99px; margin-left:8px; }
 .chat-tabs { display:flex; gap:8px; padding:10px 16px 0; }
-.chat-tab-btn { flex:1; padding:10px; background:transparent; border:1px solid transparent; color:var(--muted); font-family:inherit; font-size:12px; font-weight:700; border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition: all .18s var(--ease); }
+.chat-tab-btn { flex:1; padding:10px; background:transparent; border:1px solid transparent; color:var(--muted); font-family:inherit; font-size:12px; font-weight:700; border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition: all .18s var(--ease); -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; }
 .chat-tab-btn.active { color:var(--gold); border-color:var(--gold2); background:var(--gold-dim); }
 .chat-contacts { display:none; padding:10px 16px; gap:8px; overflow-x:auto; }
 .chat-contacts.open { display:flex; }
-.chat-contact-chip { flex:0 0 auto; padding:2px; background:transparent; border:1px solid transparent; border-radius:50%; cursor:pointer; transition: border-color .18s var(--ease); }
+.chat-contact-chip { flex:0 0 auto; padding:2px; background:transparent; border:1px solid transparent; border-radius:50%; cursor:pointer; transition: border-color .18s var(--ease); -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; }
 .chat-contact-chip.active { border-color:var(--gold2); background:var(--gold-dim); }
 .chat-contact-chip .contact-avatar { width:34px; height:34px; border-radius:50%; overflow:hidden; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--gold); flex-shrink:0; position:relative; }
 .chat-contact-chip .contact-avatar img { width:100%; height:100%; object-fit:cover; }
@@ -1163,7 +1175,7 @@ body.neclub-visitante .neclub-composer { display:none; }
 /* Lista de conversaciones privadas recientes (pantalla de inicio del chat privado, estilo WhatsApp
    pero con los colores negros/dorados de la plataforma, no el azul de WhatsApp). */
 .chat-conv-list { display:flex; flex-direction:column; }
-.chat-conv-row { display:flex; align-items:center; gap:12px; padding:12px 4px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,.04); transition: background .15s var(--ease); }
+.chat-conv-row { display:flex; align-items:center; gap:12px; padding:12px 4px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,.04); transition: background .15s var(--ease); -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; }
 .chat-conv-row:hover, .chat-conv-row:active { background:rgba(255,255,255,.03); }
 .chat-conv-avatar-wrap { position:relative; width:46px; height:46px; flex-shrink:0; }
 .chat-conv-avatar { width:100%; height:100%; border-radius:50%; overflow:hidden; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:var(--gold); }
@@ -1192,8 +1204,8 @@ body.neclub-visitante .neclub-composer { display:none; }
   background:var(--card2); clip-path:polygon(100% 0, 0% 0, 100% 100%);
 }
 .chat-inputbar { display:flex; gap:10px; padding:14px 16px 18px; border-top:1px solid rgba(240,180,41,.15); background:rgba(8,8,10,.9); }
-.chat-inputbar input { flex:1; padding:12px 14px; background:rgba(255,255,255,.05); border:1px solid transparent; border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:13.5px; }
-.chat-send-btn { width:38px; height:38px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; cursor:pointer; flex-shrink:0; font-size:14px; }
+.chat-inputbar input { flex:1; padding:12px 14px; background:rgba(255,255,255,.05); border:1px solid transparent; border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:13.5px; -webkit-tap-highlight-color:transparent; }
+.chat-send-btn { width:38px; height:38px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; cursor:pointer; flex-shrink:0; font-size:14px; -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; }
 .chat-hint { text-align:center; font-size:10px; color:var(--muted); padding:6px 16px 0; }
 
 .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(10px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; }
@@ -1294,7 +1306,7 @@ body.tr-room-lock { overflow:hidden; }
 <body>
 
 <div class="loading-screen" id="loading">
-  <div class="load-logo app-logo">NEC</div>
+  <div class="load-logo app-logo has-image"><img src="data:image/png;base64,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" alt="Logo NicaEnglish Club"></div>
   <div class="spinner"></div>
 </div>
 
@@ -1464,7 +1476,7 @@ body.tr-room-lock { overflow:hidden; }
         <span class="tr-nav-title" id="tr-nav-title"><i class="fa-solid fa-brain" style="color:var(--gold); margin-right:6px;"></i>Training Room</span>
       </div>
       <div class="nav-actions tr-nav-actions" id="tr-nav-actions">
-        <button class="tr-nav-icon-btn gold" id="tr-nav-journey-btn" onclick="entrarAEnglishJourney()" title="English Journey"><i class="fa-solid fa-route"></i></button>
+        <button class="tr-nav-icon-btn gold" id="tr-nav-journey-btn" onclick="entrarAEnglishJourney()" title="English Journey"><i class="fa-solid fa-route"></i><span class="tr-journey-badge" id="tr-journey-badge">0</span></button>
         <div class="tr-nav-search-wrap" id="tr-nav-search-wrap">
           <input type="text" id="tr-search-input" class="tr-search-input" placeholder="Escribe la palabra o frase que te gustaría traducir..." onkeydown="if(event.key==='Enter'){event.preventDefault(); trBuscarTraduccion();}">
           <button class="tr-search-btn" id="tr-search-btn" onclick="trBuscarTraduccion()"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -6097,8 +6109,9 @@ window.subirFotoPerfil = async (ev) => {
   const file = ev.target.files[0];
   if (!file || !sessionActiva) return;
   try {
+    const fotoAnterior = sessionActiva.foto || '';
     const archivoFinal = await comprimirImagen(file);
-    const { storage, storageRef, uploadBytes, getDownloadURL } = await cargarStorage();
+    const { storage, storageRef, uploadBytes, getDownloadURL, deleteObject } = await cargarStorage();
     const path = `perfiles/${sessionActiva.id}_${Date.now()}`;
     const ref = storageRef(storage, path);
     await uploadBytes(ref, archivoFinal);
@@ -6106,6 +6119,12 @@ window.subirFotoPerfil = async (ev) => {
     await updateDoc(doc(db,'alumnos',sessionActiva.id), { foto: url });
     sessionActiva.foto = url;
     document.getElementById('perfil-avatar-preview').innerHTML = `<img src="${url}">`;
+    // Borra la foto vieja de Storage (ya con la nueva guardada), para no ir acumulando
+    // fotos sin usar. Si la anterior no era de Storage (ej. un link viejo de Drive) o ya
+    // no existe, simplemente no hace nada — nunca bloquea el cambio de foto.
+    if (fotoAnterior && fotoAnterior.includes('firebasestorage')) {
+      try { await deleteObject(storageRef(storage, fotoAnterior)); } catch (e) { /* ya no existía */ }
+    }
     renderUI(sessionActiva);
     showModal("Éxito", "Foto de perfil actualizada.");
   } catch (e) {

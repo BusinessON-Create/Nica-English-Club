@@ -212,6 +212,7 @@ function escucharTraining() {
     const nuevo = snap.data();
     const semanaCambio = !trProgresoActual || trProgresoActual.semanaIdActual !== nuevo.semanaIdActual;
     trProgresoActual = nuevo;
+    trActualizarBadgeJourney();
     if (!nuevo.semanaIdActual) {
       intentarRepararSemanaFaltante(nuevo); // intento inmediato (por si ya hay contenido esperando)
       trEscucharLibreriaEnEspera(nuevo.etapaActual, nuevo.ultimoOrdenCompletado || 0); // se queda escuchando en vivo
@@ -235,6 +236,19 @@ function escucharTraining() {
   }, e => {
     console.error('Error escuchando el progreso de Training Room:', e);
   });
+}
+
+// Actualiza el numerito dorado sobre el botón de English Journey (nav de Training Room) con
+// la cantidad de semanas ya completadas, para que el alumno vea de un vistazo que ahí hay
+// progreso guardado y puede entrar a repasar días pasados.
+function trActualizarBadgeJourney() {
+  const badge = document.getElementById('tr-journey-badge');
+  if (!badge || !trProgresoActual) return;
+  const n = trProgresoActual.semanasCompletadas || 0;
+  badge.textContent = n > 99 ? '99+' : String(n);
+  badge.classList.toggle('show', n > 0);
+  const btn = document.getElementById('tr-nav-journey-btn');
+  if (btn) btn.title = n > 0 ? `English Journey — ${n} semana${n===1?'':'s'} completada${n===1?'':'s'}` : 'English Journey';
 }
 
 function renderTrainingRoom() {
@@ -266,11 +280,20 @@ function renderTrainingRoom() {
   else pasoHtml = renderPasoProduce(dia);
 
   const diaRealActual = trProgresoActual.diaActual;
+  // Los puntitos de días se pintan tanto para la semana real actual como para cualquier
+  // semana que se esté repasando en modo práctica (trModoPractica.semana). Antes, "esPasado"
+  // y "esFuturo" siempre comparaban contra diaRealActual (el día de la semana REAL actual),
+  // así que al repasar una semana YA COMPLETADA distinta a la actual, los días posteriores a
+  // diaRealActual quedaban marcados como "locked" aunque esa semana vieja estuviera 100%
+  // terminada (bug: repasar Semana 1 Día 2 funcionaba, pero Día 3+ quedaba bloqueado si el
+  // progreso real iba en Día 3 de otra semana). Ahora solo aplicamos ese límite cuando la
+  // semana que se está mostrando es realmente la semana actual del alumno.
+  const semanaEsLaActual = !trModoPractica || !trSemanaActual || (semanaEfectiva && semanaEfectiva.id === trSemanaActual.id);
   const dots = [1,2,3,4,5].map(d => {
-    const esPasado = d < diaRealActual;               // ya completado → se puede repasar
     const esActual = d === diaRealActual && !trModoPractica;
     const esActualEnPractica = trModoPractica && d === trModoPractica.dia;
-    const esFuturo = d > diaRealActual;
+    const esPasado = semanaEsLaActual ? (d < diaRealActual) : !esActualEnPractica; // semana pasada ya completada → todos los días se pueden repasar
+    const esFuturo = semanaEsLaActual && d > diaRealActual;
     const clases = ['tr-daylabel'];
     if (esPasado) clases.push('done', 'clickable');
     if (esActual || esActualEnPractica) clases.push('current');
