@@ -1,0 +1,25 @@
+  <div id="s-chat" class="chat-float-panel">
+    <nav class="stu-nav">
+      <div class="nav-actions"><span style="color:#fff; font-weight:700; font-size:13.5px;"><i class="fa-solid fa-comments" style="color:var(--gold); margin-right:6px;"></i>Chat NEC</span><span class="chat-online-pill" id="chat-online-pill"><span class="online-dot"></span> <span id="chat-online-num">0</span> en línea</span></div>
+      <button class="btn-salir" onclick="cerrarChatFlotante()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+    </nav>
+    <div class="chat-shell">
+      <div class="chat-tabs">
+        <button class="chat-tab-btn active" id="chat-tab-grupo" onclick="cambiarTabChat('grupo')"><i class="fa-solid fa-people-group"></i> Grupo (Todos)</button>
+        <button class="chat-tab-btn" id="chat-tab-privado" onclick="cambiarTabChat('privado')"><i class="fa-solid fa-user"></i> Privado</button>
+      </div>
+      <div class="chat-contacts" id="chat-contacts" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; gap:8px; padding:0 0 10px;">
+          <input type="text" id="chat-buscar-codigo" placeholder="Buscar compañero por su ID de estudiante (ej: NEC260001GM)" style="flex:1; padding:10px 14px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:99px; color:var(--text); outline:none; font-family:inherit; font-size:12.5px;" onkeydown="if(event.key==='Enter') buscarAlumnoPorCodigo();">
+          <button class="chat-send-btn" style="width:38px; height:38px;" onclick="buscarAlumnoPorCodigo()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div style="display:flex; gap:8px; overflow-x:auto;" id="chat-contacts-online"></div>
+      </div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <p class="chat-hint" id="chat-hint-txt">Please write in English <i class="fa-solid fa-language"></i> — messages are cleared periodically.</p>
+      <div class="chat-inputbar">
+        <input type="text" id="chat-input" placeholder="Type a message in English..." maxlength="300" onkeydown="if(event.key==='Enter') enviarMensajeChat();">
+        <button class="chat-send-btn" onclick="enviarMensajeChat()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
