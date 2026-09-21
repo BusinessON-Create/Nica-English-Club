@@ -897,6 +897,10 @@ body.neclub-visitante .neclub-composer { display:none; }
 .tr-nav-icon-btn.gold:hover { box-shadow:0 6px 16px rgba(240,180,41,.18); }
 .tr-nav-icon-btn.gold.has-new::after { content:''; position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--card); }
 .tr-nav-icon-btn { position:relative; }
+/* Badge de "semanas completadas" sobre el botón de English Journey — señal visible de que
+   ahí hay progreso guardado y se puede entrar a repasar. */
+.tr-journey-badge { position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-size:9px; font-weight:800; font-family:'DM Mono',monospace; display:none; align-items:center; justify-content:center; border:2px solid var(--bg); line-height:1; }
+.tr-journey-badge.show { display:flex; }
 .tr-nav-search-wrap { display:none; flex:1; min-width:0; max-width:340px; position:relative; align-items:center; animation: fadeIn .18s var(--ease); }
 .tr-nav-search-wrap.open { display:flex; }
 .tr-nav-search-wrap .tr-search-input { width:100%; min-width:0; height:38px; background:var(--card2); border:1px solid var(--border2); border-radius:12px; color:var(--text); padding:0 40px 0 14px; font-size:13px; font-family:inherit; box-sizing:border-box; }
@@ -1472,7 +1476,7 @@ body.tr-room-lock { overflow:hidden; }
         <span class="tr-nav-title" id="tr-nav-title"><i class="fa-solid fa-brain" style="color:var(--gold); margin-right:6px;"></i>Training Room</span>
       </div>
       <div class="nav-actions tr-nav-actions" id="tr-nav-actions">
-        <button class="tr-nav-icon-btn gold" id="tr-nav-journey-btn" onclick="entrarAEnglishJourney()" title="English Journey"><i class="fa-solid fa-route"></i></button>
+        <button class="tr-nav-icon-btn gold" id="tr-nav-journey-btn" onclick="entrarAEnglishJourney()" title="English Journey"><i class="fa-solid fa-route"></i><span class="tr-journey-badge" id="tr-journey-badge">0</span></button>
         <div class="tr-nav-search-wrap" id="tr-nav-search-wrap">
           <input type="text" id="tr-search-input" class="tr-search-input" placeholder="Escribe la palabra o frase que te gustaría traducir..." onkeydown="if(event.key==='Enter'){event.preventDefault(); trBuscarTraduccion();}">
           <button class="tr-search-btn" id="tr-search-btn" onclick="trBuscarTraduccion()"><i class="fa-solid fa-magnifying-glass"></i></button>
