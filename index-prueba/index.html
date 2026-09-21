@@ -2665,6 +2665,17 @@ function renderBanner(data) {
         area.innerHTML = `<img src="${resolverUrlDrive(url)}">`;
     }
 }
+// El banner es un <iframe> de YouTube: a diferencia de un <video>, no se puede simplemente
+// "pausar" desde afuera. Si el alumno le dio play y se va a otra pantalla, la única forma
+// confiable de cortar el audio es recargar el iframe (por eso el paso por "about:blank").
+window.pausarBannerVideo = function () {
+  const area = document.getElementById('banner-area');
+  const iframe = area && area.querySelector('iframe');
+  if (!iframe) return;
+  const src = iframe.src;
+  iframe.src = 'about:blank';
+  setTimeout(() => { iframe.src = src; }, 50);
+};
 
 /* ===== GALERÍA DE VIDEOS (categorías con carrusel automático) ===== */
 function extraerIdYoutube(url) {
@@ -6492,6 +6503,15 @@ function showScreen(id, opciones = {}) {
   if (pantallaAnterior && pantallaAnterior.id === 's-neclub' && id !== 's-neclub' && typeof pausarTodosLosVideosNeclub === 'function') {
     pausarTodosLosVideosNeclub();
   }
+  if (pantallaAnterior && pantallaAnterior.id === 's-student' && id !== 's-student') {
+    pausarBannerVideo();
+  }
+  // El reproductor de la Galería de videos (Sala 02) es un overlay global sobre toda la app:
+  // si sigue sonando y el alumno cambia de pantalla, lo cerramos para que no quede de fondo.
+  const modalVideoGaleria = document.getElementById('modal-video-bg');
+  if (modalVideoGaleria && modalVideoGaleria.classList.contains('open') && typeof window.cerrarVideoPlayer === 'function') {
+    window.cerrarVideoPlayer();
+  }
   if ((!pantallaAnterior || pantallaAnterior.id !== 's-neclub') && id === 's-neclub' && typeof renderFlashesNeclub === 'function') {
     renderFlashesNeclub(true); // se rebaraja el orden de los Flashes cada vez que se entra a NECLUB
   }
@@ -6962,6 +6982,10 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     if (!abierta) return;
     var a = abierta; abierta = null; historyPush = false;
     document.body.classList.remove('tr-room-lock');
+    var modalVideoGaleria = document.getElementById('modal-video-bg');
+    if (modalVideoGaleria && modalVideoGaleria.classList.contains('open') && typeof window.cerrarVideoPlayer === 'function') {
+      window.cerrarVideoPlayer();
+    }
     if (reduce || inmediato) {
       a.room.style.transition = 'none'; a.room.classList.remove('open'); a.room.style.clipPath = '';
       void a.room.offsetWidth; a.room.style.transition = '';
