@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-black">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nica English Club - Entrenamiento de Tiempos Verbales</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nec: {
+                            black: '#0a0a0c',
+                            dark: '#121216',
+                            card: '#1a1a22',
+                            border: 'rgba(255, 255, 255, 0.1)',
+                            gold: '#f59e0b',
+                            goldHover: '#d97706',
+                            goldLight: '#fbbf24',
+                            accent: '#facc15'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #08080a;
+            color: #f1f5f9;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(217, 119, 6, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff 30%, #facc15 80%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-card {
+            background: rgba(22, 22, 29, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card-gold {
+            background: rgba(245, 158, 11, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .ghosted-text {
+            color: rgba(203, 213, 225, 0.45);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #262630;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+
+        .badge-live {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #facc15;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #facc15 0%, #f59e0b 100%);
+            color: #000;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
+        }
+
+        .btn-gold:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+        }
+
+        /* Pulse animation for active lesson */
+        @keyframes subtle-pulse {
+            0%, 100% { border-color: rgba(245, 158, 11, 0.3); }
+            50% { border-color: rgba(245, 158, 11, 0.7); }
+        }
+        .pulse-border {
+            animation: subtle-pulse 3s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col justify-between antialiased selection:bg-amber-500 selection:text-black pb-8">
+
+    <!-- NAVIGATION BAR -->
+    <header class="sticky top-0 z-50 glass-card border-b border-white/10 px-4 py-3 sm:px-6">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('welcome')">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-black text-xs shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid font-black text-sm">EC</i>
+                </div>
+                <div>
+                    <span class="font-heading font-extrabold text-white text-base tracking-tight leading-none block">Nica English Club</span>
+                    <span class="text-[10px] text-amber-400/90 font-medium tracking-wider uppercase">Entrenamiento Real</span>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center gap-2">
+                <button onclick="switchTab('lessons')" id="nav-lessons" class="text-xs font-semibold px-3 py-1.5 rounded-full border border-white/10 text-gray-300 hover:text-white transition-all">
+                    <i class="fa-solid fa-book-open text-amber-400 mr-1.5"></i>Clases
+                </button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="text-xs font-semibold px-3.5 py-1.5 rounded-full btn-gold">
+                    <i class="fa-solid fa-bolt mr-1"></i>Práctica
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-3xl mx-auto px-4 pt-6 w-full flex-grow">
+
+        <!-- ==================== TAB 0: WELCOME SCREEN ==================== -->
+        <section id="tab-welcome" class="space-y-6 animate-fadeIn">
+            <!-- Hero Banner -->
+            <div class="text-center pt-4 pb-2 space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-live text-xs font-medium">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    Módulo Interactivos • Tiempos Progresivos y Perfectos
+                </div>
+
+                <h1 class="text-4xl sm:text-5xl font-heading font-black tracking-tight text-white leading-[1.15]">
+                    No estudies inglés.<br>
+                    <span class="gold-gradient-text">Entrénalo.</span>
+                </h1>
+
+                <p class="text-gray-400 text-sm sm:text-base max-w-lg mx-auto font-normal leading-relaxed">
+                    Aprende la estructura natural de los tiempos <strong class="text-white">Progresivos</strong> y <strong class="text-white">Perfectos</strong> en Presente, Pasado y Futuro. Entrena con oraciones de uso real y traducción guiada.
+                </p>
+            </div>
+
+            <!-- Features Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div onclick="switchTab('lessons')" class="glass-card p-5 rounded-2xl border border-white/10 hover:border-amber-500/50 transition-all cursor-pointer group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-graduation-cap text-lg"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg group-hover:text-amber-400 transition-colors">1. Clases de Repaso</h3>
+                    <p class="text-xs text-gray-400 mt-1 leading-relaxed">Fórmulas directas, casos de uso reales e interpretación de los 6 tiempos verbales.</p>
+                </div>
+
+                <div onclick="switchTab('quiz')" class="glass-card p-5 rounded-2xl border border-white/10 hover:border-amber-500/50 transition-all cursor-pointer group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-list-check text-lg"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg group-hover:text-amber-400 transition-colors">2. Práctica de 30 Ejercicios</h3>
+                    <p class="text-xs text-gray-400 mt-1 leading-relaxed">30 oraciones interactivas con la interpretación fantasma (ghosted) abajo para máximo contexto.</p>
+                </div>
+            </div>
+
+            <!-- Method Highlight -->
+            <div class="glass-card-gold p-5 rounded-2xl border border-amber-500/30 text-center space-y-3">
+                <div class="text-amber-400 font-heading font-bold text-sm uppercase tracking-wider">El Método Nica English Club</div>
+                <p class="text-xs text-gray-300 max-w-md mx-auto leading-relaxed">
+                    "Cada oración incluye una interpretación traducida en todo tenue abajo para activar tu intuición sin saturarte."
+                </p>
+                <button onclick="switchTab('quiz')" class="w-full sm:w-auto px-8 py-3 rounded-xl btn-gold text-sm uppercase tracking-wide font-extrabold inline-flex items-center justify-center gap-2">
+                    Iniciar Práctica Interactiva <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ==================== TAB 1: LESSONS / INTRO ==================== -->
+        <section id="tab-lessons" class="hidden space-y-5 animate-fadeIn">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                    <h2 class="font-heading font-extrabold text-2xl text-white">Guía de Tiempos Verbales</h2>
+                    <p class="text-xs text-gray-400">Repasa las fórmulas antes de iniciar la prueba de entrenamiento.</p>
+                </div>
+                <button onclick="switchTab('quiz')" class="btn-gold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+                    Ir al Test <i class="fa-solid fa-circle-play"></i>
+                </button>
+            </div>
+
+            <!-- Tabs selector for 6 Tenses -->
+            <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none" id="tense-tabs">
+                <!-- Javascript will inject tense tab buttons -->
+            </div>
+
+            <!-- Active Lesson Detail Card -->
+            <div id="active-lesson-card" class="glass-card p-5 sm:p-6 rounded-2xl border border-amber-500/30 space-y-4 pulse-border">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- Quick Tip Callout -->
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90 flex gap-3 items-start">
+                <i class="fa-solid fa-lightbulb text-amber-400 text-base mt-0.5"></i>
+                <div>
+                    <strong class="text-amber-300 block mb-0.5 font-bold">Consejo de Entrenamiento:</strong>
+                    Los tiempos <strong>Progresivos (Continuous)</strong> enfocan la duración de una acción. Los tiempos <strong>Perfectos</strong> conectan una acción completada con un punto de referencia específico.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== TAB 2: INTERACTIVE QUIZ ==================== -->
+        <section id="tab-quiz" class="hidden space-y-5 animate-fadeIn">
+            
+            <!-- Progress Bar & Stats Bar -->
+            <div class="glass-card p-4 rounded-2xl border border-white/10 space-y-2">
+                <div class="flex justify-between items-center text-xs font-semibold">
+                    <span id="quiz-progress-text" class="text-amber-400 font-mono">Pregunta 1 de 30</span>
+                    <span id="quiz-score-badge" class="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">Puntaje: <strong class="text-amber-400" id="current-score">0</strong></span>
+                </div>
+                <!-- Bar -->
+                <div class="w-full h-2.5 bg-black/60 rounded-full overflow-hidden p-0.5 border border-white/5">
+                    <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full transition-all duration-300" style="width: 3.33%;"></div>
+                </div>
+                <!-- Category Badge -->
+                <div class="flex justify-between items-center pt-1 text-[11px]">
+                    <span id="quiz-tense-tag" class="px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300 font-medium">Present Continuous</span>
+                    <span class="text-gray-500"><i class="fa-solid fa-mobile-screen mr-1"></i>Toca la opción correcta</span>
+                </div>
+            </div>
+
+            <!-- Quiz Card -->
+            <div id="quiz-card" class="glass-card p-5 sm:p-7 rounded-2xl border border-white/10 space-y-6 relative">
+                
+                <!-- Question Header / Context -->
+                <div>
+                    <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold block mb-1">Completa la oración:</span>
+                    
+                    <!-- Main English Sentence with Blank -->
+                    <div id="question-english" class="text-lg sm:text-xl font-heading font-bold text-white leading-relaxed">
+                        <!-- Injected JS -->
+                    </div>
+
+                    <!-- Ghosted Spanish Interpretation (CRITICAL REQUIREMENT) -->
+                    <div class="mt-2.5 pt-2 border-t border-white/5">
+                        <div class="text-xs text-amber-400/80 font-medium mb-0.5 uppercase tracking-wider text-[10px]"><i class="fa-solid fa-language mr-1"></i>Interpretación:</div>
+                        <div id="question-spanish-ghosted" class="ghosted-text text-sm sm:text-base leading-snug">
+                            <!-- Injected JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="grid grid-cols-1 gap-2.5">
+                    <!-- Option buttons injected here -->
+                </div>
+
+                <!-- Feedback Callout (hidden by default) -->
+                <div id="feedback-box" class="hidden p-4 rounded-xl border text-xs sm:text-sm space-y-1.5 animate-fadeIn">
+                    <div class="font-bold flex items-center gap-2" id="feedback-title"></div>
+                    <div class="text-gray-300 leading-relaxed" id="feedback-explanation"></div>
+                </div>
+
+                <!-- Footer Navigation inside Card -->
+                <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                    <button onclick="prevQuestion()" id="btn-prev" class="px-3.5 py-2 rounded-xl border border-white/10 text-xs font-semibold text-gray-400 hover:text-white transition-all disabled:opacity-30 disabled:pointer-events-none">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                    </button>
+
+                    <button onclick="nextQuestion()" id="btn-next" class="btn-gold px-5 py-2.5 rounded-xl text-xs uppercase font-extrabold tracking-wider flex items-center gap-1.5 hidden">
+                        Siguiente <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== TAB 3: RESULTS SUMMARY ==================== -->
+        <section id="tab-results" class="hidden space-y-6 text-center animate-fadeIn py-4">
+            
+            <div class="glass-card p-6 sm:p-8 rounded-3xl border border-amber-500/30 space-y-6 max-w-md mx-auto gold-glow">
+                
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-black text-2xl font-black mx-auto shadow-lg shadow-amber-500/30">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <div>
+                    <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-white">¡Entrenamiento Completado!</h2>
+                    <p class="text-gray-400 text-xs sm:text-sm mt-1">Este es tu resumen de rendimiento en tiempos verbales.</p>
+                </div>
+
+                <!-- Score Big Circle -->
+                <div class="py-4 border-y border-white/10 my-4">
+                    <div class="text-5xl font-black font-heading gold-gradient-text" id="final-score-text">0 / 30</div>
+                    <div class="text-xs text-amber-400 font-semibold tracking-wider uppercase mt-1" id="final-percentage-text">0% De Precisión</div>
+                </div>
+
+                <!-- Message based on score -->
+                <div id="final-feedback-msg" class="text-xs sm:text-sm text-gray-300 leading-relaxed px-2">
+                    <!-- Injected JS -->
+                </div>
+
+                <div class="pt-2 space-y-2.5">
+                    <button onclick="restartQuiz()" class="w-full py-3.5 rounded-xl btn-gold text-xs uppercase tracking-wider font-extrabold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Repetir Entrenamiento
+                    </button>
+                    <button onclick="switchTab('lessons')" class="w-full py-3 rounded-xl border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all">
+                        <i class="fa-solid fa-book-open mr-1.5"></i> Repasar Lecciones
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="max-w-4xl mx-auto px-4 pt-8 text-center text-xs text-gray-500 space-y-2">
+        <div class="flex items-center justify-center gap-2 text-gray-400">
+            <span class="font-semibold text-amber-400">Nica English Club</span> • Entrena comunicación real
+        </div>
+        <p class="text-[11px] text-gray-600">© 2026 Nica English Club. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- JS LOGIC DATA & APP CONTROLLER -->
+    <script>
+        
+        // 1. LESSON DATA FOR CLASES / INTRO
+        const LESSONS_DATA = [
+            {
+                id: 'pres_cont',
+                title: 'Present Continuous',
+                tag: 'Progresivo',
+                formula: 'Subject + am / is / are + Verb(-ing)',
+                explanation: 'Se usa para acciones ocurriendo en este preciso momento o situaciones temporales en el presente.',
+                keyMarkers: 'right now, currently, at the moment, today, this week',
+                exampleEn: 'I am still working from home today.',
+                exampleEs: 'Todavía estoy trabajando desde casa hoy.'
+            },
+            {
+                id: 'past_cont',
+                title: 'Past Continuous',
+                tag: 'Progresivo',
+                formula: 'Subject + was / were + Verb(-ing)',
+                explanation: 'Describe una acción que estuvo en desarrollo en un punto específico del pasado o mientras ocurría otra cosa.',
+                keyMarkers: 'yesterday at 8 PM, a few minutes ago, while, when',
+                exampleEn: 'You were still talking to your mom a few minutes ago.',
+                exampleEs: 'Todavía estabas hablando con tu mamá hace unos minutos.'
+            },
+            {
+                id: 'fut_cont',
+                title: 'Future Continuous',
+                tag: 'Progresivo',
+                formula: 'Subject + will be + Verb(-ing)',
+                explanation: 'Indica una acción que estará en pleno desarrollo en un momento específico del futuro.',
+                keyMarkers: 'tomorrow at 10 AM, this time next week, tonight',
+                exampleEn: 'We will be practicing questions in English tomorrow.',
+                exampleEs: 'Estaremos practicando preguntas en inglés mañana.'
+            },
+            {
+                id: 'pres_perf',
+                title: 'Present Perfect',
+                tag: 'Perfecto',
+                formula: 'Subject + have / has + Past Participle',
+                explanation: 'Conecta el pasado con el presente. Acciones completadas recientementes o experiencias acumuladas.',
+                keyMarkers: 'already, so far, recently, yet, for, since',
+                exampleEn: 'I have already finished all my daily tasks.',
+                exampleEs: 'Ya he terminado todas mis tareas diarias.'
+            },
+            {
+                id: 'past_perf',
+                title: 'Past Perfect',
+                tag: 'Perfecto',
+                formula: 'Subject + had + Past Participle',
+                explanation: 'El "pasado del pasado". Describe una acción que ocurrió antes de otro evento pasado.',
+                keyMarkers: 'before, by the time, already, prior to',
+                exampleEn: 'She had left the office before the meeting started.',
+                exampleEs: 'Ella se había ido de la oficina antes de que iniciara la reunión.'
+            },
+            {
+                id: 'fut_perf',
+                title: 'Future Perfect',
+                tag: 'Perfecto',
+                formula: 'Subject + will have + Past Participle',
+                explanation: 'Expresa una acción que ya estará completamente terminada antes de un plazo límite futuro.',
+                keyMarkers: 'by next Friday, by December, by the time',
+                exampleEn: 'They will have completed the whole project by next week.',
+                exampleEs: 'Ellos habrán completado todo el proyecto para la próxima semana.'
+            }
+        ];
+
+        // 2. QUIZ DATA (30 Exercises: 5 for each of the 6 tenses)
+        // Includes English sentence, blank gap, ghosted Spanish translation, options, correct index, explanation
+        const QUIZ_QUESTIONS = [
+            // --- PRESENT CONTINUOUS (1-5) ---
+            {
+                tense: "Present Continuous",
+                sentence: "I _____ from home this week while they renovate our main office.",
+                ghostedEs: "Todavía estoy trabajando desde casa esta semana mientras renuevan la oficina principal.",
+                options: ["am still working", "was still working", "have still worked", "will still be working"],
+                correct: 0,
+                explanation: "Usamos 'am still working' (Present Continuous) para describir una situación temporal activa en el presente."
+            },
+            {
+                tense: "Present Continuous",
+                sentence: "Look! The teacher _____ a key grammar rule on the board right now.",
+                ghostedEs: "¡Mira! El profesor está explicando una regla gramatical clave en la pizarra justo ahora.",
+                options: ["explained", "is explaining", "has explained", "was explaining"],
+                correct: 1,
+                explanation: "'Right now' indica que la acción está ocurriendo en este preciso instante."
+            },
+            {
+                tense: "Present Continuous",
+                sentence: "Why _____ a heavy winter coat inside the heated room today?",
+                ghostedEs: "¿Por qué estás usando un abrigo pesado de invierno dentro de la sala con calefacción hoy?",
+                options: ["did you wear", "were you wearing", "are you wearing", "have you worn"],
+                correct: 2,
+                explanation: "Pregunta sobre un estado o comportamiento continuo en el presente."
+            },
+            {
+                tense: "Present Continuous",
+                sentence: "Right now, our marketing colleagues _____ the new launch campaign.",
+                ghostedEs: "En este momento, nuestros colegas de marketing están preparando la nueva campaña de lanzamiento.",
+                options: ["are preparing", "were preparing", "have prepared", "prepared"],
+                correct: 0,
+                explanation: "'Right now' requiere la forma de presente continuo (are preparing)."
+            },
+            {
+                tense: "Present Continuous",
+                sentence: "She _____ to music; she is paying attention to an English podcast.",
+                ghostedEs: "Ella no está escuchando música; está prestando atención a un podcast en inglés.",
+                options: ["was not listening", "is not listening", "has not listened", "will not listen"],
+                correct: 1,
+                explanation: "Forma negativa del presente continuo para contrastar con lo que sí ocurre ahora mismo."
+            },
+
+            // --- PAST CONTINUOUS (6-10) ---
+            {
+                tense: "Past Continuous",
+                sentence: "You _____ to your mother on the phone just a few minutes ago.",
+                ghostedEs: "Todavía estabas hablando con tu mamá por teléfono hace solo unos minutos.",
+                options: ["are still talking", "were still talking", "have still talked", "will still be talking"],
+                correct: 1,
+                explanation: "Usamos 'were still talking' para una acción que estaba en desarrollo en un momento reciente del pasado."
+            },
+            {
+                tense: "Past Continuous",
+                sentence: "At 8:00 PM yesterday evening, we _____ dinner at that new restaurant.",
+                ghostedEs: "A las 8:00 PM ayer por la noche, estábamos cenando en ese nuevo restaurante.",
+                options: ["are eating", "had eaten", "were eating", "have eaten"],
+                correct: 2,
+                explanation: "Expresa una acción continua en un punto exacto en el pasado (8:00 PM)."
+            },
+            {
+                tense: "Past Continuous",
+                sentence: "While I was driving home from work, it _____ heavily across the city.",
+                ghostedEs: "Mientras conducía a casa del trabajo, estaba lloviendo fuertemente en la ciudad.",
+                options: ["was raining", "is raining", "has rained", "had rained"],
+                correct: 0,
+                explanation: "'While' introduce acciones simultáneas o continuas en el pasado."
+            },
+            {
+                tense: "Past Continuous",
+                sentence: "They _____ attention when the manager explained the changes.",
+                ghostedEs: "Ellos no estaban prestando atención cuando el gerente explicó los cambios.",
+                options: ["are not paying", "were not paying", "have not paid", "will not be paying"],
+                correct: 1,
+                explanation: "Acción en desarrollo en el pasado que fue interrumpida por otra acción."
+            },
+            {
+                tense: "Past Continuous",
+                sentence: "What _____ when the emergency alarm suddenly started ringing?",
+                ghostedEs: "¿Qué estabas haciendo cuando la alarma de emergencia comenzó a sonar repentinamente?",
+                options: ["were you doing", "are you doing", "have you done", "had you done"],
+                correct: 0,
+                explanation: "Pregunta sobre la acción en curso al momento de una interrupción pasada."
+            },
+
+            // --- FUTURE CONTINUOUS (11-15) ---
+            {
+                tense: "Future Continuous",
+                sentence: "We _____ questions in English tomorrow at 10:00 AM sharp.",
+                ghostedEs: "Estaremos practicando preguntas en inglés mañana a las 10:00 AM en punto.",
+                options: ["are practicing", "have practiced", "will be practicing", "were practicing"],
+                correct: 2,
+                explanation: "'Will be practicing' describe una acción en desarrollo a una hora fija en el futuro."
+            },
+            {
+                tense: "Future Continuous",
+                sentence: "Don't call her at 7:00 PM tonight because she _____ for her exam.",
+                ghostedEs: "No la llames a las 7:00 PM esta noche porque ella estará estudiando para su examen.",
+                options: ["studies", "will be studying", "has studied", "was studying"],
+                correct: 1,
+                explanation: "Advierte sobre una acción que estará en curso a esa hora futura."
+            },
+            {
+                tense: "Future Continuous",
+                sentence: "At this exact time next week, I _____ over the Atlantic Ocean to London.",
+                ghostedEs: "A esta misma hora la próxima semana, estaré volando sobre el Océano Atlántico rumbo a Londres.",
+                options: ["will fly", "will be flying", "am flying", "have flown"],
+                correct: 1,
+                explanation: "Acción en pleno proceso en un momento específico del futuro."
+            },
+            {
+                tense: "Future Continuous",
+                sentence: "Tomorrow morning at nine o'clock, the team _____ their meeting.",
+                ghostedEs: "Mañana por la mañana a las nueve en punto, el equipo estará sosteniendo su reunión.",
+                options: ["will be holding", "has held", "is holding", "held"],
+                correct: 0,
+                explanation: "Uso estándar del Future Continuous para actividades agendadas en progreso futuro."
+            },
+            {
+                tense: "Future Continuous",
+                sentence: "He _____ his laptop tonight, so you can borrow it if you need to.",
+                ghostedEs: "Él no estará usando su computadora esta noche, así que puedes tomarla prestada si la necesitas.",
+                options: ["is not using", "will not be using", "has not used", "was not using"],
+                correct: 1,
+                explanation: "Predicción de no uso en desarrollo durante un período futuro."
+            },
+
+            // --- PRESENT PERFECT (16-20) ---
+            {
+                tense: "Present Perfect",
+                sentence: "I _____ all my daily tasks for today and now I can rest.",
+                ghostedEs: "Ya he terminado todas mis tareas diarias de hoy y ahora puedo descansar.",
+                options: ["have already finished", "had already finished", "will have finished", "was finishing"],
+                correct: 0,
+                explanation: "'Have already finished' conecta el logro pasado con el resultado de descanso en el presente."
+            },
+            {
+                tense: "Present Perfect",
+                sentence: "They _____ in San Francisco for more than five years now.",
+                ghostedEs: "Ellos han vivido en San Francisco durante más de cinco años hasta ahora.",
+                options: ["lived", "were living", "have lived", "had lived"],
+                correct: 2,
+                explanation: "Usamos Present Perfect con 'for' para estados que comenzaron en el pasado y continúan hoy."
+            },
+            {
+                tense: "Present Perfect",
+                sentence: "She _____ her relatives in Canada since late 2021.",
+                ghostedEs: "Ella no ha visitado a sus familiares en Canadá desde finales de 2021.",
+                options: ["has not visited", "had not visited", "did not visit", "is not visiting"],
+                correct: 0,
+                explanation: "'Since' señala el punto inicial de un período que llega hasta el presente."
+            },
+            {
+                tense: "Present Perfect",
+                sentence: "_____ such a well-organized presentation before today?",
+                ghostedEs: "¿Alguna vez has visto una presentación tan bien organizada antes de hoy?",
+                options: ["Did you ever see", "Have you ever seen", "Had you ever seen", "Will you see"],
+                correct: 1,
+                explanation: "'Have you ever seen' indaga sobre experiencias acumuladas en la vida."
+            },
+            {
+                tense: "Present Perfect",
+                sentence: "Our enterprise _____ three successful software projects so far this year.",
+                ghostedEs: "Nuestra empresa ha lanzado tres proyectos de software exitosos en lo que va de año.",
+                options: ["launched", "had launched", "has launched", "will launch"],
+                correct: 2,
+                explanation: "'So far' (en lo que va de) es un marcador clave de Present Perfect."
+            },
+
+            // --- PAST PERFECT (21-25) ---
+            {
+                tense: "Past Perfect",
+                sentence: "She _____ the hall before the keynote presentation actually started.",
+                ghostedEs: "Ella se había ido del salón antes de que la presentación principal realmente comenzara.",
+                options: ["has left", "had left", "was leaving", "will have left"],
+                correct: 1,
+                explanation: "'Had left' ocurrió ANTES de la otra acción pasada ('started'). Es el pasado anterior."
+            },
+            {
+                tense: "Past Perfect",
+                sentence: "By the time I arrived at the platform, the train _____.",
+                ghostedEs: "Para cuando llegué a la plataforma, el tren ya había partido.",
+                options: ["has already departed", "had already departed", "departed", "was departing"],
+                correct: 1,
+                explanation: "'By the time' + pasado simple requiere Past Perfect en la cláusula principal."
+            },
+            {
+                tense: "Past Perfect",
+                sentence: "We suddenly realized that we _____ the contract documents at home.",
+                ghostedEs: "De repente nos dimos cuenta de que habíamos olvidado los documentos del contrato en casa.",
+                options: ["have forgotten", "forgot", "had forgotten", "were forgetting"],
+                correct: 2,
+                explanation: "El olvido ocurrió antes del momento en que se dieron cuenta."
+            },
+            {
+                tense: "Past Perfect",
+                sentence: "They _____ the draft when the client requested major updates.",
+                ghostedEs: "Ellos no habían terminado el borrador cuando el cliente solicitó cambios mayores.",
+                options: ["have not finished", "had not finished", "were not finishing", "will not finish"],
+                correct: 1,
+                explanation: "Acción incompleta previa a una solicitud del cliente en el pasado."
+            },
+            {
+                tense: "Past Perfect",
+                sentence: "_____ the project leader before she gave her opening speech?",
+                ghostedEs: "¿Habías conocido a la líder del proyecto antes de que diera su discurso de apertura?",
+                options: ["Have you met", "Had you met", "Did you meet", "Were you meeting"],
+                correct: 1,
+                explanation: "Pregunta si la acción ocurrió antes de un evento pasado específico."
+            },
+
+            // --- FUTURE PERFECT (26-30) ---
+            {
+                tense: "Future Perfect",
+                sentence: "They _____ the entire system upgrade by next Friday evening.",
+                ghostedEs: "Ellos habrán completado la actualización de todo el sistema para el próximo viernes por la noche.",
+                options: ["will complete", "will have completed", "have completed", "are completing"],
+                correct: 1,
+                explanation: "'By next Friday' marca una fecha límite futura. Indica que la acción ya estará finalizada."
+            },
+            {
+                tense: "Future Perfect",
+                sentence: "By December, I _____ at this international company for ten years.",
+                ghostedEs: "Para diciembre, habré trabajado en esta empresa internacional durante diez años.",
+                options: ["will work", "have worked", "will have worked", "am working"],
+                correct: 2,
+                explanation: "Calcula la duración acumulada que se alcanzará en un punto del futuro."
+            },
+            {
+                tense: "Future Perfect",
+                sentence: "She _____ her master's degree before her next birthday.",
+                ghostedEs: "Ella no habrá terminado su maestría antes de su próximo cumpleaños.",
+                options: ["will not have finished", "has not finished", "had not finished", "will not finish"],
+                correct: 0,
+                explanation: "Forma negativa de Future Perfect para metas aún no completadas antes de una fecha futura."
+            },
+            {
+                tense: "Future Perfect",
+                sentence: "By the time you get here tonight, we _____ dinner for everyone.",
+                ghostedEs: "Para cuando llegues aquí esta noche, habremos cocinado la cena para todos.",
+                options: ["will cook", "will have cooked", "have cooked", "are cooking"],
+                correct: 1,
+                explanation: "Acción futura que estará terminada cuando suceda otro evento futuro."
+            },
+            {
+                tense: "Future Perfect",
+                sentence: "How many books _____ by the end of this annual challenge?",
+                ghostedEs: "¿Cuántos libros habrás leído para el final de este desafío anual?",
+                options: ["will you read", "have you read", "will you have read", "had you read"],
+                correct: 2,
+                explanation: "Pregunta sobre la cantidad total acumulada al llegar a una fecha futura."
+            }
+        ];
+
+        // STATE APP VARIABLES
+        let currentQuestionIdx = 0;
+        let userAnswers = new Array(QUIZ_QUESTIONS.length).fill(null);
+        let activeLessonIdx = 0;
+
+        // ON INITIAL LOAD
+        window.onload = function() {
+            renderLessonsTabs();
+            renderActiveLesson();
+            renderQuestion();
+        };
+
+        // NAVIGATION TAB SWITCHER
+        function switchTab(tabId) {
+            document.getElementById('tab-welcome').classList.add('hidden');
+            document.getElementById('tab-lessons').classList.add('hidden');
+            document.getElementById('tab-quiz').classList.add('hidden');
+            document.getElementById('tab-results').classList.add('hidden');
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================= LESSONS MODULE RENDERER =================
+        function renderLessonsTabs() {
+            const container = document.getElementById('tense-tabs');
+            container.innerHTML = LESSONS_DATA.map((item, idx) => {
+                const isActive = idx === activeLessonIdx;
+                return `
+                    <button onclick="setActiveLesson(${idx})" class="px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                        isActive 
+                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20' 
+                        : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
+                    }">
+                        <span>${item.title}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setActiveLesson(idx) {
+            activeLessonIdx = idx;
+            renderLessonsTabs();
+            renderActiveLesson();
+        }
+
+        function renderActiveLesson() {
+            const lesson = LESSONS_DATA[activeLessonIdx];
+            const card = document.getElementById('active-lesson-card');
+
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            ${lesson.tag}
+                        </span>
+                        <h3 class="font-heading font-extrabold text-xl sm:text-2xl text-white mt-1.5">${lesson.title}</h3>
+                    </div>
+                    <div class="text-xs text-gray-400 font-mono">0${activeLessonIdx + 1} / 06</div>
+                </div>
+
+                <!-- Formula Box -->
+                <div class="p-3.5 rounded-xl bg-black/60 border border-amber-500/30 font-mono text-xs text-amber-300 font-semibold space-y-1">
+                    <div class="text-[10px] uppercase tracking-wider text-gray-500 font-sans">Estructura Gramatical:</div>
+                    <div class="text-sm sm:text-base font-bold">${lesson.formula}</div>
+                </div>
+
+                <!-- Usage Explanation -->
+                <div class="space-y-1 text-xs sm:text-sm text-gray-300 leading-relaxed">
+                    <div class="font-bold text-white uppercase text-[11px] tracking-wider text-amber-400">¿Cuándo se usa?</div>
+                    <p>${lesson.explanation}</p>
+                </div>
+
+                <!-- Key Time Markers -->
+                <div class="space-y-1 text-xs">
+                    <div class="font-bold text-gray-400 uppercase text-[10px] tracking-wider">Palabras Clave / Marcadores:</div>
+                    <div class="text-amber-200/90 font-medium italic">${lesson.keyMarkers}</div>
+                </div>
+
+                <!-- Practical Real Example -->
+                <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Ejemplo de la vida real:</div>
+                    <div class="font-heading font-bold text-white text-sm sm:text-base">${lesson.exampleEn}</div>
+                    <div class="ghosted-text text-xs sm:text-sm">${lesson.exampleEs}</div>
+                </div>
+            `;
+        }
+
+        // ================= QUIZ INTERACTIVE RENDERER =================
+        function renderQuestion() {
+            const q = QUIZ_QUESTIONS[currentQuestionIdx];
+            const selectedOpt = userAnswers[currentQuestionIdx];
+
+            // Update Progress bar & tags
+            document.getElementById('quiz-progress-text').innerText = `Pregunta ${currentQuestionIdx + 1} de ${QUIZ_QUESTIONS.length}`;
+            document.getElementById('quiz-tense-tag').innerText = q.tense;
+            
+            const progressPercent = ((currentQuestionIdx + 1) / QUIZ_QUESTIONS.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+            // Calculate current score
+            const score = userAnswers.reduce((acc, curr, idx) => {
+                return curr === QUIZ_QUESTIONS[idx].correct ? acc + 1 : acc;
+            }, 0);
+            document.getElementById('current-score').innerText = score;
+
+            // Render English sentence with gaps
+            const parts = q.sentence.split('_____');
+            let filledWord = "_____";
+            if (selectedOpt !== null) {
+                filledWord = `<u class="text-amber-400 font-extrabold decoration-amber-500 underline-offset-4">${q.options[selectedOpt]}</u>`;
+            } else {
+                filledWord = `<span class="inline-block min-w-[90px] text-center border-b-2 border-amber-400 text-amber-400/60 font-mono font-bold">?</span>`;
+            }
+
+            document.getElementById('question-english').innerHTML = `"${parts[0]}${filledWord}${parts[1]}"`;
+
+            // Render Ghosted Spanish Translation (Strict requirement)
+            document.getElementById('question-spanish-ghosted').innerHTML = `"${q.ghostedEs}"`;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = q.options.map((opt, idx) => {
+                let btnStyle = "bg-white/5 border-white/10 text-gray-200 hover:bg-white/10 hover:border-white/20";
+                let icon = `<span class="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-xs text-gray-400 font-mono">${String.fromCharCode(65 + idx)}</span>`;
+
+                if (selectedOpt !== null) {
+                    if (idx === q.correct) {
+                        btnStyle = "bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold";
+                        icon = `<i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>`;
+                    } else if (idx === selectedOpt && selectedOpt !== q.correct) {
+                        btnStyle = "bg-rose-500/20 border-rose-500 text-rose-300 font-bold";
+                        icon = `<i class="fa-solid fa-circle-xmark text-rose-400 text-lg"></i>`;
+                    } else {
+                        btnStyle = "bg-white/5 border-white/5 text-gray-500 opacity-50";
+                    }
+                }
+
+                return `
+                    <button onclick="selectOption(${idx})" ${selectedOpt !== null ? 'disabled' : ''} class="w-full p-3.5 rounded-xl border text-left text-xs sm:text-sm transition-all flex items-center justify-between gap-3 ${btnStyle}">
+                        <span>${opt}</span>
+                        ${icon}
+                    </button>
+                `;
+            }).join('');
+
+            // Feedback box
+            const feedbackBox = document.getElementById('feedback-box');
+            if (selectedOpt !== null) {
+                feedbackBox.classList.remove('hidden');
+                const isCorrect = selectedOpt === q.correct;
+                if (isCorrect) {
+                    feedbackBox.className = "p-4 rounded-xl border bg-emerald-500/10 border-emerald-500/30 text-emerald-300 text-xs sm:text-sm space-y-1 animate-fadeIn";
+                    document.getElementById('feedback-title').innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ¡Correcto! Excelentemente entrenado.`;
+                } else {
+                    feedbackBox.className = "p-4 rounded-xl border bg-rose-500/10 border-rose-500/30 text-rose-300 text-xs sm:text-sm space-y-1 animate-fadeIn";
+                    document.getElementById('feedback-title').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Respuesta Incorrecta`;
+                }
+                document.getElementById('feedback-explanation').innerText = q.explanation;
+                document.getElementById('btn-next').classList.remove('hidden');
+            } else {
+                feedbackBox.classList.add('hidden');
+                document.getElementById('btn-next').classList.add('hidden');
+            }
+
+            // Buttons state
+            document.getElementById('btn-prev').disabled = currentQuestionIdx === 0;
+            if (currentQuestionIdx === QUIZ_QUESTIONS.length - 1 && selectedOpt !== null) {
+                document.getElementById('btn-next').innerHTML = `Ver Resultados <i class="fa-solid fa-trophy ml-1"></i>`;
+            } else {
+                document.getElementById('btn-next').innerHTML = `Siguiente <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+        }
+
+        function selectOption(idx) {
+            if (userAnswers[currentQuestionIdx] !== null) return;
+            userAnswers[currentQuestionIdx] = idx;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIdx < QUIZ_QUESTIONS.length - 1) {
+                currentQuestionIdx++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIdx > 0) {
+                currentQuestionIdx--;
+                renderQuestion();
+            }
+        }
+
+        // ================= RESULTS SUMMARY =================
+        function showResults() {
+            const score = userAnswers.reduce((acc, curr, idx) => {
+                return curr === QUIZ_QUESTIONS[idx].correct ? acc + 1 : acc;
+            }, 0);
+
+            const percentage = Math.round((score / QUIZ_QUESTIONS.length) * 100);
+
+            document.getElementById('final-score-text').innerText = `${score} / ${QUIZ_QUESTIONS.length}`;
+            document.getElementById('final-percentage-text').innerText = `${percentage}% Precisión Global`;
+
+            let msg = "";
+            if (percentage >= 90) {
+                msg = "🔥 <strong>¡Nivel Experto!</strong> Tienes un dominio natural envidiable sobre la estructura de los tiempos progresivos y perfectos. ¡Listo para comunicarte con fluidez!";
+            } else if (percentage >= 70) {
+                msg = "💪 <strong>¡Buen trabajo!</strong> Tienes bases muy sólidas. Revisa las lecciones de los tiempos donde dudaste para perfeccionar tu automatización.";
+            } else {
+                msg = "📚 <strong>¡Sigue entrenando!</strong> La constancia es la clave en Nica English Club. Repasa la pestaña de clases y vuelve a intentarlo.";
+            }
+
+            document.getElementById('final-feedback-msg').innerHTML = msg;
+
+            switchTab('results');
+        }
+
+        function restartQuiz() {
+            currentQuestionIdx = 0;
+            userAnswers = new Array(QUIZ_QUESTIONS.length).fill(null);
+            switchTab('quiz');
+            renderQuestion();
+        }
+    </script>
+</body>
+</html>
