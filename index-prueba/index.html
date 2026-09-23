@@ -1328,6 +1328,7 @@ body.tr-room-lock { overflow:hidden; }
         <div class="nav-logo-box app-logo">NEC</div>
       </a>
       <div class="nav-actions">
+        <button class="btn-salir" id="btn-coach-notes" style="display:none;" onclick="irANotasCoach()" title="Notas de seguimiento"><i class="fa-solid fa-note-sticky"></i></button>
         <button class="btn-salir" onclick="abrirChatFlotante()" title="Mensajes"><i class="fa-solid fa-comments"></i><span class="chat-notif-badge" id="chat-notif-badge">0</span></button>
         <button class="btn-salir hamburger-btn" id="btn-hamburger" onclick="toggleSideDrawer()" title="Menú">
           <i class="fa-solid fa-bars"></i>
@@ -1877,15 +1878,7 @@ body.tr-room-lock { overflow:hidden; }
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
-  authDomain: "nicaenglishportal.firebaseapp.com",
-  projectId: "nicaenglishportal",
-  storageBucket: "nicaenglishportal.firebasestorage.app",
-  messagingSenderId: "30475218925",
-  appId: "1:30475218925:web:bd98007b81d1f3860fdc44"
-};
+import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -2536,6 +2529,8 @@ function renderUI(alumno) {
   let fotoFinal = resolverUrlDrive(alumno.foto || '');
   container.innerHTML = fotoFinal ? `<img src="${fotoFinal}" class="avatar-img" onerror="this.outerHTML='<div class=\\'avatar-default\\'>${initial}</div>'">` : `<div class="avatar-default">${initial}</div>`;
   document.getElementById('nombre-alumno-ui').innerText = alumno.nombre;
+  const btnCoachNotes = document.getElementById('btn-coach-notes');
+  if (btnCoachNotes) btnCoachNotes.style.display = alumno.esCoach ? 'flex' : 'none';
   const idBadge = document.getElementById('student-id-badge');
   if (idBadge) idBadge.innerText = alumno.identidad ? `ID: ${alumno.identidad}` : '';
   renderInfoBadges(alumno);
@@ -4176,8 +4171,10 @@ function cargarDatosAdmin() {
       const horarioTxt = (data.horario && data.horario.dias) ? `${data.horario.dias} · ${data.horario.franja}` : 'Sin horario';
       const planTxt = data.plan || 'Sin plan';
       const estaVerificado = !!data.verificado;
+      const esCoachAlumno = !!data.esCoach;
+      const numHorariosCoach = (data.horariosCoach || []).length;
       const cuentaTxt = data.uid ? `<span style="color:#3ddc84;"><i class="fa-solid fa-circle-check"></i> ${data.email}</span>` : `<span style="color:var(--red);"><i class="fa-solid fa-triangle-exclamation"></i> Sin cuenta vinculada</span>`;
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}${estaVerificado ? ' <i class="fa-solid fa-circle-check" style="color:#4d9fff; font-size:12px;" title="Verificado en NECLUB"></i>' : ''}<br><small style="color:var(--gold3); font-family:'DM Mono',monospace;">${data.identidad || 'Sin ID'}</small><br><small style="color:var(--muted)">${cuentaTxt} · ${planTxt} · ${horarioTxt}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:${estaVerificado ? 'var(--blue)' : 'var(--muted)'}; border-color:${estaVerificado ? 'rgba(77,159,255,0.2)' : 'var(--border2)'}" title="${estaVerificado ? 'Quitar verificado de NECLUB' : 'Dar verificado en NECLUB'}" onclick="toggleVerificadoAlumno('${d.id}', ${estaVerificado})"><i class="fa-solid fa-circle-check"></i></button><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
+      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><div style="color:#fff; font-size:13px;"><span class="presence-dot ${enLinea ? 'online' : ''}"></span>${data.nombre}${estaVerificado ? ' <i class="fa-solid fa-circle-check" style="color:#4d9fff; font-size:12px;" title="Verificado en NECLUB"></i>' : ''}${esCoachAlumno ? ` <span style="display:inline-flex; align-items:center; gap:3px; color:var(--gold3); background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; padding:2px 7px; border-radius:99px; margin-left:4px;" title="${numHorariosCoach} grupo(s) asignado(s)"><i class="fa-solid fa-chalkboard-user"></i> Coach</span>` : ''}<br><small style="color:var(--gold3); font-family:'DM Mono',monospace;">${data.identidad || 'Sin ID'}</small><br><small style="color:var(--muted)">${cuentaTxt} · ${planTxt} · ${horarioTxt}</small></div><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:${estaVerificado ? 'var(--blue)' : 'var(--muted)'}; border-color:${estaVerificado ? 'rgba(77,159,255,0.2)' : 'var(--border2)'}" title="${estaVerificado ? 'Quitar verificado de NECLUB' : 'Dar verificado en NECLUB'}" onclick="toggleVerificadoAlumno('${d.id}', ${estaVerificado})"><i class="fa-solid fa-circle-check"></i></button><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionAlumno('${d.id}')"><i class="fa-solid fa-user-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('alumnos','${d.id}')"><i class="fa-solid fa-user-minus"></i></button></div></div>`;
     });
     renderTop3AdminSlots();
     renderDestPicker();
@@ -5925,6 +5922,39 @@ window.toggleVerificadoAlumno = async (id, estaVerificadoActualmente) => {
     showModal('No se pudo actualizar', 'No se pudo cambiar el estado de verificado. Intenta de nuevo.');
   }
 };
+// ===== COACH: catálogo de grupos (mismo dias x franja del selector de horario del alumno) =====
+// Un coach puede tener varios de estos grupos asignados (a diferencia del alumno, que solo
+// tiene uno). Se usa tanto aquí (admin) como en coach/index.html para armar el roster.
+const CATALOGO_HORARIOS = [
+  { dias: "Lunes a miércoles", franja: "8:15 - 9:45 AM" },
+  { dias: "Lunes a miércoles", franja: "10:15 - 11:45 AM" },
+  { dias: "Lunes a miércoles", franja: "1:15 - 2:45 PM" },
+  { dias: "Lunes a miércoles", franja: "3:15 - 4:45 PM" },
+  { dias: "Lunes a miércoles", franja: "6:15 - 7:15 PM" },
+  { dias: "Sábado y domingo", franja: "8:15 - 9:45 AM" },
+  { dias: "Sábado y domingo", franja: "10:15 - 11:45 AM" },
+  { dias: "Sábado y domingo", franja: "1:15 - 2:45 PM" },
+  { dias: "Sábado y domingo", franja: "3:15 - 4:45 PM" },
+  { dias: "Sábado y domingo", franja: "6:15 - 7:15 PM" },
+];
+function renderCoachHorariosCheckboxes(seleccionados) {
+  const cont = document.getElementById('alumno-coach-horarios-lista');
+  if (!cont) return;
+  const sel = seleccionados || [];
+  cont.innerHTML = CATALOGO_HORARIOS.map(h => {
+    const marcado = sel.some(s => s.dias === h.dias && s.franja === h.franja);
+    return `<label style="display:flex; align-items:center; gap:8px; padding:5px 0; font-size:12.5px; color:var(--muted); cursor:pointer;"><input type="checkbox" class="coach-horario-check" data-dias="${h.dias}" data-franja="${h.franja}" ${marcado ? 'checked' : ''}> ${h.dias} · ${h.franja}</label>`;
+  }).join('');
+}
+function leerHorariosCoachSeleccionados() {
+  return Array.from(document.querySelectorAll('.coach-horario-check:checked')).map(el => ({ dias: el.dataset.dias, franja: el.dataset.franja }));
+}
+window.toggleCoachHorariosVisibilidad = () => {
+  const esCoach = document.getElementById('alumno-es-coach').checked;
+  document.getElementById('alumno-coach-horarios-wrap').style.display = esCoach ? 'block' : 'none';
+  if (esCoach) renderCoachHorariosCheckboxes(leerHorariosCoachSeleccionados());
+};
+
 window.prepararEdicionAlumno = (id) => {
   const a = alumnosCacheAdmin.find(x => x.id === id);
   if (!a) return;
@@ -5936,6 +5966,9 @@ window.prepararEdicionAlumno = (id) => {
   document.getElementById('alumno-plan').value = a.plan || '';
   document.getElementById('alumno-horario-dias').value = (a.horario && a.horario.dias) || '';
   document.getElementById('alumno-horario-franja').value = (a.horario && a.horario.franja) || '';
+  document.getElementById('alumno-es-coach').checked = !!a.esCoach;
+  document.getElementById('alumno-coach-horarios-wrap').style.display = a.esCoach ? 'block' : 'none';
+  renderCoachHorariosCheckboxes(a.horariosCoach || []);
   document.getElementById('btn-guardar-alumno').innerText = "Actualizar Alumno";
 
   // Si ya tiene cuenta de Firebase Auth (uid), bloqueamos correo/contraseña de este
@@ -5967,6 +6000,8 @@ window.registrarAlumno = async () => {
   const diasH = document.getElementById('alumno-horario-dias').value;
   const franjaH = document.getElementById('alumno-horario-franja').value;
   const horario = (diasH && franjaH) ? { dias: diasH, franja: franjaH } : null;
+  const esCoach = document.getElementById('alumno-es-coach').checked;
+  const horariosCoach = esCoach ? leerHorariosCoachSeleccionados() : [];
   if (!n) { showModal('Falta información', 'Escribe el nombre del alumno.'); return; }
 
   const btn = document.getElementById('btn-guardar-alumno');
@@ -5979,7 +6014,7 @@ window.registrarAlumno = async () => {
     const yaVinculado = actual && !!actual.uid;
     if (yaVinculado) {
       // Su cuenta ya existe: solo se actualizan datos de perfil, nunca correo/contraseña aquí.
-      await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario });
+      await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach });
     } else {
       // Alumno antiguo sin cuenta todavía: hay que vincularlo a una cuenta nueva de Firebase Auth.
       // Solo pedimos su correo: la contraseña se genera en código y nunca se maneja manualmente;
@@ -5989,7 +6024,7 @@ window.registrarAlumno = async () => {
       try {
         const passwordTemporal = generarPasswordSegura();
         const cred = await crearCuentaAuthSecundaria(correo, passwordTemporal);
-        await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, uid: cred.user.uid, email: correo });
+        await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach, uid: cred.user.uid, email: correo });
         await sendPasswordResetEmail(auth, correo);
         correoParaAviso = correo;
       } catch (e) {
@@ -6010,7 +6045,7 @@ window.registrarAlumno = async () => {
       const cred = await crearCuentaAuthSecundaria(correo, passwordTemporal);
       const idsExistentes = alumnosCacheAdmin.map(a => a.identidad).filter(Boolean);
       const identidad = generarIdentidadUnica(n, idsExistentes);
-      await addDoc(collection(db,'alumnos'), { nombre:n, foto:f, usuario:norm(n), plan, horario, identidad, uid: cred.user.uid, email: correo, logins:0, total_logins:0, dias_semana:[] });
+      await addDoc(collection(db,'alumnos'), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach, identidad, uid: cred.user.uid, email: correo, logins:0, total_logins:0, dias_semana:[] });
       await sendPasswordResetEmail(auth, correo);
       correoParaAviso = correo;
     } catch (e) {
@@ -6033,6 +6068,9 @@ window.registrarAlumno = async () => {
   document.getElementById('alumno-plan').value = '';
   document.getElementById('alumno-horario-dias').value = '';
   document.getElementById('alumno-horario-franja').value = '';
+  document.getElementById('alumno-es-coach').checked = false;
+  document.getElementById('alumno-coach-horarios-wrap').style.display = 'none';
+  document.getElementById('alumno-coach-horarios-lista').innerHTML = '';
   document.getElementById('alumno-cuenta-vinculada-aviso').style.display = 'none';
   document.getElementById('alumno-pass-hint').style.display = 'block';
   document.getElementById('btn-reset-pass-alumno').style.display = 'none';
@@ -6242,6 +6280,13 @@ function renderChatNotifBadge() {
     badge.classList.toggle('show', pendientes > 0 && !(panelChat && panelChat.classList.contains('open')));
   });
 }
+// Notas de Coach viven en su propia página (coach/index.html), no en un panel flotante
+// como el chat — así no le suma peso a este index.html. La sesión de Firebase Auth ya
+// queda guardada en el navegador (browserLocalPersistence), así que coach/index.html la
+// reconoce sola sin pedir login de nuevo.
+window.irANotasCoach = function () {
+  location.href = 'coach/';
+};
 window.abrirChatFlotante = async function () {
   document.activeElement?.blur(); // suelta el "highlight" del botón en móvil
   await precargarPanelChatHTML();
