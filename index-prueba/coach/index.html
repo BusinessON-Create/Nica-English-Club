@@ -36,6 +36,19 @@ h1{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin:20px 0 
 .grupo-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
 .grupo-tab{padding:9px 14px;border-radius:99px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:.2s var(--ease);white-space:nowrap;}
 .grupo-tab.active{background:var(--gold-dim);border-color:rgba(240,180,41,.4);color:var(--gold3);}
+.vista-tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:4px;}
+.vista-tab{flex:1;text-align:center;padding:9px 10px;border-radius:99px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s var(--ease);}
+.vista-tab.active{background:linear-gradient(135deg,var(--gold3),var(--gold2));color:#000;}
+input[type=text].campo-simple, input[type=url]{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:11px 14px;font-family:inherit;font-size:13px;outline:none;margin-bottom:10px;}
+input[type=text].campo-simple:focus, input[type=url]:focus{border-color:var(--gold2);}
+.item-lista{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:13px 0;border-bottom:1px solid var(--border);}
+.item-lista:last-child{border-bottom:none;}
+.item-lista .item-titulo{font-size:13px;font-weight:700;color:#fff;}
+.item-lista .item-sub{font-size:11px;color:var(--muted-dim);margin-top:3px;}
+.item-lista .item-acciones{display:flex;gap:6px;flex-shrink:0;}
+.item-mini-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;}
+.item-mini-btn.borrar{color:var(--red);border-color:rgba(255,92,92,.25);}
+.item-mini-btn.editar{color:var(--blue);border-color:rgba(77,159,255,.25);}
 input[type=date]{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:10px 14px;font-family:inherit;font-size:13px;outline:none;}
 textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:14px;color:var(--text);padding:14px;font-family:inherit;font-size:13.5px;outline:none;resize:vertical;min-height:80px;}
 textarea:focus,input:focus{border-color:var(--gold2);}
@@ -100,41 +113,78 @@ textarea:focus,input:focus{border-color:var(--gold2);}
 
   <div id="contenido" hidden>
     <h1>Hola, <span id="coach-nombre"></span></h1>
-    <p class="sub">Dejá la nota de la sesión y marcá cómo va cada alumno — antes de que se te olvide.</p>
+    <p class="sub">Dejá la nota de la sesión, asigná actividades o mandá el enlace de la clase — todo desde acá.</p>
 
     <div class="card">
       <p class="label"><i class="fa-solid fa-people-group"></i> Grupo</p>
       <div class="grupo-tabs" id="grupo-tabs"></div>
     </div>
 
-    <div class="card">
-      <p class="label"><i class="fa-solid fa-calendar-day"></i> Fecha de la sesión</p>
-      <input type="date" id="fecha-sesion">
+    <div class="vista-tabs">
+      <button class="vista-tab active" data-vista="notas" onclick="cambiarVista('notas')"><i class="fa-solid fa-note-sticky"></i> Notas</button>
+      <button class="vista-tab" data-vista="actividades" onclick="cambiarVista('actividades')"><i class="fa-solid fa-list-check"></i> Actividades</button>
+      <button class="vista-tab" data-vista="reuniones" onclick="cambiarVista('reuniones')"><i class="fa-solid fa-video"></i> Reuniones</button>
     </div>
 
-    <div class="card">
-      <p class="label">
-        <span><i class="fa-solid fa-pen"></i> Nota general de la sesión</span>
-        <label class="compartir-toggle" id="toggle-compartir-general"><input type="checkbox" id="nota-general-compartida"> Compartir con el grupo</label>
-      </p>
-      <textarea id="nota-general" placeholder="¿Qué se vio hoy? ¿Cómo estuvo el grupo en general?"></textarea>
-      <p class="form-hint">Si la marcás como compartida, cada alumno la va a ver en "Mi seguimiento" dentro de su perfil.</p>
+    <div id="vista-notas">
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-calendar-day"></i> Fecha de la sesión</p>
+        <input type="date" id="fecha-sesion">
+      </div>
+
+      <div class="card">
+        <p class="label">
+          <span><i class="fa-solid fa-pen"></i> Nota general de la sesión</span>
+          <label class="compartir-toggle" id="toggle-compartir-general"><input type="checkbox" id="nota-general-compartida"> Compartir con el grupo</label>
+        </p>
+        <textarea id="nota-general" placeholder="¿Qué se vio hoy? ¿Cómo estuvo el grupo en general?"></textarea>
+        <p class="form-hint">Si la marcás como compartida, cada alumno la va a ver en "Mi seguimiento" dentro de su perfil.</p>
+      </div>
+
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-user-graduate"></i> Alumnos de este grupo</p>
+        <div id="roster"></div>
+        <p class="form-hint" id="roster-vacio" hidden>No hay alumnos asignados a este grupo todavía.</p>
+      </div>
+
+      <button class="btn-guardar" id="btn-guardar" onclick="guardarNota()">Guardar nota de esta sesión</button>
+      <button class="btn-borrado" id="btn-solicitar-borrado" onclick="solicitarBorrado()"><i class="fa-solid fa-trash-can"></i> Solicitar borrado de esta sesión</button>
+      <p id="solicitud-estado" hidden></p>
+
+      <div class="card" style="margin-top:22px;">
+        <p class="label"><i class="fa-solid fa-clock-rotate-left"></i> Notas recientes de este grupo</p>
+        <div id="historial"></div>
+        <p class="form-hint" id="historial-vacio" hidden>Todavía no hay notas guardadas para este grupo.</p>
+      </div>
     </div>
 
-    <div class="card">
-      <p class="label"><i class="fa-solid fa-user-graduate"></i> Alumnos de este grupo</p>
-      <div id="roster"></div>
-      <p class="form-hint" id="roster-vacio" hidden>No hay alumnos asignados a este grupo todavía.</p>
+    <div id="vista-actividades" hidden>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-plus"></i> Nueva actividad para este grupo</p>
+        <input type="text" class="campo-simple" id="act-titulo" placeholder="Título de la actividad" maxlength="120">
+        <textarea id="act-descripcion" placeholder="Instrucciones para el alumno" style="min-height:60px;"></textarea>
+        <input type="url" id="act-enlace" placeholder="Enlace (opcional) — ej: un video o documento" style="margin-top:10px;">
+        <button class="btn-guardar" id="btn-guardar-actividad" onclick="guardarActividadCoach()" style="margin-top:12px;">Publicar actividad</button>
+      </div>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-list-check"></i> Actividades de este grupo</p>
+        <div id="lista-actividades-coach"></div>
+        <p class="form-hint" id="actividades-vacio" hidden>Todavía no hay actividades para este grupo.</p>
+      </div>
     </div>
 
-    <button class="btn-guardar" id="btn-guardar" onclick="guardarNota()">Guardar nota de esta sesión</button>
-    <button class="btn-borrado" id="btn-solicitar-borrado" onclick="solicitarBorrado()"><i class="fa-solid fa-trash-can"></i> Solicitar borrado de esta sesión</button>
-    <p id="solicitud-estado" hidden></p>
-
-    <div class="card" style="margin-top:22px;">
-      <p class="label"><i class="fa-solid fa-clock-rotate-left"></i> Notas recientes de este grupo</p>
-      <div id="historial"></div>
-      <p class="form-hint" id="historial-vacio" hidden>Todavía no hay notas guardadas para este grupo.</p>
+    <div id="vista-reuniones" hidden>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-video"></i> Enviar enlace de reunión (Google Meet)</p>
+        <input type="url" id="meet-url-coach" placeholder="https://meet.google.com/...">
+        <p class="form-hint">Le va a aparecer como botón flotante "Unirse a la clase" solo a este grupo, y se borra solo a las 3 horas.</p>
+        <button class="btn-guardar" id="btn-guardar-meet" onclick="enviarMeetCoach()" style="margin-top:12px;">Enviar a este grupo</button>
+      </div>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-video"></i> Reuniones activas de este grupo</p>
+        <div id="lista-reuniones-coach"></div>
+        <p class="form-hint" id="reuniones-vacio" hidden>No hay reuniones activas para este grupo.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -144,7 +194,7 @@ textarea:focus,input:focus{border-color:var(--gold2);}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, query, where, limit, getDocs, doc, getDoc, setDoc, deleteDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, query, where, limit, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc, updateDoc, Timestamp, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { firebaseConfig } from "../firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -170,6 +220,20 @@ function hoyStr() {
   const utcMs = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
   const managua = new Date(utcMs - (6 * 60 * 60000)); // Managua es UTC-6 fijo, igual que en index.html
   return managua.getFullYear() + "-" + String(managua.getMonth() + 1).padStart(2, '0') + "-" + String(managua.getDate()).padStart(2, '0');
+}
+function lunesDeEstaSemanaStr() {
+  const ahora = new Date();
+  const utcMs = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+  const t = new Date(utcMs - (6 * 60 * 60000));
+  const day = t.getDay(), diff = t.getDate() - day + (day === 0 ? -6 : 1);
+  t.setDate(diff);
+  return t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, '0') + "-" + String(t.getDate()).padStart(2, '0');
+}
+function normalizarUrl(u) {
+  const limpio = (u || '').trim();
+  if (!limpio) return '';
+  if (/^https?:\/\//i.test(limpio)) return limpio;
+  return 'https://' + limpio;
 }
 function mostrarToast(msg) {
   const t = document.getElementById('toast');
@@ -232,7 +296,16 @@ async function seleccionarGrupo(g) {
   await cargarRoster();
   await cargarSesion();
   await cargarHistorial();
+  await cargarActividadesCoach();
+  await cargarReunionesCoach();
 }
+
+window.cambiarVista = (v) => {
+  document.querySelectorAll('.vista-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.vista === v));
+  document.getElementById('vista-notas').hidden = v !== 'notas';
+  document.getElementById('vista-actividades').hidden = v !== 'actividades';
+  document.getElementById('vista-reuniones').hidden = v !== 'reuniones';
+};
 
 async function cargarRoster() {
   const cont = document.getElementById('roster');
@@ -440,6 +513,151 @@ window.solicitarBorrado = async () => {
     mostrarToast('No se pudo enviar la solicitud. Intentá de nuevo.');
   }
 };
+
+/* ===== ACTIVIDADES (por grupo, solo lo que el coach mismo creó lo puede editar/borrar) ===== */
+window.prepararEdicionActividadCoach = (id, titulo, descripcion, enlace) => {
+  document.getElementById('act-id-edicion') && document.getElementById('act-id-edicion').remove();
+  const hidden = document.createElement('input');
+  hidden.type = 'hidden'; hidden.id = 'act-id-edicion'; hidden.value = id;
+  document.getElementById('act-titulo').before(hidden);
+  document.getElementById('act-titulo').value = titulo || '';
+  document.getElementById('act-descripcion').value = descripcion || '';
+  document.getElementById('act-enlace').value = enlace || '';
+  document.getElementById('btn-guardar-actividad').innerText = 'Actualizar actividad';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.guardarActividadCoach = async () => {
+  if (!grupoActivo || !rosterActual) return;
+  const titulo = document.getElementById('act-titulo').value.trim();
+  const descripcion = document.getElementById('act-descripcion').value.trim();
+  const enlace = normalizarUrl(document.getElementById('act-enlace').value);
+  const idEdicion = document.getElementById('act-id-edicion');
+  if (!titulo) { mostrarToast('Escribí un título para la actividad.'); return; }
+  const destinatarios = rosterActual.map(a => a.id);
+  const btn = document.getElementById('btn-guardar-actividad');
+  btn.disabled = true;
+  try {
+    if (idEdicion && idEdicion.value) {
+      await updateDoc(doc(db, 'actividades', idEdicion.value), { titulo, descripcion, enlace, destinatarios });
+      idEdicion.remove();
+    } else {
+      await addDoc(collection(db, 'actividades'), {
+        titulo, descripcion, enlace, destinatarios,
+        semana: lunesDeEstaSemanaStr(),
+        fecha: Date.now(),
+        creadoPor: coach.id,
+      });
+    }
+    document.getElementById('act-titulo').value = '';
+    document.getElementById('act-descripcion').value = '';
+    document.getElementById('act-enlace').value = '';
+    btn.innerText = 'Publicar actividad';
+    mostrarToast('Actividad guardada ✓');
+    cargarActividadesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo guardar la actividad.');
+  }
+  btn.disabled = false;
+};
+
+window.borrarActividadCoach = async (id) => {
+  if (!confirm('¿Borrar esta actividad?')) return;
+  try {
+    await deleteDoc(doc(db, 'actividades', id));
+    mostrarToast('Actividad borrada ✓');
+    cargarActividadesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo borrar (¿es tuya esta actividad?).');
+  }
+};
+
+async function cargarActividadesCoach() {
+  if (!grupoActivo) return;
+  const cont = document.getElementById('lista-actividades-coach');
+  const vacio = document.getElementById('actividades-vacio');
+  cont.innerHTML = '<p class="form-hint">Cargando…</p>';
+  try {
+    const idsGrupo = new Set(rosterActual.map(a => a.id));
+    const snap = await getDocs(query(collection(db, 'actividades'), orderBy('fecha', 'desc'), limit(50)));
+    const items = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(a => Array.isArray(a.destinatarios) && a.destinatarios.length && a.destinatarios.some(id => idsGrupo.has(id)));
+    vacio.hidden = items.length > 0;
+    cont.innerHTML = items.map(a => `<div class="item-lista">
+      <div><p class="item-titulo">${escHtml(a.titulo)}</p><p class="item-sub">${escHtml(a.descripcion || '')}</p></div>
+      ${a.creadoPor === coach.id ? `<div class="item-acciones">
+        <button class="item-mini-btn editar" onclick='prepararEdicionActividadCoach(${JSON.stringify(a.id)}, ${JSON.stringify(a.titulo || '')}, ${JSON.stringify(a.descripcion || '')}, ${JSON.stringify(a.enlace || '')})'><i class="fa-solid fa-pen"></i></button>
+        <button class="item-mini-btn borrar" onclick="borrarActividadCoach('${a.id}')"><i class="fa-solid fa-trash"></i></button>
+      </div>` : `<span class="form-hint" style="margin:0;">del admin</span>`}
+    </div>`).join('');
+  } catch (e) {
+    console.error('No se pudo cargar actividades:', e);
+    cont.innerHTML = '<p class="form-hint">No se pudieron cargar las actividades.</p>';
+  }
+}
+
+/* ===== REUNIONES (Google Meet, por grupo, expira sola a las 3h) ===== */
+window.enviarMeetCoach = async () => {
+  if (!grupoActivo || !rosterActual) return;
+  const url = document.getElementById('meet-url-coach').value.trim();
+  if (!url || !/^https?:\/\//i.test(url)) { mostrarToast('Escribí un enlace válido (https://...).'); return; }
+  const destinatarios = rosterActual.map(a => a.id);
+  if (!destinatarios.length) { mostrarToast('Este grupo no tiene alumnos todavía.'); return; }
+  const expiraEn = Timestamp.fromMillis(Date.now() + 3 * 60 * 60 * 1000);
+  const btn = document.getElementById('btn-guardar-meet');
+  btn.disabled = true;
+  try {
+    await addDoc(collection(db, 'reuniones'), { url, destinatarios, creadoEn: Date.now(), expiraEn, creadoPor: coach.id });
+    document.getElementById('meet-url-coach').value = '';
+    mostrarToast('Enlace enviado al grupo ✓');
+    cargarReunionesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo enviar el enlace.');
+  }
+  btn.disabled = false;
+};
+
+window.borrarReunionCoach = async (id) => {
+  try {
+    await deleteDoc(doc(db, 'reuniones', id));
+    mostrarToast('Reunión borrada ✓');
+    cargarReunionesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo borrar (¿es tuya esta reunión?).');
+  }
+};
+
+async function cargarReunionesCoach() {
+  if (!grupoActivo) return;
+  const cont = document.getElementById('lista-reuniones-coach');
+  const vacio = document.getElementById('reuniones-vacio');
+  cont.innerHTML = '<p class="form-hint">Cargando…</p>';
+  try {
+    const idsGrupo = new Set(rosterActual.map(a => a.id));
+    const snap = await getDocs(collection(db, 'reuniones'));
+    const ahora = Date.now();
+    const items = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(r => Array.isArray(r.destinatarios) && r.destinatarios.length && r.destinatarios.some(id => idsGrupo.has(id)));
+    vacio.hidden = items.length > 0;
+    cont.innerHTML = items.map(r => {
+      const expiraMs = r.expiraEn && r.expiraEn.toMillis ? r.expiraEn.toMillis() : (r.expiraEn || 0);
+      const minsRestantes = Math.max(0, Math.round((expiraMs - ahora) / 60000));
+      return `<div class="item-lista">
+        <div><p class="item-titulo"><i class="fa-solid fa-video" style="color:#34a853;"></i> Meet</p><p class="item-sub">expira en ${minsRestantes} min</p></div>
+        ${r.creadoPor === coach.id ? `<div class="item-acciones"><button class="item-mini-btn borrar" onclick="borrarReunionCoach('${r.id}')"><i class="fa-solid fa-trash"></i></button></div>` : `<span class="form-hint" style="margin:0;">del admin</span>`}
+      </div>`;
+    }).join('');
+  } catch (e) {
+    console.error('No se pudo cargar reuniones:', e);
+    cont.innerHTML = '<p class="form-hint">No se pudieron cargar las reuniones.</p>';
+  }
+}
 </script>
 </body>
 </html>
