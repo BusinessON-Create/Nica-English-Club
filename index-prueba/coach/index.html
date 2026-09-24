@@ -24,22 +24,28 @@ a{color:inherit;}
 nav.top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,8,10,.9);backdrop-filter:blur(10px);z-index:10;}
 nav.top .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:#fff;font-size:14.5px;}
 nav.top .brand i{color:var(--gold);}
-nav.top .actions{display:flex;gap:8px;}
+nav.top .actions{display:flex;align-items:center;gap:8px;}
+.coach-avatar{width:34px;height:34px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold3);font-size:13px;overflow:hidden;border:1px solid var(--border2);flex-shrink:0;}
+.coach-avatar img{width:100%;height:100%;object-fit:cover;}
 .ico-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:.2s var(--ease);}
 .ico-btn:hover{color:#fff;border-color:var(--gold2);}
-h1{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin:20px 0 4px;}
+h1{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin:20px 0 4px;display:flex;align-items:center;gap:12px;}
 .sub{color:var(--muted);font-size:13px;margin-bottom:22px;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;}
-.label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--gold3);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--gold3);margin-bottom:10px;display:flex;align-items:center;gap:7px;justify-content:space-between;}
 .grupo-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
 .grupo-tab{padding:9px 14px;border-radius:99px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:.2s var(--ease);white-space:nowrap;}
 .grupo-tab.active{background:var(--gold-dim);border-color:rgba(240,180,41,.4);color:var(--gold3);}
 input[type=date]{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:10px 14px;font-family:inherit;font-size:13px;outline:none;}
 textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:14px;color:var(--text);padding:14px;font-family:inherit;font-size:13.5px;outline:none;resize:vertical;min-height:80px;}
 textarea:focus,input:focus{border-color:var(--gold2);}
+.compartir-toggle{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap;}
+.compartir-toggle input{accent-color:var(--gold2);width:14px;height:14px;cursor:pointer;}
+.compartir-toggle.on{color:var(--gold3);font-weight:700;}
 .roster-item{display:flex;flex-direction:column;gap:8px;padding:14px 0;border-bottom:1px solid var(--border);}
 .roster-item:last-child{border-bottom:none;}
-.roster-head{display:flex;align-items:center;gap:10px;}
+.roster-head{display:flex;align-items:center;gap:10px;justify-content:space-between;}
+.roster-head-left{display:flex;align-items:center;gap:10px;}
 .avatar-mini{width:34px;height:34px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold3);font-size:13px;flex-shrink:0;overflow:hidden;}
 .avatar-mini img{width:100%;height:100%;object-fit:cover;}
 .roster-nombre{font-size:13.5px;font-weight:700;color:#fff;}
@@ -54,10 +60,14 @@ textarea:focus,input:focus{border-color:var(--gold2);}
 .nota-mini:focus{border-color:var(--gold2);}
 .btn-guardar{width:100%;padding:14px;border-radius:99px;border:none;background:linear-gradient(135deg,var(--gold3),var(--gold2));color:#000;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;letter-spacing:.3px;}
 .btn-guardar:disabled{opacity:.5;cursor:default;}
+.btn-borrado{width:100%;padding:12px;border-radius:99px;border:1px solid var(--border2);background:transparent;color:var(--red);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;margin-top:10px;}
+.btn-borrado:disabled{opacity:.4;cursor:default;border-color:var(--border);color:var(--muted);}
 .form-hint{font-size:11.5px;color:var(--muted-dim);margin-top:8px;}
-.historial-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted);cursor:pointer;}
+.solicitud-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--red);background:rgba(255,92,92,.1);border:1px solid rgba(255,92,92,.3);padding:5px 11px;border-radius:99px;margin-top:10px;}
+.historial-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted);cursor:pointer;gap:8px;}
 .historial-item:last-child{border-bottom:none;}
 .historial-item:hover{color:var(--gold3);}
+.historial-item .tag-pendiente{font-size:9.5px;font-weight:800;color:var(--red);border:1px solid rgba(255,92,92,.35);padding:2px 7px;border-radius:99px;}
 .estado-msg{text-align:center;padding:80px 20px;color:var(--muted);}
 .estado-msg i{font-size:32px;color:var(--gold-dim);display:block;margin-bottom:14px;}
 .estado-msg a{color:var(--gold3);font-weight:700;text-decoration:underline;}
@@ -73,6 +83,7 @@ textarea:focus,input:focus{border-color:var(--gold2);}
 <nav class="top">
   <a class="brand" href="../"><i class="fa-solid fa-chalkboard-user"></i> Notas de Coach</a>
   <div class="actions">
+    <div class="coach-avatar" id="coach-avatar"></div>
     <button class="ico-btn" onclick="location.href='../'" title="Volver al portal"><i class="fa-solid fa-arrow-left"></i></button>
     <button class="ico-btn" onclick="cerrarSesionCoach()" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
   </div>
@@ -102,8 +113,12 @@ textarea:focus,input:focus{border-color:var(--gold2);}
     </div>
 
     <div class="card">
-      <p class="label"><i class="fa-solid fa-pen"></i> Nota general de la sesión</p>
+      <p class="label">
+        <span><i class="fa-solid fa-pen"></i> Nota general de la sesión</span>
+        <label class="compartir-toggle" id="toggle-compartir-general"><input type="checkbox" id="nota-general-compartida"> Compartir con el grupo</label>
+      </p>
       <textarea id="nota-general" placeholder="¿Qué se vio hoy? ¿Cómo estuvo el grupo en general?"></textarea>
+      <p class="form-hint">Si la marcás como compartida, cada alumno la va a ver en "Mi seguimiento" dentro de su perfil.</p>
     </div>
 
     <div class="card">
@@ -113,6 +128,8 @@ textarea:focus,input:focus{border-color:var(--gold2);}
     </div>
 
     <button class="btn-guardar" id="btn-guardar" onclick="guardarNota()">Guardar nota de esta sesión</button>
+    <button class="btn-borrado" id="btn-solicitar-borrado" onclick="solicitarBorrado()"><i class="fa-solid fa-trash-can"></i> Solicitar borrado de esta sesión</button>
+    <p id="solicitud-estado" hidden></p>
 
     <div class="card" style="margin-top:22px;">
       <p class="label"><i class="fa-solid fa-clock-rotate-left"></i> Notas recientes de este grupo</p>
@@ -127,7 +144,7 @@ textarea:focus,input:focus{border-color:var(--gold2);}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, query, where, limit, getDocs, doc, getDoc, setDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, query, where, limit, getDocs, doc, getDoc, setDoc, deleteDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { firebaseConfig } from "../firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -141,10 +158,13 @@ const ETIQUETAS = ["Excelente", "Buen progreso", "Necesita repaso", "Ausente"];
 let coach = null;          // doc del alumno-coach logueado
 let grupoActivo = null;    // { dias, franja }
 let rosterActual = [];     // alumnos del grupo activo
-let estadoAlumnos = {};    // { [alumnoId]: { etiqueta, nota } } — lo que se está editando
+let estadoAlumnos = {};    // { [alumnoId]: { etiqueta, nota, compartido } } — lo que se está editando
+let solicitudActual = null; // solicitudBorrado de la sesión cargada ahora mismo (o null)
 
+function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 function slug(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
-function docIdNota(coachId, dias, franja, fecha) { return `${coachId}__${slug(dias)}__${slug(franja)}__${fecha}`; }
+function idSesion(dias, franja, fecha) { return `${slug(dias)}__${slug(franja)}__${fecha}`; }
+function docIdNota(coachId, dias, franja, fecha) { return `${coachId}__${idSesion(dias, franja, fecha)}`; }
 function hoyStr() {
   const ahora = new Date();
   const utcMs = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
@@ -181,8 +201,11 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('cargando').hidden = true;
     document.getElementById('contenido').hidden = false;
     document.getElementById('coach-nombre').innerText = coach.nombre || '';
+    const inicial = (coach.nombre || '?').charAt(0).toUpperCase();
+    document.getElementById('coach-avatar').innerHTML = coach.foto ? `<img src="${coach.foto}" onerror="this.parentElement.innerHTML='${inicial}'">` : inicial;
     document.getElementById('fecha-sesion').value = hoyStr();
     document.getElementById('fecha-sesion').addEventListener('change', () => cargarSesion());
+    document.getElementById('nota-general-compartida').addEventListener('change', pintarToggleGeneral);
 
     const grupos = coach.horariosCoach || [];
     if (!grupos.length) {
@@ -199,7 +222,7 @@ onAuthStateChanged(auth, async (user) => {
 
 function pintarTabsGrupos(grupos) {
   const cont = document.getElementById('grupo-tabs');
-  cont.innerHTML = grupos.map((g, i) => `<button class="grupo-tab" data-i="${i}">${g.dias} · ${g.franja}</button>`).join('');
+  cont.innerHTML = grupos.map((g, i) => `<button class="grupo-tab" data-i="${i}">${escHtml(g.dias)} · ${escHtml(g.franja)}</button>`).join('');
   cont.querySelectorAll('.grupo-tab').forEach((btn, i) => btn.addEventListener('click', () => seleccionarGrupo(grupos[i])));
 }
 
@@ -225,21 +248,30 @@ async function cargarRoster() {
     const inicial = (a.nombre || '?').charAt(0).toUpperCase();
     const foto = a.foto ? `<img src="${a.foto}" onerror="this.parentElement.innerHTML='${inicial}'">` : inicial;
     return `<div class="roster-item" data-alumno="${a.id}">
-      <div class="roster-head"><div class="avatar-mini">${foto}</div><span class="roster-nombre">${a.nombre}</span></div>
+      <div class="roster-head">
+        <div class="roster-head-left"><div class="avatar-mini">${foto}</div><span class="roster-nombre">${escHtml(a.nombre)}</span></div>
+        <label class="compartir-toggle" data-alumno-toggle="${a.id}"><input type="checkbox" class="compartir-alumno-check" data-alumno="${a.id}"> Compartir</label>
+      </div>
       <div class="etiquetas">${ETIQUETAS.map(e => `<button type="button" class="etq-chip" data-etq="${e}" data-alumno="${a.id}">${e}</button>`).join('')}</div>
       <input type="text" class="nota-mini" data-alumno="${a.id}" placeholder="Nota corta (opcional)" maxlength="140">
     </div>`;
   }).join('');
   cont.querySelectorAll('.etq-chip').forEach(chip => chip.addEventListener('click', () => {
     const id = chip.dataset.alumno, etq = chip.dataset.etq;
-    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '' };
+    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '', compartido: false };
     estadoAlumnos[id].etiqueta = (estadoAlumnos[id].etiqueta === etq) ? '' : etq; // toca de nuevo para des-marcar
     pintarEstadoRoster();
   }));
   cont.querySelectorAll('.nota-mini').forEach(inp => inp.addEventListener('input', () => {
     const id = inp.dataset.alumno;
-    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '' };
+    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '', compartido: false };
     estadoAlumnos[id].nota = inp.value;
+  }));
+  cont.querySelectorAll('.compartir-alumno-check').forEach(chk => chk.addEventListener('change', () => {
+    const id = chk.dataset.alumno;
+    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '', compartido: false };
+    estadoAlumnos[id].compartido = chk.checked;
+    pintarEstadoRoster();
   }));
 }
 
@@ -252,6 +284,30 @@ function pintarEstadoRoster() {
     const est = estadoAlumnos[inp.dataset.alumno];
     inp.value = (est && est.nota) || '';
   });
+  document.querySelectorAll('.compartir-alumno-check').forEach(chk => {
+    const est = estadoAlumnos[chk.dataset.alumno];
+    const compartido = !!est && !!est.compartido;
+    chk.checked = compartido;
+    chk.closest('[data-alumno-toggle]').classList.toggle('on', compartido);
+  });
+}
+
+function pintarToggleGeneral() {
+  const chk = document.getElementById('nota-general-compartida');
+  document.getElementById('toggle-compartir-general').classList.toggle('on', chk.checked);
+}
+
+function pintarSolicitudEstado() {
+  const btn = document.getElementById('btn-solicitar-borrado');
+  const txt = document.getElementById('solicitud-estado');
+  if (solicitudActual) {
+    btn.disabled = true;
+    txt.hidden = false;
+    txt.innerHTML = `<span class="solicitud-badge"><i class="fa-solid fa-clock"></i> Borrado pendiente de aprobación</span>`;
+  } else {
+    btn.disabled = false;
+    txt.hidden = true;
+  }
 }
 
 // Carga (o limpia) la nota guardada para la fecha + grupo seleccionados actualmente.
@@ -260,16 +316,22 @@ async function cargarSesion() {
   const fecha = document.getElementById('fecha-sesion').value || hoyStr();
   const id = docIdNota(coach.id, grupoActivo.dias, grupoActivo.franja, fecha);
   document.getElementById('nota-general').value = '';
+  document.getElementById('nota-general-compartida').checked = false;
   estadoAlumnos = {};
+  solicitudActual = null;
   try {
     const snap = await getDoc(doc(db, 'coach_notas', id));
     if (snap.exists()) {
       const data = snap.data();
       document.getElementById('nota-general').value = data.notaGeneral || '';
+      document.getElementById('nota-general-compartida').checked = !!data.notaGeneralCompartida;
       estadoAlumnos = data.alumnos || {};
+      solicitudActual = data.solicitudBorrado || null;
     }
   } catch (e) { console.error('No se pudo cargar la nota de esta sesión:', e); }
   pintarEstadoRoster();
+  pintarToggleGeneral();
+  pintarSolicitudEstado();
 }
 
 async function cargarHistorial() {
@@ -288,7 +350,8 @@ async function cargarHistorial() {
       const nAlumnos = Object.keys(data.alumnos || {}).length;
       const item = document.createElement('div');
       item.className = 'historial-item';
-      item.innerHTML = `<span>${data.fecha}</span><span>${nAlumnos} alumno(s) con nota <i class="fa-solid fa-chevron-right" style="margin-left:6px;"></i></span>`;
+      const pendienteHtml = data.solicitudBorrado ? '<span class="tag-pendiente">Pendiente de borrado</span>' : '';
+      item.innerHTML = `<span>${escHtml(data.fecha)}</span><span style="display:flex; align-items:center; gap:8px;">${pendienteHtml}${nAlumnos} alumno(s) con nota <i class="fa-solid fa-chevron-right"></i></span>`;
       item.addEventListener('click', () => { document.getElementById('fecha-sesion').value = data.fecha; cargarSesion(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
       cont.appendChild(item);
     });
@@ -299,11 +362,37 @@ async function cargarHistorial() {
   }
 }
 
+// Sincroniza la copia "pública" que el alumno puede leer (alumnos/{id}/seguimiento/{sesionId}).
+// Se actualiza o se borra según lo que el coach haya marcado como compartido en esta sesión.
+async function sincronizarSeguimientoAlumno(alumnoId, fecha, notaGeneral, notaGeneralCompartida, est) {
+  const segId = idSesion(grupoActivo.dias, grupoActivo.franja, fecha);
+  const compartirIndividual = !!(est && est.compartido && (est.etiqueta || est.nota));
+  const compartirGeneral = !!(notaGeneralCompartida && notaGeneral);
+  const ref = doc(db, 'alumnos', alumnoId, 'seguimiento', segId);
+  if (!compartirIndividual && !compartirGeneral) {
+    try { await deleteDoc(ref); } catch (e) { /* no existía, no pasa nada */ }
+    return;
+  }
+  await setDoc(ref, {
+    coachId: coach.id,
+    coachNombre: coach.nombre || '',
+    dias: grupoActivo.dias,
+    franja: grupoActivo.franja,
+    fecha,
+    notaGeneral: compartirGeneral ? notaGeneral : '',
+    etiqueta: compartirIndividual ? (est.etiqueta || '') : '',
+    nota: compartirIndividual ? (est.nota || '') : '',
+    actualizadoEn: serverTimestamp(),
+  }, { merge: false });
+}
+
 window.guardarNota = async () => {
   if (!grupoActivo) return;
   const btn = document.getElementById('btn-guardar');
   const fecha = document.getElementById('fecha-sesion').value || hoyStr();
   const id = docIdNota(coach.id, grupoActivo.dias, grupoActivo.franja, fecha);
+  const notaGeneral = document.getElementById('nota-general').value.trim();
+  const notaGeneralCompartida = document.getElementById('nota-general-compartida').checked;
   btn.disabled = true; btn.innerText = 'Guardando…';
   try {
     await setDoc(doc(db, 'coach_notas', id), {
@@ -312,10 +401,15 @@ window.guardarNota = async () => {
       dias: grupoActivo.dias,
       franja: grupoActivo.franja,
       fecha,
-      notaGeneral: document.getElementById('nota-general').value.trim(),
+      notaGeneral,
+      notaGeneralCompartida,
       alumnos: estadoAlumnos,
       actualizadoEn: serverTimestamp(),
     }, { merge: true });
+    // Sincroniza lo compartido hacia cada alumno del grupo, uno por uno.
+    await Promise.all(rosterActual.map(a =>
+      sincronizarSeguimientoAlumno(a.id, fecha, notaGeneral, notaGeneralCompartida, estadoAlumnos[a.id])
+    ));
     mostrarToast('Nota guardada ✓');
     cargarHistorial();
   } catch (e) {
@@ -323,6 +417,28 @@ window.guardarNota = async () => {
     mostrarToast('No se pudo guardar. Intentá de nuevo.');
   }
   btn.disabled = false; btn.innerText = 'Guardar nota de esta sesión';
+};
+
+window.solicitarBorrado = async () => {
+  if (!grupoActivo) return;
+  const fecha = document.getElementById('fecha-sesion').value || hoyStr();
+  const id = docIdNota(coach.id, grupoActivo.dias, grupoActivo.franja, fecha);
+  try {
+    await setDoc(doc(db, 'coach_notas', id), {
+      coachId: coach.id,
+      dias: grupoActivo.dias,
+      franja: grupoActivo.franja,
+      fecha,
+      solicitudBorrado: { solicitadoEn: serverTimestamp(), coachNombre: coach.nombre || '' },
+    }, { merge: true });
+    solicitudActual = { coachNombre: coach.nombre || '' };
+    pintarSolicitudEstado();
+    mostrarToast('Solicitud enviada al admin ✓');
+    cargarHistorial();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo enviar la solicitud. Intentá de nuevo.');
+  }
 };
 </script>
 </body>

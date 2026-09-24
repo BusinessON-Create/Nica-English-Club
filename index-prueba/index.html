@@ -1689,6 +1689,13 @@ body.tr-room-lock { overflow:hidden; }
     </div>
 
     <div class="perfil-section">
+      <p class="perfil-section-title">Mi seguimiento</p>
+      <p class="form-hint" style="margin-bottom:10px;">Notas que tu coach decidió compartir contigo.</p>
+      <div id="perfil-seguimiento-lista"></div>
+      <p class="form-hint" id="perfil-seguimiento-vacio" style="display:none;">Todavía no tenés notas de seguimiento compartidas.</p>
+    </div>
+
+    <div class="perfil-section">
       <p class="perfil-section-title">Contacto</p>
       <p class="field-label">Número de WhatsApp</p>
       <p class="form-hint" style="margin-top:2px; margin-bottom:8px;">Ej: +505 8888 8888</p>
@@ -2520,6 +2527,10 @@ async function registrarAcceso(alumno) {
   sessionActiva.total_logins = upd.total_logins;
 }
 
+// Escapa texto libre (notas de coach, etc.) antes de meterlo en innerHTML.
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 function renderUI(alumno) {
   const hoyStr = getLocalDateStr(managuaNow());
   const diasValidos = (alumno.dias_semana || []).filter(d => d <= hoyStr);
@@ -6172,7 +6183,34 @@ window.abrirPerfil = () => {
     perfilBadgesEl.innerHTML = chips.length ? chips.join('') : `<span class="tr-badge-chip" style="opacity:.55;"><i class="fa-solid fa-lock"></i> No badges yet — keep training!</span>`;
   }
   document.getElementById('modal-perfil-bg').classList.add('open');
+  cargarSeguimientoPerfil();
 };
+const ETQ_COACH_COLOR = { 'Excelente': 'var(--green)', 'Buen progreso': 'var(--blue)', 'Necesita repaso': 'var(--gold3)', 'Ausente': 'var(--red)' };
+async function cargarSeguimientoPerfil() {
+  const lista = document.getElementById('perfil-seguimiento-lista');
+  const vacio = document.getElementById('perfil-seguimiento-vacio');
+  if (!lista || !sessionActiva) return;
+  lista.innerHTML = '<p class="form-hint">Cargando…</p>';
+  vacio.style.display = 'none';
+  try {
+    const snap = await getDocs(query(collection(db, 'alumnos', sessionActiva.id, 'seguimiento'), orderBy('fecha', 'desc'), limit(20)));
+    if (snap.empty) { lista.innerHTML = ''; vacio.style.display = 'block'; return; }
+    lista.innerHTML = snap.docs.map(d => {
+      const s = d.data();
+      const etqColor = ETQ_COACH_COLOR[s.etiqueta] || 'var(--card2)';
+      const etqHtml = s.etiqueta ? `<span style="display:inline-block; padding:3px 10px; border-radius:99px; font-size:10.5px; font-weight:800; background:${etqColor}; color:#000; margin-bottom:6px;">${escHtml(s.etiqueta)}</span>` : '';
+      return `<div style="padding:12px 0; border-bottom:1px solid var(--border);">
+        <p style="font-size:11px; color:var(--muted-dim); margin-bottom:5px;">${escHtml(s.fecha)} · ${escHtml(s.dias)} · ${escHtml(s.franja)} — ${escHtml(s.coachNombre || 'Coach')}</p>
+        ${etqHtml}
+        ${s.notaGeneral ? `<p style="font-size:12.5px; color:var(--text); margin-top:4px;">${escHtml(s.notaGeneral)}</p>` : ''}
+        ${s.nota ? `<p style="font-size:12px; color:var(--muted); margin-top:4px;">${escHtml(s.nota)}</p>` : ''}
+      </div>`;
+    }).join('');
+  } catch (e) {
+    console.error('No se pudo cargar el seguimiento del coach:', e);
+    lista.innerHTML = '<p class="form-hint">No se pudo cargar el seguimiento ahora mismo.</p>';
+  }
+}
 window.perfilTogglePass = function () {
   const fields = document.getElementById('perfil-pass-fields');
   const btn = document.getElementById('perfil-pass-toggle');
