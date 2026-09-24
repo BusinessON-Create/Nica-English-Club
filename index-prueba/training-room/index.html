@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training Room — Nica English</title>
+<link rel="stylesheet" href="./assets/css/base.css">
+</head>
+<body>
+
+  <nav class="tr2-nav">
+    <span class="tr2-title"><i class="fa-solid fa-brain"></i>Training Room</span>
+    <span id="tr2-user-info" style="font-size:12px; color:var(--muted);">Cargando…</span>
+  </nav>
+
+  <div class="tr2-shell">
+    <h1 style="font-size:22px; margin-bottom:4px;">Elige tu nivel</h1>
+    <p style="color:var(--muted); font-size:13px;">Tu coach desbloquea cada nivel a medida que avanzas.</p>
+
+    <div class="tr2-grid-niveles" id="tr2-grid-niveles">
+      <!-- Las 5 tarjetas (A1-C1) se pintan aquí por JS, según niveles.js -->
+    </div>
+  </div>
+
+  <script type="module">
+    import { esperarSesion, obtenerPerfilUsuario } from "./assets/js/auth-init.js";
+    import { pintarNiveles } from "./assets/js/training-room.js";
+
+    (async function init() {
+      const user = await esperarSesion();
+      if (!user) return; // auth-init.js ya redirige al login si no hay sesión
+
+      const perfil = await obtenerPerfilUsuario(user.uid);
+      document.getElementById("tr2-user-info").textContent =
+        perfil?.nombre ? `${perfil.nombre}` : user.email;
+
+      await pintarNiveles(user, perfil);
+    })();
+  </script>
+
+</body>
+</html>

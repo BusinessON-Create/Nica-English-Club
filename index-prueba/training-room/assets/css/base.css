@@ -1,0 +1,72 @@
+/* base.css — Training Room v2
+   Variables tomadas de la identidad visual ya usada en index.html
+   (--gold, --card, --border, fondo oscuro) para que el módulo nuevo
+   se sienta parte de la misma plataforma, no un sitio aparte. */
+
+:root {
+  --gold: #f0b429;
+  --gold2: #c8891a;
+  --gold3: #f0b429;
+  --bg: #0a0a0c;
+  --card: #121214;
+  --card2: #17171a;
+  --border: rgba(255,255,255,.08);
+  --border2: rgba(255,255,255,.14);
+  --text: #f5f5f5;
+  --muted: #9a9a9a;
+  --muted-dim: #6f6f6f;
+  --green: #3ecf71;
+  --red: #e23744;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --shadow-card: 0 10px 30px rgba(0,0,0,.35);
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.tr2-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+}
+
+.tr2-title { font-weight: 800; font-size: 15px; color: #fff; }
+.tr2-title i { color: var(--gold); margin-right: 8px; }
+
+.tr2-shell { max-width: 960px; margin: 0 auto; padding: 24px 20px 60px; }
+
+/* Tarjetas de nivel — Training Room index */
+.tr2-grid-niveles {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+  gap: 16px; margin-top: 20px;
+}
+
+.tr2-card-nivel {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: var(--r-lg); padding: 20px; cursor: pointer;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+.tr2-card-nivel:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+.tr2-card-nivel.locked { opacity: .45; cursor: not-allowed; }
+.tr2-card-nivel .tr2-nivel-nombre { font-size: 18px; font-weight: 800; color: #fff; }
+.tr2-card-nivel .tr2-nivel-estado { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.tr2-card-nivel .tr2-nivel-estado.unlocked { color: var(--green); }
+
+/* Estados (🔒🟡📤✅🔴) — reutilizado en unidades, páginas y matriz del coach */
+.tr2-badge-estado {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; padding: 3px 9px; border-radius: 99px;
+  border: 1px solid var(--border2); color: var(--muted);
+}
+.tr2-badge-estado.bloqueada { color: var(--muted-dim); }
+.tr2-badge-estado.disponible { color: var(--gold); border-color: var(--gold2); }
+.tr2-badge-estado.entregada { color: #6fb3ef; }
+.tr2-badge-estado.aprobada { color: var(--green); }
+.tr2-badge-estado.refuerzo { color: var(--red); }
