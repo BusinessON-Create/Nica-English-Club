@@ -9,6 +9,7 @@
         <div class="admin-menu-grid" id="admin-menu-grid">
           <button class="admin-menu-card active" id="btn-tab-enlaces" onclick="switchTab('enlaces',this)"><i class="fa-solid fa-link"></i><span>Recursos</span></button>
           <button class="admin-menu-card" id="btn-tab-alumnos" onclick="switchTab('alumnos',this)"><i class="fa-solid fa-user-graduate"></i><span>Alumnos</span></button>
+          <button class="admin-menu-card" id="btn-tab-coachsolicitudes" onclick="switchTab('coachsolicitudes',this)"><i class="fa-solid fa-inbox"></i><span>Solicitudes<span class="menu-card-badge" id="badge-solicitudes-borrado" style="display:none;">0</span></span></button>
           <button class="admin-menu-card" id="btn-tab-motivacion" onclick="switchTab('motivacion',this)"><i class="fa-solid fa-crown"></i><span>Motivación</span></button>
           <button class="admin-menu-card" id="btn-tab-actividades" onclick="switchTab('actividades',this)"><i class="fa-solid fa-list-check"></i><span>Actividades</span></button>
           <button class="admin-menu-card" id="btn-tab-videos" onclick="switchTab('videos',this)"><i class="fa-solid fa-clapperboard"></i><span>Videos</span></button>
@@ -31,6 +32,12 @@
           <input type="url" id="link-url" class="admin-input" placeholder="https://url-clase.com">
           <button class="btn-login" id="btn-guardar-enlace" onclick="guardarEnlace()">Publicar Enlace</button>
           <div id="lista-enlaces-ui" style="margin-top:20px;"></div>
+        </div>
+        <div id="tab-coachsolicitudes" class="tab-content" style="padding:20px; display:none;">
+          <p class="admin-label"><i class="fa-solid fa-inbox"></i> Solicitudes de borrado de notas de coach</p>
+          <p class="form-hint" style="margin-bottom:16px;">Los coaches no pueden borrar sus notas directamente — solo piden que las borres vos. Acá aparece cada solicitud pendiente; "Aprobar y borrar" elimina la nota completa (y lo que se le compartió al alumno). "Rechazar" solo quita la solicitud y deja la nota como estaba.</p>
+          <div id="lista-solicitudes-borrado-ui"></div>
+          <p class="form-hint" id="solicitudes-borrado-vacio" style="display:none;">No hay solicitudes de borrado pendientes.</p>
         </div>
         <div id="tab-alumnos" class="tab-content" style="padding:20px; display:none;">
           <input type="hidden" id="alumno-id-edicion">
@@ -218,18 +225,7 @@
           <div id="lista-neclub-ui"></div>
         </div>
         <div id="tab-training" class="tab-content" style="padding:20px; display:none;">
-          <!-- TRAINING ROOM V2: asignar coach a un grupo (horario) -->
-          <div class="admin-section">
-            <p class="admin-label"><i class="fa-solid fa-user-tie"></i> Asignar coach a un grupo</p>
-            <select id="tr2-grupo-select" class="admin-input"></select>
-            <select id="tr2-coach-select" class="admin-input"></select>
-            <button class="btn-login btn-outline-gold" onclick="asignarCoachAGrupo()">
-              Asignar coach a este grupo
-            </button>
-            <p class="form-hint" id="tr2-asignar-hint" style="margin-top:8px;"></p>
-          </div>
-
-          <p class="admin-label" style="margin-top:24px;"><i class="fa-solid fa-book-open-reader"></i> Biblioteca de semanas</p>
+          <p class="admin-label"><i class="fa-solid fa-book-open-reader"></i> Biblioteca de semanas</p>
           <p class="form-hint">Crea el contenido de cada semana (Foundations, Everyday English, Confidence, Fluency Mode). Los alumnos avanzan solos por la biblioteca según su propio ritmo — tú solo la mantienes llena.</p>
           <button class="btn-login btn-outline-gold" onclick="abrirEditorSemanaTraining()"><i class="fa-solid fa-plus"></i> Nueva semana</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemanaTraining()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 1 — Who Are You?)</button>
