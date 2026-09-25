@@ -1912,7 +1912,7 @@ body.tr-room-lock { overflow:hidden; }
 <script type="module">
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where, deleteField, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -4293,6 +4293,41 @@ function renderGrupoSelect(selId) {
     : `<option value="">-- No hay grupos con horario asignado --</option>`;
   if (grupos.some(g => `${g.dias}||${g.franja}` === actual)) sel.value = actual;
 }
+// ===== TRAINING ROOM V2: asignar coach por grupo (horario) =====
+// Reutiliza renderGrupoSelect(selId), que ya arma la lista de grupos únicos.
+function renderTr2GrupoYCoachSelects() {
+  renderGrupoSelect('tr2-grupo-select');
+  const coaches = alumnosCacheAdmin.filter(a => a.esCoach === true);
+  const coachSel = document.getElementById('tr2-coach-select');
+  if (!coachSel) return;
+  coachSel.innerHTML = coaches.length
+    ? `<option value="">-- Sin coach asignado --</option>` +
+      coaches.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('')
+    : `<option value="">-- No hay coaches creados aún --</option>`;
+}
+window.asignarCoachAGrupo = async function () {
+  const grupoVal = document.getElementById('tr2-grupo-select').value;
+  const coachId = document.getElementById('tr2-coach-select').value;
+  const hint = document.getElementById('tr2-asignar-hint');
+  if (!grupoVal) { hint.textContent = 'Selecciona un grupo primero.'; return; }
+  const [dias, franja] = grupoVal.split('||');
+  const destinatarios = alumnosCacheAdmin.filter(
+    a => a.horario && a.horario.dias === dias && a.horario.franja === franja
+  );
+  if (!destinatarios.length) { hint.textContent = 'Ese grupo no tiene alumnos.'; return; }
+  try {
+    const batch = writeBatch(db);
+    destinatarios.forEach(a => {
+      batch.update(doc(db, 'alumnos', a.id), { coachAsignadoId: coachId || null });
+    });
+    await batch.commit();
+    hint.textContent = `Coach ${coachId ? 'asignado' : 'removido'} a ${destinatarios.length} alumno(s) de ${dias} · ${franja}.`;
+  } catch (e) {
+    console.error('Error asignando coach:', e);
+    hint.textContent = 'Ocurrió un error. Intenta de nuevo.';
+  }
+};
+
 function obtenerDestinatariosPorModo(nombreRadio, grupoSelId, listaClase) {
   const modoEl = document.querySelector(`input[name="${nombreRadio}"]:checked`);
   const modo = modoEl ? modoEl.value : 'todos';
@@ -6261,6 +6296,7 @@ window.switchTab = (n, b) => {
   document.querySelectorAll('.admin-menu-card').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
   b.classList.add('active'); document.getElementById('tab-'+n).style.display='block';
+  if (n === 'training' && typeof renderTr2GrupoYCoachSelects === 'function') renderTr2GrupoYCoachSelects();
 };
 window.showModal = (t, d, icono) => {
   document.getElementById('modal-title').innerText=t;

@@ -1,12 +1,9 @@
-// training-room.js — Fase 0/2
-// Pinta las 5 tarjetas de nivel (A1-C1) en el index del Training Room v2,
-// según el progreso real del usuario guardado en:
-//   /usuarios/{uid}/progreso_v2/{nivelId} -> { desbloqueado: true/false }
-//
-// Nota de namespace: se usa "progreso_v2" (no "progreso") para no chocar
-// con cualquier colección que ya use el Training Room viejo.
+// training-room.js — Fase 0/2 (CORREGIDO)
+// Pinta las 5 tarjetas de nivel (A1-C1), según:
+//   /alumnos/{alumnoId}/progreso_v2/{nivelId} -> { desbloqueado: true/false }
+// alumnoId = el ID del documento en /alumnos (obtenido por correo en auth-init.js)
 
-import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const NIVELES = [
   { id: "a1", nombre: "A1" },
@@ -16,7 +13,7 @@ const NIVELES = [
   { id: "c1", nombre: "C1" },
 ];
 
-export async function pintarNiveles(user, perfil) {
+export async function pintarNiveles(alumnoId, perfil) {
   const db = window.trv2_db;
   const grid = document.getElementById("tr2-grid-niveles");
   grid.innerHTML = "";
@@ -24,14 +21,13 @@ export async function pintarNiveles(user, perfil) {
   for (const nivel of NIVELES) {
     let desbloqueado = false;
     try {
-      const ref = doc(db, "usuarios", user.uid, "progreso_v2", nivel.id);
+      const ref = doc(db, "alumnos", alumnoId, "progreso_v2", nivel.id);
       const snap = await getDoc(ref);
       desbloqueado = snap.exists() ? !!snap.data().desbloqueado : false;
     } catch (e) {
       console.error(`No se pudo leer progreso de ${nivel.id}:`, e);
     }
 
-    // A1 se desbloquea por defecto para cualquier alumno nuevo sin progreso aún.
     if (nivel.id === "a1" && !desbloqueado) desbloqueado = true;
 
     const card = document.createElement("div");
