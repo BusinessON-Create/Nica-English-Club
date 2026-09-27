@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nivel — Training Room</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+  .tr2-portada { text-align:center; padding: 60px 20px; }
+  .tr2-btn-entrar { margin-top:20px; background:var(--gold); color:#000; border:none; padding:12px 28px; border-radius:99px; font-weight:800; cursor:pointer; font-size:14px; }
+  .tr2-tabs { display:flex; gap:8px; margin:20px 0; border-bottom:1px solid var(--border); }
+  .tr2-tab { background:none; border:none; color:var(--muted); padding:10px 16px; cursor:pointer; font-weight:700; border-bottom:2px solid transparent; font-size:13px; }
+  .tr2-tab.active { color: var(--gold); border-color: var(--gold); }
+  .tr2-seccion { margin-bottom: 26px; }
+  .tr2-seccion h2 { color:#fff; font-size:16px; margin-bottom:12px; }
+  .tr2-seccion p, .tr2-seccion li { color: var(--text); font-size:14px; line-height:1.6; }
+  .tr2-vocab-list { list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:8px; }
+  .tr2-vocab-list li { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 12px; }
+  .tr2-dialogo p { margin:4px 0; }
+  .tr2-answers { color: var(--gold); font-size:12px; margin-top:6px; }
+  .tr2-card-unidad { background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); padding:18px; margin-bottom:10px; cursor:pointer; color:#fff; font-size:14px; }
+  .tr2-card-unidad:hover { border-color: var(--gold2); }
+</style>
+</head>
+<body>
+
+  <nav class="tr2-nav">
+    <span class="tr2-title"><i class="fa-solid fa-brain"></i>Training Room</span>
+    <a href="../index.html" style="color:var(--muted); font-size:12px; text-decoration:none;">&larr; Niveles</a>
+  </nav>
+
+  <div class="tr2-shell" id="tr2-vista-lista">
+    <h1 id="tr2-nivel-titulo" style="font-size:22px;">Cargando…</h1>
+    <div id="tr2-lista-unidades"></div>
+  </div>
+
+  <div class="tr2-shell" id="tr2-vista-unidad" style="display:none;"></div>
+
+  <script type="module">
+    import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
+    import { cargarUnidades, cargarPagina, renderPortada, renderContenido } from "../assets/js/nivel.js";
+
+    const params = new URLSearchParams(location.search);
+    const nivelId = params.get('nivel') || 'a1';
+
+    (async function init() {
+      const resultado = await esperarSesionYAlumno();
+      if (!resultado) return; // auth-init.js ya redirige si no hay sesión/perfil
+
+      document.getElementById('tr2-nivel-titulo').textContent = `Nivel ${nivelId.toUpperCase()}`;
+
+      const unidades = await cargarUnidades(nivelId);
+      const lista = document.getElementById('tr2-lista-unidades');
+
+      if (!unidades.length) {
+        lista.innerHTML = `<p style="color:var(--muted);">Todavía no hay unidades cargadas para este nivel.</p>`;
+        return;
+      }
+
+      lista.innerHTML = unidades.map((u) => `
+        <div class="tr2-card-unidad" data-unidad="${u.id}">
+          <b>Unidad ${u.orden}</b> — ${u.nombre}
+        </div>
+      `).join('');
+
+      lista.querySelectorAll('.tr2-card-unidad').forEach((card) => {
+        card.onclick = () => abrirUnidad(card.dataset.unidad);
+      });
+
+      async function abrirUnidad(unidadId) {
+        const pagina = await cargarPagina(nivelId, unidadId);
+        if (!pagina) {
+          alert('Esta unidad todavía no tiene contenido cargado.');
+          return;
+        }
+
+        document.getElementById('tr2-vista-lista').style.display = 'none';
+        const vista = document.getElementById('tr2-vista-unidad');
+        vista.style.display = 'block';
+        vista.innerHTML = renderPortada(pagina);
+
+        document.getElementById('btn-entrar-clase').onclick = () => {
+          vista.innerHTML = renderContenido(pagina);
+          vista.querySelectorAll('.tr2-tab').forEach((tab) => {
+            tab.onclick = () => {
+              vista.querySelectorAll('.tr2-tab').forEach((t) => t.classList.remove('active'));
+              vista.querySelectorAll('.tr2-tab-panel').forEach((p) => (p.style.display = 'none'));
+              tab.classList.add('active');
+              document.getElementById(`tr2-tab-${tab.dataset.tab}`).style.display = 'block';
+            };
+          });
+        };
+      }
+    })();
+  </script>
+
+</body>
+</html>

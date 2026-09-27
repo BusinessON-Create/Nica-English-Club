@@ -18,23 +18,22 @@
     <p style="color:var(--muted); font-size:13px;">Tu coach desbloquea cada nivel a medida que avanzas.</p>
 
     <div class="tr2-grid-niveles" id="tr2-grid-niveles">
-      <!-- Las 5 tarjetas (A1-C1) se pintan aquí por JS, según niveles.js -->
+      <!-- Las 5 tarjetas (A1-C1) se pintan aquí por JS, según training-room.js -->
     </div>
   </div>
 
   <script type="module">
-    import { esperarSesion, obtenerPerfilUsuario } from "./assets/js/auth-init.js";
+    import { esperarSesionYAlumno } from "./assets/js/auth-init.js";
     import { pintarNiveles } from "./assets/js/training-room.js";
 
     (async function init() {
-      const user = await esperarSesion();
-      if (!user) return; // auth-init.js ya redirige al login si no hay sesión
+      const resultado = await esperarSesionYAlumno();
+      if (!resultado) return; // auth-init.js ya redirige al login si no hay sesión/perfil
+      const { alumno } = resultado;
 
-      const perfil = await obtenerPerfilUsuario(user.uid);
-      document.getElementById("tr2-user-info").textContent =
-        perfil?.nombre ? `${perfil.nombre}` : user.email;
+      document.getElementById("tr2-user-info").textContent = alumno.nombre || alumno.email || "";
 
-      await pintarNiveles(user, perfil);
+      await pintarNiveles(alumno);
     })();
   </script>
 

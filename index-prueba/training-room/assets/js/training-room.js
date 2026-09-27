@@ -1,12 +1,21 @@
-// training-room.js — Fase 0/2
-// Pinta las 5 tarjetas de nivel (A1-C1) en el index del Training Room v2,
-// según el progreso real del usuario guardado en:
-//   /usuarios/{uid}/progreso_v2/{nivelId} -> { desbloqueado: true/false }
+// training-room.js — Fase 0 (corregido)
+// Pinta las 5 tarjetas de nivel (A1-C1) según el progreso real del alumno,
+// guardado en /training_v2_progreso/{alumnoId} — alumnoId es el ID real
+// del doc en /alumnos (el mismo que usa coach_notas.coachId, actividades.
+// creadoPor, etc.), NUNCA el uid de Firebase Auth.
 //
-// Nota de namespace: se usa "progreso_v2" (no "progreso") para no chocar
-// con cualquier colección que ya use el Training Room viejo.
+// Namespace "training_v2_progreso" (no "entrenamiento_progreso") para no
+// chocar con el Training Room viejo (training-journey.js), que sigue vivo
+// en producción mientras se prueba este módulo nuevo.
+//
+// NOTA para la fase de "motor de estados" (la próxima, no esta): el
+// desbloqueo real de UNIDADES/páginas tiene techo grupal — lo abre el
+// coach para todo su horario/grupo, no alumno por alumno. Este archivo,
+// en Fase 0, solo resuelve el desbloqueo de NIVEL (A1→C1), que sí es
+// individual. La lógica de techo grupal por unidad se construye en la
+// siguiente fase, sobre esta misma base.
 
-import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const NIVELES = [
   { id: "a1", nombre: "A1" },
@@ -16,20 +25,27 @@ const NIVELES = [
   { id: "c1", nombre: "C1" },
 ];
 
-export async function pintarNiveles(user, perfil) {
+export async function pintarNiveles(alumno) {
   const db = window.trv2_db;
   const grid = document.getElementById("tr2-grid-niveles");
   grid.innerHTML = "";
 
-  for (const nivel of NIVELES) {
-    let desbloqueado = false;
+  // El coach tiene acceso de solo lectura a TODO el contenido (para
+  // preparar clases), así que para un coach todos los niveles se muestran
+  // desbloqueados sin tocar/depender de su propio progreso como alumno.
+  let progreso = { niveles: {} };
+  if (!alumno.esCoach) {
     try {
-      const ref = doc(db, "usuarios", user.uid, "progreso_v2", nivel.id);
-      const snap = await getDoc(ref);
-      desbloqueado = snap.exists() ? !!snap.data().desbloqueado : false;
+      const snap = await getDoc(doc(db, 'training_v2_progreso', alumno.id));
+      if (snap.exists()) progreso = snap.data();
     } catch (e) {
-      console.error(`No se pudo leer progreso de ${nivel.id}:`, e);
+      console.error('No se pudo leer el progreso de Training Room v2:', e);
     }
+  }
+
+  for (const nivel of NIVELES) {
+    let desbloqueado = alumno.esCoach ||
+      !!(progreso.niveles && progreso.niveles[nivel.id] && progreso.niveles[nivel.id].desbloqueado);
 
     // A1 se desbloquea por defecto para cualquier alumno nuevo sin progreso aún.
     if (nivel.id === "a1" && !desbloqueado) desbloqueado = true;
