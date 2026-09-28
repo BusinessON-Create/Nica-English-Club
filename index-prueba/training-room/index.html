@@ -4,18 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Training Room — Nica English</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+
 <link rel="stylesheet" href="./assets/css/base.css">
 </head>
 <body>
 
   <nav class="tr2-nav">
     <span class="tr2-title"><i class="fa-solid fa-brain"></i>Training Room</span>
-    <span id="tr2-user-info" style="font-size:12px; color:var(--muted);">Cargando…</span>
+    <div class="tr2-nav-right">
+      <span id="tr2-user-info" class="tr2-chip"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando…</span>
+    </div>
   </nav>
 
   <div class="tr2-shell">
-    <h1 style="font-size:22px; margin-bottom:4px;">Elige tu nivel</h1>
-    <p style="color:var(--muted); font-size:13px;">Tu coach desbloquea cada nivel a medida que avanzas.</p>
+    <h1 class="tr2-h1">Elige tu nivel</h1>
+    <p class="tr2-sub">Tu coach desbloquea cada nivel a medida que avanzas.</p>
 
     <div class="tr2-grid-niveles" id="tr2-grid-niveles">
       <!-- Las 5 tarjetas (A1-C1) se pintan aquí por JS, según training-room.js -->
@@ -31,7 +42,8 @@
       if (!resultado) return; // auth-init.js ya redirige al login si no hay sesión/perfil
       const { alumno } = resultado;
 
-      document.getElementById("tr2-user-info").textContent = alumno.nombre || alumno.email || "";
+      document.getElementById("tr2-user-info").innerHTML =
+        `<i class="fa-solid fa-user"></i> ${alumno.nombre || alumno.email || ''}`;
 
       await pintarNiveles(alumno);
     })();
