@@ -13,13 +13,17 @@ import { instalarAudio, registrarLista, limpiarParaAudio, ciclarVelocidad, etiqu
 import { instalarJuegos, marcador, renderOpcion, renderOrden, renderParejas } from "./juegos.js";
 import { ICONO_UNIDAD, PORTADAS, ICONOS_VOCAB, BANDERAS, NUMEROS, COLORES, REGLAS_ICONO, WARMUP, PRONOMBRES, TO_BE, TEMA_VISUAL } from "./visuales.js";
 import { PRACTICA_U1 } from "./ejercicios-u1.js";
+import { PRACTICA_U2, PRACTICA_U3, PRACTICA_U4, PRACTICA_U5, PRACTICA_U6, PRACTICA_U7 } from "./ejercicios-resto.js";
 
 instalarAudio();
 instalarJuegos();
 
-// Ejercicios curados por unidad (solo u1 por ahora — piloto). El resto sigue
-// mostrando el ejercicio en texto plano hasta que se curen sus respuestas.
-const EJERCICIOS = { u1: PRACTICA_U1 };
+// Ejercicios curados por unidad (respuestas completadas a mano donde el
+// JSON original no las traía). Todas las unidades de A1 ya están cubiertas.
+const EJERCICIOS = {
+  u1: PRACTICA_U1, u2: PRACTICA_U2, u3: PRACTICA_U3, u4: PRACTICA_U4,
+  u5: PRACTICA_U5, u6: PRACTICA_U6, u7: PRACTICA_U7,
+};
 
 const ICONOS_BLOQUE = {
   warm_up: 'fa-globe', vocabulary: 'fa-book-open', vocabulary_practice: 'fa-puzzle-piece',
