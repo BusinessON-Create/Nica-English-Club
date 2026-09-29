@@ -10,9 +10,16 @@
 
 import { collection, getDocs, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { instalarAudio, registrarLista, limpiarParaAudio, ciclarVelocidad, etiquetaVelocidad } from "./audio.js";
-import { ICONO_UNIDAD, PORTADAS, ICONOS_VOCAB, BANDERAS, NUMEROS, WARMUP, PRONOMBRES, TO_BE, TEMA_VISUAL } from "./visuales.js";
+import { instalarJuegos, marcador, renderOpcion, renderOrden, renderParejas } from "./juegos.js";
+import { ICONO_UNIDAD, PORTADAS, ICONOS_VOCAB, BANDERAS, NUMEROS, COLORES, REGLAS_ICONO, WARMUP, PRONOMBRES, TO_BE, TEMA_VISUAL } from "./visuales.js";
+import { PRACTICA_U1 } from "./ejercicios-u1.js";
 
 instalarAudio();
+instalarJuegos();
+
+// Ejercicios curados por unidad (solo u1 por ahora — piloto). El resto sigue
+// mostrando el ejercicio en texto plano hasta que se curen sus respuestas.
+const EJERCICIOS = { u1: PRACTICA_U1 };
 
 const ICONOS_BLOQUE = {
   warm_up: 'fa-globe', vocabulary: 'fa-book-open', vocabulary_practice: 'fa-puzzle-piece',
@@ -167,14 +174,22 @@ function renderDialogue(b) {
 
 // ── Bloques de VOCABULARIO ─────────────────────────────────────────────
 function iconoPalabra(topicLower, en) {
-  if (ICONOS_VOCAB[en.toLowerCase()]) return { tipo: 'icono', valor: ICONOS_VOCAB[en.toLowerCase()] };
+  const enLower = en.toLowerCase();
+  if (ICONOS_VOCAB[enLower]) return { tipo: 'icono', valor: ICONOS_VOCAB[enLower] };
   if (topicLower.includes('countries') || topicLower.includes('nationalit')) {
-    const bandera = BANDERAS[en.toLowerCase()];
+    const bandera = BANDERAS[enLower];
     if (bandera) return { tipo: 'bandera', valor: bandera };
   }
   if (topicLower.includes('numbers')) {
-    const n = NUMEROS[en.toLowerCase()];
+    const n = NUMEROS[enLower];
     if (n !== undefined) return { tipo: 'numero', valor: n };
+  }
+  if (topicLower.includes('colors')) {
+    const color = COLORES[enLower];
+    if (color) return { tipo: 'color', valor: color };
+  }
+  for (const [regla, icono] of REGLAS_ICONO) {
+    if (regla.test(enLower)) return { tipo: 'icono', valor: icono };
   }
   return { tipo: 'generico' };
 }
@@ -190,6 +205,7 @@ function renderVocabulary(b) {
         if (ico.tipo === 'icono') img = `<div class="tr2-vimg"><i class="fa-solid ${ico.valor}"></i></div>`;
         if (ico.tipo === 'bandera') img = `<div class="tr2-vimg tr2-vflag"><img src="https://flagcdn.com/w160/${ico.valor}.png" alt="${w.en}" loading="lazy"></div>`;
         if (ico.tipo === 'numero') img = `<div class="tr2-vimg tr2-vnum"><span>${ico.valor}</span><div class="tr2-dots">${'<i></i>'.repeat(Math.min(ico.valor, 10))}</div></div>`;
+        if (ico.tipo === 'color') img = `<div class="tr2-vimg"><div class="tr2-swatch" style="background:${ico.valor};"></div></div>`;
         return `
           <div class="tr2-vcard">
             ${img}
@@ -202,17 +218,29 @@ function renderVocabulary(b) {
     </div>`;
 }
 
-function renderVocabPractice(b) {
+function renderVocabPractice(b, unidadId) {
+  const curado = EJERCICIOS[unidadId]?.vocabularyPractice?.find((v) => v.topic === b.topic);
+  if (curado) return renderParejas(curado.pares);
   return `<p class="tr2-instr">${b.instructions}</p><ul class="tr2-items">${b.items.map((i) => `<li class="tr2-par"><i class="fa-solid fa-arrow-right-long"></i> ${i}</li>`).join('')}</ul>`;
 }
 
 // ── Bloques de PRÁCTICA ─────────────────────────────────────────────────
-function renderGrammarPractice(b) {
+function renderGrammarPractice(b, unidadId) {
+  const curado = EJERCICIOS[unidadId]?.grammarPractice?.find((g) => g.topic === b.topic);
+  if (curado) {
+    return curado.preguntas.map((p) =>
+      curado.tipo === 'orden' ? renderOrden(p.piezas, p.correcta) : renderOpcion(p.pregunta, p.opciones, p.correcta)
+    ).join('');
+  }
   return `<p class="tr2-instr">${b.instructions}</p><ul class="tr2-items">${b.items.map((i) => `<li>${i}</li>`).join('')}</ul>`;
 }
-function renderListening(b) {
+function renderListening(b, unidadId) {
   if (b.audio_script) return `<div class="tr2-listen">${btnPlayLista(b.audio_script)}${b.audio_script.map((l) => `<p>${l}</p>`).join('')}</div>`;
-  if (b.questions) return `<ol class="tr2-preguntas">${b.questions.map((q) => `<li>${q}</li>`).join('')}</ol>`;
+  if (b.questions) {
+    const curado = EJERCICIOS[unidadId]?.listening;
+    if (curado) return curado.preguntas.map((p) => renderOpcion(p.pregunta, p.opciones, p.correcta)).join('');
+    return `<ol class="tr2-preguntas">${b.questions.map((q) => `<li>${q}</li>`).join('')}</ol>`;
+  }
   return '';
 }
 function renderPronunciation(b) {
@@ -235,9 +263,9 @@ function contenidoBloque(b, unidadId) {
     case 'grammar': return renderGrammar(b);
     case 'dialogue': return renderDialogue(b);
     case 'vocabulary': return renderVocabulary(b);
-    case 'vocabulary_practice': return renderVocabPractice(b);
-    case 'grammar_practice': return renderGrammarPractice(b);
-    case 'listening': return renderListening(b);
+    case 'vocabulary_practice': return renderVocabPractice(b, unidadId);
+    case 'grammar_practice': return renderGrammarPractice(b, unidadId);
+    case 'listening': return renderListening(b, unidadId);
     case 'pronunciation': return renderPronunciation(b);
     case 'speaking': return renderTarea(b, 'fa-microphone', 'Grábate hablando');
     case 'writing': return renderTarea(b, 'fa-pen-nib', 'Escribe');
@@ -277,7 +305,7 @@ export function renderContenido(pagina, unidad, unidadId) {
     </div>
     <div id="tr2-tab-tema" class="tr2-tab-panel">${renderSeccion(pagina.tema, unidadId)}</div>
     <div id="tr2-tab-vocabulario" class="tr2-tab-panel" style="display:none;">${renderSeccion(pagina.vocabulario, unidadId)}</div>
-    <div id="tr2-tab-practica" class="tr2-tab-panel" style="display:none;">${renderSeccion(pagina.practica, unidadId)}</div>
+    <div id="tr2-tab-practica" class="tr2-tab-panel" style="display:none;">${marcador()}${renderSeccion(pagina.practica, unidadId)}</div>
   `;
 }
 
