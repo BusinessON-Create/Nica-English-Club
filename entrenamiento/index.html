@@ -101,7 +101,7 @@ h1,h2,.hd{font-family:Sora,sans-serif}
 <div class="flex items-center gap-2"><button id="prev" class="btn gh">←</button><button id="say" class="btn pri flex-1 justify-center">🔊 Listen</button><button id="next" class="btn gh">→</button></div>
 <div class="flex flex-wrap items-center gap-2 mt-3 text-sm"><button class="btn gh !py-2" id="cd">🖼 Card</button><button class="btn gh !py-2" id="tr">🌐 Español</button><button class="btn gh !py-2" id="sv">⭐ Save</button><button class="btn gh !py-2" id="bu">Build-up</button><button class="btn gh !py-2" id="stop">Stop</button><label class="flex gap-1 items-center"><input type="checkbox" id="slow" class="accent-blue-500"> Slow</label><select id="acc" class="inp !w-auto !py-2"><option value="en-US">US</option><option value="en-GB">UK</option></select><span id="st" class="text-gray-400 w-full"></span></div>
 </div></div>
-<div id="how" class="modal"><div class="sheet" style="--c:#d4af37">
+<div id="guide" class="modal"><div class="sheet" style="--c:#d4af37">
 <div class="flex justify-between items-start"><h2 class="hd text-xl font-bold">📘 ¿Cómo se usa?</h2><button id="hx" class="text-gray-400 text-xl px-2" aria-label="Cerrar">✕</button></div>
 <p class="mt-3 text-[15px]"><b class="text-[#d4af37]">¿Para qué sirve?</b> Para practicar los tiempos del inglés (antes, ahora y después) armando oraciones y diciéndolas en voz alta.</p>
 <ol class="mt-4 space-y-3 text-[15px] list-decimal pl-5 marker:text-[#d4af37]">
@@ -294,8 +294,8 @@ $('#cd').onclick=async()=>{const k=cur(),cv=document.createElement('canvas');cv.
  x.fillStyle='#94a3b8';x.font='500 32px Inter';x.fillText('Tense Engine · Think → Build → Speak',80,1260);
  cv.toBlob(async b=>{const f=new File([b],'my-sentence.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});return}catch(e){}}const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='my-sentence.png';a.click()})};
 scene();
-const hw=o=>$('#how').classList.toggle('on',o);
-$('#hb').onclick=()=>hw(1);$('#hx').onclick=$('#hk').onclick=()=>hw(0);$('#how').onclick=e=>{if(e.target.id=='how')hw(0)};
+const hw=o=>$('#guide').classList.toggle('on',o);
+$('#hb').onclick=()=>hw(1);$('#hx').onclick=$('#hk').onclick=()=>hw(0);$('#guide').onclick=e=>{if(e.target.id=='guide')hw(0)};
 document.addEventListener('keydown',e=>{if(e.key=='Escape')hw(0)});
 AOS.init({once:true,duration:700});render();
 </script></body></html>
