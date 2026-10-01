@@ -202,6 +202,20 @@ h1,h2,h3,p { margin:0; }
 .tr2-pareja-item.tr2-ok { border-color:var(--green); background:rgba(0,214,143,.14); color:var(--green); cursor:default; }
 .tr2-pareja-item.tr2-mal { border-color:var(--red); background:rgba(255,92,92,.14); color:var(--red); }
 
+/* Entregas (Speaking / Writing) */
+.tr2-entrega { margin-top:14px; background:var(--card2); border:1px solid var(--border2); border-radius:var(--r); padding:16px; }
+.tr2-textarea { width:100%; background:var(--card); border:1px solid var(--border2); border-radius:var(--r-sm); color:var(--text); font:400 14px 'DM Sans',sans-serif; padding:12px; resize:vertical; }
+.tr2-textarea:focus { outline:none; border-color:var(--gold2); }
+.tr2-entrega-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+.tr2-contador { font-size:12px; color:var(--muted); }
+.tr2-btn-entregar { background:linear-gradient(135deg,var(--gold3),var(--gold2)); color:#1a1200; border:none; padding:9px 20px; border-radius:99px; font:800 13px 'DM Sans',sans-serif; cursor:pointer; }
+.tr2-btn-entregar:disabled { opacity:.6; cursor:default; }
+.tr2-btn-grabar { display:inline-flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border2); color:var(--text); padding:10px 18px; border-radius:99px; font:700 13px 'DM Sans',sans-serif; cursor:pointer; }
+.tr2-btn-grabar.tr2-grabando { border-color:var(--red); color:var(--red); animation:tr2pulse 1s ease-in-out infinite; }
+.tr2-audio-preview { display:block; width:100%; margin-top:10px; }
+.tr2-entrega-estado { margin-top:12px; }
+.tr2-feedback-coach { margin-top:8px; font-size:13.5px; color:var(--text); background:var(--card); border-left:3px solid var(--gold); border-radius:var(--r-sm); padding:10px 14px; }
+
 @media (max-width:520px) {
   .tr2-shell { padding:18px 14px 60px; }
   .tr2-portada-titulo { font-size:30px; }

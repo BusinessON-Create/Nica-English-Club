@@ -6,39 +6,80 @@
 // (piloto); las demás muestran el contenido sin imagen hasta que las sumemos.
 
 export const ICONO_UNIDAD = {
-  u1: 'fa-handshake', u2: 'fa-heart', u3: 'fa-house', u4: 'fa-clock',
-  u5: 'fa-person-running', u6: 'fa-circle-question', u7: 'fa-utensils',
+  'a1-u1': 'fa-handshake', 'a1-u2': 'fa-heart', 'a1-u3': 'fa-house', 'a1-u4': 'fa-clock',
+  'a1-u5': 'fa-person-running', 'a1-u6': 'fa-circle-question', 'a1-u7': 'fa-utensils',
+  'a2-u1': 'fa-clock-rotate-left', 'a2-u2': 'fa-shuffle', 'a2-u3': 'fa-compass',
+  'a2-u4': 'fa-code-branch', 'a2-u5': 'fa-list-check', 'a2-u6': 'fa-scale-balanced',
+  'a2-u7': 'fa-cart-shopping', 'a2-u8': 'fa-circle-question', 'a2-u9': 'fa-thumbs-up',
 };
 
-// Textos de portada (Aprenderás / En la vida real), las 7 unidades.
+// Textos de portada (Aprenderás / En la vida real). Clave = "{nivelId}-{unidadId}"
+// (los IDs de unidad se repiten entre niveles: u1 de A1 y u1 de A2 son cosas
+// distintas, así que hay que diferenciarlos o se mezclan los textos).
 export const PORTADAS = {
-  u1: {
+  'a1-u1': {
     aprenderas: 'a presentarte, saludar y decir de dónde eres.',
     vidaReal: 'lo usas cada vez que conoces a alguien: de viaje, en el trabajo o por internet.',
   },
-  u2: {
+  'a1-u2': {
     aprenderas: 'a hablar de tu familia y decir qué cosas tienes.',
     vidaReal: 'lo usas cuando le muestras fotos de tu familia a alguien o hablas de lo que es tuyo.',
   },
-  u3: {
+  'a1-u3': {
     aprenderas: 'a describir tu casa, tu barrio y dar direcciones simples.',
     vidaReal: 'lo usas cuando alguien te pregunta cómo es tu casa o cómo llegar a un lugar.',
   },
-  u4: {
+  'a1-u4': {
     aprenderas: 'a hablar de tu rutina diaria y decir la hora.',
     vidaReal: 'lo usas todos los días: contar qué haces y cuándo, o coordinar una hora con alguien.',
   },
-  u5: {
+  'a1-u5': {
     aprenderas: 'a describir qué está pasando en este momento y dar instrucciones.',
     vidaReal: 'lo usas cuando cuentas lo que está pasando ahora mismo, o das una orden simple.',
   },
-  u6: {
+  'a1-u6': {
     aprenderas: 'a hablar de tus hobbies, tu trabajo y lo que sabes hacer.',
     vidaReal: 'lo usas en una entrevista, conociendo gente nueva o hablando de tus habilidades.',
   },
-  u7: {
+  'a1-u7': {
     aprenderas: 'a comparar cosas y pedir algo de forma educada.',
     vidaReal: 'lo usas en un restaurante o una tienda, para ordenar o comprar algo.',
+  },
+  'a2-u1': {
+    aprenderas: 'a contar cosas que pasaron en el pasado.',
+    vidaReal: 'lo usas para contar tu fin de semana, un viaje o cualquier historia pasada.',
+  },
+  'a2-u2': {
+    aprenderas: 'a contar dos cosas que pasaron al mismo tiempo en el pasado.',
+    vidaReal: 'lo usas cuando dices "estaba haciendo X cuando pasó Y".',
+  },
+  'a2-u3': {
+    aprenderas: 'a hablar de planes y del futuro.',
+    vidaReal: 'lo usas para decir qué vas a hacer el fin de semana o tus planes de vida.',
+  },
+  'a2-u4': {
+    aprenderas: 'a hablar de condiciones: "si pasa esto, entonces...".',
+    vidaReal: 'lo usas para tomar decisiones y hablar de consecuencias.',
+  },
+  'a2-u5': {
+    aprenderas: 'a hablar de obligaciones y posibilidades.',
+    vidaReal: 'lo usas para decir qué debes hacer o qué podrías hacer.',
+  },
+  'a2-u6': {
+    aprenderas: 'a comparar con más precisión.',
+    vidaReal: 'lo usas para decir que algo es "el mejor" o "tan bueno como" otra cosa.',
+  },
+  'a2-u7': {
+    aprenderas: 'a preguntar y hablar de cantidades.',
+    vidaReal: 'lo usas en el supermercado, cocinando o hablando de dinero.',
+  },
+  'a2-u8': {
+    aprenderas: 'a hablar sin especificar exactamente de qué o quién hablas.',
+    vidaReal: 'lo usas en conversación natural, sin dar todos los detalles.',
+  },
+  'a2-u9': {
+    aprenderas: 'a hablar de experiencias de vida y mostrar acuerdo o desacuerdo.',
+    vidaReal: 'lo usas para contar "ya hice esto" o para opinar en una conversación.',
   },
 };
 
@@ -188,9 +229,9 @@ export const NUMEROS = {
   eighteen: 18, nineteen: 19, twenty: 20,
 };
 
-// Warm-up visual por unidad (reemplaza la instrucción para el coach)
+// Warm-up visual por unidad (reemplaza la instrucción para el coach). Clave = "{nivelId}-{unidadId}".
 export const WARMUP = {
-  u1: {
+  'a1-u1': {
     titulo: '¿Cómo se dice "hola" en el mundo?',
     items: [
       { flag: 'ni', pais: 'Nicaragua', texto: 'Hola' },

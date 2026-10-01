@@ -11,19 +11,43 @@
 import { collection, getDocs, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { instalarAudio, registrarLista, limpiarParaAudio, ciclarVelocidad, etiquetaVelocidad } from "./audio.js";
 import { instalarJuegos, marcador, renderOpcion, renderOrden, renderParejas } from "./juegos.js";
+import { instalarEntregas, cargarEntrega, pintarEstado } from "./entregas.js";
 import { ICONO_UNIDAD, PORTADAS, ICONOS_VOCAB, BANDERAS, NUMEROS, COLORES, REGLAS_ICONO, WARMUP, PRONOMBRES, TO_BE, TEMA_VISUAL } from "./visuales.js";
 import { PRACTICA_U1 } from "./ejercicios-u1.js";
 import { PRACTICA_U2, PRACTICA_U3, PRACTICA_U4, PRACTICA_U5, PRACTICA_U6, PRACTICA_U7 } from "./ejercicios-resto.js";
+import { PRACTICA_A2_U1, PRACTICA_A2_U2, PRACTICA_A2_U3, PRACTICA_A2_U4, PRACTICA_A2_U5, PRACTICA_A2_U6, PRACTICA_A2_U7, PRACTICA_A2_U8, PRACTICA_A2_U9 } from "./ejercicios-a2.js";
 
 instalarAudio();
 instalarJuegos();
+instalarEntregas();
 
-// Ejercicios curados por unidad (respuestas completadas a mano donde el
-// JSON original no las traía). Todas las unidades de A1 ya están cubiertas.
+// Ejercicios curados por nivel+unidad (respuestas completadas a mano donde el
+// JSON original no las traía). Clave = "{nivelId}-{unidadId}" — el mismo "u1"
+// se repite en cada nivel, así que hay que diferenciarlos.
 const EJERCICIOS = {
-  u1: PRACTICA_U1, u2: PRACTICA_U2, u3: PRACTICA_U3, u4: PRACTICA_U4,
-  u5: PRACTICA_U5, u6: PRACTICA_U6, u7: PRACTICA_U7,
+  'a1-u1': PRACTICA_U1, 'a1-u2': PRACTICA_U2, 'a1-u3': PRACTICA_U3, 'a1-u4': PRACTICA_U4,
+  'a1-u5': PRACTICA_U5, 'a1-u6': PRACTICA_U6, 'a1-u7': PRACTICA_U7,
+  'a2-u1': PRACTICA_A2_U1, 'a2-u2': PRACTICA_A2_U2, 'a2-u3': PRACTICA_A2_U3,
+  'a2-u4': PRACTICA_A2_U4, 'a2-u5': PRACTICA_A2_U5, 'a2-u6': PRACTICA_A2_U6,
+  'a2-u7': PRACTICA_A2_U7, 'a2-u8': PRACTICA_A2_U8, 'a2-u9': PRACTICA_A2_U9,
 };
+
+// Contexto del alumno actual + unidad abierta (lo fija nivel.html). Se usa
+// solo para saber a nombre de quién se guarda una entrega de Speaking/Writing.
+let CTX = null;
+export function setContexto(ctx) { CTX = ctx; }
+export function setUnidadActual(unidadId, unidadNombre) {
+  if (CTX) { CTX.unidadId = unidadId; CTX.unidadNombre = unidadNombre; }
+}
+export async function cargarEstadosEntrega(vista) {
+  if (!CTX || CTX.esCoach) return;
+  for (const tipo of ['writing', 'speaking']) {
+    const el = vista.querySelector(`#estado-${tipo}-${CTX.unidadId}`);
+    if (!el) continue;
+    const entrega = await cargarEntrega(CTX.alumnoId, CTX.nivelId, CTX.unidadId, tipo);
+    pintarEstado(el, entrega);
+  }
+}
 
 const ICONOS_BLOQUE = {
   warm_up: 'fa-globe', vocabulary: 'fa-book-open', vocabulary_practice: 'fa-puzzle-piece',
@@ -36,6 +60,12 @@ const NOMBRES_BLOQUE = {
   grammar: 'Gramática', dialogue: 'Diálogo', grammar_practice: 'Ejercicio', listening: 'Listening',
   pronunciation: 'Pronunciación', speaking: 'Speaking', writing: 'Writing',
 };
+
+// Clave compuesta para los mapas de visuales.js y EJERCICIOS: el ID de unidad
+// ("u1") se repite en cada nivel, así que todo se busca como "{nivel}-{u1}".
+function claveNU(unidadId) {
+  return `${CTX?.nivelId || 'a1'}-${unidadId}`;
+}
 
 // ── Datos ──────────────────────────────────────────────────────────────
 export async function cargarUnidades(nivelId) {
@@ -66,7 +96,7 @@ function btnPlayLista(lineas, etiqueta = 'Escuchar todo') {
 export function renderListaUnidades(unidades) {
   return unidades.map((u) => `
     <div class="tr2-card-unidad" data-unidad="${u.id}">
-      <div class="tr2-uni-icono"><i class="fa-solid ${ICONO_UNIDAD[u.id] || 'fa-book'}"></i></div>
+      <div class="tr2-uni-icono"><i class="fa-solid ${ICONO_UNIDAD[claveNU(u.id)] || 'fa-book'}"></i></div>
       <div class="tr2-uni-txt">
         <div class="tr2-uni-kicker">Unidad ${u.orden} · Semana ${u.semana}</div>
         <div class="tr2-uni-nombre">${u.nombre}</div>
@@ -78,14 +108,14 @@ export function renderListaUnidades(unidades) {
 
 // ── Portada ────────────────────────────────────────────────────────────
 export function renderPortada(unidad, unidadId) {
-  const p = PORTADAS[unidadId] || {
+  const p = PORTADAS[claveNU(unidadId)] || {
     aprenderas: `a usar lo esencial de "${unidad.nombre}" en una conversación real.`,
     vidaReal: 'lo vas a practicar hoy en clase y usarlo esta misma semana.',
   };
   return `
     <button class="tr2-volver" id="btn-volver-lista"><i class="fa-solid fa-arrow-left"></i> Unidades</button>
     <div class="tr2-portada">
-      <div class="tr2-portada-icono"><i class="fa-solid ${ICONO_UNIDAD[unidadId] || 'fa-book'}"></i></div>
+      <div class="tr2-portada-icono"><i class="fa-solid ${ICONO_UNIDAD[claveNU(unidadId)] || 'fa-book'}"></i></div>
       <div class="tr2-portada-kicker">Unidad ${unidad.orden} · Semana ${unidad.semana}</div>
       <h1 class="tr2-portada-titulo">${unidad.nombre}</h1>
       <div class="tr2-portada-linea"><i class="fa-solid fa-bullseye"></i><span><b>Vas a aprender</b> ${p.aprenderas}</span></div>
@@ -97,7 +127,7 @@ export function renderPortada(unidad, unidadId) {
 
 // ── Bloques de TEMA ────────────────────────────────────────────────────
 function renderWarmup(b, unidadId) {
-  const w = WARMUP[unidadId];
+  const w = WARMUP[claveNU(unidadId)];
   if (!w) return `<p>${b.content}</p>`;
   return `
     <p class="tr2-nota" style="margin-bottom:12px;">${w.titulo}</p>
@@ -223,14 +253,14 @@ function renderVocabulary(b) {
 }
 
 function renderVocabPractice(b, unidadId) {
-  const curado = EJERCICIOS[unidadId]?.vocabularyPractice?.find((v) => v.topic === b.topic);
+  const curado = EJERCICIOS[claveNU(unidadId)]?.vocabularyPractice?.find((v) => v.topic === b.topic);
   if (curado) return renderParejas(curado.pares);
   return `<p class="tr2-instr">${b.instructions}</p><ul class="tr2-items">${b.items.map((i) => `<li class="tr2-par"><i class="fa-solid fa-arrow-right-long"></i> ${i}</li>`).join('')}</ul>`;
 }
 
 // ── Bloques de PRÁCTICA ─────────────────────────────────────────────────
 function renderGrammarPractice(b, unidadId) {
-  const curado = EJERCICIOS[unidadId]?.grammarPractice?.find((g) => g.topic === b.topic);
+  const curado = EJERCICIOS[claveNU(unidadId)]?.grammarPractice?.find((g) => g.topic === b.topic);
   if (curado) {
     return curado.preguntas.map((p) =>
       curado.tipo === 'orden' ? renderOrden(p.piezas, p.correcta) : renderOpcion(p.pregunta, p.opciones, p.correcta)
@@ -241,7 +271,7 @@ function renderGrammarPractice(b, unidadId) {
 function renderListening(b, unidadId) {
   if (b.audio_script) return `<div class="tr2-listen">${btnPlayLista(b.audio_script)}${b.audio_script.map((l) => `<p>${l}</p>`).join('')}</div>`;
   if (b.questions) {
-    const curado = EJERCICIOS[unidadId]?.listening;
+    const curado = EJERCICIOS[claveNU(unidadId)]?.listening;
     if (curado) return curado.preguntas.map((p) => renderOpcion(p.pregunta, p.opciones, p.correcta)).join('');
     return `<ol class="tr2-preguntas">${b.questions.map((q) => `<li>${q}</li>`).join('')}</ol>`;
   }
@@ -252,11 +282,38 @@ function renderPronunciation(b) {
     <div class="tr2-sonidos">${(b.focus_sounds || []).map((s) => `<span class="tr2-chip-sonido">${s}</span>`).join('')}</div>
     <div class="tr2-drill">${(b.drill_words || []).map((w) => `<span class="tr2-palabra">${w}${btnSay(w)}</span>`).join('')}</div>`;
 }
-function renderTarea(b, icono, etiqueta) {
-  return `
+function renderTarea(b, icono, etiqueta, tipo) {
+  const base = `
     <div class="tr2-tarea">
       <div class="tr2-tarea-icono"><i class="fa-solid ${icono}"></i></div>
       <div><div class="tr2-tarea-tag">${etiqueta}</div><p>${b.task}${b.target_length ? ` <span class="tr2-nota">(${b.target_length})</span>` : ''}</p></div>
+    </div>`;
+
+  if (!CTX) return base;
+  if (CTX.esCoach) return base + `<p class="tr2-nota" style="margin-top:8px;">Vista previa — como coach no entregas, solo revisas.</p>`;
+
+  const ctxJson = JSON.stringify({
+    alumnoId: CTX.alumnoId, alumnoNombre: CTX.alumnoNombre, alumnoEmail: CTX.alumnoEmail,
+    nivelId: CTX.nivelId, unidadId: CTX.unidadId, unidadNombre: CTX.unidadNombre,
+  }).replace(/"/g, '&quot;');
+
+  if (tipo === 'writing') {
+    return base + `
+      <div class="tr2-entrega" data-ctx="${ctxJson}">
+        <textarea class="tr2-textarea" rows="4" placeholder="Escribe tu respuesta aquí..."></textarea>
+        <div class="tr2-entrega-footer">
+          <span class="tr2-contador">0 palabras</span>
+          <button class="tr2-btn-entregar" data-accion="entregar-texto">Entregar</button>
+        </div>
+        <div class="tr2-entrega-estado" id="estado-writing-${CTX.unidadId}"></div>
+      </div>`;
+  }
+  return base + `
+    <div class="tr2-entrega" data-ctx="${ctxJson}">
+      <button class="tr2-btn-grabar" data-accion="grabar"><i class="fa-solid fa-microphone"></i> Grabar</button>
+      <audio class="tr2-audio-preview" controls style="display:none;"></audio>
+      <button class="tr2-btn-entregar tr2-btn-entregar-audio" data-accion="entregar-audio" style="display:none;">Entregar</button>
+      <div class="tr2-entrega-estado" id="estado-speaking-${CTX.unidadId}"></div>
     </div>`;
 }
 
@@ -271,8 +328,8 @@ function contenidoBloque(b, unidadId) {
     case 'grammar_practice': return renderGrammarPractice(b, unidadId);
     case 'listening': return renderListening(b, unidadId);
     case 'pronunciation': return renderPronunciation(b);
-    case 'speaking': return renderTarea(b, 'fa-microphone', 'Grábate hablando');
-    case 'writing': return renderTarea(b, 'fa-pen-nib', 'Escribe');
+    case 'speaking': return renderTarea(b, 'fa-microphone', 'Grábate hablando', 'speaking');
+    case 'writing': return renderTarea(b, 'fa-pen-nib', 'Escribe', 'writing');
     default: return `<pre>${JSON.stringify(b, null, 2)}</pre>`;
   }
 }

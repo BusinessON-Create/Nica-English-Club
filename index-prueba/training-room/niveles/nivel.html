@@ -31,7 +31,7 @@
 
   <script type="module">
     import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
-    import { cargarUnidades, cargarPagina, renderListaUnidades, renderPortada, renderContenido, activarVelocidad } from "../assets/js/nivel.js";
+    import { cargarUnidades, cargarPagina, renderListaUnidades, renderPortada, renderContenido, activarVelocidad, setContexto, setUnidadActual, cargarEstadosEntrega } from "../assets/js/nivel.js";
 
     const params = new URLSearchParams(location.search);
     const nivelId = params.get('nivel') || 'a1';
@@ -40,6 +40,15 @@
     (async function init() {
       const resultado = await esperarSesionYAlumno();
       if (!resultado) return; // auth-init.js ya redirige si no hay sesión/perfil
+      const { alumno } = resultado;
+
+      setContexto({
+        alumnoId: alumno.id,
+        alumnoNombre: alumno.nombre || '',
+        alumnoEmail: alumno.email || '',
+        nivelId,
+        esCoach: !!alumno.esCoach,
+      });
 
       document.getElementById('tr2-nivel-titulo').textContent = `Nivel ${nivelId.toUpperCase()}`;
 
@@ -69,12 +78,14 @@
       const vista = document.getElementById('tr2-vista-unidad');
       vista.style.display = 'block';
       vista.innerHTML = renderPortada(unidad, unidadId);
+      setUnidadActual(unidadId, unidad.nombre);
 
       document.getElementById('btn-volver-lista').onclick = mostrarLista;
 
       document.getElementById('btn-entrar-clase').onclick = () => {
         vista.innerHTML = renderContenido(pagina, unidad, unidadId);
         activarVelocidad(vista);
+        cargarEstadosEntrega(vista);
 
         document.getElementById('btn-volver-portada').onclick = () => abrirUnidad(unidadId);
 
