@@ -51,6 +51,9 @@ h1,h2,.hd{font-family:Sora,sans-serif}
 .sheet{max-height:92vh;overflow:auto}.gr{transform-box:fill-box;transform-origin:left;animation:grow 1s ease-out}@keyframes grow{from{transform:scaleX(0)}}
 select.inp{background:#0b1224;color:#fff}option{background:#0b1224;color:#fff}
 .step{display:none}.step.on{display:block}
+.pcs{display:inline-flex;flex-direction:column;align-items:center;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);margin:3px 3px 0 0}.pcs b{font-size:16px}.pcs small{font-size:10px;color:#94a3b8;margin-top:2px}.pcs.k{border-color:var(--c,#60a5fa);box-shadow:0 0 14px -6px var(--c,#60a5fa)}
+.mc.dom{position:relative}.mc.dom::after{content:'🏆';position:absolute;top:2px;right:4px;font-size:12px}
+#mdl .chip.on{border-color:#d4af37;color:#d4af37;background:rgba(212,175,55,.12)}
 .mic{background:linear-gradient(135deg,#d4af37,#b8860b);color:#05070d;box-shadow:0 6px 24px #d4af3744}.mic:hover{transform:translateY(-1px)}
 .rec{background:#dc2626!important;color:#fff!important;animation:rp 1s infinite}@keyframes rp{0%,100%{box-shadow:0 0 0 0 #dc262688}50%{box-shadow:0 0 0 10px #dc262600}}
 .sw{display:inline-block;padding:1px 7px;border-radius:7px;margin:2px 3px 0 0;font-weight:600;font-size:15px}
@@ -112,8 +115,9 @@ select.inp{background:#0b1224;color:#fff}option{background:#0b1224;color:#fff}
 <div id="qb" class="mb-3 p-3 rounded-xl bg-white/5 text-sm"><span class="lbl">🎤 Answer out loud</span><button id="qn" class="float-right text-xs text-gray-400">🔀 another</button><p id="qt" class="mt-1 text-white text-[15px]"></p><button id="qm" class="btn gh !py-1 !px-3 !text-xs mt-2">🎙 Answer</button><p id="qa" class="mt-2 text-sky-300 text-sm"></p></div>
 <div class="flex items-center gap-2"><button id="prev" class="btn gh">←</button><button id="say" class="btn pri flex-1 justify-center">🔊 Listen</button><button id="next" class="btn gh">→</button></div>
 <button id="mic" class="btn mic w-full justify-center mt-2">🎙 Speak</button><div id="sp" class="mt-2 text-sm"></div>
-<div class="flex flex-wrap items-center gap-2 mt-3 text-sm"><button class="btn gh !py-2" id="cd">🖼 Card</button><button class="btn gh !py-2" id="tr">🌐 Español</button><button class="btn gh !py-2" id="sv">⭐ Save</button><button class="btn gh !py-2" id="bu">Build-up</button><button class="btn gh !py-2" id="stop">Stop</button><label class="flex gap-1 items-center"><input type="checkbox" id="slow" class="accent-blue-500"> Slow</label><select id="acc" class="inp !w-auto !py-2"><option value="en-US">US</option><option value="en-GB">UK</option></select><span id="st" class="text-gray-400 w-full"></span></div>
+<div class="flex flex-wrap items-center gap-2 mt-3 text-sm"><button class="btn mic !py-2" id="dm">🎯 Dominar este tiempo</button><button class="btn gh !py-2" id="cd">🖼 Card</button><button class="btn gh !py-2" id="tr">🌐 Español</button><button class="btn gh !py-2" id="sv">⭐ Save</button><button class="btn gh !py-2" id="bu">Build-up</button><button class="btn gh !py-2" id="stop">Stop</button><label class="flex gap-1 items-center"><input type="checkbox" id="slow" class="accent-blue-500"> Slow</label><select id="acc" class="inp !w-auto !py-2"><option value="en-US">US</option><option value="en-GB">UK</option></select><span id="st" class="text-gray-400 w-full"></span></div>
 </div></div>
+<div id="mdl" class="modal"><div id="msh" class="sheet" style="--c:#60a5fa"><div class="flex justify-between items-start"><div><b id="mh2" class="text-xs tracking-widest"></b><p class="lbl mt-1">🎯 Dominar este tiempo</p></div><button id="mdx" class="text-gray-400 text-xl px-2" aria-label="Close">✕</button></div><div id="mbody"></div></div></div>
 <div id="guide" class="modal"><div class="sheet" style="--c:#d4af37">
 <div class="flex justify-between items-start"><h2 class="hd text-xl font-bold">📘 ¿Cómo se usa?</h2><button id="hx" class="text-gray-400 text-xl px-2" aria-label="Cerrar">✕</button></div>
 <p class="mt-3 text-[15px]"><b class="text-[#d4af37]">¿Para qué sirve?</b> Para practicar los tiempos del inglés (antes, ahora y después) armando oraciones y diciéndolas en voz alta.</p>
@@ -123,6 +127,7 @@ select.inp{background:#0b1224;color:#fff}option{background:#0b1224;color:#fff}
 <li><b>Toca un cuadro.</b> Toca <b>1 vez</b> y verás dónde está en la línea. Toca <b>2 veces</b> y se abre la tarjeta con la oración. Toca 🔊 y escúchala. Luego toca <b>🎙 Speak</b> y dila en voz alta: la app te escucha y te da un puntaje. Con <b>80 o más</b> pasas y con <b>90 o más</b> sacas 100. <b>Build-up</b> y <b>Listen all</b> esperan a que lo digas (máximo 3 intentos por frase). Usa Chrome o Edge y permite el micrófono. El tiempo que tocaste queda marcado en dorado, en la línea y en el cuadro.</li>
 <li><b>Agrega ideas en la Cocina.</b> Usa las flechas ← → para pasar de paso. Pon qué, cómo, dónde, con quién y cuándo. ¡Tu oración crece y se ve en el cuadro!</li>
 <li><b>Prueba ✍ Practice.</b> La tabla se vacía y tú escribes los verbos. Toca Check ✓ para ver si está bien.</li>
+<li><b>Domina un tiempo.</b> En la tarjeta toca <b>🎯 Dominar este tiempo</b>: verás el molde de la oración (afirmativa, negativa y pregunta), qué imaginar, y practicas armándola 🧩 y diciéndola 🎙. Con 80 o más en las 3 formas ganas 🏆.</li>
 <li><b>Juega.</b> Resuelve las escenas 🎭, contesta las preguntas con 🎙 y guarda tus frases favoritas con ⭐.</li>
 </ol>
 <p class="mt-4 text-sm p-3 rounded-xl bg-white/5">💡 <b>Truco:</b> no traduzcas. Piensa <i>cuándo</i> pasa la acción y di la oración.</p>
@@ -222,7 +227,7 @@ function render(){
   return{id:t[0],name:t[1],kind:t[2],html,text:chunks[chunks.length-1]+end,chunks:chunks.map((x,i)=>i==chunks.length-1?x+end:x),ans:(S.pol=='q'?p:p.slice(1)).map(x=>x[0]).join(' '),blank:(S.pol=='q'?'':cap(c.S)+' ')+'<u class="px-7">&nbsp;</u> <span class="text-sm text-gray-400">('+c.b+')</span> '+tail.join(' ')+clause+end,warn:STATE.has(c.b)&&(t[2]=='c'||t[2]=='pc')};
  });
  const key=[c.S,c.b,c.pa,c.pp,S.pol].join();if(key!=S.key){S.key=key;S.done={};S.fail={}}
- const mc=(id,sp)=>{const k=CELLS.find(x=>x.id==id);return`<button class="mc ${(S.hl||[S.sel]).includes(id)?'sel':''} ${S.prac&&S.done[id]?'ok':''} ${S.prac&&S.fail[id]&&!S.done[id]?'bad':''}" data-id="${id}" style="--c:${COL[k.kind]};${sp?'grid-column:span 2':''}"><div class="t">${S.prac&&!S.done[id]?`<b style="color:var(--c)">${k.name}</b><br>✍ ___`:k.html}</div></button>`};
+ const mc=(id,sp)=>{const k=CELLS.find(x=>x.id==id);return`<button class="mc ${isDom(id)?'dom':''} ${(S.hl||[S.sel]).includes(id)?'sel':''} ${S.prac&&S.done[id]?'ok':''} ${S.prac&&S.fail[id]&&!S.done[id]?'bad':''}" data-id="${id}" style="--c:${COL[k.kind]};${sp?'grid-column:span 2':''}"><div class="t">${S.prac&&!S.done[id]?`<b style="color:var(--c)">${k.name}</b><br>✍ ___`:k.html}</div></button>`};
  $('#grid').innerHTML=ROWS.map(([n,ids],i)=>`<p class="lbl mt-3 mb-1">${n}</p><div class="g">${ids.map(id=>mc(id,i==3)).join('')}</div>`).join('');
  if(S.open)fill();
  const dn=Object.keys(S.done).length;$('#pm').textContent=S.prac?`✍ Practice ${dn}/14`:'✍ Practice';$('#pm').classList.toggle('pri',!!S.prac);$('#pm').classList.toggle('gh',!S.prac);
@@ -281,7 +286,7 @@ function grade(target,alts){const T=toks(target);let best=null;
 
 const ERR={'not-allowed':'🚫 Permite el micrófono (candado junto a la dirección) y vuelve a intentar.','service-not-allowed':'🚫 Permite el micrófono (candado junto a la dirección) y vuelve a intentar.','audio-capture':'🎙 No encuentro un micrófono conectado.','network':'📡 El reconocimiento de voz necesita internet.','no-speech':'🙉 No te escuché. Acércate al micrófono y habla un poco más fuerte.','language-not-supported':'⚠ Este navegador no reconoce ese acento.','start':'⚠ No pude activar el micrófono. Intenta de nuevo.','unsupported':'⚠ Este navegador no tiene reconocimiento de voz. Usa Chrome o Edge.'};
 const FATAL=new Set(['not-allowed','service-not-allowed','audio-capture','network','unsupported','language-not-supported']);
-function setMic(on){S.listening=!!on;$('#mic').classList.toggle('rec',!!on);$('#mic').textContent=on?'⏹ Listening… (tap to stop)':'🎙 Speak';$('#qm').classList.toggle('rec',!!on);$('#qm').textContent=on?'⏹ Stop':'🎙 Answer'}
+function setMic(on){S.listening=!!on;$('#mic').classList.toggle('rec',!!on);$('#mic').textContent=on?'⏹ Listening… (tap to stop)':'🎙 Speak';$('#qm').classList.toggle('rec',!!on);$('#qm').textContent=on?'⏹ Stop':'🎙 Answer';const m=$('#mm');if(m){m.classList.toggle('rec',!!on);m.textContent=on?'⏹ Listening…':'🎙 Dilo'}}
 // Escucha una vez. Devuelve {alts:[...transcripciones], err}
 function hear(onInt,ms){return new Promise(res=>{
  if(!SR)return res({alts:[],err:'unsupported'});
@@ -294,16 +299,17 @@ function hear(onInt,ms){return new Promise(res=>{
  r.onerror=e=>fin(e.error);r.onend=()=>fin();
  S.rec=r;setMic(1);tm=setTimeout(()=>{try{r.stop()}catch(e){}},ms||10000);
  try{r.start()}catch(e){fin('start')}})}
+const SP=()=>$($('#mdl').classList.contains('on')?'#msp':'#sp');
 const spT=t=>t.trim().split(/\s+/).map(w=>`<span class="sw tg">${esc(w)}</span>`).join('');
 function spR(r){const c=r.pass?(r.perfect?'#34d399':'#fbbf24'):'#f87171',clean=r.view.every(w=>w.s=='ok'),msg=r.perfect?(clean?'Perfect! 🎉':'Great! ✅'):r.pass?'Good! You pass ✅':'Almost — try again 🔁';
- $('#sp').innerHTML=`<div class="flex items-center gap-3"><b class="hd" style="font-size:32px;color:${c}">${r.shown}</b><div class="flex-1"><b style="color:${c}">${msg}</b><div class="sbar"><i style="width:${r.shown}%;background:${c}"></i></div></div></div><div class="mt-2">${r.view.map(w=>`<span class="sw ${w.s}">${esc(w.t)}</span>`).join('')}</div><p class="text-xs text-gray-400 mt-2">Te escuché: “${esc(r.heard||'…')}”</p>`+(r.pass?(r.view.some(w=>w.s!='ok')?'<p class="text-xs text-gray-500">Pasaste, pero fíjate en las palabras marcadas.</p>':''):`<p class="text-xs text-gray-500">Necesitas ${PASS} o más. Escucha de nuevo 🔊 y repite.</p>`)}
+ SP().innerHTML=`<div class="flex items-center gap-3"><b class="hd" style="font-size:32px;color:${c}">${r.shown}</b><div class="flex-1"><b style="color:${c}">${msg}</b><div class="sbar"><i style="width:${r.shown}%;background:${c}"></i></div></div></div><div class="mt-2">${r.view.map(w=>`<span class="sw ${w.s}">${esc(w.t)}</span>`).join('')}</div><p class="text-xs text-gray-400 mt-2">Te escuché: “${esc(r.heard||'…')}”</p>`+(r.pass?(r.view.some(w=>w.s!='ok')?'<p class="text-xs text-gray-500">Pasaste, pero fíjate en las palabras marcadas.</p>':''):`<p class="text-xs text-gray-500">Necesitas ${PASS} o más. Escucha de nuevo 🔊 y repite.</p>`)}
 // Un intento de hablar: escucha, califica y muestra el resultado
 async function tryOnce(t,showT){
- if(!SR){$('#sp').innerHTML=`<p class="text-amber-400">${ERR.unsupported}</p>`;return{pass:false,err:'unsupported',fatal:1}}
- $('#sp').innerHTML=(showT?`<p class="text-[11px] text-gray-400 mb-1">Di esto:</p><div>${spT(t)}</div>`:'')+'<p id="spl" class="text-sky-300 mt-1">🎙 Listening… habla ahora</p>';
+ if(!SR){SP().innerHTML=`<p class="text-amber-400">${ERR.unsupported}</p>`;return{pass:false,err:'unsupported',fatal:1}}
+ SP().innerHTML=(showT?`<p class="text-[11px] text-gray-400 mb-1">Di esto:</p><div>${spT(t)}</div>`:'')+'<p id="spl" class="text-sky-300 mt-1">🎙 Listening… habla ahora</p>';
  const h=await hear(it=>{const e=$('#spl');if(e)e.textContent='🎙 '+it},10000);
  if(h.err=='aborted')return{pass:false,err:'aborted'};
- if(!h.alts.length||(h.err&&FATAL.has(h.err))){const e=h.err||'no-speech';$('#sp').innerHTML=`<p class="text-amber-400">${ERR[e]||'⚠ '+e}</p>`;fx(0);return{pass:false,err:e,fatal:FATAL.has(e)}}
+ if(!h.alts.length||(h.err&&FATAL.has(h.err))){const e=h.err||'no-speech';SP().innerHTML=`<p class="text-amber-400">${ERR[e]||'⚠ '+e}</p>`;fx(0);return{pass:false,err:e,fatal:FATAL.has(e)}}
  S.nomic=0;const r=grade(t,h.alts);spR(r);fx(r.pass);return r}
 
 async function seq(list,repeat){
@@ -322,6 +328,46 @@ async function seq(list,repeat){
  $('#st').textContent='Done!'+(cnt?` Promedio: ${Math.round(tot/cnt)}`:'');confetti({particleCount:70,spread:60,origin:{y:.2}});
 }
 
+/* ===== DOMINAR UN TIEMPO ===== */
+const ldm=()=>{try{return JSON.parse(localStorage.getItem('ne_dom'))||{}}catch(e){return{}}},svm=o=>{try{localStorage.setItem('ne_dom',JSON.stringify(o))}catch(e){}};
+const isDom=id=>{const m=ldm()[id];return!!(m&&m.a&&m.n&&m.q)};
+const PRE=[['I','eat','breakfast','🍳'],['she','cook','dinner','🍲'],['we','watch','a movie','🎬'],['they','play','soccer','⚽'],['he','call','his mom','📞'],['I','study','English','📚'],['we','go','to the market','🛒'],['she','work','in an office','💼']];
+const PL={a:'+',n:'−',q:'?'},PN={a:'Afirmativa',n:'Negativa',q:'Pregunta'};
+function mpre(i){const[s,v,w]=PRE[i];S.subj=s;S.so=0;S.verb=v;S.vo=0;S.touched=1;['subj','verb','pa','ppv','what','how','where','with','when','clause'].forEach(x=>$('#'+x).value='');$('#what').value=w}
+function mpieces(t,c,pol,p,k){const col=COL[t[2]],sp=pol=='a'&&t[6],si=p.findIndex(x=>x[0]===c.S&&!x[1]);let fl=0;
+ const lab=p.map(([w,f],i)=>sp?(i?(t[0]=='ps'?'Verbo en pasado':'Verbo en presente'):'Sujeto'):f?(fl++?'Pieza clave':'Auxiliar'):i==si?'Sujeto':'Verbo '+({b:'(base)',ing:'(-ing)',pp:'(participio)'}[t[5]]||''));
+ const cp=k.text.slice(cap(p.map(x=>x[0]).join(' ')).length).replace(/[.?!]$/,'').trim();
+ return p.map(([w,f],i)=>`<span class="pcs ${f?'k':''}"><b style="color:${f?col:'#fff'}">${esc(i?w:cap(w))}</b><small>${lab[i]}</small></span>`).join('')+(cp?`<span class="pcs" style="--c:#34d399"><b style="color:#34d399">${esc(cp)}</b><small>Complemento</small></span>`:'')}
+function mrender(){const id=S.sel,t=T.find(x=>x[0]==id),col=COL[t[2]],pol=S.mp;S.pol=pol;render();S.ma=null;
+ const k=CELLS.find(x=>x.id==id),c=ctx(),p=build(t,c,pol);S.mk=k;
+ $('#msh').style.setProperty('--c',col);$('#mh2').textContent=t[1].toUpperCase();$('#mh2').style.color=col;
+ $('#mbody').innerHTML=`<div class="flex gap-2 mt-3">${Object.keys(PL).map(x=>`<button class="chip !px-4 ${x==pol?'on':''}" data-p="${x}">${PL[x]} ${PN[x]}</button>`).join('')}</div>
+<div class="mt-3 p-3 rounded-xl bg-white/5 text-sm"><span class="lbl">🧠 Imagina</span>${tlsvg(id,col)}<p>${ES[id]}</p><p class="text-gray-300 mt-1">🎬 ${SC[id]}</p></div>
+<p class="lbl mt-4 mb-1">El molde</p><div>${mpieces(t,c,pol,p,k)}</div>
+<p class="lbl mt-4 mb-1">Tu oración</p><p class="hd text-2xl leading-snug" style="--c:${col}">${k.html}</p>
+<div class="flex gap-2 mt-3"><button class="btn pri flex-1 justify-center" id="ml">🔊 Listen</button><button class="btn gh" data-a="arm">🧩 Arma</button><button class="btn mic flex-1 justify-center" id="mm">🎙 Dilo</button></div>
+<div id="mar" class="mt-3"></div><div id="msp" class="mt-2 text-sm"></div>
+<p class="lbl mt-4 mb-1">Cambia el ejemplo</p><div class="flex flex-wrap gap-2">${PRE.map((x,i)=>`<button class="chip ${S.subj==x[0]&&S.verb==x[1]?'on':''}" data-i="${i}">${x[3]} ${x[0]} · ${x[1]}</button>`).join('')}</div>
+<div id="mpg" class="mt-4"></div>`;mprog()}
+function mprog(){const m=ldm()[S.sel]||{},all=m.a&&m.n&&m.q;
+ $('#mpg').innerHTML=`<div class="flex items-center gap-2 flex-wrap"><span class="lbl">Progreso</span>${Object.keys(PL).map(x=>`<span class="sw ${m[x]?'ok':'tg'}">${PL[x]} ${m[x]?'✓':'·'}</span>`).join('')}</div>`+(all?'<p class="mt-2 text-[#d4af37] font-bold">🏆 ¡Tiempo dominado!</p>':'<p class="text-xs text-gray-500 mt-2">Dilo con 80 o más en las 3 formas para dominarlo.</p>')}
+function marm(){const w=S.mk.text.trim().split(/\s+/);S.ma={w,g:[],b:shuf(w.map((_,i)=>i))};mar()}
+function mar(){const a=S.ma;if(!a)return;const full=a.g.length==a.w.length,ok=full&&a.g.map(i=>a.w[i]).join(' ')==a.w.join(' ');
+ $('#mar').innerHTML=`<div class="p-2 rounded-xl border border-white/10 min-h-[44px]">${a.g.map(i=>`<button class="sw tg" data-r="${i}">${esc(a.w[i])}</button>`).join('')||'<span class="text-xs text-gray-500">Toca las palabras en orden…</span>'}</div><div class="mt-2">${a.b.filter(i=>!a.g.includes(i)).map(i=>`<button class="sw" style="background:rgba(255,255,255,.12)" data-b="${i}">${esc(a.w[i])}</button>`).join('')}</div>`+(full?`<p class="mt-1 ${ok?'text-emerald-300':'text-amber-400'}">${ok?'✅ ¡Bien armada! Ahora dila con 🎙':'🤔 Casi: toca una palabra de arriba para quitarla y corrige el orden'}</p>`:'');if(full)fx(ok)}
+function mclose(){halt();$('#mdl').classList.remove('on');S.pol=S.mo;render();schedHome()}
+$('#dm').onclick=()=>{closeM();S.mo=S.pol;S.mp='a';if(!S.touched)mpre(0);if(/^(ppc|prpc|fpc)$/.test(S.sel)&&/^(eat|cook|watch|go|call)$/.test(S.verb))mpre(5);$('#mdl').classList.add('on');mrender()};
+$('#mdx').onclick=mclose;$('#mdl').onclick=e=>{if(e.target.id=='mdl')mclose()};
+document.addEventListener('keydown',e=>{if(e.key=='Escape'&&$('#mdl').classList.contains('on'))mclose()});
+$('#mbody').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.p){halt();S.mp=d.p;mrender()}
+ else if(d.i){halt();mpre(+d.i);mrender()}
+ else if(d.a=='arm'){halt();marm()}
+ else if(d.b!=null){S.ma.g.push(+d.b);mar()}
+ else if(d.r!=null){S.ma.g=S.ma.g.filter(x=>x!=+d.r);mar()}
+ else if(b.id=='ml'){halt();say(S.mk.text)}
+ else if(b.id=='mm'){if(S.listening){halt();return}halt();const r=await tryOnce(S.mk.text,0);
+  if(r.pass){const m=ldm(),id=S.sel,was=isDom(id);(m[id]=m[id]||{})[S.mp]=1;svm(m);mprog();render();if(!was&&isDom(id))confetti({particleCount:160,spread:90,origin:{y:.5}})}}};
+
 const cur=()=>CELLS.find(c=>c.id==S.sel);
 
 function chips(el,arr,get,set){$(el).innerHTML=arr.map(a=>`<button class="chip ${get()==a?'on':''}">${a}</button>`).join('');
@@ -339,7 +385,7 @@ $('#qm').onclick=async()=>{if(S.listening){halt();return}halt();if(!SR){$('#qa')
  if(h.err=='aborted')return;
  if(h.alts.length)$('#qa').innerHTML='🗣 “'+esc(h.alts[0])+'”';else $('#qa').textContent=ERR[h.err]||ERR['no-speech']};
 $('#bu').onclick=()=>seq([cur()],false);$('#stop').onclick=halt;
-function fill(){const k=cur();if(!k)return;$('#mh').textContent=k.name.toUpperCase();$('#mh').style.color=COL[k.kind];const pr=S.prac&&!S.done[k.id];$('#ms').innerHTML=pr?k.blank:k.html;$('#pr').classList.toggle('hidden',!pr);$('#pin').placeholder=S.pol=='q'?'e.g. Has she been working':'Type the verb form (aux + verb)';$('#mes').textContent=ES[k.id];$('#tr').style.display=$('#sv').style.display=$('#cd').style.display=$('#qb').style.display=$('#mic').style.display=$('#sp').style.display=pr?'none':'';if(S.tt!=k.text){S.tt=k.text;$('#mtr').classList.add('hidden')}if(S.lf!=k.id){S.lf=k.id;$('#sp').innerHTML='';$('#mtl').innerHTML=tlsvg(k.id,COL[k.kind]);qshow();$('#pin').value='';$('#fb').textContent=''}$('#mw').textContent=(S.prac&&S.done[k.id])?'✅ Correct! Now tap 🎙 and say it out loud.':k.warn?'⚠ rare in continuous':'';$('#sheet').style.setProperty('--c',COL[k.kind]);if(document.activeElement!=$('#verb2'))$('#verb2').value=$('#verb').value.trim()||S.verb}
+function fill(){const k=cur();if(!k)return;$('#mh').textContent=k.name.toUpperCase();$('#mh').style.color=COL[k.kind];const pr=S.prac&&!S.done[k.id];$('#ms').innerHTML=pr?k.blank:k.html;$('#pr').classList.toggle('hidden',!pr);$('#pin').placeholder=S.pol=='q'?'e.g. Has she been working':'Type the verb form (aux + verb)';$('#mes').textContent=ES[k.id];$('#dm').style.display=$('#tr').style.display=$('#sv').style.display=$('#cd').style.display=$('#qb').style.display=$('#mic').style.display=$('#sp').style.display=pr?'none':'';if(S.tt!=k.text){S.tt=k.text;$('#mtr').classList.add('hidden')}if(S.lf!=k.id){S.lf=k.id;$('#sp').innerHTML='';$('#mtl').innerHTML=tlsvg(k.id,COL[k.kind]);qshow();$('#pin').value='';$('#fb').textContent=''}$('#mw').textContent=(S.prac&&S.done[k.id])?'✅ Correct! Now tap 🎙 and say it out loud.':k.warn?'⚠ rare in continuous':'';$('#sheet').style.setProperty('--c',COL[k.kind]);if(document.activeElement!=$('#verb2'))$('#verb2').value=$('#verb').value.trim()||S.verb}
 function openM(){S.open=1;$('#modal').classList.add('on');fill()}
 function closeM(){halt();S.open=0;schedHome();$('#modal').classList.remove('on')}
 const step=d=>{halt();pick(T[(T.findIndex(t=>t[0]==S.sel)+d+T.length)%T.length][0])};
