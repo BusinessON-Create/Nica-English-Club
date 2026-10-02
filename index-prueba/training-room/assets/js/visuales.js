@@ -11,6 +11,10 @@ export const ICONO_UNIDAD = {
   'a2-u1': 'fa-clock-rotate-left', 'a2-u2': 'fa-shuffle', 'a2-u3': 'fa-compass',
   'a2-u4': 'fa-code-branch', 'a2-u5': 'fa-list-check', 'a2-u6': 'fa-scale-balanced',
   'a2-u7': 'fa-cart-shopping', 'a2-u8': 'fa-circle-question', 'a2-u9': 'fa-thumbs-up',
+  'b1-u1': 'fa-clock-rotate-left', 'b1-u2': 'fa-hourglass-half', 'b1-u3': 'fa-backward-step',
+  'b1-u4': 'fa-circle-half-stroke', 'b1-u5': 'fa-industry', 'b1-u6': 'fa-quote-right',
+  'b1-u7': 'fa-crosshairs', 'b1-u8': 'fa-magnifying-glass', 'b1-u9': 'fa-arrows-rotate',
+  'b1-u10': 'fa-comments', 'b1-u11': 'fa-microphone-lines',
 };
 
 // Textos de portada (Aprenderás / En la vida real). Clave = "{nivelId}-{unidadId}"
@@ -80,6 +84,50 @@ export const PORTADAS = {
   'a2-u9': {
     aprenderas: 'a hablar de experiencias de vida y mostrar acuerdo o desacuerdo.',
     vidaReal: 'lo usas para contar "ya hice esto" o para opinar en una conversación.',
+  },
+  'b1-u1': {
+    aprenderas: 'a distinguir cuándo algo es una experiencia general y cuándo un momento específico del pasado.',
+    vidaReal: 'lo usas en una entrevista de trabajo o contando tu historia profesional.',
+  },
+  'b1-u2': {
+    aprenderas: 'a hablar de acciones que empezaron en el pasado y siguen ahora.',
+    vidaReal: 'lo usas para contar hace cuánto haces algo que sigues haciendo.',
+  },
+  'b1-u3': {
+    aprenderas: 'a contar qué había pasado antes de otro momento en el pasado.',
+    vidaReal: 'lo usas al contar una historia con varios eventos en orden.',
+  },
+  'b1-u4': {
+    aprenderas: 'a distinguir verbos de estado (saber, creer) de verbos de acción (correr, cocinar).',
+    vidaReal: 'lo usas para no cometer errores comunes como "estoy sabiendo" en vez de "sé".',
+  },
+  'b1-u5': {
+    aprenderas: 'a hablar de algo sin decir quién lo hizo.',
+    vidaReal: 'lo usas en noticias, procesos o reglas: "se fabrica", "fue construido".',
+  },
+  'b1-u6': {
+    aprenderas: 'a contar lo que otra persona dijo, sin citarla palabra por palabra.',
+    vidaReal: 'lo usas al contarle a alguien lo que un tercero te dijo.',
+  },
+  'b1-u7': {
+    aprenderas: 'a dar información extra o esencial sobre personas y lugares con precisión.',
+    vidaReal: 'lo usas para describir con detalle a alguien o algún lugar.',
+  },
+  'b1-u8': {
+    aprenderas: 'a expresar obligación, posibilidad y hacer deducciones lógicas.',
+    vidaReal: 'lo usas para decir qué es obligatorio, posible, o para adivinar qué pasó.',
+  },
+  'b1-u9': {
+    aprenderas: 'a hablar de hábitos pasados y verbos que cambian de significado.',
+    vidaReal: 'lo usas para contar lo que solías hacer y lo que ya es costumbre ahora.',
+  },
+  'b1-u10': {
+    aprenderas: 'a conectar ideas contrastantes y dar matices al argumentar.',
+    vidaReal: 'lo usas para debatir o dar tu opinión de forma más sofisticada.',
+  },
+  'b1-u11': {
+    aprenderas: 'a sonar más natural en conversación: question tags, preguntas indirectas.',
+    vidaReal: 'lo usas en conversación cotidiana para sonar más fluido y educado.',
   },
 };
 
