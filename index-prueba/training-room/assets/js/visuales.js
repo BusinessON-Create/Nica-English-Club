@@ -15,6 +15,11 @@ export const ICONO_UNIDAD = {
   'b1-u4': 'fa-circle-half-stroke', 'b1-u5': 'fa-industry', 'b1-u6': 'fa-quote-right',
   'b1-u7': 'fa-crosshairs', 'b1-u8': 'fa-magnifying-glass', 'b1-u9': 'fa-arrows-rotate',
   'b1-u10': 'fa-comments', 'b1-u11': 'fa-microphone-lines',
+  'b2-u1': 'fa-map', 'b2-u2': 'fa-rocket', 'b2-u3': 'fa-road-circle-xmark',
+  'b2-u4': 'fa-layer-group', 'b2-u5': 'fa-star-half-stroke', 'b2-u6': 'fa-newspaper',
+  'b2-u7': 'fa-screwdriver-wrench', 'b2-u8': 'fa-bullhorn', 'b2-u9': 'fa-compress',
+  'b2-u10': 'fa-magnifying-glass-chart', 'b2-u11': 'fa-bolt', 'b2-u12': 'fa-link',
+  'b2-u13': 'fa-pen-fancy',
 };
 
 // Textos de portada (Aprenderás / En la vida real). Clave = "{nivelId}-{unidadId}"
@@ -128,6 +133,58 @@ export const PORTADAS = {
   'b1-u11': {
     aprenderas: 'a sonar más natural en conversación: question tags, preguntas indirectas.',
     vidaReal: 'lo usas en conversación cotidiana para sonar más fluido y educado.',
+  },
+  'b2-u1': {
+    aprenderas: 'a combinar varios tiempos pasados con precisión.',
+    vidaReal: 'lo usas al contar tu historia de vida de forma fluida y conectada.',
+  },
+  'b2-u2': {
+    aprenderas: 'a proyectarte hacia el futuro con distintos niveles de certeza.',
+    vidaReal: 'lo usas para hablar de metas y dónde estarás en X años.',
+  },
+  'b2-u3': {
+    aprenderas: 'a imaginar cómo habría sido el pasado si algo hubiera sido diferente.',
+    vidaReal: 'lo usas para reflexionar sobre decisiones pasadas y sus consecuencias.',
+  },
+  'b2-u4': {
+    aprenderas: 'a mezclar condicionales de distintos tiempos en una sola idea.',
+    vidaReal: 'lo usas para conectar una causa pasada con un resultado presente.',
+  },
+  'b2-u5': {
+    aprenderas: 'a expresar deseos y preferencias con matices.',
+    vidaReal: 'lo usas para negociar, elegir entre opciones o lamentar algo.',
+  },
+  'b2-u6': {
+    aprenderas: 'voz pasiva avanzada, como se usa en noticias y reportes.',
+    vidaReal: 'lo usas para sonar objetivo, como en un artículo o informe.',
+  },
+  'b2-u7': {
+    aprenderas: 'a decir que alguien más hizo algo por ti (mandar a hacer).',
+    vidaReal: 'lo usas cuando pagas a alguien para que haga un trabajo por ti.',
+  },
+  'b2-u8': {
+    aprenderas: 'a reportar lo que alguien dijo con más matices y precisión.',
+    vidaReal: 'lo usas en reuniones formales o al transmitir mensajes complejos.',
+  },
+  'b2-u9': {
+    aprenderas: 'a comprimir información compleja en frases más cortas y elegantes.',
+    vidaReal: 'lo usas al escribir de forma más académica o profesional.',
+  },
+  'b2-u10': {
+    aprenderas: 'a especular y hacer deducciones sobre el pasado.',
+    vidaReal: 'lo usas para criticar constructivamente o analizar qué salió mal.',
+  },
+  'b2-u11': {
+    aprenderas: 'a dar énfasis especial reordenando la oración.',
+    vidaReal: 'lo usas para sonar más persuasivo o enfático al hablar.',
+  },
+  'b2-u12': {
+    aprenderas: 'a conectar ideas de forma fluida en textos y discursos largos.',
+    vidaReal: 'lo usas al escribir ensayos o dar presentaciones formales.',
+  },
+  'b2-u13': {
+    aprenderas: 'a elegir la palabra exacta según el contexto formal o informal.',
+    vidaReal: 'lo usas para adaptar tu inglés según con quién hablas.',
   },
 };
 
