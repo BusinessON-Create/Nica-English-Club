@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entregas — Training Room</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+  .tr2-entrega-card { background:var(--card); border:1px solid var(--border2); border-radius:var(--r); padding:18px; margin-bottom:14px; }
+  .tr2-entrega-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .tr2-entrega-alumno { font-family:'Playfair Display',serif; font-size:17px; color:#fff; }
+  .tr2-entrega-meta { font-size:12px; color:var(--muted); }
+  .tr2-entrega-tipo { display:inline-flex; align-items:center; gap:6px; background:var(--gold-dim); color:var(--gold3); font:700 11.5px 'DM Sans',sans-serif; padding:4px 12px; border-radius:99px; }
+  .tr2-entrega-body { background:var(--card2); border-radius:var(--r-sm); padding:12px 14px; font-size:14px; margin:12px 0; }
+  .tr2-entrega-acciones { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }
+  .tr2-btn-aprobar { background:rgba(0,214,143,.14); border:1px solid var(--green); color:var(--green); padding:8px 16px; border-radius:99px; font:700 13px 'DM Sans',sans-serif; cursor:pointer; }
+  .tr2-btn-refuerzo { background:rgba(255,92,92,.14); border:1px solid var(--red); color:var(--red); padding:8px 16px; border-radius:99px; font:700 13px 'DM Sans',sans-serif; cursor:pointer; }
+  .tr2-feedback-input { flex:1; min-width:200px; background:var(--card); border:1px solid var(--border2); color:var(--text); padding:9px 12px; border-radius:99px; font:400 13px 'DM Sans',sans-serif; }
+</style>
+</head>
+<body>
+
+  <nav class="tr2-nav">
+    <span class="tr2-title"><i class="fa-solid fa-inbox"></i>Entregas pendientes</span>
+    <a href="../index.html" class="tr2-link"><i class="fa-solid fa-arrow-left"></i> Training Room</a>
+  </nav>
+
+  <div class="tr2-shell">
+    <h1 class="tr2-h1" id="tr2-titulo">Cargando…</h1>
+    <p class="tr2-sub">Speaking y Writing entregados por los alumnos, esperando tu revisión.</p>
+    <div id="tr2-lista" style="margin-top:20px;"></div>
+  </div>
+
+  <script type="module">
+    import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
+    import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    (async function init() {
+      const resultado = await esperarSesionYAlumno();
+      if (!resultado) return;
+      const { alumno } = resultado;
+
+      if (!alumno.esCoach) {
+        document.getElementById('tr2-titulo').textContent = 'Solo coaches pueden ver esta página.';
+        return;
+      }
+
+      const db = window.trv2_db;
+      const q = query(collection(db, 'training_v2_entregas'), where('estado', '==', 'pendiente'));
+      const snap = await getDocs(q);
+      const entregas = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (b.fecha?.toMillis?.() || 0) - (a.fecha?.toMillis?.() || 0));
+
+      document.getElementById('tr2-titulo').textContent = `${entregas.length} pendiente${entregas.length === 1 ? '' : 's'}`;
+
+      const lista = document.getElementById('tr2-lista');
+      if (!entregas.length) {
+        lista.innerHTML = `<p class="tr2-muted">No hay entregas pendientes por ahora.</p>`;
+        return;
+      }
+
+      lista.innerHTML = entregas.map((e) => `
+        <div class="tr2-entrega-card" data-id="${e.id}">
+          <div class="tr2-entrega-head">
+            <div>
+              <div class="tr2-entrega-alumno">${e.alumnoNombre || e.alumnoEmail || 'Alumno'}</div>
+              <div class="tr2-entrega-meta">${e.nivelId.toUpperCase()} · ${e.unidadNombre || e.unidadId}</div>
+            </div>
+            <span class="tr2-entrega-tipo"><i class="fa-solid ${e.tipo === 'speaking' ? 'fa-microphone' : 'fa-pen-nib'}"></i> ${e.tipo === 'speaking' ? 'Speaking' : 'Writing'}</span>
+          </div>
+          <div class="tr2-entrega-body">
+            ${e.tipo === 'writing' ? `<p>${e.texto || ''}</p>` : `<audio controls style="width:100%;" src="${e.audioBase64 || ''}"></audio>`}
+          </div>
+          <div class="tr2-entrega-acciones">
+            <input type="text" class="tr2-feedback-input" placeholder="Feedback para el alumno (opcional)">
+            <button class="tr2-btn-aprobar" data-veredicto="aprobada"><i class="fa-solid fa-check"></i> Aprobar</button>
+            <button class="tr2-btn-refuerzo" data-veredicto="refuerzo"><i class="fa-solid fa-rotate-left"></i> Necesita refuerzo</button>
+          </div>
+        </div>
+      `).join('');
+
+      lista.querySelectorAll('[data-veredicto]').forEach((btn) => {
+        btn.onclick = async () => {
+          const card = btn.closest('.tr2-entrega-card');
+          const feedback = card.querySelector('.tr2-feedback-input').value.trim();
+          btn.disabled = true;
+          await updateDoc(doc(db, 'training_v2_entregas', card.dataset.id), {
+            estado: btn.dataset.veredicto,
+            feedbackCoach: feedback || null,
+            calificadoPor: alumno.id,
+            calificadoEn: serverTimestamp(),
+          });
+          card.style.opacity = '.4';
+          card.querySelectorAll('button,input').forEach((el) => (el.disabled = true));
+        };
+      });
+    })();
+  </script>
+
+</body>
+</html>

@@ -172,6 +172,10 @@ h1,h2,h3,p { margin:0; }
 .tr2-tarea-tag { font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--gold); margin-bottom:3px; }
 .tr2-tarea p { font-size:14.5px; line-height:1.55; }
 
+/* Tip de estrategia (TOEFL) */
+.tr2-tip { display:flex; gap:10px; align-items:flex-start; background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold3); border-radius:var(--r-sm); padding:10px 14px; font-size:13.5px; line-height:1.55; margin-top:10px; }
+.tr2-tip i { margin-top:3px; }
+
 /* Marcador de puntos/racha */
 .tr2-marcador { display:inline-flex; align-items:center; gap:4px; background:var(--card); border:1px solid var(--border2); color:var(--gold3); font:700 13px 'DM Mono',monospace; padding:8px 16px; border-radius:99px; margin-bottom:20px; }
 .tr2-marcador i { color:var(--gold); }

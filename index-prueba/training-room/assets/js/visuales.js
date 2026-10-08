@@ -20,6 +20,11 @@ export const ICONO_UNIDAD = {
   'b2-u7': 'fa-screwdriver-wrench', 'b2-u8': 'fa-bullhorn', 'b2-u9': 'fa-compress',
   'b2-u10': 'fa-magnifying-glass-chart', 'b2-u11': 'fa-bolt', 'b2-u12': 'fa-link',
   'b2-u13': 'fa-pen-fancy',
+  'c1-u1': 'fa-gem', 'c1-u2': 'fa-hourglass-end', 'c1-u3': 'fa-building-columns',
+  'c1-u4': 'fa-feather', 'c1-u5': 'fa-minimize', 'c1-u6': 'fa-diagram-project',
+  'c1-u7': 'fa-arrows-up-down', 'c1-u8': 'fa-bullseye', 'c1-u9': 'fa-link',
+  'c1-u10': 'fa-quote-left', 'c1-u11': 'fa-spell-check', 'c1-u12': 'fa-scale-balanced',
+  'c1-u13': 'fa-book-open-reader', 'c1-u14': 'fa-headset', 'c1-u15': 'fa-keyboard',
 };
 
 // Textos de portada (Aprenderás / En la vida real). Clave = "{nivelId}-{unidadId}"
@@ -185,6 +190,66 @@ export const PORTADAS = {
   'b2-u13': {
     aprenderas: 'a elegir la palabra exacta según el contexto formal o informal.',
     vidaReal: 'lo usas para adaptar tu inglés según con quién hablas.',
+  },
+  'c1-u1': {
+    aprenderas: 'a dominar los tiempos verbales y los condicionales con matices finos.',
+    vidaReal: 'lo usas para hablar y escribir con la precisión de un hablante muy avanzado.',
+  },
+  'c1-u2': {
+    aprenderas: 'a expresar expectativas, críticas y obligaciones del pasado con exactitud.',
+    vidaReal: 'lo usas en evaluaciones de proyectos: "debió hacerse", "no hacía falta".',
+  },
+  'c1-u3': {
+    aprenderas: 'a usar pasiva y causativa con fluidez en contextos formales.',
+    vidaReal: 'lo usas en informes, auditorías y comunicación institucional.',
+  },
+  'c1-u4': {
+    aprenderas: 'a suavizar y matizar afirmaciones (hedging) como en textos académicos.',
+    vidaReal: 'lo usas para opinar con cautela y sonar profesional.',
+  },
+  'c1-u5': {
+    aprenderas: 'a comprimir ideas con cláusulas reducidas y participios.',
+    vidaReal: 'lo usas en redacción académica y profesional más concisa.',
+  },
+  'c1-u6': {
+    aprenderas: 'a construir frases complejas con nominalización y subordinación.',
+    vidaReal: 'lo usas en ensayos y documentos formales.',
+  },
+  'c1-u7': {
+    aprenderas: 'a romper el orden normal de la oración con inversión y anteposición.',
+    vidaReal: 'lo usas en discursos y escritura de alto impacto.',
+  },
+  'c1-u8': {
+    aprenderas: 'a enfatizar información con oraciones hendidas, elipsis y sustitución.',
+    vidaReal: 'lo usas para destacar lo importante sin repetir palabras.',
+  },
+  'c1-u9': {
+    aprenderas: 'a conectar ideas con marcadores de discurso de nivel profesional.',
+    vidaReal: 'lo usas para que un texto largo fluya y se entienda con claridad.',
+  },
+  'c1-u10': {
+    aprenderas: 'a puntuar bien para evitar comma splices y oraciones sin cortar.',
+    vidaReal: 'lo usas para que tus correos y ensayos se vean profesionales.',
+  },
+  'c1-u11': {
+    aprenderas: 'a elegir palabras con precisión según significado, connotación y registro.',
+    vidaReal: 'lo usas para dar feedback o negociar sin sonar mal.',
+  },
+  'c1-u12': {
+    aprenderas: 'a argumentar y discrepar sin romper el diálogo.',
+    vidaReal: 'lo usas en debates, reuniones y la sección de ensayo del examen.',
+  },
+  'c1-u13': {
+    aprenderas: 'estrategias para el Reading del TOEFL: ideas principales, vocabulario en contexto e inferencia.',
+    vidaReal: 'lo usas para rendir bien en la sección de lectura del examen.',
+  },
+  'c1-u14': {
+    aprenderas: 'estrategias para Listening y Speaking del TOEFL.',
+    vidaReal: 'lo usas para entender clases/conversaciones y responder con claridad bajo tiempo.',
+  },
+  'c1-u15': {
+    aprenderas: 'estrategias para las tareas de Writing del TOEFL.',
+    vidaReal: 'lo usas para organizar, escribir y revisar ensayos en tiempo limitado.',
   },
 };
 

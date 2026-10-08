@@ -17,6 +17,7 @@ import { PRACTICA_U1 } from "./ejercicios-u1.js";
 import { PRACTICA_U2, PRACTICA_U3, PRACTICA_U4, PRACTICA_U5, PRACTICA_U6, PRACTICA_U7 } from "./ejercicios-resto.js";
 import { PRACTICA_A2_U1, PRACTICA_A2_U2, PRACTICA_A2_U3, PRACTICA_A2_U4, PRACTICA_A2_U5, PRACTICA_A2_U6, PRACTICA_A2_U7, PRACTICA_A2_U8, PRACTICA_A2_U9 } from "./ejercicios-a2.js";
 import { PRACTICA_B1_U1, PRACTICA_B1_U2, PRACTICA_B1_U3, PRACTICA_B1_U4, PRACTICA_B1_U5, PRACTICA_B1_U6, PRACTICA_B1_U7, PRACTICA_B1_U8, PRACTICA_B1_U9, PRACTICA_B1_U10, PRACTICA_B1_U11 } from "./ejercicios-b1.js";
+import { PRACTICA_C1_U1, PRACTICA_C1_U2, PRACTICA_C1_U3, PRACTICA_C1_U4, PRACTICA_C1_U5, PRACTICA_C1_U6, PRACTICA_C1_U7, PRACTICA_C1_U8, PRACTICA_C1_U9, PRACTICA_C1_U10, PRACTICA_C1_U11, PRACTICA_C1_U12 } from "./ejercicios-c1.js";
 import { PRACTICA_B2_U1, PRACTICA_B2_U2, PRACTICA_B2_U3, PRACTICA_B2_U4, PRACTICA_B2_U5, PRACTICA_B2_U6, PRACTICA_B2_U7, PRACTICA_B2_U8, PRACTICA_B2_U9, PRACTICA_B2_U10, PRACTICA_B2_U11, PRACTICA_B2_U12, PRACTICA_B2_U13 } from "./ejercicios-b2.js";
 
 instalarAudio();
@@ -41,6 +42,10 @@ const EJERCICIOS = {
   'b2-u7': PRACTICA_B2_U7, 'b2-u8': PRACTICA_B2_U8, 'b2-u9': PRACTICA_B2_U9,
   'b2-u10': PRACTICA_B2_U10, 'b2-u11': PRACTICA_B2_U11, 'b2-u12': PRACTICA_B2_U12,
   'b2-u13': PRACTICA_B2_U13,
+  'c1-u1': PRACTICA_C1_U1, 'c1-u2': PRACTICA_C1_U2, 'c1-u3': PRACTICA_C1_U3,
+  'c1-u4': PRACTICA_C1_U4, 'c1-u5': PRACTICA_C1_U5, 'c1-u6': PRACTICA_C1_U6,
+  'c1-u7': PRACTICA_C1_U7, 'c1-u8': PRACTICA_C1_U8, 'c1-u9': PRACTICA_C1_U9,
+  'c1-u10': PRACTICA_C1_U10, 'c1-u11': PRACTICA_C1_U11, 'c1-u12': PRACTICA_C1_U12,
 };
 
 // Contexto del alumno actual + unidad abierta (lo fija nivel.html). Se usa
@@ -65,11 +70,22 @@ const ICONOS_BLOQUE = {
   grammar: 'fa-graduation-cap', dialogue: 'fa-comments', grammar_practice: 'fa-pen-to-square',
   listening: 'fa-headphones', pronunciation: 'fa-microphone-lines', speaking: 'fa-microphone',
   writing: 'fa-pen-nib',
+  // Bloques de las unidades TOEFL (C1 u13-u15)
+  strategy: 'fa-chess', vocabulary_or_language_bank: 'fa-book-open', vocabulary_review: 'fa-book-open',
+  grammar_review: 'fa-list-check', sample_task: 'fa-file-lines', practice_task: 'fa-pencil',
+  common_mistakes: 'fa-triangle-exclamation', self_assessment_checklist: 'fa-clipboard-check',
+  timed_practice: 'fa-stopwatch', review_tips: 'fa-lightbulb', extra_practice: 'fa-dumbbell',
+  evaluation: 'fa-flag-checkered',
 };
 const NOMBRES_BLOQUE = {
   warm_up: 'Para empezar', vocabulary: 'Vocabulario', vocabulary_practice: 'Repaso de vocabulario',
   grammar: 'Gramática', dialogue: 'Diálogo', grammar_practice: 'Ejercicio', listening: 'Listening',
   pronunciation: 'Pronunciación', speaking: 'Speaking', writing: 'Writing',
+  strategy: 'Estrategia', vocabulary_or_language_bank: 'Banco de lenguaje', vocabulary_review: 'Repaso de vocabulario',
+  grammar_review: 'Repaso de gramática', sample_task: 'Ejemplo', practice_task: 'Práctica',
+  common_mistakes: 'Errores comunes', self_assessment_checklist: 'Autoevaluación',
+  timed_practice: 'Práctica cronometrada', review_tips: 'Cómo revisar', extra_practice: 'Práctica extra',
+  evaluation: 'Evaluación',
 };
 
 // Clave compuesta para los mapas de visuales.js y EJERCICIOS: el ID de unidad
@@ -329,8 +345,45 @@ function renderTarea(b, icono, etiqueta, tipo) {
 }
 
 // ── Router de bloque → HTML ──────────────────────────────────────────────
+// ── Bloques TOEFL (C1 u13-u15) ────────────────────────────────────────────
+function listaHTML(items, icono) {
+  return `<ul class="tr2-items">${items.map((i) => `<li class="tr2-par"><i class="fa-solid ${icono}"></i> ${i}</li>`).join('')}</ul>`;
+}
+function renderStrategy(b) {
+  return `
+    <div class="tr2-expl">${b.explanation}</div>
+    ${b.tip ? `<div class="tr2-tip"><i class="fa-solid fa-lightbulb"></i> ${b.tip}</div>` : ''}`;
+}
+function renderSampleTask(b) {
+  return `
+    <div class="tr2-expl">${b.passage_summary}</div>
+    <p class="tr2-instr" style="margin-top:12px;">Preguntas de ejemplo:</p>
+    ${listaHTML(b.sample_questions || [], 'fa-circle-question')}`;
+}
+function renderInstruccion(b, icono, etiqueta) {
+  return `
+    <div class="tr2-tarea">
+      <div class="tr2-tarea-icono"><i class="fa-solid ${icono}"></i></div>
+      <div><div class="tr2-tarea-tag">${etiqueta}</div><p>${b.instructions}</p></div>
+    </div>`;
+}
+
 function contenidoBloque(b, unidadId) {
   switch (b.type) {
+    // TOEFL
+    case 'strategy': return renderStrategy(b);
+    case 'vocabulary_or_language_bank': return renderVocabulary(b);
+    case 'vocabulary_review': return renderVocabulary(b);
+    case 'grammar_review': return listaHTML(b.checklist || [], 'fa-square-check');
+    case 'self_assessment_checklist': return listaHTML(b.checklist || [], 'fa-square-check');
+    case 'sample_task': return renderSampleTask(b);
+    case 'practice_task': return renderInstruccion(b, 'fa-pencil', 'Haz esta práctica');
+    case 'timed_practice': return renderInstruccion(b, 'fa-stopwatch', 'Con tiempo límite');
+    case 'extra_practice': return renderInstruccion(b, 'fa-dumbbell', 'Práctica extra');
+    case 'evaluation': return renderInstruccion(b, 'fa-flag-checkered', 'Evaluación');
+    case 'common_mistakes': return listaHTML(b.mistakes || [], 'fa-triangle-exclamation');
+    case 'review_tips': return listaHTML(b.tips || [], 'fa-lightbulb');
+    // Estándar
     case 'warm_up': return renderWarmup(b, unidadId);
     case 'grammar': return renderGrammar(b);
     case 'dialogue': return renderDialogue(b);
