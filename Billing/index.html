@@ -405,7 +405,23 @@ function sheetsLoadAll(){
     document.head.appendChild(s);
   });
 }
-// Escritura: POST "no-cors" (se envía y Google lo guarda; el navegador no puede leer la respuesta)
+// Lectura cruda (JSONP) reutilizable para verificar que el guardado llegó al Sheet
+let __cbN = 0;
+function sheetsReadRaw(){
+  return new Promise(resolve=>{
+    const cb = '__sheets_v_' + Date.now() + '_' + (++__cbN);
+    const s = document.createElement('script');
+    let finished = false;
+    const done = (d)=>{ if(finished) return; finished = true; clearTimeout(t); delete window[cb]; s.remove(); resolve(d); };
+    const t = setTimeout(()=>done(null), 15000);
+    window[cb] = (d)=>done(d);
+    s.onerror = ()=>done(null);
+    s.src = `${SHEETS_URL}?token=${encodeURIComponent(SHEETS_TOKEN)}&callback=${cb}`;
+    document.head.appendChild(s);
+  });
+}
+// Escritura: POST "no-cors" (el navegador no puede leer la respuesta),
+// por eso después se VERIFICA leyendo el Sheet de nuevo.
 async function sheetsSave(key, data){
   if(!sheetsOK) return false;      // nunca escribir si no se pudo leer (evita borrar el Sheet)
   try{
@@ -414,8 +430,19 @@ async function sheetsSave(key, data){
       headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify({token: SHEETS_TOKEN, key, data})
     });
-    return true;
   }catch(e){ console.error('Sheets (guardar):', e); return false; }
+  const want = Array.isArray(data) ? data.length : 1;
+  for(let i=0;i<3;i++){
+    await new Promise(r=>setTimeout(r, 1500));
+    const back = await sheetsReadRaw();
+    if(back && back.ok){
+      const got = back[key];
+      const n = Array.isArray(got) ? got.length : (got ? 1 : 0);
+      if(n === want) return true;
+    }
+  }
+  console.error('Sheets: el POST no llegó al Sheet para', key);
+  return false;
 }
 function localGet(key, fallback){
   try{ const raw = localStorage.getItem(key); if(raw) return JSON.parse(raw); }catch(e){}
@@ -425,12 +452,12 @@ function localSet(key, v){ try{ localStorage.setItem(key, JSON.stringify(v)); }c
 function setSaveStatus(ok){
   const el = document.getElementById('storageMode');
   if(!el) return;
-  el.textContent = ok ? '☁ Conectado a Google Sheets' : '⚠ No se pudo guardar en Google Sheets';
+  el.textContent = ok ? '☁ Guardado en Google Sheets ✓' : '⚠ Google Sheets NO confirmó el guardado (revisa la implementación del script)';
   el.style.color = ok ? '' : '#ff8a80';
 }
 async function persist(localKey, sheetKey, v){
   localSet(localKey, v);
-  if(sheetsOK) setSaveStatus(await sheetsSave(sheetKey, v));
+  if(sheetsOK){ const el=document.getElementById('storageMode'); if(el){ el.textContent='☁ Guardando…'; el.style.color=''; } setSaveStatus(await sheetsSave(sheetKey, v)); }
 }
 
 const loadPlans = async ()=>{
