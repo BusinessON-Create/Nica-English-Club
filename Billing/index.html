@@ -364,26 +364,37 @@ const SHEETS_TOKEN = "NicaEnglishClub-2026";
 let sheetsOK = false;      // true solo si se pudo leer el Sheet al abrir
 let sheetsData = null;
 
-async function sheetsLoadAll(){
-  const ctrl = new AbortController();
-  const t = setTimeout(()=>ctrl.abort(), 15000);
-  try{
-    const r = await fetch(`${SHEETS_URL}?token=${encodeURIComponent(SHEETS_TOKEN)}`, {signal: ctrl.signal});
-    const j = await r.json();
-    if(j && j.ok){ sheetsOK = true; sheetsData = j; }
-  }catch(e){ console.error('Sheets (leer):', e); }
-  clearTimeout(t);
+// Lectura por <script> (JSONP): el navegador no aplica CORS a los scripts,
+// así funciona desde cualquier dominio (app.nicaenglishclub.com, GitHub Pages, etc.)
+function sheetsLoadAll(){
+  return new Promise(resolve=>{
+    const cb = '__sheets_cb_' + Date.now();
+    const s = document.createElement('script');
+    let finished = false, called = false;
+    const done = (data)=>{
+      if(finished) return; finished = true;
+      clearTimeout(timer); delete window[cb]; s.remove();
+      if(data && data.ok){ sheetsOK = true; sheetsData = data; }
+      resolve();
+    };
+    const timer = setTimeout(()=>done(null), 15000);
+    window[cb] = (data)=>{ called = true; done(data); };
+    s.onerror = ()=>done(null);
+    s.onload  = ()=>{ if(!called) done(null); };   // respondió algo que no es el formato nuevo
+    s.src = `${SHEETS_URL}?token=${encodeURIComponent(SHEETS_TOKEN)}&callback=${cb}`;
+    document.head.appendChild(s);
+  });
 }
+// Escritura: POST "no-cors" (se envía y Google lo guarda; el navegador no puede leer la respuesta)
 async function sheetsSave(key, data){
   if(!sheetsOK) return false;      // nunca escribir si no se pudo leer (evita borrar el Sheet)
   try{
-    const r = await fetch(SHEETS_URL, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},   // evita el preflight CORS
+    await fetch(SHEETS_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify({token: SHEETS_TOKEN, key, data})
     });
-    const j = await r.json();
-    return !!(j && j.ok);
+    return true;
   }catch(e){ console.error('Sheets (guardar):', e); return false; }
 }
 function localGet(key, fallback){
