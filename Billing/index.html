@@ -216,8 +216,18 @@
   .btn:disabled{opacity:.4;cursor:default;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 <body>
+<div id="loginGate" style="position:fixed;inset:0;z-index:99999;background:#0b1020;display:flex;align-items:center;justify-content:center;font-family:Poppins,Arial,sans-serif;color:#fff;padding:20px;text-align:center">
+  <div style="max-width:360px">
+    <h2 style="margin:0 0 8px">Generador de facturas</h2>
+    <p style="opacity:.75;margin:0 0 20px;font-size:14px">Acceso solo para el administrador.</p>
+    <button id="loginBtn" style="background:#fff;color:#222;border:0;border-radius:8px;padding:12px 20px;font-size:15px;font-weight:600;cursor:pointer">Iniciar sesión con Google</button>
+    <p id="loginMsg" style="margin-top:16px;font-size:13px;color:#ff8a80;min-height:18px"></p>
+  </div>
+</div>
 <div class="app">
 
   <!-- ============ SIDEBAR ============ -->
@@ -379,14 +389,25 @@ const IMG_MID2   = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABYYAAAExCAIAAA
 
 // ---------- Almacenamiento: Google Sheets (con copia local de respaldo) ----------
 const SHEETS_URL   = "https://script.google.com/macros/s/AKfycbx43kRtZ7ySNqqe1VxhEUFCJikVhIgdkVI15Y3FsF4JgKAxHX3R-bLxYrJ13mjUk6OT/exec";
-const SHEETS_TOKEN = "NicaEnglishClub-2026";
+const ADMIN_EMAIL = "95gusmg@gmail.com";
+firebase.initializeApp({
+  apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
+  authDomain: "nicaenglishportal.firebaseapp.com",
+  projectId: "nicaenglishportal"
+});
+// Token de sesión de Firebase (se renueva solo); Apps Script lo verifica en el servidor
+async function getToken(){
+  const u = firebase.auth().currentUser;
+  return u ? await u.getIdToken() : '';
+}
 
 let sheetsOK = false;      // true solo si se pudo leer el Sheet al abrir
 let sheetsData = null;
 
 // Lectura por <script> (JSONP): el navegador no aplica CORS a los scripts,
 // así funciona desde cualquier dominio (app.nicaenglishclub.com, GitHub Pages, etc.)
-function sheetsLoadAll(){
+async function sheetsLoadAll(){
+  const tk = await getToken();
   return new Promise(resolve=>{
     const cb = '__sheets_cb_' + Date.now();
     const s = document.createElement('script');
@@ -395,19 +416,21 @@ function sheetsLoadAll(){
       if(finished) return; finished = true;
       clearTimeout(timer); delete window[cb]; s.remove();
       if(data && data.ok){ sheetsOK = true; sheetsData = data; }
+      else if(data && data.error==='auth'){ window.__authDenied = true; }
       resolve();
     };
     const timer = setTimeout(()=>done(null), 15000);
     window[cb] = (data)=>{ called = true; done(data); };
     s.onerror = ()=>done(null);
     s.onload  = ()=>{ if(!called) done(null); };   // respondió algo que no es el formato nuevo
-    s.src = `${SHEETS_URL}?token=${encodeURIComponent(SHEETS_TOKEN)}&callback=${cb}`;
+    s.src = `${SHEETS_URL}?token=${encodeURIComponent(tk)}&callback=${cb}`;
     document.head.appendChild(s);
   });
 }
 // Lectura cruda (JSONP) reutilizable para verificar que el guardado llegó al Sheet
 let __cbN = 0;
-function sheetsReadRaw(){
+async function sheetsReadRaw(){
+  const tk = await getToken();
   return new Promise(resolve=>{
     const cb = '__sheets_v_' + Date.now() + '_' + (++__cbN);
     const s = document.createElement('script');
@@ -416,7 +439,7 @@ function sheetsReadRaw(){
     const t = setTimeout(()=>done(null), 15000);
     window[cb] = (d)=>done(d);
     s.onerror = ()=>done(null);
-    s.src = `${SHEETS_URL}?token=${encodeURIComponent(SHEETS_TOKEN)}&callback=${cb}`;
+    s.src = `${SHEETS_URL}?token=${encodeURIComponent(tk)}&callback=${cb}`;
     document.head.appendChild(s);
   });
 }
@@ -424,11 +447,12 @@ function sheetsReadRaw(){
 // por eso después se VERIFICA leyendo el Sheet de nuevo.
 async function sheetsSave(key, data){
   if(!sheetsOK) return false;      // nunca escribir si no se pudo leer (evita borrar el Sheet)
+  const tk = await getToken();
   try{
     await fetch(SHEETS_URL, {
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({token: SHEETS_TOKEN, key, data})
+      body: JSON.stringify({token: tk, key, data})
     });
   }catch(e){ console.error('Sheets (guardar):', e); return false; }
   const want = Array.isArray(data) ? data.length : 1;
@@ -1372,7 +1396,24 @@ async function init(){
   renderInvoice();                 // redibuja ya con Montserrat
   document.fonts.addEventListener && document.fonts.addEventListener('loadingdone', updatePreview);
 }
-init();
+let __started = false;
+const loginMsg = ()=>document.getElementById('loginMsg');
+document.getElementById('loginBtn').onclick = async ()=>{
+  loginMsg().textContent = '';
+  try{ await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+  catch(e){ loginMsg().textContent = 'No se pudo iniciar sesión: ' + (e.code||e.message); }
+};
+firebase.auth().onAuthStateChanged(async (u)=>{
+  if(!u){ document.getElementById('loginGate').style.display='flex'; return; }
+  if((u.email||'').toLowerCase() !== ADMIN_EMAIL || !u.emailVerified){
+    await firebase.auth().signOut();
+    loginMsg().textContent = 'Esta cuenta no tiene permiso para usar el generador.';
+    document.getElementById('loginGate').style.display='flex';
+    return;
+  }
+  document.getElementById('loginGate').style.display='none';
+  if(!__started){ __started = true; init(); }
+});
 
 </script>
 </body>
