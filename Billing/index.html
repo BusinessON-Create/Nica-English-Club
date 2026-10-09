@@ -209,7 +209,13 @@
   /* Factura: canvas 1414x2000, escalado solo visualmente */
   #invoice{display:block;background:#fff;}
   .font-warn{font-size:12px;color:#b45309;margin:-8px 0 12px;min-height:0;}
+  .batch-item{display:flex;gap:10px;align-items:flex-start;background:#161616;border:1px solid #2a2a2a;border-radius:9px;padding:9px 12px;margin:0 0 6px;cursor:pointer;font-weight:400;color:#fff;font-size:13px;}
+  .batch-item input{width:auto;margin-top:3px;accent-color:#F5CE00;}
+  .batch-item small{display:block;color:#9a9a97;font-size:11px;line-height:1.4;margin-top:2px;}
+  .batch-item.disabled{opacity:.45;cursor:default;}
+  .btn:disabled{opacity:.4;cursor:default;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -225,6 +231,7 @@
     <label>Nombre del estudiante</label>
     <input type="text" id="studentName" placeholder="Ej: Gustavo Martínez" list="studentNames">
     <datalist id="studentNames"></datalist>
+    <div class="hint" id="studentHint"></div>
 
     <label>Número de factura</label>
     <input type="text" id="invoiceNumber" placeholder="FAC-26-401">
@@ -259,6 +266,7 @@
         <input type="date" id="dueDate">
       </div>
     </div>
+    <button class="mini-btn" id="resetDatesBtn" style="margin-top:8px;">Restablecer fechas (hoy y +5 días)</button>
 
     <label>Plan / Servicio</label>
     <select id="planSelect"></select>
@@ -305,6 +313,18 @@
 
     <button class="btn btn-primary" id="downloadBtn">⬇ Descargar factura en JPG</button>
     <div class="hint" id="downloadStatus" style="text-align:center;margin-top:10px;"></div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Generar varias facturas</div>
+    <div class="hint" style="margin:-4px 0 10px;">Cada alumno sale con los datos de su última factura (plan, bono, descuento u horario), con las fechas de arriba. Los números siguen desde "Siguiente sugerido".</div>
+    <div id="batchList"></div>
+    <div class="row2" style="margin-top:8px;">
+      <div><button class="btn btn-ghost" id="batchAll">Seleccionar todos</button></div>
+      <div><button class="btn btn-ghost" id="batchNone">Quitar todos</button></div>
+    </div>
+    <button class="btn btn-primary" id="batchBtn" style="margin-top:14px;" disabled>Generar facturas</button>
+    <div class="hint" id="batchStatus" style="text-align:center;margin-top:10px;"></div>
 
     <div class="divider"></div>
 
@@ -457,6 +477,7 @@ let students = [];
 
 // ---------- Alumnos ----------
 function renderStudents(){
+  renderBatch();
   const list = $('studentList');
   if(!students.length){
     list.innerHTML = '<div class="history-empty">Aún no has registrado alumnos.</div>';
@@ -475,7 +496,7 @@ function renderStudents(){
     list.appendChild(item);
   });
   list.querySelectorAll('[data-use]').forEach(b=>{
-    b.onclick = ()=>{ $('studentName').value = students[parseInt(b.dataset.use)]; updatePreview(); };
+    b.onclick = ()=>{ selectStudent(students[parseInt(b.dataset.use)]); };
   });
   list.querySelectorAll('[data-rm]').forEach(b=>{
     b.onclick = async ()=>{
@@ -515,7 +536,27 @@ async function persistCounter(){
   await saveCounter(counter);
   updateNumPreview();
 }
-['numYear','numNext','numIncrement'].forEach(id=>$(id).addEventListener('input', persistCounter));
+let numManual = false;   // true si escribiste el número a mano
+function lastInvoiceNum(){
+  let max = null;
+  history.forEach(h=>{
+    const m = String(h.invoiceNumber).match(/(\d+)\s*$/);
+    if(m){ const n = parseInt(m[1]); if(max===null || n>max) max = n; }
+  });
+  return max;
+}
+function suggestedNext(){
+  const last = lastInvoiceNum();
+  const inc = parseInt($('numIncrement').value) || counter.increment || 5;
+  return last===null ? (counter.next || 401) : last + inc;
+}
+function refreshSuggested(force){
+  if(force || !numManual) $('numNext').value = suggestedNext();
+  updateNumPreview();
+}
+$('numNext').addEventListener('input', ()=>{ numManual = true; persistCounter(); });
+$('numIncrement').addEventListener('input', ()=>{ persistCounter(); refreshSuggested(false); });
+$('numYear').addEventListener('input', persistCounter);
 $('useNextBtn').onclick = ()=>{
   const y = $('numYear').value || currentYY();
   const n = $('numNext').value || counter.next;
@@ -525,6 +566,7 @@ $('useNextBtn').onclick = ()=>{
 
 // ---------- Historial ----------
 function renderHistory(){
+  renderBatch();
   const list = $('historyList');
   if(!history.length){
     list.innerHTML = '<div class="history-empty">Aún no has descargado facturas.</div>';
@@ -550,13 +592,8 @@ function renderHistory(){
       $('invoiceNumber').value = h.invoiceNumber;
       $('issueDate').value = h.issueDateRaw || $('issueDate').value;
       $('dueDate').value = h.dueDateRaw || $('dueDate').value;
-      $('planSelect').value = h.planId;
-      $('servicePrice').value = h.servicePrice;
-      if(h.thirdType==='horario'){ setThird('horario'); setHorarioValue(h.thirdValue); }
-      else if(h.thirdType==='descuento'){ setThird('descuento'); $('descValue').value = h.thirdValue; }
-      else { setThird('bono'); $('bonoValue').value = h.thirdValue; }
-      totalManuallyEdited = true;
-      $('totalPrice').value = h.total;
+      dueManual = true;
+      applyRecordToForm(h);
       updateStudentDatalist();
       updatePreview();
       window.scrollTo(0,0);
@@ -740,7 +777,53 @@ function setHorarioValue(text){
   if(match){ sel.value = text; val.style.display = 'none'; val.value = text; }
   else{ sel.value = 'custom'; val.style.display = 'block'; val.value = text; }
 }
-['studentName','invoiceNumber','issueDate','dueDate'].forEach(id=>$(id).addEventListener('input', updatePreview));
+let dueManual = false;
+function addDaysISO(iso,n){
+  const [y,m,d] = iso.split('-').map(Number);
+  return localISO(new Date(y,m-1,d+n));
+}
+$('issueDate').addEventListener('input', ()=>{
+  if(!dueManual && $('issueDate').value) $('dueDate').value = addDaysISO($('issueDate').value,5);
+  updatePreview();
+});
+$('dueDate').addEventListener('input', ()=>{ dueManual = true; updatePreview(); });
+$('resetDatesBtn').onclick = ()=>{
+  dueManual = false;
+  const t = localISO(new Date());
+  $('issueDate').value = t;
+  $('dueDate').value = addDaysISO(t,5);
+  updatePreview();
+};
+['studentName','invoiceNumber'].forEach(id=>$(id).addEventListener('input', updatePreview));
+
+// ---------- Última factura de cada alumno ----------
+function lastRecordFor(name){
+  const k = String(name).trim().toLowerCase();
+  for(let i=history.length-1;i>=0;i--){
+    if(String(history[i].studentName).trim().toLowerCase()===k) return history[i];
+  }
+  return null;
+}
+function applyRecordToForm(h){
+  if(plans.some(p=>p.id===h.planId)) $('planSelect').value = h.planId;
+  $('servicePrice').value = h.servicePrice;
+  totalManuallyEdited = true;
+  if(h.thirdType==='horario'){ setThird('horario'); setHorarioValue(h.thirdValue); }
+  else if(h.thirdType==='descuento'){ setThird('descuento'); $('descValue').value = h.thirdValue; }
+  else { setThird('bono'); $('bonoValue').value = h.thirdValue; }
+  $('totalPrice').value = h.total;
+}
+function selectStudent(name){
+  $('studentName').value = name;
+  const h = lastRecordFor(name);
+  $('studentHint').textContent = h ? `Datos tomados de su última factura (${h.invoiceNumber}). Puedes cambiarlos.` : '';
+  if(h) applyRecordToForm(h);
+  updatePreview();
+}
+$('studentName').addEventListener('change', ()=>{
+  const n = $('studentName').value.trim();
+  if(n && lastRecordFor(n)) selectStudent(n); else $('studentHint').textContent = '';
+});
 
 
 // ======================================================================
@@ -972,18 +1055,17 @@ function drawBox(ctx,st){
   lines.forEach((ln,i)=>txt(ctx,ln,TX,by+LH*(i+1),F(400,23),COL.ink));
 }
 
+function makeThird(type, rawIn){
+  const raw = String(rawIn==null ? '' : rawIn).trim();
+  const n = parseFloat(raw);
+  if(type==='horario')   return {label:'Horario:', value: raw || '—', color:COL.green};
+  if(type==='descuento') return {label:'Descuento Miembro', value: raw==='' ? 'N/A' : (isNaN(n) ? raw : money(Math.abs(n))), color:COL.red};
+  return {label:'Bono por desempeño:', value: raw==='' ? 'N/A' : (isNaN(n) ? raw : money(n)), color:COL.red};
+}
 function getState(){
   const p = plans.find(pp=>pp.id===$('planSelect').value) || plans[0] || {name:'',desc:'',icon:'solo'};
-  let third;
-  if(thirdFieldType==='horario'){
-    third = {label:'Horario:', value:$('horarioValue').value || '—', color:COL.green};
-  }else if(thirdFieldType==='descuento'){
-    const raw = $('descValue').value.trim(); const n = parseFloat(raw);
-    third = {label:'Descuento Miembro', value: raw==='' ? 'N/A' : (isNaN(n) ? raw : money(Math.abs(n))), color:COL.red};
-  }else{
-    const raw = $('bonoValue').value.trim(); const n = parseFloat(raw);
-    third = {label:'Bono por desempeño:', value: raw==='' ? 'N/A' : (isNaN(n) ? raw : money(n)), color:COL.red};
-  }
+  const raw = thirdFieldType==='horario' ? $('horarioValue').value
+            : thirdFieldType==='descuento' ? $('descValue').value : $('bonoValue').value;
   return {
     name: $('studentName').value.trim() || 'Nombre del estudiante',
     invoiceNumber: $('invoiceNumber').value || '—',
@@ -991,14 +1073,23 @@ function getState(){
     due: fmtDate($('dueDate').value) || '—',
     servicePrice: money($('servicePrice').value),
     total: money($('totalPrice').value),
-    plan: p, third
+    plan: p, third: makeThird(thirdFieldType, raw)
   };
 }
-
-function renderInvoice(){
-  if(!assets.header) return;
-  const cv = $('invoice'), ctx = cv.getContext('2d');
-  const st = getState();
+// Estado de una factura a partir de un registro del historial (para generar varias)
+function stateFromRecord(h, number, issueISO, dueISO){
+  const p = plans.find(pp=>pp.id===h.planId) || {name:h.planName||'', desc:'', icon:'solo'};
+  return {
+    name: String(h.studentName).trim(),
+    invoiceNumber: number,
+    issue: fmtDate(issueISO) || '—',
+    due: fmtDate(dueISO) || '—',
+    servicePrice: money(h.servicePrice),
+    total: money(h.total),
+    plan: p, third: makeThird(h.thirdType, h.thirdValue)
+  };
+}
+function paintInvoice(ctx, st){
   ctx.save();
   ctx.fillStyle = '#fff'; ctx.fillRect(0,0,CW,CH);
   ctx.drawImage(assets.header,0,0);
@@ -1007,6 +1098,10 @@ function renderInvoice(){
   drawDates(ctx,st);
   drawBox(ctx,st);
   ctx.restore();
+}
+function renderInvoice(){
+  if(!assets.header) return;
+  paintInvoice($('invoice').getContext('2d'), getState());
 }
 let _raf = 0;
 function updatePreview(){
@@ -1087,16 +1182,122 @@ $('downloadBtn').addEventListener('click', async ()=>{
     updateStudentDatalist();
 
     // Avanzar el contador
-    counter.next = (parseInt($('numNext').value)||counter.next) + (parseInt($('numIncrement').value)||5);
-    $('numNext').value = counter.next;
+    numManual = false;
+    refreshSuggested(true);
     await persistCounter();
-    $('invoiceNumber').value = `FAC-${$('numYear').value}-${counter.next}`;
+    $('invoiceNumber').value = `FAC-${$('numYear').value}-${$('numNext').value}`;
     updatePreview();
   }catch(e){
     statusEl.textContent = 'Error al generar la imagen.';
     console.error(e);
   }
   setTimeout(()=>{ statusEl.textContent=''; }, 3500);
+});
+
+// ---------- Varias facturas a la vez ----------
+const batchSel = new Set();
+function allStudentNames(){
+  const seen = new Map();
+  [...students, ...history.map(h=>h.studentName)].forEach(n=>{
+    n = String(n).trim();
+    if(n && !seen.has(n.toLowerCase())) seen.set(n.toLowerCase(), n);
+  });
+  return [...seen.values()].sort((a,b)=>a.localeCompare(b,'es'));
+}
+function recSummary(h){
+  const tv = String(h.thirdValue==null ? '' : h.thirdValue).trim();
+  let extra = '';
+  if(h.thirdType==='descuento' && tv!=='') extra = ` · Descuento ${money(Math.abs(parseFloat(tv)))}`;
+  else if(h.thirdType==='bono' && tv!=='') extra = ` · Bono ${money(tv)}`;
+  else if(h.thirdType==='horario' && tv!=='') extra = ` · ${tv}`;
+  return `${h.planName||'Plan'}${extra} · Total ${money(h.total)}`;
+}
+function updateBatchBtn(){
+  const n = batchSel.size;
+  $('batchBtn').disabled = n===0;
+  $('batchBtn').textContent = n ? `Generar ${n} factura${n>1?'s':''} (ZIP)` : 'Generar facturas';
+}
+function renderBatch(){
+  const box = $('batchList');
+  if(!box) return;
+  const names = allStudentNames();
+  if(!names.length){ box.innerHTML = '<div class="history-empty">Registra alumnos o descarga una factura primero.</div>'; updateBatchBtn(); return; }
+  box.innerHTML = '';
+  names.forEach(n=>{
+    const h = lastRecordFor(n);
+    if(!h) batchSel.delete(n);
+    const row = document.createElement('label');
+    row.className = 'batch-item' + (h ? '' : ' disabled');
+    row.innerHTML = `<input type="checkbox" ${h?'':'disabled'} ${batchSel.has(n)?'checked':''}>
+      <span><strong>${esc(n)}</strong><small>${h ? esc(recSummary(h)) : 'Sin factura previa: hazla individual primero'}</small></span>`;
+    const cb = row.querySelector('input');
+    cb.onchange = ()=>{ cb.checked ? batchSel.add(n) : batchSel.delete(n); updateBatchBtn(); };
+    box.appendChild(row);
+  });
+  updateBatchBtn();
+}
+$('batchAll').onclick  = ()=>{ allStudentNames().forEach(n=>{ if(lastRecordFor(n)) batchSel.add(n); }); renderBatch(); };
+$('batchNone').onclick = ()=>{ batchSel.clear(); renderBatch(); };
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+}
+const safeName = (s)=>String(s).trim().replace(/[^a-z0-9]+/gi,'_');
+
+$('batchBtn').addEventListener('click', async ()=>{
+  const statusEl = $('batchStatus');
+  const names = allStudentNames().filter(n=>batchSel.has(n));
+  const issue = $('issueDate').value, due = $('dueDate').value;
+  if(!names.length) return;
+  if(!issue || !due){ statusEl.textContent = 'Completa las fechas de emisión y vencimiento.'; return; }
+  $('batchBtn').disabled = true;
+  try{
+    await ensureFonts();
+    const inc = parseInt($('numIncrement').value) || 5;
+    let num = parseInt($('numNext').value) || suggestedNext();
+    const yy = $('numYear').value || currentYY();
+    const files = [], newRecords = [];
+    for(let i=0;i<names.length;i++){
+      statusEl.textContent = `Generando ${i+1} de ${names.length}…`;
+      const rec = lastRecordFor(names[i]);
+      const number = `FAC-${yy}-${num}`;
+      const cv = document.createElement('canvas'); cv.width = CW; cv.height = CH;
+      paintInvoice(cv.getContext('2d'), stateFromRecord(rec, number, issue, due));
+      const blob = await new Promise(res=>cv.toBlob(res,'image/jpeg',0.95));
+      files.push({name:`Factura_${safeName(number)}_${safeName(names[i])}.jpg`, blob});
+      newRecords.push({
+        invoiceNumber: number, studentName: rec.studentName, planId: rec.planId, planName: rec.planName,
+        servicePrice: rec.servicePrice, total: rec.total, thirdType: rec.thirdType, thirdValue: rec.thirdValue,
+        issueDate: fmtDate(issue), issueDateRaw: issue, dueDateRaw: due
+      });
+      num += inc;
+    }
+    if(files.length===1){
+      downloadBlob(files[0].blob, files[0].name);
+    }else if(typeof JSZip!=='undefined'){
+      const zip = new JSZip();
+      files.forEach(f=>zip.file(f.name, f.blob));
+      downloadBlob(await zip.generateAsync({type:'blob'}), `Facturas_${issue}.zip`);
+    }else{
+      for(const f of files){ downloadBlob(f.blob, f.name); await new Promise(r=>setTimeout(r,700)); }
+    }
+    history.push(...newRecords);
+    await saveHistory(history);
+    renderHistory(); updateStudentDatalist();
+    numManual = false; refreshSuggested(true); await persistCounter();
+    $('invoiceNumber').value = `FAC-${$('numYear').value}-${$('numNext').value}`;
+    batchSel.clear(); renderBatch(); updatePreview();
+    statusEl.textContent = `✓ ${files.length} factura${files.length>1?'s':''} generada${files.length>1?'s':''} y guardada${files.length>1?'s':''} en el historial`;
+  }catch(e){
+    console.error(e);
+    statusEl.textContent = 'Error al generar las facturas.';
+    updateBatchBtn();
+  }
+  setTimeout(()=>{ statusEl.textContent=''; }, 5000);
 });
 
 // ---------- Inicio ----------
@@ -1125,6 +1326,7 @@ async function init(){
 
   history = await loadHistory(); renderHistory();
   students = await loadStudents(); renderStudents(); updateStudentDatalist();
+  refreshSuggested(true);
 
   syncHorarioField();
 
@@ -1134,7 +1336,7 @@ async function init(){
   $('dueDate').value = localISO(due);
   $('servicePrice').value = plans[0].price.toFixed(2);
   $('totalPrice').value = plans[0].price.toFixed(2);
-  $('invoiceNumber').value = `FAC-${counter.year}-${counter.next}`;
+  $('invoiceNumber').value = `FAC-${counter.year}-${$('numNext').value}`;
 
   await loadAssets();
   scalePreview();
