@@ -458,7 +458,7 @@ async function sheetsSave(key, data){
   }catch(e){ console.error('Sheets (guardar):', e); return false; }
   const want = Array.isArray(data) ? data.length : 1;
   for(let i=0;i<3;i++){
-    await new Promise(r=>setTimeout(r, 1500));
+    await new Promise(r=>setTimeout(r, 800));
     const back = await sheetsReadRaw();
     if(back && back.ok){
       const got = back[key];
@@ -896,12 +896,20 @@ function selectStudent(name){
   }else if(h){
     $('studentHint').textContent = `Datos tomados de su última factura (${h.invoiceNumber}). Puedes cambiarlos.`;
     applyRecordToForm(h);
-  }else $('studentHint').textContent = '';
+  }else{
+    // alumno sin datos guardados: limpiar lo del alumno anterior
+    $('studentHint').textContent = 'Este alumno aún no tiene datos guardados: elige su plan y precio.';
+    const p = plans.find(pp=>pp.id===$('planSelect').value) || plans[0];
+    if(p) $('servicePrice').value = p.price.toFixed(2);
+    $('bonoValue').value = ''; $('descValue').value = ''; $('horarioValue').value = '';
+    setThird('bono');
+    totalManuallyEdited = false; recalcTotal();
+  }
   updatePreview();
 }
 $('studentName').addEventListener('change', ()=>{
   const n = $('studentName').value.trim();
-  if(n && (lastRecordFor(n) || studentProfiles[n.toLowerCase()])) selectStudent(n); else $('studentHint').textContent = '';
+  if(n && (students.some(x=>x.toLowerCase()===n.toLowerCase()) || lastRecordFor(n) || studentProfiles[n.toLowerCase()])) selectStudent(n); else $('studentHint').textContent = '';
 });
 
 // ---------- Guardado automático de los datos de cada alumno registrado ----------
@@ -910,6 +918,18 @@ function currentProfile(){
   const raw = t==='horario' ? $('horarioValue').value : t==='descuento' ? $('descValue').value : $('bonoValue').value;
   return {planId:$('planSelect').value, servicePrice:String($('servicePrice').value),
           thirdType:t, thirdValue:String(raw), total:String($('totalPrice').value)};
+}
+// Al generar facturas, los datos del alumno se actualizan solos con lo último que se facturó
+async function syncProfiles(recs){
+  recs.forEach(r=>{
+    const n = String(r.studentName||'').trim();
+    if(!n || !students.some(x=>x.toLowerCase()===n.toLowerCase())) return;
+    studentProfiles[n.toLowerCase()] = {
+      planId:String(r.planId||''), servicePrice:String(r.servicePrice??''),
+      thirdType:String(r.thirdType||'bono'), thirdValue:String(r.thirdValue??''), total:String(r.total??'')
+    };
+  });
+  await saveStudents(students);
 }
 let profTimer = null;
 function scheduleProfileSave(){
@@ -1281,6 +1301,7 @@ $('downloadBtn').addEventListener('click', async ()=>{
     await saveHistory(history);
     renderHistory();
     await registerStudent($('studentName').value);
+    await syncProfiles([history[history.length-1]]);
     updateStudentDatalist();
 
     // Avanzar el contador
@@ -1389,6 +1410,7 @@ $('batchBtn').addEventListener('click', async ()=>{
     }
     history.push(...newRecords);
     await saveHistory(history);
+    await syncProfiles(newRecords);
     renderHistory(); updateStudentDatalist();
     numManual = false; refreshSuggested(true); await persistCounter();
     $('invoiceNumber').value = `FAC-${$('numYear').value}-${$('numNext').value}`;
