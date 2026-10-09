@@ -2,218 +2,63 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
 <title>Generador de Facturas — Nica English Club</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --yellow:#F5CE00;
-    --black:#0a0a0a;
-    --gray-bg:#f4f4f3;
-    --gray-border:#e2e2df;
-    --gray-text:#6b6b68;
-    --red:#e0342a;
-    --green:#1f7a4d;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Poppins',sans-serif;
-    background:var(--gray-bg);
-    color:var(--black);
-  }
-  .app{
-    display:flex;
-    min-height:100vh;
-  }
-  /* ---------- SIDEBAR ---------- */
-  .sidebar{
-    width:400px;
-    min-width:400px;
-    background:var(--black);
-    color:#fff;
-    padding:28px 24px 60px;
-    overflow-y:auto;
-    max-height:100vh;
-  }
-  .sidebar h1{
-    font-size:20px;
-    font-weight:800;
-    font-style:italic;
-    margin:0 0 2px;
-    letter-spacing:-0.02em;
-  }
-  .sidebar .sub{
-    color:var(--yellow);
-    font-size:12.5px;
-    margin:0 0 26px;
-    font-weight:500;
-  }
-  .section-label{
-    text-transform:uppercase;
-    font-size:11px;
-    letter-spacing:0.08em;
-    color:#9a9a97;
-    font-weight:600;
-    margin:26px 0 10px;
-  }
-  .section-label:first-of-type{margin-top:0;}
-  label{
-    display:block;
-    font-size:12.5px;
-    font-weight:600;
-    color:#d8d8d5;
-    margin:14px 0 6px;
-  }
-  label:first-child{margin-top:0;}
-  input[type=text],input[type=number],input[type=date],select,textarea{
-    width:100%;
-    background:#1c1c1c;
-    border:1px solid #333;
-    color:#fff;
-    padding:10px 11px;
-    border-radius:8px;
-    font-family:'Poppins',sans-serif;
-    font-size:13.5px;
-    outline:none;
-    transition:border-color .15s;
-  }
-  input:focus,select:focus,textarea:focus{border-color:var(--yellow);}
-  .row2{display:flex;gap:10px;}
-  .row2>div{flex:1;}
-  .toggle-group{display:flex;gap:8px;margin-top:6px;}
-  .toggle-btn{
-    flex:1;
-    padding:9px 8px;
-    background:#1c1c1c;
-    border:1px solid #333;
-    border-radius:8px;
-    color:#bbb;
-    font-size:12.5px;
-    font-weight:600;
-    cursor:pointer;
-    text-align:center;
-    transition:.15s;
-  }
-  .toggle-btn.active{
-    background:var(--yellow);
-    color:#000;
-    border-color:var(--yellow);
-  }
-  .btn{
-    width:100%;
-    padding:13px;
-    border-radius:9px;
-    border:none;
-    font-family:'Poppins',sans-serif;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
-    transition:.15s;
-  }
-  .btn-primary{
-    background:var(--yellow);
-    color:#000;
-    margin-top:22px;
-  }
-  .btn-primary:hover{filter:brightness(1.08);}
-  .btn-ghost{
-    background:transparent;
-    color:#d8d8d5;
-    border:1px solid #3a3a3a;
-    font-size:12.5px;
-    padding:9px;
-  }
-  .btn-ghost:hover{border-color:var(--yellow);color:var(--yellow);}
-  .hint{font-size:11px;color:#8a8a87;margin-top:6px;line-height:1.5;}
-  .divider{height:1px;background:#262626;margin:24px 0;}
-
-  /* Catalog */
-  .plan-card{
-    background:#161616;
-    border:1px solid #2a2a2a;
-    border-radius:10px;
-    padding:12px 13px;
-    margin-bottom:9px;
-  }
-  .plan-card-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:8px;
-  }
-  .plan-card-top strong{font-size:13.5px;}
-  .plan-card-top span.price{color:var(--yellow);font-weight:700;font-size:13.5px;white-space:nowrap;}
-  .plan-card p{font-size:11.5px;color:#9a9a97;margin:4px 0 0;line-height:1.4;}
-  .plan-card-actions{display:flex;gap:6px;margin-top:9px;}
-  .mini-btn{
-    background:#232323;border:1px solid #333;color:#ccc;
-    font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer;
-  }
-  .mini-btn:hover{color:var(--yellow);border-color:var(--yellow);}
-  .mini-btn.danger:hover{color:#ff6b60;border-color:#ff6b60;}
-
-  .plan-edit-form{
-    background:#161616;border:1px solid #2a2a2a;border-radius:10px;
-    padding:14px;margin-top:10px;
-  }
-
-  /* Numbering + history */
-  .num-config{
-    display:flex;gap:8px;
-  }
-  .num-config>div{flex:1;}
-  .num-config label{margin-top:0;}
-  .next-preview{
-    background:#161616;border:1px solid #2a2a2a;border-radius:8px;
-    padding:9px 12px;margin-top:10px;font-size:12.5px;color:#ccc;
-    display:flex;justify-content:space-between;align-items:center;
-  }
-  .next-preview b{color:var(--yellow);font-size:13.5px;}
-  .history-item{
-    background:#161616;border:1px solid #2a2a2a;border-radius:9px;
-    padding:10px 12px;margin-bottom:7px;
-    display:flex;justify-content:space-between;align-items:center;gap:8px;
-  }
-  .history-item .hi-text{font-size:12px;line-height:1.5;}
-  .history-item .hi-text strong{font-size:12.5px;color:#fff;}
-  .history-item .hi-text span{display:block;color:#9a9a97;}
-  .history-empty{font-size:12px;color:#7a7a77;padding:6px 2px;}
-
-  /* ---------- MAIN / PREVIEW ---------- */
-  .main{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:36px 20px 80px;
-    overflow-x:auto;
-  }
-  .preview-toolbar{
-    width:100%;
-    max-width:720px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-  }
-  .preview-toolbar h2{font-size:16px;margin:0;font-weight:700;}
-  .preview-toolbar .status{font-size:12px;color:var(--gray-text);}
-  .canvas-wrap{
-    box-shadow:0 8px 30px rgba(0,0,0,0.12);
-    background:#fff;
-    border-radius:14px;
-    overflow:hidden;
-  }
-  /* Factura: canvas 1414x2000, escalado solo visualmente */
-  #invoice{display:block;background:#fff;}
-  .font-warn{font-size:12px;color:#b45309;margin:-8px 0 12px;min-height:0;}
-  .batch-item{display:flex;gap:10px;align-items:flex-start;background:#161616;border:1px solid #2a2a2a;border-radius:9px;padding:9px 12px;margin:0 0 6px;cursor:pointer;font-weight:400;color:#fff;font-size:13px;}
-  .batch-item input{width:auto;margin-top:3px;accent-color:#F5CE00;}
-  .batch-item small{display:block;color:#9a9a97;font-size:11px;line-height:1.4;margin-top:2px;}
-  .batch-item.disabled{opacity:.45;cursor:default;}
-  .btn:disabled{opacity:.4;cursor:default;}
+:root{--y:#F5CE00;--k:#0a0a0a;--bg:#f4f4f3;--bd:#e2e2df;--mut:#6b6b68;--red:#e0342a;--grn:#1f7a4d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
+body{margin:0;font-family:Poppins,sans-serif;background:var(--bg);color:var(--k);padding-bottom:84px}
+.top{position:sticky;top:0;z-index:50;background:var(--k);color:#fff;display:flex;align-items:center;gap:12px;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top))}
+.brand b{display:block;font-weight:800;font-style:italic;font-size:16px}.brand small{color:var(--y);font-size:11px}
+.sync{margin-left:auto;font-size:11px;color:#aaa;text-align:right;max-width:46%;margin-top:0!important;margin-bottom:0!important}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--k);padding:6px 6px max(6px,env(safe-area-inset-bottom));z-index:60;border-top:1px solid #222}
+.tabs button{flex:1;background:none;border:0;color:#9a9a97;font:600 11px Poppins;padding:8px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.tabs button span{font-size:19px}.tabs button.on{color:var(--y)}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.tab{display:none}.tab.on{display:block}
+.card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+h2{font-size:15px;margin:0;font-weight:700}.card>h2{margin-bottom:10px}
+label{display:block;font-size:12px;font-weight:600;color:#444;margin:12px 0 5px}
+input,select{width:100%;background:#fafaf9;border:1.5px solid var(--bd);border-radius:10px;padding:11px 12px;font:500 16px Poppins;outline:none;color:var(--k)}
+input:focus,select:focus{border-color:var(--y);background:#fff}
+.row2{display:flex;gap:10px}.row2>div{flex:1;min-width:0}
+.hint{font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.5}
+.btn{border:0;border-radius:12px;padding:13px 16px;font:700 14px Poppins;cursor:pointer;background:var(--k);color:#fff;width:100%}
+.btn.y{background:var(--y);color:#000}.btn.sm{width:auto;padding:8px 14px;font-size:13px}
+.btn.ghost{background:#fff;color:var(--k);border:1.5px solid var(--bd)}.btn:disabled{opacity:.4}
+.btn.dirty{background:var(--y);color:#000;border-color:var(--y);box-shadow:0 0 0 3px rgba(245,206,0,.4)}
+.mini-btn{background:#fff;border:1.5px solid var(--bd);color:var(--k);font:600 12px Poppins;padding:7px 12px;border-radius:9px;cursor:pointer;margin-top:8px}
+.mini-btn.danger{color:var(--red)}
+.banner{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18);cursor:pointer;margin-bottom:16px;background:#fff}
+.banner canvas{display:block;width:100%;height:auto}
+.cap{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;gap:8px;padding:22px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,.88));color:#fff;font-size:12px;font-weight:600}.cap i{color:var(--y);font-style:normal;white-space:nowrap}
+.list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.st{border:1.5px solid var(--bd);border-radius:14px;margin-top:10px;overflow:hidden;background:#fff}
+.st.open{border-color:var(--y);box-shadow:0 0 0 3px rgba(245,206,0,.25)}
+.st-h{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;cursor:pointer}
+.av{width:40px;height:40px;border-radius:50%;background:var(--k);color:var(--y);display:grid;place-items:center;font-weight:700;flex:none}
+.st-t{flex:1;min-width:0}.st-t b{display:block;font-size:14px}.st-t small{color:var(--mut);font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{font-size:24px;color:var(--mut);transition:.2s}.st.open .chev{transform:rotate(90deg)}
+.st-b{display:none;padding:0 14px 16px;border-top:1px solid var(--bd)}.st.open .st-b{display:block}
+.toggle-group{display:flex;gap:6px}.toggle-btn{flex:1;text-align:center;padding:10px 4px;border-radius:10px;border:1.5px solid var(--bd);font:600 12.5px Poppins;cursor:pointer;background:#fff}
+.toggle-btn.active{background:var(--y);border-color:var(--y)}
+.plan-card,.history-item,.batch-item{background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:12px;margin-top:10px}
+.plan-card-top{display:flex;justify-content:space-between;gap:8px}.price{font-weight:700}.plan-card p{font-size:12px;color:var(--mut);margin:4px 0 0}
+.plan-card-actions{display:flex;gap:8px}.plan-edit-form{background:#fafaf9;border:1.5px solid var(--y);border-radius:12px;padding:14px;margin-top:12px}
+.history-item{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px}.history-item span{display:block;color:var(--mut)}.history-item .mini-btn{margin:0}
+.batch-item{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-weight:400;font-size:13px;margin:8px 0 0}.batch-item input{width:auto;margin-top:4px;accent-color:#000}
+.batch-item small{display:block;color:var(--mut);font-size:11.5px}.batch-item.disabled{opacity:.45}
+.history-empty{font-size:13px;color:var(--mut);padding:8px 2px}
+.toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);background:var(--k);color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:90%;text-align:center}.toast.on{opacity:1;transform:translate(-50%,0)}
+.modal{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.93);display:flex;flex-direction:column}
+.mbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;color:#fff;font-size:13px;font-weight:600}.mbar .btn{padding:9px 14px;font-size:13px}
+.mbody{flex:1;overflow:auto;display:flex;justify-content:center;padding:0 12px 20px}.mbody canvas{width:min(100%,760px);height:auto;align-self:flex-start;border-radius:10px;background:#fff}
+@media(min-width:900px){body{padding-bottom:0}.top{padding:12px 28px}.tabs{position:static;background:none;padding:0;margin-left:24px;border:0}
+.tabs button{flex:none;flex-direction:row;gap:6px;font-size:13px;padding:8px 14px}.tabs button.on{background:#1f1f1f}.tabs button span{font-size:15px}.sync{max-width:none}
+.facturar{display:grid;grid-template-columns:1.05fr 1fr;gap:24px;align-items:start}.banner{position:sticky;top:84px}.toast{bottom:30px}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -229,153 +74,46 @@
     <p id="loginMsg" style="margin-top:16px;font-size:13px;color:#ff8a80;min-height:18px"></p>
   </div>
 </div>
-<div class="app">
 
-  <!-- ============ SIDEBAR ============ -->
-  <div class="sidebar">
-    <h1>Generador de Facturas</h1>
-    <p class="sub">Nica English Club — Aviso de Pago</p>
-    <p class="hint" id="storageMode" style="margin:-16px 0 20px;"></p>
-
-    <div class="section-label">Datos de la factura</div>
-
-    <label>Nombre del estudiante</label>
-    <input type="text" id="studentName" placeholder="Ej: Gustavo Martínez" list="studentNames">
-    <datalist id="studentNames"></datalist>
-    <div class="hint" id="studentHint"></div>
-
-    <label>Número de factura</label>
-    <input type="text" id="invoiceNumber" placeholder="FAC-26-401">
-
-    <div class="num-config" style="margin-top:8px;">
-      <div>
-        <label>Año (2 dígitos)</label>
-        <input type="text" id="numYear" maxlength="2" readonly title="Se actualiza solo cada año">
-      </div>
-      <div>
-        <label>Próximo número</label>
-        <input type="number" id="numNext">
-      </div>
-      <div>
-        <label>Incremento</label>
-        <input type="number" id="numIncrement">
-      </div>
-    </div>
-    <div class="next-preview">
-      <span>Siguiente sugerido: <b id="numPreview">FAC-26-401</b></span>
-      <button class="mini-btn" id="useNextBtn">Usar</button>
-    </div>
-    <div class="hint">Cada vez que descargues una factura, el número sube automáticamente según el incremento. Puedes editar el número de factura a mano si lo necesitas.</div>
-
-    <div class="row2">
-      <div>
-        <label>Fecha de emisión</label>
-        <input type="date" id="issueDate">
-      </div>
-      <div>
-        <label>Fecha de vencimiento</label>
-        <input type="date" id="dueDate">
-      </div>
-    </div>
-    <button class="mini-btn" id="resetDatesBtn" style="margin-top:8px;">Restablecer fechas (hoy y +5 días)</button>
-
-    <label>Plan / Servicio</label>
-    <select id="planSelect"></select>
-
-    <div class="row2">
-      <div>
-        <label>Precio del servicio (USD)</label>
-        <input type="number" id="servicePrice" step="0.01">
-      </div>
-      <div>
-        <label>Total a pagar (USD)</label>
-        <input type="number" id="totalPrice" step="0.01">
-      </div>
-    </div>
-    <div class="hint">El total se calcula automático (precio + bono, o precio − descuento), pero puedes sobrescribirlo a mano.</div>
-
-    <label>Campo inferior izquierdo</label>
-    <div class="toggle-group">
-      <div class="toggle-btn active" id="btnBono">Bono por desempeño</div>
-      <div class="toggle-btn" id="btnDescuento">Descuento</div>
-      <div class="toggle-btn" id="btnHorario">Horario</div>
-    </div>
-
-    <div id="bonoField">
-      <label>Valor del bono (deja vacío = N/A)</label>
-      <input type="text" id="bonoValue" placeholder="-20.00 o vacío para N/A">
-    </div>
-    <div id="descField" style="display:none;">
-      <label>Descuento miembro (deja vacío = N/A)</label>
-      <input type="text" id="descValue" placeholder="20.00 o vacío para N/A">
-    </div>
-    <div id="horarioField" style="display:none;">
-      <label>Horario</label>
-      <select id="horarioSelect">
-        <option value="8:15 - 9:45 AM CST">8:15 - 9:45 AM CST</option>
-        <option value="10:15 - 11:45 AM CST">10:15 - 11:45 AM CST</option>
-        <option value="1:15 - 2:45 PM CST">1:15 - 2:45 PM CST</option>
-        <option value="3:15 - 4:45 PM CST" selected>3:15 - 4:45 PM CST</option>
-        <option value="6:15 - 7:15 PM CST">6:15 - 7:15 PM CST</option>
-        <option value="custom">Personalizado…</option>
-      </select>
-      <input type="text" id="horarioValue" placeholder="Escribe el horario" style="margin-top:8px;display:none;">
-    </div>
-
-    <button class="btn btn-primary" id="downloadBtn">⬇ Descargar factura en JPG</button>
-    <div class="hint" id="downloadStatus" style="text-align:center;margin-top:10px;"></div>
-
-    <div class="divider"></div>
-
-    <div class="section-label">Generar varias facturas</div>
-    <div class="hint" style="margin:-4px 0 10px;">Cada alumno sale con los datos de su última factura (plan, bono, descuento u horario), con las fechas de arriba. Los números siguen desde "Siguiente sugerido".</div>
-    <div id="batchList"></div>
-    <div class="row2" style="margin-top:8px;">
-      <div><button class="btn btn-ghost" id="batchAll">Seleccionar todos</button></div>
-      <div><button class="btn btn-ghost" id="batchNone">Quitar todos</button></div>
-    </div>
-    <button class="btn btn-primary" id="batchBtn" style="margin-top:14px;" disabled>Generar facturas</button>
-    <div class="hint" id="batchStatus" style="text-align:center;margin-top:10px;"></div>
-
-    <div class="divider"></div>
-
-    <div class="section-label">Catálogo de planes (editable)</div>
-    <div id="planList"></div>
-    <button class="btn btn-ghost" id="addPlanBtn" style="margin-top:4px;">+ Agregar plan nuevo</button>
-    <div id="planEditArea"></div>
-
-    <div class="divider"></div>
-
-    <div class="section-label">Alumnos registrados</div>
-    <div class="row2">
-      <div><input type="text" id="newStudentInput" placeholder="Nombre del alumno nuevo"></div>
-    </div>
-    <button class="btn btn-ghost" id="addStudentBtn" style="margin-top:8px;">+ Registrar alumno</button>
-    <div id="studentList" style="margin-top:10px;"></div>
-
-    <div class="divider"></div>
-
-    <div class="section-label">Facturas generadas (historial)</div>
-    <div id="historyList"></div>
-    <button class="btn btn-ghost" id="clearHistoryBtn" style="margin-top:4px;">Vaciar historial</button>
-
-  </div>
-
-  <!-- ============ MAIN PREVIEW ============ -->
-  <div class="main">
-    <div class="preview-toolbar">
-      <h2>Vista previa</h2>
-      <span class="status" id="scaleStatus">Escala 45%</span>
-    </div>
-    <div class="font-warn" id="fontStatus"></div>
-    <div class="canvas-wrap" id="canvasWrap">
-      <canvas id="invoice" width="1414" height="2000"></canvas>
-    </div>
-  </div>
-
-</div>
+<header class="top"><div class="brand"><b>Nica English Club</b><small>Generador de facturas</small></div>
+<nav class="tabs" id="tabs"><button data-tab="facturar" class="on"><span>🧾</span>Facturar</button><button data-tab="lote"><span>📦</span>Varias</button><button data-tab="hist"><span>🕘</span>Historial</button><button data-tab="ajustes"><span>⚙️</span>Ajustes</button></nav>
+<span class="sync hint" id="storageMode"></span></header>
+<main>
+<section class="tab on" id="tab-facturar"><div class="facturar">
+ <div><div class="banner" id="banner"><canvas id="bannerCv" width="1414" height="880"></canvas><div class="cap"><span id="bannerTitle">Vista previa</span><i>Toca para ver completa ⤢</i></div></div><div class="hint" id="fontStatus"></div></div>
+ <div class="card"><div class="list-head"><h2>Alumnos registrados</h2><button class="btn sm y" id="newStBtn">+ Nuevo</button></div>
+  <div id="newStBox" hidden class="row2" style="margin-bottom:10px"><div><input id="newStudentInput" placeholder="Nombre del alumno"></div><div style="flex:none"><button class="btn sm" id="addStudentBtn" style="height:100%">Registrar</button></div></div>
+  <input type="search" id="stSearch" placeholder="🔍 Buscar alumno…">
+  <div id="studentList"></div><div class="hint" style="margin-top:12px">Toca un alumno para abrir sus datos. Se cargan los de su última factura o los últimos que guardaste.</div></div>
+</div></section>
+<section class="tab" id="tab-lote"><div class="card"><h2>Generar varias facturas</h2><div class="hint">Cada alumno sale con los datos de su última factura. Los números siguen desde el siguiente sugerido.</div>
+ <div class="row2"><div><label>Emisión</label><input type="date" id="bIssue"></div><div><label>Vencimiento</label><input type="date" id="bDue"></div></div>
+ <div id="batchList"></div><div class="row2" style="margin-top:10px"><div><button class="btn ghost" id="batchAll">Seleccionar todos</button></div><div><button class="btn ghost" id="batchNone">Quitar todos</button></div></div>
+ <button class="btn y" id="batchBtn" style="margin-top:12px" disabled>Generar facturas</button><div class="hint" id="batchStatus" style="text-align:center"></div></div></section>
+<section class="tab" id="tab-hist"><div class="card"><h2>Facturas generadas</h2><div id="historyList"></div><button class="btn ghost" id="clearHistoryBtn" style="margin-top:14px">Vaciar historial</button></div></section>
+<section class="tab" id="tab-ajustes"><div class="card"><h2>Catálogo de planes</h2><div id="planList"></div><button class="btn ghost" id="addPlanBtn" style="margin-top:12px">+ Agregar plan nuevo</button><div id="planEditArea"></div></div>
+ <div class="card"><h2>Numeración</h2><div class="row2"><div><label>Año</label><input id="numYear" readonly></div><div><label>Próximo</label><input type="number" id="numNext"></div><div><label>Incremento</label><input type="number" id="numIncrement"></div></div>
+ <div class="hint">Siguiente sugerido: <b id="numPreview"></b> (siempre parte de la última factura generada).</div></div></section>
+</main>
+<div id="editHolder" hidden><div id="editor">
+ <input type="hidden" id="studentName"><div class="hint" id="studentHint"></div>
+ <label>Número de factura</label><input id="invoiceNumber" placeholder="FAC-26-401">
+ <div class="row2"><div><label>Emisión</label><input type="date" id="issueDate"></div><div><label>Vencimiento</label><input type="date" id="dueDate"></div></div>
+ <button class="mini-btn" id="resetDatesBtn">Fechas: hoy y +5 días</button>
+ <label>Plan / Servicio</label><select id="planSelect"></select>
+ <div class="row2"><div><label>Precio (USD)</label><input type="number" inputmode="decimal" id="servicePrice" step="0.01"></div><div><label>Total a pagar</label><input type="number" inputmode="decimal" id="totalPrice" step="0.01"></div></div>
+ <label>Campo inferior izquierdo</label><div class="toggle-group"><div class="toggle-btn active" id="btnBono">Bono</div><div class="toggle-btn" id="btnDescuento">Descuento</div><div class="toggle-btn" id="btnHorario">Horario</div></div>
+ <div id="bonoField"><label>Bono (vacío = N/A)</label><input type="text" id="bonoValue" placeholder="-20.00"></div>
+ <div id="descField" style="display:none"><label>Descuento (vacío = N/A)</label><input type="text" id="descValue" placeholder="20.00"></div>
+ <div id="horarioField" style="display:none"><label>Horario</label><select id="horarioSelect"><option value="8:15 - 9:45 AM CST">8:15 - 9:45 AM CST</option><option value="10:15 - 11:45 AM CST">10:15 - 11:45 AM CST</option><option value="1:15 - 2:45 PM CST">1:15 - 2:45 PM CST</option><option value="3:15 - 4:45 PM CST" selected>3:15 - 4:45 PM CST</option><option value="6:15 - 7:15 PM CST">6:15 - 7:15 PM CST</option><option value="custom">Personalizado…</option></select><input type="text" id="horarioValue" placeholder="Escribe el horario" style="margin-top:8px;display:none"></div>
+ <div class="row2" style="margin-top:16px"><div><button class="btn ghost" id="saveBtn">💾 Guardar datos</button></div><div><button class="btn y" id="downloadBtn">⬇ Factura JPG</button></div></div>
+ <div class="hint" id="downloadStatus" style="text-align:center"></div><button class="mini-btn danger" id="rmStudentBtn">Quitar alumno de la lista</button>
+</div></div>
+<div class="modal" id="modal" hidden><div class="mbar"><span id="mTitle"></span><span style="display:flex;gap:8px"><button class="btn ghost" id="mShare">Compartir</button><button class="btn y" id="mDl">⬇ Descargar</button><button class="btn ghost" id="mClose">✕</button></span></div><div class="mbody"><canvas id="fullCv" width="1414" height="2000"></canvas></div></div>
+<canvas id="invoice" width="1414" height="2000" hidden></canvas><div class="toast" id="toast"></div>
 
 <script>
+
 // ======================================================================
 //  Generador de Facturas — Nica English Club
 //  La factura se dibuja en un <canvas> de 1414 x 2000 px (mismo tamaño
@@ -546,55 +284,6 @@ let counter = {year:'', next:401, increment:5};
 let history = [];
 let students = [];
 
-// ---------- Alumnos ----------
-function renderStudents(){
-  renderBatch();
-  const list = $('studentList');
-  if(!students.length){
-    list.innerHTML = '<div class="history-empty">Aún no has registrado alumnos.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  students.forEach((s,idx)=>{
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `
-      <div class="hi-text"><strong>${esc(s)}</strong></div>
-      <div style="display:flex;gap:6px;">
-        <button class="mini-btn" data-use="${idx}">Usar</button>
-        <button class="mini-btn danger" data-rm="${idx}">✕</button>
-      </div>`;
-    list.appendChild(item);
-  });
-  list.querySelectorAll('[data-use]').forEach(b=>{
-    b.onclick = ()=>{ selectStudent(students[parseInt(b.dataset.use)]); };
-  });
-  list.querySelectorAll('[data-rm]').forEach(b=>{
-    b.onclick = async ()=>{
-      const rmName = students[parseInt(b.dataset.rm)];
-      delete studentProfiles[String(rmName).toLowerCase()];
-      students.splice(parseInt(b.dataset.rm),1);
-      await saveStudents(students);
-      renderStudents(); updateStudentDatalist();
-    };
-  });
-}
-async function registerStudent(name){
-  name = name.trim();
-  if(!name) return;
-  if(!students.some(s=>s.toLowerCase()===name.toLowerCase())){
-    students.push(name);
-    await saveStudents(students);
-    renderStudents(); updateStudentDatalist();
-  }
-}
-$('addStudentBtn').onclick = async ()=>{
-  const input = $('newStudentInput');
-  await registerStudent(input.value);
-  input.value = '';
-};
-$('newStudentInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') $('addStudentBtn').click(); });
-
 // ---------- Numeración ----------
 function currentYY(){ return String(new Date().getFullYear()%100).padStart(2,'0'); }
 function updateNumPreview(){
@@ -630,59 +319,6 @@ function refreshSuggested(force){
 $('numNext').addEventListener('input', ()=>{ numManual = true; persistCounter(); });
 $('numIncrement').addEventListener('input', ()=>{ persistCounter(); refreshSuggested(false); });
 $('numYear').addEventListener('input', persistCounter);
-$('useNextBtn').onclick = ()=>{
-  const y = $('numYear').value || currentYY();
-  const n = $('numNext').value || counter.next;
-  $('invoiceNumber').value = `FAC-${y}-${n}`;
-  updatePreview();
-};
-
-// ---------- Historial ----------
-function renderHistory(){
-  renderBatch();
-  const list = $('historyList');
-  if(!history.length){
-    list.innerHTML = '<div class="history-empty">Aún no has descargado facturas.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  history.slice().reverse().forEach((h)=>{
-    const idx = history.indexOf(h);
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.innerHTML = `
-      <div class="hi-text">
-        <strong>${esc(h.invoiceNumber)}</strong> — $${parseFloat(h.total).toFixed(2)}
-        <span>${esc(h.studentName)} · ${esc(h.planName)} · ${esc(h.issueDate)}</span>
-      </div>
-      <button class="mini-btn" data-load="${idx}">Cargar</button>`;
-    list.appendChild(item);
-  });
-  list.querySelectorAll('[data-load]').forEach(b=>{
-    b.onclick = ()=>{
-      const h = history[parseInt(b.dataset.load)];
-      $('studentName').value = h.studentName;
-      $('invoiceNumber').value = h.invoiceNumber;
-      $('issueDate').value = h.issueDateRaw || $('issueDate').value;
-      $('dueDate').value = h.dueDateRaw || $('dueDate').value;
-      dueManual = true;
-      applyRecordToForm(h);
-      updateStudentDatalist();
-      updatePreview();
-      window.scrollTo(0,0);
-    };
-  });
-}
-function updateStudentDatalist(){
-  const names = [...new Set([...students, ...history.map(h=>h.studentName)])];
-  $('studentNames').innerHTML = names.map(n=>`<option value="${esc(n)}">`).join('');
-}
-$('clearHistoryBtn').onclick = async ()=>{
-  if(!confirm('¿Vaciar todo el historial de facturas guardadas?')) return;
-  history = [];
-  await saveHistory(history);
-  renderHistory(); updateStudentDatalist();
-};
 
 // ---------- Utilidades ----------
 function fmtDate(d){
@@ -886,32 +522,6 @@ function applyRecordToForm(h){
   else { setThird('bono'); $('bonoValue').value = h.thirdValue; }
   $('totalPrice').value = h.total;
 }
-function selectStudent(name){
-  $('studentName').value = name;
-  const h  = lastRecordFor(name);
-  const pr = studentProfiles[String(name).trim().toLowerCase()];
-  if(pr){
-    $('studentHint').textContent = 'Datos guardados de este alumno. Puedes cambiarlos (se guardan solos).';
-    applyRecordToForm(pr);
-  }else if(h){
-    $('studentHint').textContent = `Datos tomados de su última factura (${h.invoiceNumber}). Puedes cambiarlos.`;
-    applyRecordToForm(h);
-  }else{
-    // alumno sin datos guardados: limpiar lo del alumno anterior
-    $('studentHint').textContent = 'Este alumno aún no tiene datos guardados: elige su plan y precio.';
-    const p = plans.find(pp=>pp.id===$('planSelect').value) || plans[0];
-    if(p) $('servicePrice').value = p.price.toFixed(2);
-    $('bonoValue').value = ''; $('descValue').value = ''; $('horarioValue').value = '';
-    setThird('bono');
-    totalManuallyEdited = false; recalcTotal();
-  }
-  updatePreview();
-}
-$('studentName').addEventListener('change', ()=>{
-  const n = $('studentName').value.trim();
-  if(n && (students.some(x=>x.toLowerCase()===n.toLowerCase()) || lastRecordFor(n) || studentProfiles[n.toLowerCase()])) selectStudent(n); else $('studentHint').textContent = '';
-});
-
 // ---------- Guardado automático de los datos de cada alumno registrado ----------
 function currentProfile(){
   const t = thirdFieldType;
@@ -932,7 +542,7 @@ async function syncProfiles(recs){
   await saveStudents(students);
 }
 let profTimer = null;
-function scheduleProfileSave(){
+function scheduleProfileSave(){ setDirty(true); return;
   const n = $('studentName').value.trim();
   if(!n || !students.some(s=>s.toLowerCase()===n.toLowerCase())) return;
   clearTimeout(profTimer);
@@ -1223,7 +833,7 @@ function paintInvoice(ctx, st){
 }
 function renderInvoice(){
   if(!assets.header) return;
-  paintInvoice($('invoice').getContext('2d'), getState());
+  paintInvoice($('invoice').getContext('2d'), getState()); syncViews();
 }
 let _raf = 0;
 function updatePreview(){
@@ -1250,22 +860,136 @@ async function ensureFonts(){
   $('fontStatus').textContent = montserratLoaded() ? '' : '⚠ No cargó la fuente Montserrat (¿sin internet?). Se usa una de respaldo.';
 }
 
-// ---------- Escala de la vista previa ----------
-function scalePreview(){
-  const wrap = $('canvasWrap'), cv = $('invoice');
-  const available = window.innerWidth - 400 - 80;
-  const scale = Math.max(0.2, Math.min(available/CW, (window.innerHeight-160)/CH, 0.62));
-  cv.style.width  = (CW*scale)+'px';
-  cv.style.height = (CH*scale)+'px';
-  wrap.style.width  = (CW*scale)+'px';
-  wrap.style.height = (CH*scale)+'px';
-  $('scaleStatus').textContent = `Escala ${Math.round(scale*100)}%`;
-}
-window.addEventListener('resize', scalePreview);
 
+// ===================== INTERFAZ NUEVA =====================
+let selected=null, dirty=false;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2600);}
+function setDirty(v){dirty=v;const b=$('saveBtn');b.classList.toggle('dirty',v);b.textContent=v?'💾 Guardar cambios':'💾 Guardar datos';}
+function showTab(n){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='tab-'+n));
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===n));
+  if(n==='lote'){ $('bIssue').value=$('issueDate').value; $('bDue').value=$('dueDate').value; }
+  scrollTo(0,0);
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$('bIssue').oninput=()=>{ $('issueDate').value=$('bIssue').value; $('issueDate').dispatchEvent(new Event('input')); $('bDue').value=$('dueDate').value; };
+$('bDue').oninput=()=>{ $('dueDate').value=$('bDue').value; $('dueDate').dispatchEvent(new Event('input')); };
+function updateStudentDatalist(){}
+function stSummary(n){
+  const r=studentProfiles[n.toLowerCase()]||lastRecordFor(n);
+  if(!r) return 'Sin datos todavía';
+  const p=plans.find(x=>x.id===r.planId);
+  return `${p?p.name:(r.planName||'Plan')} · Total ${money(r.total)}`;
+}
+function renderStudents(){
+  renderBatch();
+  $('editHolder').appendChild($('editor'));
+  const q=$('stSearch').value.trim().toLowerCase(), box=$('studentList');
+  const names=allStudentNames().filter(n=>!q||n.toLowerCase().includes(q));
+  if(!names.length){ box.innerHTML='<div class="history-empty">'+(q?'Sin resultados.':'Aún no hay alumnos. Toca "+ Nuevo".')+'</div>'; return; }
+  box.innerHTML='';
+  names.forEach(n=>{
+    const it=document.createElement('div'); it.className='st'+(n===selected?' open':'');
+    it.innerHTML=`<button class="st-h"><span class="av">${esc(n[0].toUpperCase())}</span><span class="st-t"><b>${esc(n)}</b><small>${esc(stSummary(n))}</small></span><span class="chev">›</span></button><div class="st-b"></div>`;
+    it.querySelector('.st-h').onclick=()=>toggleStudent(n);
+    if(n===selected) it.querySelector('.st-b').appendChild($('editor'));
+    box.appendChild(it);
+  });
+}
+$('stSearch').oninput=renderStudents;
+async function confirmLeave(){
+  if(dirty&&selected&&confirm(`Hay cambios sin guardar de ${selected}.\n\nAceptar = guardarlos · Cancelar = descartarlos`)) await saveProfile();
+  setDirty(false);
+}
+async function toggleStudent(n){
+  await confirmLeave();
+  if(selected===n){ selected=null; renderStudents(); return; }
+  selected=n; selectStudent(n); renderStudents();
+  const el=document.querySelector('.st.open'); if(el) setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+}
+function selectStudent(name){
+  $('studentName').value=name;
+  const h=lastRecordFor(name), pr=studentProfiles[name.trim().toLowerCase()];
+  if(pr){ $('studentHint').textContent='Datos guardados de este alumno.'; applyRecordToForm(pr); }
+  else if(h){ $('studentHint').textContent=`Datos de su última factura (${h.invoiceNumber}).`; applyRecordToForm(h); }
+  else{
+    $('studentHint').textContent='Alumno sin datos: elige su plan y precio y toca Guardar.';
+    const p=plans.find(pp=>pp.id===$('planSelect').value)||plans[0];
+    if(p) $('servicePrice').value=p.price.toFixed(2);
+    $('bonoValue').value=''; $('descValue').value=''; $('horarioValue').value='';
+    setThird('bono'); totalManuallyEdited=false; recalcTotal();
+  }
+  numManual=false; refreshSuggested(true);
+  $('invoiceNumber').value=`FAC-${$('numYear').value||currentYY()}-${$('numNext').value}`;
+  setDirty(false); updatePreview();
+}
+async function saveProfile(){
+  const n=$('studentName').value.trim(); if(!n) return;
+  if(!students.some(s=>s.toLowerCase()===n.toLowerCase())) students.push(n);
+  studentProfiles[n.toLowerCase()]=currentProfile();
+  await saveStudents(students); setDirty(false); renderStudents(); toast('Datos guardados ✓');
+}
+$('saveBtn').onclick=saveProfile;
+const _sp=syncProfiles; syncProfiles=async function(r){ await _sp(r); setDirty(false); renderStudents(); };
+async function registerStudent(name){
+  name=name.trim(); if(!name||students.some(s=>s.toLowerCase()===name.toLowerCase())) return;
+  students.push(name); await saveStudents(students); renderStudents();
+}
+$('newStBtn').onclick=()=>{ $('newStBox').hidden=!$('newStBox').hidden; $('newStudentInput').focus(); };
+$('addStudentBtn').onclick=async()=>{
+  const n=$('newStudentInput').value.trim(); if(!n) return;
+  if(!allStudentNames().some(x=>x.toLowerCase()===n.toLowerCase())){ students.push(n); await saveStudents(students); }
+  const name=allStudentNames().find(x=>x.toLowerCase()===n.toLowerCase());
+  $('newStudentInput').value=''; $('newStBox').hidden=true;
+  await confirmLeave(); selected=name; selectStudent(name); renderStudents(); toast('Alumno registrado ✓');
+};
+$('newStudentInput').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addStudentBtn').click(); });
+$('rmStudentBtn').onclick=async()=>{
+  const n=selected; if(!n||!confirm(`¿Quitar a ${n} de la lista? Sus facturas del historial se conservan.`)) return;
+  delete studentProfiles[n.toLowerCase()]; students=students.filter(s=>s.toLowerCase()!==n.toLowerCase());
+  await saveStudents(students); selected=null; setDirty(false); renderStudents();
+};
+function renderHistory(){
+  renderStudents();
+  const list=$('historyList');
+  if(!history.length){ list.innerHTML='<div class="history-empty">Aún no has generado facturas.</div>'; return; }
+  list.innerHTML='';
+  history.map((h,i)=>[h,i]).reverse().forEach(([h,i])=>{
+    const d=document.createElement('div'); d.className='history-item';
+    d.innerHTML=`<div><b>${esc(h.invoiceNumber)}</b> — $${parseFloat(h.total).toFixed(2)}<span>${esc(h.studentName)} · ${esc(h.planName)} · ${esc(h.issueDate)}</span></div><button class="mini-btn">Cargar</button>`;
+    d.querySelector('button').onclick=()=>loadFromHistory(i);
+    list.appendChild(d);
+  });
+}
+async function loadFromHistory(i){
+  const h=history[i]; await confirmLeave();
+  const n=allStudentNames().find(x=>x.toLowerCase()===String(h.studentName).trim().toLowerCase())||h.studentName;
+  selected=n; showTab('facturar'); selectStudent(n); applyRecordToForm(h);
+  $('invoiceNumber').value=h.invoiceNumber; $('issueDate').value=h.issueDateRaw||$('issueDate').value; $('dueDate').value=h.dueDateRaw||$('dueDate').value;
+  dueManual=true; renderStudents(); updatePreview(); setDirty(false); toast('Factura cargada');
+}
+$('clearHistoryBtn').onclick=async()=>{
+  if(!confirm('¿Vaciar todo el historial de facturas?')) return;
+  history=[]; await saveHistory(history); renderHistory();
+};
+// Banner + vista completa
+function syncViews(){
+  $('bannerCv').getContext('2d').drawImage($('invoice'),0,0,CW,880,0,0,CW,880);
+  $('bannerTitle').textContent=`${$('invoiceNumber').value||'Vista previa'} · ${$('studentName').value||'Elige un alumno'}`;
+  if(!$('modal').hidden) $('fullCv').getContext('2d').drawImage($('invoice'),0,0);
+}
+function openModal(){ $('modal').hidden=false; document.body.style.overflow='hidden'; $('mTitle').textContent=$('bannerTitle').textContent; syncViews(); }
+function closeModal(){ $('modal').hidden=true; document.body.style.overflow=''; }
+$('banner').onclick=openModal; $('mClose').onclick=closeModal;
+$('mDl').onclick=()=>{ closeModal(); downloadCurrent(); };
+$('mShare').onclick=()=>{ closeModal(); downloadCurrent(true); };
+window.addEventListener('beforeunload',e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+function scalePreview(){}
 // ---------- Descargar JPG ----------
-$('downloadBtn').addEventListener('click', async ()=>{
+async function downloadCurrent(share){
   const statusEl = $('downloadStatus');
+  if(!$('studentName').value){ toast('Elige un alumno primero'); return; }
   statusEl.textContent = 'Generando imagen...';
   try{
     await ensureFonts();
@@ -1277,9 +1001,11 @@ $('downloadBtn').addEventListener('click', async ()=>{
     const invNum = ($('invoiceNumber').value || '').trim().replace(/[^a-z0-9]+/gi,'_');
     link.download = `Factura_${invNum}_${studentName}.jpg`;
     link.href = url;
-    document.body.appendChild(link); link.click(); link.remove();
+    let shared=false;
+    if(share){ try{ const f=new File([blob],link.download,{type:'image/jpeg'}); if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f]}); shared=true; } }catch(e){ if(e&&e.name==='AbortError'){ statusEl.textContent=''; return; } } }
+    if(!shared){ document.body.appendChild(link); link.click(); link.remove(); }
     setTimeout(()=>URL.revokeObjectURL(url), 5000);
-    statusEl.textContent = '✓ Descargada y guardada en el historial';
+    statusEl.textContent = '✓ Descargada y guardada en el historial'; toast(shared?'✓ Factura compartida y guardada':'✓ Factura descargada y guardada');
 
     // Historial
     const p = plans.find(pp=>pp.id===$('planSelect').value);
@@ -1315,7 +1041,8 @@ $('downloadBtn').addEventListener('click', async ()=>{
     console.error(e);
   }
   setTimeout(()=>{ statusEl.textContent=''; }, 3500);
-});
+}
+$('downloadBtn').addEventListener('click', ()=>downloadCurrent(false));
 
 // ---------- Varias facturas a la vez ----------
 const batchSel = new Set();
