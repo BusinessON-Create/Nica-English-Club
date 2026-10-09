@@ -503,14 +503,33 @@ const loadHistory = async ()=>{
   if(sheetsOK) return (sheetsData.history||[]).map(h=>({...h, invoiceNumber:String(h.invoiceNumber), studentName:String(h.studentName)}));
   return localGet('invoiceHistory', []);
 };
+// Datos propios de cada alumno (plan, precio, bono/descuento/horario), guardados en el Sheet
+let studentProfiles = {};
 const loadStudents = async ()=>{
-  if(sheetsOK) return (sheetsData.students||[]).map(String).filter(Boolean);
-  return localGet('students', []);
+  const raw = sheetsOK ? (sheetsData.students||[]) : localGet('students', []);
+  const names = []; studentProfiles = {};
+  raw.forEach(r=>{
+    if(r && typeof r==='object'){
+      const n = String(r.name||'').trim(); if(!n) return;
+      names.push(n);
+      if(r.planId || (r.servicePrice!==undefined && r.servicePrice!=='')){
+        studentProfiles[n.toLowerCase()] = {
+          planId:String(r.planId||''), servicePrice:String(r.servicePrice??''),
+          thirdType:String(r.thirdType||'bono'), thirdValue:String(r.thirdValue??''),
+          total:String(r.total??'')
+        };
+      }
+    }else{ const n = String(r).trim(); if(n) names.push(n); }
+  });
+  return names;
 };
+function studentRows(names){
+  return names.map(n=>({name:n, ...(studentProfiles[n.toLowerCase()]||{})}));
+}
 const savePlans    = (v)=>persist('plans','plans',v);
 const saveCounter  = (v)=>persist('invoiceCounter','counter',v);
 const saveHistory  = (v)=>persist('invoiceHistory','history',v);
-const saveStudents = (v)=>persist('students','students',v);
+const saveStudents = (v)=>persist('students','students',studentRows(v));
 
 const $ = (id)=>document.getElementById(id);
 const esc = (s)=>String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -552,6 +571,8 @@ function renderStudents(){
   });
   list.querySelectorAll('[data-rm]').forEach(b=>{
     b.onclick = async ()=>{
+      const rmName = students[parseInt(b.dataset.rm)];
+      delete studentProfiles[String(rmName).toLowerCase()];
       students.splice(parseInt(b.dataset.rm),1);
       await saveStudents(students);
       renderStudents(); updateStudentDatalist();
@@ -867,15 +888,44 @@ function applyRecordToForm(h){
 }
 function selectStudent(name){
   $('studentName').value = name;
-  const h = lastRecordFor(name);
-  $('studentHint').textContent = h ? `Datos tomados de su última factura (${h.invoiceNumber}). Puedes cambiarlos.` : '';
-  if(h) applyRecordToForm(h);
+  const h  = lastRecordFor(name);
+  const pr = studentProfiles[String(name).trim().toLowerCase()];
+  if(pr){
+    $('studentHint').textContent = 'Datos guardados de este alumno. Puedes cambiarlos (se guardan solos).';
+    applyRecordToForm(pr);
+  }else if(h){
+    $('studentHint').textContent = `Datos tomados de su última factura (${h.invoiceNumber}). Puedes cambiarlos.`;
+    applyRecordToForm(h);
+  }else $('studentHint').textContent = '';
   updatePreview();
 }
 $('studentName').addEventListener('change', ()=>{
   const n = $('studentName').value.trim();
-  if(n && lastRecordFor(n)) selectStudent(n); else $('studentHint').textContent = '';
+  if(n && (lastRecordFor(n) || studentProfiles[n.toLowerCase()])) selectStudent(n); else $('studentHint').textContent = '';
 });
+
+// ---------- Guardado automático de los datos de cada alumno registrado ----------
+function currentProfile(){
+  const t = thirdFieldType;
+  const raw = t==='horario' ? $('horarioValue').value : t==='descuento' ? $('descValue').value : $('bonoValue').value;
+  return {planId:$('planSelect').value, servicePrice:String($('servicePrice').value),
+          thirdType:t, thirdValue:String(raw), total:String($('totalPrice').value)};
+}
+let profTimer = null;
+function scheduleProfileSave(){
+  const n = $('studentName').value.trim();
+  if(!n || !students.some(s=>s.toLowerCase()===n.toLowerCase())) return;
+  clearTimeout(profTimer);
+  profTimer = setTimeout(async ()=>{
+    studentProfiles[n.toLowerCase()] = currentProfile();
+    await saveStudents(students);
+  }, 1200);
+}
+['planSelect','servicePrice','totalPrice','bonoValue','descValue','horarioSelect','horarioValue'].forEach(id=>{
+  $(id).addEventListener('input', scheduleProfileSave);
+  $(id).addEventListener('change', scheduleProfileSave);
+});
+Object.values(THIRD_UI).forEach(ui=>$(ui.btn).addEventListener('click', scheduleProfileSave));
 
 
 // ======================================================================
