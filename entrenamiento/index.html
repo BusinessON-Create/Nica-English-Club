@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="../seguridad.js"></script>
+<title>Tense Engine · Nica English Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.453.0"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+body{font-family:Inter,sans-serif;background:radial-gradient(1200px 600px at 50% -10%,#0d1b3d,#05070d 60%) #05070d;color:#e5e7eb;min-height:100vh}
+h1,h2,.hd{font-family:Sora,sans-serif}
+.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(14px);border-radius:20px}
+.lbl{font:600 11px Inter;letter-spacing:.12em;color:#d4af37;text-transform:uppercase}
+.inp{width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;color:#fff;outline:none;font-size:14px}
+.inp:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f633}
+.chip{border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer;transition:.15s;background:rgba(255,255,255,.03)}
+.chip:hover{border-color:#3b82f6}.chip.on{background:#2563eb;border-color:#3b82f6;color:#fff}
+.btn{border-radius:12px;padding:10px 16px;font-weight:600;font-size:14px;display:inline-flex;gap:8px;align-items:center;cursor:pointer;transition:.15s}
+.pri{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 6px 24px #2563eb55}.pri:hover{transform:translateY(-1px)}
+.gh{border:1px solid rgba(255,255,255,.16)}.gh:hover{background:rgba(255,255,255,.07)}
+.cell{border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:14px;background:rgba(255,255,255,.035);cursor:pointer;transition:.2s;border-top:3px solid var(--c)}
+.cell:hover{transform:translateY(-2px)}.cell.sel{box-shadow:0 0 0 1px var(--c),0 10px 40px -10px var(--c);background:rgba(255,255,255,.07)}
+.a{color:var(--c);font-weight:700}.m{font-weight:600;color:#fff}
+.row{display:none}.row.on{display:block}
+@media(min-width:1024px){.row{display:block}.tabs{display:none}}
+.tab{flex:1;padding:9px;border-radius:10px;font-weight:600;font-size:13px;color:#9ca3af}.tab.on{background:#2563eb;color:#fff}
+.tl{position:relative;height:210px;min-width:820px}
+.line{position:absolute;left:0;right:0;top:99px;height:3px;background:linear-gradient(90deg,#fb923c22,#fb923c 20%,#fb923c 80%,#fb923c22);border-radius:9px}
+.node{position:absolute;top:0;height:100%;width:0;transition:.25s}
+.dot{position:absolute;left:-9px;top:91px;width:18px;height:18px;border:2px solid var(--c);border-radius:99px;background:#05070d;transition:.25s}.sq{border-radius:5px}
+.lab{position:absolute;left:-42px;width:84px;text-align:center;font:600 12px Inter;color:var(--c)}.up{bottom:118px}.dn{top:120px}
+.node.on .dot{background:var(--c);box-shadow:0 0 20px var(--c);transform:scale(1.25)}
+.tl.has .node:not(.on){opacity:.28}
+.seg{height:8px;border-radius:9px;background:rgba(255,255,255,.1);flex:1;transition:.3s}.seg.f{background:linear-gradient(90deg,#d4af37,#fb923c)}
+.g{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mc{border:1px solid rgba(255,255,255,.1);border-top:3px solid var(--c);border-radius:12px;padding:6px;min-height:84px;background:rgba(255,255,255,.04);cursor:pointer;overflow:hidden;font-size:10.5px;line-height:1.3;color:#cbd5e1;text-align:left;transition:.15s}
+.mc .t{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.mc.sel{box-shadow:0 0 0 1px var(--c),0 0 18px -4px var(--c);background:rgba(255,255,255,.09)}
+@media(min-width:640px){.mc{font-size:13px;padding:10px;min-height:104px}.g{gap:10px}}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+.modal.on{display:flex}@media(min-width:640px){.modal{align-items:center}}
+.sheet{width:100%;max-width:520px;border-radius:24px 24px 0 0;background:#0b1224;border:1px solid rgba(255,255,255,.12);border-top:3px solid var(--c);padding:20px;animation:up .25s}
+@media(min-width:640px){.sheet{border-radius:24px}}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.mc.ok{border-color:#22c55e66;border-top-color:#22c55e;background:rgba(34,197,94,.08)}
+.mc.bad{border-color:#f59e0b88;border-top-color:#f59e0b}
+.now-pill{position:absolute;left:60%;top:2px;transform:translateX(-50%);background:#d4af37;color:#05070d;font:700 10px Inter;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.now-ln{position:absolute;left:60%;top:26px;height:70px;border-left:2px dashed #d4af37}
+.sheet{max-height:92vh;overflow:auto}.gr{transform-box:fill-box;transform-origin:left;animation:grow 1s ease-out}@keyframes grow{from{transform:scaleX(0)}}
+select.inp{background:#0b1224;color:#fff}option{background:#0b1224;color:#fff}
+.step{display:none}.step.on{display:block}
+.pcs{display:inline-flex;flex-direction:column;align-items:center;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);margin:3px 3px 0 0}.pcs b{font-size:16px}.pcs small{font-size:10px;color:#94a3b8;margin-top:2px}.pcs.k{border-color:var(--c,#60a5fa);box-shadow:0 0 14px -6px var(--c,#60a5fa)}
+.mc.dom{position:relative}.mc.dom::after{content:'🏆';position:absolute;top:2px;right:4px;font-size:12px}
+#mdl .chip.on{border-color:#d4af37;color:#d4af37;background:rgba(212,175,55,.12)}
+.mic{background:linear-gradient(135deg,#d4af37,#b8860b);color:#05070d;box-shadow:0 6px 24px #d4af3744}.mic:hover{transform:translateY(-1px)}
+.rec{background:#dc2626!important;color:#fff!important;animation:rp 1s infinite}@keyframes rp{0%,100%{box-shadow:0 0 0 0 #dc262688}50%{box-shadow:0 0 0 10px #dc262600}}
+.sw{display:inline-block;padding:1px 7px;border-radius:7px;margin:2px 3px 0 0;font-weight:600;font-size:15px}
+.sw.tg{background:rgba(255,255,255,.07);color:#e2e8f0}.sw.ok{background:#34d3991f;color:#6ee7b7}.sw.cl{background:#fbbf2426;color:#fcd34d}.sw.no{background:#f871711f;color:#fca5a5;text-decoration:underline wavy #f87171}
+.sbar{height:6px;border-radius:9px;background:rgba(255,255,255,.1);margin-top:6px;overflow:hidden}.sbar i{display:block;height:100%;border-radius:9px;transition:width .5s}
+.mc{touch-action:manipulation;user-select:none}.node{cursor:pointer}
+.tl{min-width:1000px;width:100%}.tlw{overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth}.tlw::-webkit-scrollbar{display:none}
+.mk{position:absolute;top:0;width:0;transition:left .6s ease}.mk .now-pill{left:0;transform:translateX(-50%)}.mk .now-ln{left:0}
+.act{font:600 12px Inter;padding:5px 12px;border-radius:99px;border:1px solid var(--c,#d4af37);color:var(--c,#d4af37);background:rgba(255,255,255,.04)}
+.mc.sel{box-shadow:0 0 0 2px #d4af37,0 0 22px -2px #d4af37}.node.on .dot{box-shadow:0 0 0 3px #d4af37,0 0 20px var(--c)}.tl.has .node:not(.on){opacity:.45}
+</style></head>
+<body class="pb-16">
+<header class="max-w-6xl mx-auto px-5 pt-10 text-center" data-aos="fade-down">
+<p class="lbl">Nica English Club</p>
+<h1 class="text-4xl md:text-6xl font-extrabold mt-2 bg-gradient-to-r from-white via-blue-300 to-blue-500 bg-clip-text text-transparent">TENSE ENGINE</h1>
+<p class="text-gray-400 mt-3">Build the idea. Move it through time. Say it out loud.</p>
+<button id="hb" class="btn pri mt-5">📘 ¿Cómo se usa? Léelo primero</button>
+</header>
+
+<main class="max-w-3xl mx-auto px-3 mt-8 space-y-6">
+<section class="glass p-4 sm:p-5">
+<div class="flex items-center justify-between gap-2 flex-wrap"><h2 class="hd font-bold text-lg tracking-wide">THE TIMELINE</h2><button id="act" class="act"></button></div>
+<div class="text-xs flex gap-3 flex-wrap text-gray-400 mt-1 mb-2"><span style="color:#fb923c">● Simple</span><span style="color:#60a5fa">■ Perfect</span><span style="color:#e5e7eb">● Progressive</span><span style="color:#a78bfa">● Going to</span></div>
+<div id="tlw" class="tlw"><div class="tl" id="tl"><div class="line"></div><span class="absolute bottom-0 left-[3%] lbl">← Past</span><span class="absolute bottom-0 right-[3%] lbl">Future →</span><div id="mk" class="mk" style="left:50%"><span id="mkt" class="now-pill">📍 YOU ARE HERE</span><i class="now-ln"></i></div></div></div>
+<p class="text-xs text-gray-500 mt-1">Toca un punto o un cuadro: la línea se mueve hasta ahí.</p></section>
+
+<section class="glass p-3 sm:p-5">
+<div class="flex flex-wrap gap-2 mb-2"><input id="verb" class="inp" placeholder="Type any verb → the table conjugates it: cook, wake up…"><button id="pm" class="btn gh flex-1 justify-center">✍ Practice</button><button id="sh" class="btn gh justify-center">🔗 Share</button><button id="all" class="btn pri flex-1 justify-center">▶ Listen all</button></div>
+<p id="vn" class="text-xs text-amber-400 mb-2 hidden"></p>
+<details class="mb-3 text-sm text-gray-400"><summary class="cursor-pointer">Irregular verb? Set past / participle</summary><div class="grid grid-cols-2 gap-2 mt-2"><input id="pa" class="inp" placeholder="past: bought"><input id="ppv" class="inp" placeholder="participle: bought"></div></details>
+<p id="ex" class="text-xs text-[#d4af37] mb-3 mt-1 px-3 py-2 rounded-xl border border-[#d4af37]/40 bg-[#d4af37]/10 leading-snug"></p>
+<div class="g text-center lbl" style="font-size:9px"><span>Simple</span><span>Continuous</span><span>Perfect</span><span>Perf. Cont.</span></div>
+<div id="grid"></div><p class="text-xs text-gray-500 mt-3">Toca 1 vez: se ve en la línea ⬆ · Toca 2 veces: se abre la tarjeta 🔊</p></section>
+<section id="kit" class="glass p-3 sm:p-4">
+<div class="flex items-center justify-between mb-2"><h2 class="hd font-bold text-base">🍳 The Kitchen</h2><div class="flex items-center gap-2"><button id="kp" class="btn gh !py-1 !px-3" aria-label="Back">←</button><div id="kd" class="flex gap-1"></div><button id="kx" class="btn gh !py-1 !px-3" aria-label="Next">→</button></div></div>
+<p id="kt" class="lbl mb-2"></p>
+<div id="ktr">
+<div class="step on" data-t="1 · Subject — ¿Quién?"><select id="subjS" class="inp"></select><input id="subj" class="inp mt-2" style="display:none" placeholder="Write who: Maria, my uncle…"></div>
+<div class="step" data-t="2 · Verb — ¿Qué hace?"><select id="verbS" class="inp"></select><p class="text-xs text-gray-500 mt-2">Tip: you can also type your own verb above the table ⬆</p></div>
+<div class="step" data-t="3 · Form — ¿Cómo la quieres?"><select id="polS" class="inp"></select></div>
+<div class="step" data-t="4 · Season it — ¡Dale sabor!"><div id="fields" class="grid grid-cols-2 gap-2"></div><p class="text-[11px] text-gray-500 mt-1">Tap a box to see ideas, or write your own. “When” empty = automatic.</p></div>
+<div class="step" data-t="5 · A second idea — ¿Por qué? ¿Pero?"><div class="grid sm:grid-cols-[150px_1fr] gap-2"><select id="conn" class="inp"><option>because</option><option>but</option><option>so</option><option>although</option></select><input id="clause" class="inp" placeholder="she wants to save money"></div></div>
+</div>
+<div class="mt-3"><div class="flex justify-between text-xs mb-1"><span class="lbl">Flavor level</span><b id="lvl" class="hd text-[#d4af37]"></b></div><div id="meter" class="flex gap-1"></div></div>
+</section>
+
+<section class="glass p-4 sm:p-5" data-aos="fade-up"><div class="flex justify-between items-center mb-2"><h2 class="hd font-bold text-lg">🎭 Which tense fits?</h2><b id="sk" class="text-[#d4af37]"></b></div><p id="sc" class="text-[15px] mb-3"></p><div id="so" class="grid grid-cols-2 gap-2"></div><p id="sf" class="text-sm mt-3 min-h-[20px]"></p><button id="sn" class="btn gh mt-2 !py-2">Next scene →</button></section>
+
+<section class="glass p-4 sm:p-5" data-aos="fade-up"><h2 class="hd font-bold text-lg mb-1">📖 My day in 3 tenses</h2><p class="text-xs text-gray-500 mb-3">Write your own story, then listen to it.</p>
+<div class="space-y-2"><input id="d1" class="inp" style="font-size:16px" placeholder="Yesterday I…"><input id="d2" class="inp" style="font-size:16px" placeholder="Right now I'm…"><input id="d3" class="inp" style="font-size:16px" placeholder="Tomorrow I'm going to…"></div><button id="dl" class="btn pri mt-3">🔊 Listen to my story</button></section>
+<section class="glass p-4 sm:p-5" data-aos="fade-up"><div class="flex justify-between items-center mb-3"><h2 class="hd font-bold text-lg">⭐ My phrases</h2><button id="cp" class="btn gh !py-2">Copy all</button></div><div id="pls"></div><p class="text-[11px] text-gray-500 mt-2">Saved only on this phone and browser. Use “Copy all” to keep a backup.</p></section>
+</main>
+<div id="modal" class="modal"><div id="sheet" class="sheet" style="--c:#60a5fa">
+<div class="flex justify-between items-center"><div><b id="mh" class="text-xs tracking-widest"></b><p id="mes" class="text-xs text-gray-400 mt-1 pr-2"></p></div><button id="mx" class="text-gray-400 text-xl px-2" aria-label="Close">✕</button></div>
+<div id="mtl" class="mt-3"></div><p id="ms" class="hd text-2xl leading-snug my-4"></p><p id="mw" class="text-xs text-amber-400 -mt-3 mb-3"></p>
+<p id="mtr" class="hidden text-sm text-gray-300 -mt-2 mb-3"></p>
+<div id="pr" class="hidden mb-3"><input id="pin" class="inp" style="font-size:16px" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="flex gap-2 mt-2"><button id="chk" class="btn pri flex-1 justify-center">Check ✓</button><button id="shw" class="btn gh">Show</button></div><p id="fb" class="text-sm mt-2 min-h-[20px]"></p></div>
+<input id="verb2" class="inp mb-3" placeholder="Change the verb here…">
+<div id="qb" class="mb-3 p-3 rounded-xl bg-white/5 text-sm"><span class="lbl">🎤 Answer out loud</span><button id="qn" class="float-right text-xs text-gray-400">🔀 another</button><p id="qt" class="mt-1 text-white text-[15px]"></p><button id="qm" class="btn gh !py-1 !px-3 !text-xs mt-2">🎙 Answer</button><p id="qa" class="mt-2 text-sky-300 text-sm"></p></div>
+<div class="flex items-center gap-2"><button id="prev" class="btn gh">←</button><button id="say" class="btn pri flex-1 justify-center">🔊 Listen</button><button id="next" class="btn gh">→</button></div>
+<button id="mic" class="btn mic w-full justify-center mt-2">🎙 Speak</button><div id="sp" class="mt-2 text-sm"></div>
+<div class="flex flex-wrap items-center gap-2 mt-3 text-sm"><button class="btn mic !py-2" id="dm">🎯 Dominar este tiempo</button><button class="btn gh !py-2" id="cd">🖼 Card</button><button class="btn gh !py-2" id="tr">🌐 Español</button><button class="btn gh !py-2" id="sv">⭐ Save</button><button class="btn gh !py-2" id="bu">Build-up</button><button class="btn gh !py-2" id="stop">Stop</button><label class="flex gap-1 items-center"><input type="checkbox" id="slow" class="accent-blue-500"> Slow</label><select id="acc" class="inp !w-auto !py-2"><option value="en-US">US</option><option value="en-GB">UK</option></select><span id="st" class="text-gray-400 w-full"></span></div>
+</div></div>
+<div id="mdl" class="modal"><div id="msh" class="sheet" style="--c:#60a5fa"><div class="flex justify-between items-start"><div><b id="mh2" class="text-xs tracking-widest"></b><p class="lbl mt-1">🎯 Dominar este tiempo</p></div><button id="mdx" class="text-gray-400 text-xl px-2" aria-label="Close">✕</button></div><div id="mbody"></div></div></div>
+<div id="guide" class="modal"><div class="sheet" style="--c:#d4af37">
+<div class="flex justify-between items-start"><h2 class="hd text-xl font-bold">📘 ¿Cómo se usa?</h2><button id="hx" class="text-gray-400 text-xl px-2" aria-label="Cerrar">✕</button></div>
+<p class="mt-3 text-[15px]"><b class="text-[#d4af37]">¿Para qué sirve?</b> Para practicar los tiempos del inglés (antes, ahora y después) armando oraciones y diciéndolas en voz alta.</p>
+<ol class="mt-4 space-y-3 text-[15px] list-decimal pl-5 marker:text-[#d4af37]">
+<li><b>Mira la línea.</b> El 📍 <b>YOU ARE HERE</b> es el ahora. A la izquierda está el pasado y a la derecha el futuro. Toca un punto: la línea se mueve hasta ahí para que imagines que estás en ese punto, y a los 5 segundos vuelve sola al presente.</li>
+<li><b>Escoge quién y qué hace.</b> En la Cocina, debajo del cuadro, elige una persona y un verbo de la lista. También puedes escribir tu propio verbo arriba del cuadro.</li>
+<li><b>Toca un cuadro.</b> Toca <b>1 vez</b> y verás dónde está en la línea. Toca <b>2 veces</b> y se abre la tarjeta con la oración. Toca 🔊 y escúchala. Luego toca <b>🎙 Speak</b> y dila en voz alta: la app te escucha y te da un puntaje. Con <b>80 o más</b> pasas y con <b>90 o más</b> sacas 100. <b>Build-up</b> y <b>Listen all</b> esperan a que lo digas (máximo 3 intentos por frase). Usa Chrome o Edge y permite el micrófono. El tiempo que tocaste queda marcado en dorado, en la línea y en el cuadro.</li>
+<li><b>Agrega ideas en la Cocina.</b> Usa las flechas ← → para pasar de paso. Pon qué, cómo, dónde, con quién y cuándo. ¡Tu oración crece y se ve en el cuadro!</li>
+<li><b>Prueba ✍ Practice.</b> La tabla se vacía y tú escribes los verbos. Toca Check ✓ para ver si está bien.</li>
+<li><b>Domina un tiempo.</b> En la tarjeta toca <b>🎯 Dominar este tiempo</b>: verás el molde de la oración (afirmativa, negativa y pregunta), qué imaginar, y practicas armándola 🧩 y diciéndola 🎙. Con 80 o más en las 3 formas ganas 🏆.</li>
+<li><b>Juega.</b> Resuelve las escenas 🎭, contesta las preguntas con 🎙 y guarda tus frases favoritas con ⭐.</li>
+</ol>
+<p class="mt-4 text-sm p-3 rounded-xl bg-white/5">💡 <b>Truco:</b> no traduzcas. Piensa <i>cuándo</i> pasa la acción y di la oración.</p>
+<button id="hk" class="btn pri w-full justify-center mt-4">¡Entendido!</button>
+</div></div>
+<section class="max-w-3xl mx-auto px-3 mt-10"><div class="glass p-5 text-center">
+<p class="lbl">Metodología NEC</p>
+<h3 class="hd font-bold text-lg mt-1">Aprendiendo cómo pensar en inglés</h3>
+<div class="grid grid-cols-3 gap-2 mt-4 text-xs"><div class="p-3 rounded-xl bg-white/5"><b class="text-[#60a5fa] block text-sm">THINK</b>¿Cuándo ocurre la acción?</div><div class="p-3 rounded-xl bg-white/5"><b class="text-[#fb923c] block text-sm">BUILD</b>Arma la oración, capa por capa.</div><div class="p-3 rounded-xl bg-white/5"><b class="text-[#d4af37] block text-sm">SPEAK</b>Dila en voz alta, sin traducir.</div></div>
+<p class="text-gray-400 text-xs mt-4">Una idea, 12 tiempos: aprende a moverla por el tiempo en lugar de memorizar fórmulas sueltas.</p>
+</div></section>
+<footer class="text-center text-[11px] text-gray-500 mt-6 px-4">© 2026 NicaEnglish Club · <b class="text-gray-400">GM</b> · Todos los derechos reservados.<br>Prohibida la reproducción o distribución sin autorización.</footer>
+
+<script>
+window.AOS=window.AOS||{init(){}};window.lucide=window.lucide||{createIcons(){}};window.confetti=window.confetti||(()=>{});
+const $=s=>document.querySelector(s);
+const IRR=`arise:arose:arisen,awake:awoke:awoken,bear:bore:borne,beat:beat:beaten,become:became:become,begin:began:begun,bend:bent:bent,bet:bet:bet,bind:bound:bound,bite:bit:bitten,bleed:bled:bled,blow:blew:blown,break:broke:broken,breed:bred:bred,bring:brought:brought,build:built:built,burst:burst:burst,buy:bought:bought,catch:caught:caught,choose:chose:chosen,cling:clung:clung,come:came:come,cost:cost:cost,creep:crept:crept,cut:cut:cut,deal:dealt:dealt,dig:dug:dug,do:did:done,draw:drew:drawn,drink:drank:drunk,drive:drove:driven,eat:ate:eaten,fall:fell:fallen,feed:fed:fed,feel:felt:felt,fight:fought:fought,find:found:found,flee:fled:fled,fly:flew:flown,forbid:forbade:forbidden,forget:forgot:forgotten,forgive:forgave:forgiven,freeze:froze:frozen,get:got:gotten,give:gave:given,go:went:gone,grind:ground:ground,grow:grew:grown,hang:hung:hung,have:had:had,hear:heard:heard,hide:hid:hidden,hit:hit:hit,hold:held:held,hurt:hurt:hurt,keep:kept:kept,kneel:knelt:knelt,know:knew:known,lay:laid:laid,lead:led:led,leave:left:left,lend:lent:lent,let:let:let,light:lit:lit,lose:lost:lost,make:made:made,mean:meant:meant,meet:met:met,pay:paid:paid,put:put:put,quit:quit:quit,read:read:read,ride:rode:ridden,ring:rang:rung,rise:rose:risen,run:ran:run,say:said:said,see:saw:seen,seek:sought:sought,sell:sold:sold,send:sent:sent,set:set:set,shake:shook:shaken,shine:shone:shone,shoot:shot:shot,show:showed:shown,shrink:shrank:shrunk,shut:shut:shut,sing:sang:sung,sink:sank:sunk,sit:sat:sat,sleep:slept:slept,slide:slid:slid,speak:spoke:spoken,speed:sped:sped,spend:spent:spent,spin:spun:spun,split:split:split,spread:spread:spread,spring:sprang:sprung,stand:stood:stood,steal:stole:stolen,stick:stuck:stuck,sting:stung:stung,strike:struck:struck,swear:swore:sworn,sweep:swept:swept,swim:swam:swum,swing:swung:swung,take:took:taken,teach:taught:taught,tear:tore:torn,tell:told:told,think:thought:thought,throw:threw:thrown,understand:understood:understood,wake:woke:woken,wear:wore:worn,weave:wove:woven,weep:wept:wept,win:won:won,wind:wound:wound,write:wrote:written`;
+const irr=Object.create(null);IRR.split(',').forEach(x=>{const[a,b,c]=x.split(':');irr[a]=[b,c]});
+const STATE=new Set('know understand want like love need believe remember have hate prefer'.split(' '));
+const VERBS='go eat work study learn speak live drive buy make take get come sleep wait play watch cook call write read understand know want'.split(' ');
+const DB2=new Set('prefer refer admit commit occur submit permit control regret equip compel expel omit transfer patrol rebel confer defer'.split(' '));
+const dbl=w=>DB2.has(w)||/^[^aeiou]*[aeiou][^aeiouwxy]$/.test(w)&&w.length<=5;
+const ck=w=>/^(panic|picnic|mimic|traffic)$/.test(w)?w+'k':w;
+const PF=['over','under','with','fore','out','mis','re','un','up','for'];
+const irrOf=b=>{if(irr[b])return irr[b];for(const p of PF)if(b.startsWith(p)&&irr[b.slice(p.length)])return irr[b.slice(p.length)].map(x=>p+x)};
+const s3=b=>b=='have'?'has':/(s|sh|ch|x|z|o)$/.test(b)?b+'es':/[^aeiou]y$/.test(b)?b.slice(0,-1)+'ies':b+'s';
+const ed=b=>{b=ck(b);return /e$/.test(b)?b+'d':/[^aeiou]y$/.test(b)?b.slice(0,-1)+'ied':dbl(b)?b+b.slice(-1)+'ed':b+'ed'};
+const ing=b=>{b=ck(b);return /^(dye|singe|hoe|shoe|tiptoe)$/.test(b)||/ee$/.test(b)?b+'ing':/ie$/.test(b)?b.slice(0,-2)+'ying':/e$/.test(b)?b.slice(0,-1)+'ing':dbl(b)?b+b.slice(-1)+'ing':b+'ing'};
+const N={did:"didn't",do:"don't",does:"doesn't",will:"won't",had:"hadn't",have:"haven't",has:"hasn't",is:"isn't",are:"aren't",was:"wasn't",were:"weren't",am:"am not"};
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+const REV=Object.create(null);Object.entries(irr).forEach(([b,[a,c]])=>{[a,c,ing(b),s3(b)].forEach(x=>{if(!irr[x]&&!REV[x])REV[x]=b})});
+const ONL=Object.create(null);let LT;
+const onlNote=(o,b)=>!o?'':o.p?'🌐 Checking online…':o.off?'Offline: using built-in rules.':o.nf?`⚠ "${b}" wasn't found as a base English verb online. Check the spelling or type the base form.`:'✓ Verified online';
+function parseHW(t){const g=r=>{const m=t.match(r);if(!m)return'';const w=m[1].trim().split(/ or |,|\)/)[0].trim();return/^[a-z'-]+$/.test(w)?w:''};
+ const pa=g(/simple past(?: and past participle)? ([^,)]+)/),pp=/simple past and past participle/.test(t)?pa:g(/past participle ([^,)]+)/);
+ return pa&&pp?{ok:1,pa,pp,s3:g(/simple present ([^,)]+)/),ing:g(/present participle ([^,)]+)/)}:null}
+function look(b){if(irrOf(b)||!/^[a-z]{2,}$/.test(b))return;const o=ONL[b];if(o&&(!o.off||Date.now()-o.t<15000))return;clearTimeout(LT);
+ LT=setTimeout(async()=>{ONL[b]={p:1};render();try{const r=await fetch('https://en.wiktionary.org/w/api.php?action=parse&format=json&origin=*&prop=text&redirects=1&page='+encodeURIComponent(b));const j=await r.json();
+  if(j.error){ONL[b]={nf:1}}else{const x=j.parse.text['*']||j.parse.text,d=new DOMParser().parseFromString(x,'text/html');const t=[...d.querySelectorAll('.headword-line')].map(e=>e.textContent).find(e=>/simple past/.test(e));ONL[b]=(t&&parseHW(t))||{nf:1}}}
+ catch(e){ONL[b]={off:1,t:Date.now()}}render()},700)}
+const COL={s:'#fb923c',c:'#e5e7eb',p:'#60a5fa',pc:'#2dd4bf',g:'#a78bfa'};
+const T=[
+['ps','Past Simple','s',c=>'did','','b',c=>c.pa,'yesterday'],
+['pc','Past Continuous','c',c=>c.was,'','ing',0,'at 8 PM yesterday'],
+['pp','Past Perfect','p',c=>'had','','pp',0,'before noon yesterday'],
+['ppc','Past Perfect Continuous','pc',c=>'had','been','ing',0,'for two hours before lunch'],
+['prs','Present Simple','s',c=>c.do,'','b',c=>c.th?c.s3:c.b,'every day'],
+['prc','Present Continuous','c',c=>c.be,'','ing',0,'right now'],
+['prp','Present Perfect','p',c=>c.have,'','pp',0,'since 2024'],
+['prpc','Present Perfect Continuous','pc',c=>c.have,'been','ing',0,'for two years'],
+['fs','Future Simple','s',c=>'will','','b',0,'tomorrow'],
+['fc','Future Continuous','c',c=>'will','be','ing',0,'at 8 PM tomorrow'],
+['fp','Future Perfect','p',c=>'will','have','pp',0,'by next Friday'],
+['fpc','Future Perfect Continuous','pc',c=>'will','have been','ing',0,'for two years by 2030'],
+['gtp','Was / Were going to','g',c=>c.was,'going to','b',0,'last week'],
+['gtf','Am / Is / Are going to','g',c=>c.be,'going to','b',0,'tomorrow']];
+const ROWS=[['Past',['ps','pc','pp','ppc']],['Present',['prs','prc','prp','prpc']],['Future',['fs','fc','fp','fpc']],['Going to',['gtp','gtf']]];
+const NODES=[['Had',9,'p',['pp','ppc'],1],['Did',17.2,'s',['ps'],0],['was / were going to',25.4,'g',['gtp'],1],['Have / Has',33.6,'p',['prp','prpc'],0],['was / were',41.8,'c',['pc'],1],['Do / Does',50,'s',['prs'],0],['am / is / are',58.2,'c',['prc'],1],['am / is / are going to',66.4,'g',['gtf'],0],['Will have',74.6,'p',['fp','fpc'],1],['Will',82.8,'s',['fs'],0],['will be',91,'c',['fc'],1]];
+const FIELDS=[['what','WHAT','¿Qué / a quién?','English, a report, my homework',[]],['how','HOW','¿Cómo?','hard, carefully, on the bus',['hard','carefully','on the bus','very well']],['where','WHERE','¿Dónde?','at a call center',['at home','at work','in Managua','at the market']],['with','WITH WHOM','¿Con quién?','with my coworkers',['with my family','with my coworkers','with my friends']],['when','WHEN','Empty = auto, changes for each tense','Auto',[]]];
+const LV=['Plain','Seasoned','Seasoned','Tasty','Tasty','Delicious','Chef\'s kiss!'];
+const S={subj:'she',verb:'work',pol:'a',sel:'prpc',tab:1,run:0,lv:0,done:{},fail:{}};
+let CELLS=[];
+const H=new URLSearchParams(location.hash.slice(1));
+if(H.get('v')){if(VERBS.includes(H.get('v')))S.verb=H.get('v');else $('#verb').value=H.get('v')}
+if(H.get('s')){if(['I','you','he','she','we','they'].includes(H.get('s')))S.subj=H.get('s');else $('#subj').value=H.get('s')}
+if(['a','n','q'].includes(H.get('p')))S.pol=H.get('p');
+const rnd=a=>a[Math.random()*a.length|0],EX=VERBS.filter(v=>!STATE.has(v));
+if(!H.get('v'))S.verb=rnd(EX);if(!H.get('s'))S.subj=rnd(['I','you','he','she','we','they']);S.sel=rnd(T)[0];
+if(H.get('pa'))$('#pa').value=H.get('pa');if(H.get('pp'))$('#ppv').value=H.get('pp');
+const ES={ps:'Pasado simple: algo que pasó y terminó.',pc:'Pasado continuo: algo estaba en proceso en ese momento.',pp:'Pasado perfecto: pasó antes de otro momento del pasado.',ppc:'Pasado perfecto continuo: venía pasando por un tiempo, antes de otro momento del pasado.',prs:'Presente simple: hábitos y hechos.',prc:'Presente continuo: pasa ahora o en este período.',prp:'Presente perfecto: pasó y todavía importa ahora.',prpc:'Presente perfecto continuo: empezó antes y sigue pasando hasta ahora.',fs:'Futuro simple: decisión o predicción.',fc:'Futuro continuo: estará en proceso en ese momento.',fp:'Futuro perfecto: ya habrá terminado para cierto momento.',fpc:'Futuro perfecto continuo: llevará un tiempo haciéndolo para cierto momento futuro.',gtp:'Was/were going to: tenía planeado hacerlo (en el pasado).',gtf:'Am/is/are going to: un plan, o algo que va a pasar.'};
+const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function ctx(){
+ const s=$('#subj').value.trim()||S.subj,sl=s.toLowerCase(),I=sl=='i';
+ const pl=/^(we|they|you)$/.test(sl)||/(^|\s)(people|friends|children|parents)$/.test(sl)||(/s$/.test(sl)&&!/ss$/.test(sl));
+ const th=!I&&!pl,w=($('#verb').value.trim().toLowerCase()||S.verb).split(/\s+/),b0=w[0],conv=(!irrOf(b0)&&REV[b0])||'',b=conv||b0,ir=irrOf(b)||[],o=ONL[b]&&ONL[b].ok?ONL[b]:null,note=conv?`Using the base form "${conv}" (you typed "${b0}").`:(/(ing|ed)$/.test(b0)&&b0.length>4&&!/eed$/.test(b0)&&!irrOf(b0))?`"${b0}" looks like an -ing/-ed form. Type the base verb (example: work).`:'';
+ return{S:I?'I':s,note:note||($('#verb').value.trim()?onlNote(ONL[b],b):''),b,part:w.slice(1).join(' '),th,s3:(o&&o.s3)||s3(b),be:I?'am':th?'is':'are',was:(I||th)?'was':'were',have:th?'has':'have',do:th?'does':'do',
+ pa:$('#pa').value.trim()||ir[0]||(o&&o.pa)||ed(b),pp:$('#ppv').value.trim()||ir[1]||(o&&o.pp)||ed(b),ing:(o&&o.ing)||ing(b)};
+}
+function build(t,c,pol){
+ const f=t[3](c),r=t[4],m=c[t[5]];let p;
+ if(pol=='a')p=t[6]?[[c.S],[t[6](c),1]]:[[c.S],[f,1],[r,1],[m]];
+ else if(pol=='n')p=[[c.S],[N[f],1],[r,1],[m]];
+ else p=[[f,1],[c.S],[r,1],[m]];
+ return p.filter(x=>x[0]);
+}
+function render(){
+ $('#subjS').value=($('#subj').value.trim()||S.so)?'__own':S.subj;$('#verbS').value=($('#verb').value.trim()||S.vo)?'__own':S.verb;$('#polS').value=S.pol;$('#subj').style.display=$('#subjS').value=='__own'?'':'none';
+ $('#ex').style.display=S.touched?'none':'';$('#ex').textContent='👀 Ejemplo: '+S.subj+' + '+S.verb+' · cámbialo abajo en la Cocina ⬇';
+ const c=ctx(),v=id=>$('#'+id).value.trim(),conn=v('conn'),cl=v('clause');$('#vn').textContent=c.note;$('#vn').classList.toggle('hidden',!c.note);if($('#verb').value.trim())look(c.b);
+ CELLS=T.map(t=>{
+  const p=build(t,c,S.pol),tail=[c.part,v('what'),v('how'),v('where'),v('with'),v('when')||t[7]].filter(Boolean);
+  const clause=S.pol!='q'&&cl?`, ${conn} ${cl}`:'',end=S.pol=='q'?'?':'.';
+  const core=cap(p.map(x=>x[0]).join(' '));
+  const chunks=[core];tail.forEach(x=>chunks.push(chunks[chunks.length-1]+' '+x));if(clause)chunks.push(chunks[chunks.length-1]+clause);
+  const html=p.map((x,i)=>`<span class="${x[1]?'a':'m'}">${i?x[0]:cap(x[0])}</span>`).join(' ')+' '+tail.join(' ')+clause+end;
+  return{id:t[0],name:t[1],kind:t[2],html,text:chunks[chunks.length-1]+end,chunks:chunks.map((x,i)=>i==chunks.length-1?x+end:x),ans:(S.pol=='q'?p:p.slice(1)).map(x=>x[0]).join(' '),blank:(S.pol=='q'?'':cap(c.S)+' ')+'<u class="px-7">&nbsp;</u> <span class="text-sm text-gray-400">('+c.b+')</span> '+tail.join(' ')+clause+end,warn:STATE.has(c.b)&&(t[2]=='c'||t[2]=='pc')};
+ });
+ const key=[c.S,c.b,c.pa,c.pp,S.pol].join();if(key!=S.key){S.key=key;S.done={};S.fail={}}
+ const mc=(id,sp)=>{const k=CELLS.find(x=>x.id==id);return`<button class="mc ${isDom(id)?'dom':''} ${(S.hl||[S.sel]).includes(id)?'sel':''} ${S.prac&&S.done[id]?'ok':''} ${S.prac&&S.fail[id]&&!S.done[id]?'bad':''}" data-id="${id}" style="--c:${COL[k.kind]};${sp?'grid-column:span 2':''}"><div class="t">${S.prac&&!S.done[id]?`<b style="color:var(--c)">${k.name}</b><br>✍ ___`:k.html}</div></button>`};
+ $('#grid').innerHTML=ROWS.map(([n,ids],i)=>`<p class="lbl mt-3 mb-1">${n}</p><div class="g">${ids.map(id=>mc(id,i==3)).join('')}</div>`).join('');
+ if(S.open)fill();
+ const dn=Object.keys(S.done).length;$('#pm').textContent=S.prac?`✍ Practice ${dn}/14`:'✍ Practice';$('#pm').classList.toggle('pri',!!S.prac);$('#pm').classList.toggle('gh',!S.prac);
+ if(dn<14)S.won=0;else if(S.prac&&!S.won){S.won=1;confetti({particleCount:180,spread:90,origin:{y:.5}})}
+ const n=['what','how','where','with','when','clause'].filter(i=>v(i)).length;
+ $('#meter').innerHTML=Array.from({length:6},(_,i)=>`<i class="seg ${i<n?'f':''}"></i>`).join('');$('#lvl').textContent=LV[n];
+ if(n==6&&S.lv<6)confetti({particleCount:140,spread:80,origin:{y:.4},colors:['#d4af37','#3b82f6','#fb923c','#fff']});S.lv=n;
+ lucide.createIcons();hl();
+}
+function hl(){$('#tl').classList.add('has');document.querySelectorAll('.node').forEach(n=>n.classList.toggle('on',n.dataset.c.split(' ').includes(S.sel)));const k=T.find(t=>t[0]==S.sel);$('#act').textContent='● Tiempo activo: '+k[1];$('#act').style.setProperty('--c',COL[k[2]])}
+function pick(id,ids){S.sel=id;S.hl=ids||[id];document.querySelectorAll('.mc').forEach(e=>e.classList.toggle('sel',S.hl.includes(e.dataset.id)));hl();aim(id);if(S.open)fill()}
+
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function say(txt,sl){return new Promise(r=>{const u=new SpeechSynthesisUtterance(txt);u.lang=$('#acc').value;u.rate=(sl||$('#slow').checked)?.65:.95;u.onend=u.onerror=r;speechSynthesis.speak(u)})}
+function halt(){S.run++;speechSynthesis.cancel();if(S.rec){const r=S.rec;S.rec=null;try{r.abort()}catch(e){}setMic(0)}$('#st').textContent=''}
+/* ===== SPEAKING: reconocimiento de voz + puntaje ===== */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const PASS=80,PERFECT=90;           // 80+ pasa · 90+ se muestra como 100
+const UN={zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+const isNW=w=>w in UN||w=='hundred'||w=='thousand';
+function numVal(r){const big=r.includes('hundred')||r.includes('thousand'),sum=a=>a.reduce((t,w)=>t+UN[w],0);
+ if(!big&&r.length>=2&&UN[r[0]]>=10&&UN[r[1]]>=10)return String(UN[r[0]]*100+sum(r.slice(1)));   // año: twenty twenty-four = 2024
+ let tot=0,cur=0;for(const w of r){if(w=='hundred')cur=(cur||1)*100;else if(w=='thousand'){tot+=(cur||1)*1000;cur=0}else cur+=UN[w]}return String(tot+cur)}
+const CTR={"won't":['will','not'],"can't":['can','not'],cannot:['can','not'],"shan't":['shall','not'],"ain't":['is','not'],"let's":['let','us'],gonna:['going','to'],wanna:['want','to'],gotta:['got','to']};
+const SFX={"'s":['is','has'],"'d":['had','would'],"'ve":['have'],"'ll":['will'],"'re":['are'],"'m":['am']};
+const HOM=[['to','too','two','2'],['there','their'],['write','right'],['no','know'],['by','buy','bye'],['here','hear'],['for','four','4'],['one','won','1'],['wait','weight'],['see','sea'],['read','red'],['our','hour'],['would','wood'],['wear','where'],['new','knew'],['week','weak'],['son','sun'],['meet','meat'],['ate','eight','8']];
+const HM={};HOM.forEach((g,i)=>g.forEach(w=>HM[w]=i));
+// Convierte texto en "tokens"; cada token es una lista de formas aceptables (she's → she + [is|has])
+function toks(s){const out=[],ws=s.toLowerCase().replace(/[’`´]/g,"'").replace(/[^a-z0-9' ]+/g,' ').split(/\s+/).filter(Boolean);
+ for(let i=0;i<ws.length;i++){let w=ws[i].replace(/^'+|'+$/g,'');if(!w)continue;
+  if(isNW(w)){let k=i,r=[];while(k<ws.length&&isNW(ws[k]))r.push(ws[k++]);out.push([numVal(r)]);i=k-1;continue}
+  if(CTR[w]){CTR[w].forEach(x=>out.push([x]));continue}
+  let m=w.match(/^(.+)n't$/);if(m){out.push([m[1]],['not']);continue}
+  m=w.match(/^(.+)('s|'d|'ve|'ll|'re|'m)$/);if(m){out.push([m[1]],SFX[m[2]]);continue}
+  out.push([w.replace(/'/g,'')])}
+ return out}
+const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);for(let j=1;j<=b.length;j++)d[0][j]=j;
+ for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]==b[j-1]?0:1));return d[a.length][b.length]};
+// Crédito por palabra: 1 = igual (o suena igual), .5 = casi igual (work/works), 0 = distinta
+const cr=(A,B)=>{let s=0;for(const x of A)for(const y of B){if(x==y||(HM[x]!=null&&HM[x]==HM[y]))return 1;
+  if(Math.min(x.length,y.length)>=3)s=Math.max(s,1-lev(x,y)/Math.max(x.length,y.length))}return s>=.75?.5:0};
+// Alineación palabra por palabra (tolera palabras de más, omitidas o cambiadas)
+function align(T,H){const m=T.length,n=H.length,g=.25,d=Array.from({length:m+1},()=>Array(n+1).fill(0));
+ for(let j=1;j<=n;j++)d[0][j]=-g*j;
+ for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.max(d[i-1][j-1]+cr(T[i-1],H[j-1]),d[i-1][j],d[i][j-1]-g);
+ const st=Array(m).fill(0);let i=m,j=n;
+ while(i>0&&j>0){const c=cr(T[i-1],H[j-1]);
+  if(d[i][j]==d[i-1][j-1]+c){st[i-1]=c;i--;j--}else if(d[i][j]==d[i-1][j])i--;else j--}
+ return{credit:Math.max(0,d[m][n]),st}}
+// Califica contra TODAS las alternativas que devuelve el navegador y se queda con la mejor
+function grade(target,alts){const T=toks(target);let best=null;
+ (alts.length?alts:['']).forEach(a=>{const r=align(T,toks(a)),raw=T.length?r.credit/T.length*100:0;if(!best||raw>best.raw)best={raw,st:r.st,heard:a}});
+ const raw=Math.round(best.raw);let k=0;
+ const view=target.trim().split(/\s+/).map(w=>{const n=toks(w).length,s=n?Math.min(...best.st.slice(k,k+n)):1;k+=n;return{t:w,s:s==1?'ok':s>0?'cl':'no'}});
+ return{raw,shown:raw>=PERFECT?100:raw,pass:raw>=PASS,perfect:raw>=PERFECT,view,heard:best.heard}}
+
+const ERR={'not-allowed':'🚫 Permite el micrófono (candado junto a la dirección) y vuelve a intentar.','service-not-allowed':'🚫 Permite el micrófono (candado junto a la dirección) y vuelve a intentar.','audio-capture':'🎙 No encuentro un micrófono conectado.','network':'📡 El reconocimiento de voz necesita internet.','no-speech':'🙉 No te escuché. Acércate al micrófono y habla un poco más fuerte.','language-not-supported':'⚠ Este navegador no reconoce ese acento.','start':'⚠ No pude activar el micrófono. Intenta de nuevo.','unsupported':'⚠ Este navegador no tiene reconocimiento de voz. Usa Chrome o Edge.'};
+const FATAL=new Set(['not-allowed','service-not-allowed','audio-capture','network','unsupported','language-not-supported']);
+function setMic(on){S.listening=!!on;$('#mic').classList.toggle('rec',!!on);$('#mic').textContent=on?'⏹ Listening… (tap to stop)':'🎙 Speak';$('#qm').classList.toggle('rec',!!on);$('#qm').textContent=on?'⏹ Stop':'🎙 Answer';const m=$('#mm');if(m){m.classList.toggle('rec',!!on);m.textContent=on?'⏹ Listening…':'🎙 Dilo'}}
+// Escucha una vez. Devuelve {alts:[...transcripciones], err}
+function hear(onInt,ms){return new Promise(res=>{
+ if(!SR)return res({alts:[],err:'unsupported'});
+ let r,done=0,alts=[],last='',tm;
+ const fin=err=>{if(done)return;done=1;clearTimeout(tm);if(S.rec===r){S.rec=null;setMic(0)}res({alts:alts.length?alts:(last?[last]:[]),err})};
+ try{r=new SR()}catch(e){return res({alts:[],err:'unsupported'})}
+ r.lang=$('#acc').value;r.interimResults=true;r.maxAlternatives=5;r.continuous=false;
+ r.onresult=e=>{let f=null,it='';for(let i=e.resultIndex;i<e.results.length;i++){const R=e.results[i];if(R.isFinal)f=[...R].map(a=>a.transcript);else it+=R[0].transcript}
+  if(f){alts=f;onInt&&onInt(f[0])}else if(it){last=it;onInt&&onInt(it)}};
+ r.onerror=e=>fin(e.error);r.onend=()=>fin();
+ S.rec=r;setMic(1);tm=setTimeout(()=>{try{r.stop()}catch(e){}},ms||10000);
+ try{r.start()}catch(e){fin('start')}})}
+const SP=()=>$($('#mdl').classList.contains('on')?'#msp':'#sp');
+const spT=t=>t.trim().split(/\s+/).map(w=>`<span class="sw tg">${esc(w)}</span>`).join('');
+function spR(r){const c=r.pass?(r.perfect?'#34d399':'#fbbf24'):'#f87171',clean=r.view.every(w=>w.s=='ok'),msg=r.perfect?(clean?'Perfect! 🎉':'Great! ✅'):r.pass?'Good! You pass ✅':'Almost — try again 🔁';
+ SP().innerHTML=`<div class="flex items-center gap-3"><b class="hd" style="font-size:32px;color:${c}">${r.shown}</b><div class="flex-1"><b style="color:${c}">${msg}</b><div class="sbar"><i style="width:${r.shown}%;background:${c}"></i></div></div></div><div class="mt-2">${r.view.map(w=>`<span class="sw ${w.s}">${esc(w.t)}</span>`).join('')}</div><p class="text-xs text-gray-400 mt-2">Te escuché: “${esc(r.heard||'…')}”</p>`+(r.pass?(r.view.some(w=>w.s!='ok')?'<p class="text-xs text-gray-500">Pasaste, pero fíjate en las palabras marcadas.</p>':''):`<p class="text-xs text-gray-500">Necesitas ${PASS} o más. Escucha de nuevo 🔊 y repite.</p>`)}
+// Un intento de hablar: escucha, califica y muestra el resultado
+async function tryOnce(t,showT){
+ if(!SR){SP().innerHTML=`<p class="text-amber-400">${ERR.unsupported}</p>`;return{pass:false,err:'unsupported',fatal:1}}
+ SP().innerHTML=(showT?`<p class="text-[11px] text-gray-400 mb-1">Di esto:</p><div>${spT(t)}</div>`:'')+'<p id="spl" class="text-sky-300 mt-1">🎙 Listening… habla ahora</p>';
+ const h=await hear(it=>{const e=$('#spl');if(e)e.textContent='🎙 '+it},10000);
+ if(h.err=='aborted')return{pass:false,err:'aborted'};
+ if(!h.alts.length||(h.err&&FATAL.has(h.err))){const e=h.err||'no-speech';SP().innerHTML=`<p class="text-amber-400">${ERR[e]||'⚠ '+e}</p>`;fx(0);return{pass:false,err:e,fatal:FATAL.has(e)}}
+ S.nomic=0;const r=grade(t,h.alts);spR(r);fx(r.pass);return r}
+
+async function seq(list,repeat){
+ halt();openM();const id=S.run;let tot=0,cnt=0;
+ for(const c of list){if(id!=S.run)return;pick(c.id);
+  for(const t of (repeat?[c.text]:c.chunks)){let tries=0;
+   while(true){if(id!=S.run)return;
+    $('#st').textContent='🔊 Listen…';await say(t,tries>=2);if(id!=S.run)return;
+    if(!SR||S.nomic){$('#st').textContent='🎤 Your turn!';await wait(700+t.length*85*($('#slow').checked?1.4:1));break}   // sin micrófono: modo temporizador
+    $('#st').textContent='🎤 Your turn!'+(tries?` (intento ${tries+1}/3)`:'');await wait(250);if(id!=S.run)return;
+    const r=await tryOnce(t,!repeat);if(id!=S.run)return;
+    if(r.fatal){S.nomic=1;$('#st').textContent='Sin micrófono: sigo con temporizador';await wait(2800);break}
+    if(r.pass){tot+=r.shown;cnt++;await wait(r.perfect?900:1500);break}
+    if(++tries>=3){cnt++;tot+=r.shown||0;$('#st').textContent='Seguimos con la siguiente →';await wait(1600);break}
+    await wait(1400)}}}
+ $('#st').textContent='Done!'+(cnt?` Promedio: ${Math.round(tot/cnt)}`:'');confetti({particleCount:70,spread:60,origin:{y:.2}});
+}
+
+/* ===== DOMINAR UN TIEMPO ===== */
+const ldm=()=>{try{return JSON.parse(localStorage.getItem('ne_dom'))||{}}catch(e){return{}}},svm=o=>{try{localStorage.setItem('ne_dom',JSON.stringify(o))}catch(e){}};
+const isDom=id=>{const m=ldm()[id];return!!(m&&m.a&&m.n&&m.q)};
+const PRE=[['I','eat','breakfast','🍳'],['she','cook','dinner','🍲'],['we','watch','a movie','🎬'],['they','play','soccer','⚽'],['he','call','his mom','📞'],['I','study','English','📚'],['we','go','to the market','🛒'],['she','work','in an office','💼']];
+const PL={a:'+',n:'−',q:'?'},PN={a:'Afirmativa',n:'Negativa',q:'Pregunta'};
+function mpre(i){const[s,v,w]=PRE[i];S.subj=s;S.so=0;S.verb=v;S.vo=0;S.touched=1;['subj','verb','pa','ppv','what','how','where','with','when','clause'].forEach(x=>$('#'+x).value='');$('#what').value=w}
+function mpieces(t,c,pol,p,k){const col=COL[t[2]],sp=pol=='a'&&t[6],si=p.findIndex(x=>x[0]===c.S&&!x[1]);let fl=0;
+ const lab=p.map(([w,f],i)=>sp?(i?(t[0]=='ps'?'Verbo en pasado':'Verbo en presente'):'Sujeto'):f?(fl++?'Pieza clave':'Auxiliar'):i==si?'Sujeto':'Verbo '+({b:'(base)',ing:'(-ing)',pp:'(participio)'}[t[5]]||''));
+ const cp=k.text.slice(cap(p.map(x=>x[0]).join(' ')).length).replace(/[.?!]$/,'').trim();
+ return p.map(([w,f],i)=>`<span class="pcs ${f?'k':''}"><b style="color:${f?col:'#fff'}">${esc(i?w:cap(w))}</b><small>${lab[i]}</small></span>`).join('')+(cp?`<span class="pcs" style="--c:#34d399"><b style="color:#34d399">${esc(cp)}</b><small>Complemento</small></span>`:'')}
+function mrender(){const id=S.sel,t=T.find(x=>x[0]==id),col=COL[t[2]],pol=S.mp;S.pol=pol;render();S.ma=null;
+ const k=CELLS.find(x=>x.id==id),c=ctx(),p=build(t,c,pol);S.mk=k;
+ $('#msh').style.setProperty('--c',col);$('#mh2').textContent=t[1].toUpperCase();$('#mh2').style.color=col;
+ $('#mbody').innerHTML=`<div class="flex gap-2 mt-3">${Object.keys(PL).map(x=>`<button class="chip !px-4 ${x==pol?'on':''}" data-p="${x}">${PL[x]} ${PN[x]}</button>`).join('')}</div>
+<div class="mt-3 p-3 rounded-xl bg-white/5 text-sm"><span class="lbl">🧠 Imagina</span>${tlsvg(id,col)}<p>${ES[id]}</p><p class="text-gray-300 mt-1">🎬 ${SC[id]}</p></div>
+<p class="lbl mt-4 mb-1">El molde</p><div>${mpieces(t,c,pol,p,k)}</div>
+<p class="lbl mt-4 mb-1">Tu oración</p><p class="hd text-2xl leading-snug" style="--c:${col}">${k.html}</p>
+<div class="flex gap-2 mt-3"><button class="btn pri flex-1 justify-center" id="ml">🔊 Listen</button><button class="btn gh" data-a="arm">🧩 Arma</button><button class="btn mic flex-1 justify-center" id="mm">🎙 Dilo</button></div>
+<div id="mar" class="mt-3"></div><div id="msp" class="mt-2 text-sm"></div>
+<p class="lbl mt-4 mb-1">Cambia el ejemplo</p><div class="flex flex-wrap gap-2">${PRE.map((x,i)=>`<button class="chip ${S.subj==x[0]&&S.verb==x[1]?'on':''}" data-i="${i}">${x[3]} ${x[0]} · ${x[1]}</button>`).join('')}</div>
+<div id="mpg" class="mt-4"></div>`;mprog()}
+function mprog(){const m=ldm()[S.sel]||{},all=m.a&&m.n&&m.q;
+ $('#mpg').innerHTML=`<div class="flex items-center gap-2 flex-wrap"><span class="lbl">Progreso</span>${Object.keys(PL).map(x=>`<span class="sw ${m[x]?'ok':'tg'}">${PL[x]} ${m[x]?'✓':'·'}</span>`).join('')}</div>`+(all?'<p class="mt-2 text-[#d4af37] font-bold">🏆 ¡Tiempo dominado!</p>':'<p class="text-xs text-gray-500 mt-2">Dilo con 80 o más en las 3 formas para dominarlo.</p>')}
+function marm(){const w=S.mk.text.trim().split(/\s+/);S.ma={w,g:[],b:shuf(w.map((_,i)=>i))};mar()}
+function mar(){const a=S.ma;if(!a)return;const full=a.g.length==a.w.length,ok=full&&a.g.map(i=>a.w[i]).join(' ')==a.w.join(' ');
+ $('#mar').innerHTML=`<div class="p-2 rounded-xl border border-white/10 min-h-[44px]">${a.g.map(i=>`<button class="sw tg" data-r="${i}">${esc(a.w[i])}</button>`).join('')||'<span class="text-xs text-gray-500">Toca las palabras en orden…</span>'}</div><div class="mt-2">${a.b.filter(i=>!a.g.includes(i)).map(i=>`<button class="sw" style="background:rgba(255,255,255,.12)" data-b="${i}">${esc(a.w[i])}</button>`).join('')}</div>`+(full?`<p class="mt-1 ${ok?'text-emerald-300':'text-amber-400'}">${ok?'✅ ¡Bien armada! Ahora dila con 🎙':'🤔 Casi: toca una palabra de arriba para quitarla y corrige el orden'}</p>`:'');if(full)fx(ok)}
+function mclose(){halt();$('#mdl').classList.remove('on');S.pol=S.mo;render();schedHome()}
+$('#dm').onclick=()=>{closeM();S.mo=S.pol;S.mp='a';if(!S.touched)mpre(0);if(/^(ppc|prpc|fpc)$/.test(S.sel)&&/^(eat|cook|watch|go|call)$/.test(S.verb))mpre(5);$('#mdl').classList.add('on');mrender()};
+$('#mdx').onclick=mclose;$('#mdl').onclick=e=>{if(e.target.id=='mdl')mclose()};
+document.addEventListener('keydown',e=>{if(e.key=='Escape'&&$('#mdl').classList.contains('on'))mclose()});
+$('#mbody').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.p){halt();S.mp=d.p;mrender()}
+ else if(d.i){halt();mpre(+d.i);mrender()}
+ else if(d.a=='arm'){halt();marm()}
+ else if(d.b!=null){S.ma.g.push(+d.b);mar()}
+ else if(d.r!=null){S.ma.g=S.ma.g.filter(x=>x!=+d.r);mar()}
+ else if(b.id=='ml'){halt();say(S.mk.text)}
+ else if(b.id=='mm'){if(S.listening){halt();return}halt();const r=await tryOnce(S.mk.text,0);
+  if(r.pass){const m=ldm(),id=S.sel,was=isDom(id);(m[id]=m[id]||{})[S.mp]=1;svm(m);mprog();render();if(!was&&isDom(id))confetti({particleCount:160,spread:90,origin:{y:.5}})}}};
+
+const cur=()=>CELLS.find(c=>c.id==S.sel);
+
+function chips(el,arr,get,set){$(el).innerHTML=arr.map(a=>`<button class="chip ${get()==a?'on':''}">${a}</button>`).join('');
+ $(el).onclick=e=>{const b=e.target.closest('.chip');if(!b)return;set(b.textContent);$(el).querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x==b));render()}}
+const DL={what:['English','a report','my homework','a book','coffee','pizza'],how:['hard','carefully','on the bus','very well','slowly'],where:['at home','at work','in Managua','at the market','at school'],with:['with my family','with my coworkers','with my friends'],when:['yesterday','last week','every day','right now','since 2024','for two years','tomorrow','by Friday']};
+$('#fields').innerHTML=FIELDS.map(([k,l,q,ph])=>`<div><p class="text-xs mb-1"><b class="text-white">${l}</b> <span class="text-gray-500">${q}</span></p><input id="${k}" list="dl_${k}" class="inp" placeholder="${ph}" autocomplete="off"><datalist id="dl_${k}">${DL[k].map(x=>`<option value="${x}">`).join('')}</datalist></div>`).join('');
+$('#fields').onclick=e=>{const b=e.target.closest('.chip'),f=b&&b.parentElement.dataset.f;if(!f)return;const i=$('#'+f);i.value=i.value==b.textContent?'':b.textContent;b.parentElement.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.textContent==i.value));render()};
+document.querySelectorAll('input.inp:not(#verb2):not(#pin),select.inp:not(#subjS):not(#verbS):not(#polS)').forEach(i=>i.addEventListener('input',()=>{if(i.id=='subj'||i.id=='verb')document.querySelectorAll('#'+(i.id=='subj'?'subjC':'verbC')+' .chip').forEach(x=>x.classList.remove('on'));render()}));
+$('#tl').insertAdjacentHTML('afterbegin',NODES.map(([l,x,k,c,u])=>`<div class="node" data-c="${c.join(' ')}" style="left:${x}%;--c:${COL[k]}"><i class="dot ${k=='p'?'sq':''}"></i><b class="lab ${u?'up':'dn'}">${l}</b></div>`).join(''));
+$('#grid').onclick=e=>{const c=e.target.closest('.mc');if(!c)return;const id=c.dataset.id,now=Date.now();if(S.lt&&S.lt.id==id&&now-S.lt.t<450){S.lt=null;halt();pick(id);openM()}else{S.lt={id,t:now};pick(id)}};
+$('#all').onclick=()=>seq(CELLS,true);
+$('#mic').onclick=async()=>{if(S.listening){halt();return}const k=cur();if(S.prac&&!S.done[k.id]){$('#fb').textContent='Check your answer first 🙂';return}halt();await tryOnce(k.text,0)};
+$('#qm').onclick=async()=>{if(S.listening){halt();return}halt();if(!SR){$('#qa').textContent=ERR.unsupported;return}
+ $('#qa').textContent='🎙 Listening…';const h=await hear(it=>{$('#qa').textContent='🎙 '+it},14000);
+ if(h.err=='aborted')return;
+ if(h.alts.length)$('#qa').innerHTML='🗣 “'+esc(h.alts[0])+'”';else $('#qa').textContent=ERR[h.err]||ERR['no-speech']};
+$('#bu').onclick=()=>seq([cur()],false);$('#stop').onclick=halt;
+function fill(){const k=cur();if(!k)return;$('#mh').textContent=k.name.toUpperCase();$('#mh').style.color=COL[k.kind];const pr=S.prac&&!S.done[k.id];$('#ms').innerHTML=pr?k.blank:k.html;$('#pr').classList.toggle('hidden',!pr);$('#pin').placeholder=S.pol=='q'?'e.g. Has she been working':'Type the verb form (aux + verb)';$('#mes').textContent=ES[k.id];$('#dm').style.display=$('#tr').style.display=$('#sv').style.display=$('#cd').style.display=$('#qb').style.display=$('#mic').style.display=$('#sp').style.display=pr?'none':'';if(S.tt!=k.text){S.tt=k.text;$('#mtr').classList.add('hidden')}if(S.lf!=k.id){S.lf=k.id;$('#sp').innerHTML='';$('#mtl').innerHTML=tlsvg(k.id,COL[k.kind]);qshow();$('#pin').value='';$('#fb').textContent=''}$('#mw').textContent=(S.prac&&S.done[k.id])?'✅ Correct! Now tap 🎙 and say it out loud.':k.warn?'⚠ rare in continuous':'';$('#sheet').style.setProperty('--c',COL[k.kind]);if(document.activeElement!=$('#verb2'))$('#verb2').value=$('#verb').value.trim()||S.verb}
+function openM(){S.open=1;$('#modal').classList.add('on');fill()}
+function closeM(){halt();S.open=0;schedHome();$('#modal').classList.remove('on')}
+const step=d=>{halt();pick(T[(T.findIndex(t=>t[0]==S.sel)+d+T.length)%T.length][0])};
+$('#mx').onclick=closeM;$('#modal').onclick=e=>{if(e.target.id=='modal')closeM()};
+$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);$('#say').onclick=()=>{if(S.prac&&!S.done[S.sel]){$('#fb').textContent='Check your answer first 🙂';return}halt();say(cur().text)};
+$('#verb2').addEventListener('input',e=>{$('#verb').value=e.target.value;document.querySelectorAll('#verbC .chip').forEach(x=>x.classList.remove('on'));render()});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')closeM()});
+const norm=x=>{x=x.toLowerCase().replace(/’/g,"'").replace(/[.?!,]/g,'');Object.entries(N).forEach(([k,v])=>{if(k!='am')x=x.split(v).join(k+' not')});return x.replace(/\s+/g,' ').trim()};
+function chk(){const k=cur(),v=norm($('#pin').value);if(!v)return;if(v==norm(k.ans)){S.done[k.id]=1;fx(1);render();say(k.text)}else{S.fail[k.id]=1;fx(0);$('#fb').textContent='❌ '+hint(k,v);render()}}
+$('#chk').onclick=chk;$('#pin').addEventListener('keydown',e=>{if(e.key=='Enter')chk()});
+$('#shw').onclick=()=>{$('#fb').innerHTML='Answer: <b class="text-white">'+cur().ans+'</b>'};
+$('#pm').onclick=()=>{S.prac=!S.prac;render();schedHome()};
+function hint(k,v){const t=T.find(x=>x[0]==k.id),c=ctx(),e=norm(k.ans).split(' '),w=v.split(' '),lw=w[w.length-1],le=e[e.length-1];
+ if(e.includes('been')&&!w.includes('been'))return'Falta «been»: es un tiempo perfect continuous.';
+ if(e.includes('will')&&!w.includes('will'))return'Es futuro: necesita «will».';
+ if(lw!=le)return t[5]=='ing'?`Este tiempo termina en -ing (${c.ing}).`:t[5]=='pp'?`Este tiempo necesita el participio (${c.pp}).`:t[2]=='s'&&S.pol=='a'?'Revisa la forma del verbo (¿pasado o presente?).':'Revisa la forma del verbo.';
+ return`Revisa el auxiliar: empieza con «${e[0]}».`}
+const TRC={};
+$('#tr').onclick=async()=>{const k=cur(),el=$('#mtr');el.classList.remove('hidden');el.textContent='…';
+ if(!TRC[k.text]){try{const r=await fetch('https://api.mymemory.translated.net/get?langpair=en|es&q='+encodeURIComponent(k.text));const j=await r.json(),x=j.responseData.translatedText;if(/^MYMEMORY|QUERY LENGTH/i.test(x))throw 0;TRC[k.text]=x}catch(e){el.textContent='Translation needs an internet connection.';return}}
+ el.innerHTML='🇪🇸 '+esc(TRC[k.text])+'<br><span class="text-[11px] text-gray-500">Traducción automática: puede tener errores.</span>'};
+const ld=()=>{try{return JSON.parse(localStorage.getItem('ne_phrases'))||[]}catch(e){return[]}},lsSave=a=>{try{localStorage.setItem('ne_phrases',JSON.stringify(a))}catch(e){}};
+function plist(){const a=ld();$('#pls').innerHTML=a.length?a.map((x,i)=>`<div class="p-3 mb-2 rounded-xl border border-white/10"><p class="text-[15px]">${esc(x.t)}</p><p class="text-[11px] text-gray-500 mb-2">${esc(x.k)}</p><div class="flex gap-2"><input data-n="${i}" class="inp" style="font-size:16px" placeholder="My note…" value="${esc(x.n)}"><button data-p="${i}" class="btn gh !px-3">🔊</button><button data-d="${i}" class="btn gh !px-3">✕</button></div></div>`).join(''):'<p class="text-sm text-gray-500">Tap ⭐ Save on any sentence to keep it here.</p>'}
+$('#sv').onclick=()=>{const k=cur(),a=ld();if(!a.some(x=>x.t==k.text)){a.unshift({t:k.text,k:k.name,n:''});lsSave(a)}plist();$('#sv').textContent='✓ Saved';setTimeout(()=>$('#sv').textContent='⭐ Save',1500)};
+$('#pls').addEventListener('input',e=>{const i=e.target.dataset.n;if(i==null)return;const a=ld();if(a[i]){a[i].n=e.target.value;lsSave(a)}});
+$('#pls').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=ld();if(b.dataset.d!=null){a.splice(+b.dataset.d,1);lsSave(a);plist()}else if(b.dataset.p!=null){halt();say(a[+b.dataset.p].t)}};
+$('#cp').onclick=async()=>{const t=ld().map(x=>'• '+x.t+(x.n?' — '+x.n:'')).join('\n');try{await navigator.clipboard.writeText(t);$('#cp').textContent='✓ Copied'}catch(e){prompt('Copy:',t)}setTimeout(()=>$('#cp').textContent='Copy all',1500)};
+$('#sh').onclick=async()=>{const q=new URLSearchParams();q.set('v',$('#verb').value.trim()||S.verb);q.set('s',$('#subj').value.trim()||S.subj);q.set('p',S.pol);['what','how','where','with','when','clause','pa'].forEach(i=>{const x=$('#'+i).value.trim();if(x)q.set(i,x)});if($('#ppv').value.trim())q.set('pp',$('#ppv').value.trim());q.set('c',$('#conn').value);const u=location.href.split('#')[0]+'#'+q;try{await navigator.clipboard.writeText(u)}catch(e){prompt('Copy this link',u)}$('#sh').textContent='✓ Copied';setTimeout(()=>$('#sh').textContent='🔗 Share',1800)};
+['what','how','where','with','when','clause'].forEach(i=>{if(H.get(i))$('#'+i).value=H.get(i)});if(H.get('c'))$('#conn').value=H.get('c');
+plist();
+const Q={ps:"What did you do yesterday?|Where did you go last weekend?|What did you eat this morning?|Who did you talk to last night?",pc:"What were you doing last night at 8?|What were you doing when you woke up?|Who were you talking to an hour ago?|Where were you living five years ago?",pp:"What had you done before you came to class today?|What had you learned before you started this course?|Had you ever traveled before you were 18?|What had you eaten before you slept last night?",ppc:"What had you been doing before this class started?|How long had you been studying English before today?|What had you been thinking about all morning?|Where had you been working before your current job?",prs:"What do you do every morning?|Where do you usually eat lunch?|Who do you talk to every day?|What do you do on weekends?",prc:"What are you doing right now?|What are you learning these days?|Who are you talking to lately?|What are you thinking about right now?",prp:"What have you done today?|Where have you been this week?|What have you learned this month?|Have you ever eaten something strange?",prpc:"How long have you been studying English?|What have you been doing lately?|How long have you been living in your city?|What have you been waiting for?",fs:"What will you do tomorrow?|Where will you go next weekend?|What will you eat tonight?|What will you buy next month?",fc:"What will you be doing at 8 PM tomorrow?|Where will you be working next year?|What will you be doing this time next week?|Who will you be talking to tonight?",fp:"What will you have finished by Friday?|What will you have learned by next year?|What will you have bought by December?|Where will you have been by 2030?",fpc:"How long will you have been studying English by next year?|How long will you have been working by 2030?|What will you have been doing for a year by then?|How long will you have been living here by 2030?",gtp:"What were you going to do yesterday but couldn't?|Who were you going to call last week?|What were you going to buy?|Where were you going to travel?",gtf:"What are you going to do tomorrow?|Where are you going to travel next?|What are you going to learn?|Who are you going to meet this week?"};
+function qshow(){const a=Q[S.sel].split('|');let i;do{i=Math.random()*a.length|0}while(i==S.qi&&a.length>1);S.qi=i;$('#qt').textContent=a[i];$('#qa').textContent=''}
+$('#qn').onclick=qshow;
+function tlsvg(id,c){const k=T.find(t=>t[0]==id)[2],z=id[0]=='g'?(id=='gtp'?0:1):id[0]=='f'?2:id[1]=='r'?1:0,x=[80,180,280][z],L=`stroke="${c}" stroke-width="3" fill="none"`;let h='';
+ if(k=='s')h=(z==1?[150,180,210]:[x]).map(v=>`<circle cx="${v}" cy="40" r="6" fill="${c}"/>`).join('');
+ else if(k=='c')h=`<rect class="gr" x="${x-28}" y="33" width="56" height="14" rx="7" fill="${c}"/>`;
+ else if(k=='p'){const a=[40,90,200][z],b=[110,180,280][z];h=`<circle cx="${a}" cy="40" r="6" fill="${c}"/><line class="gr" x1="${a}" x2="${b-6}" y1="40" y2="40" ${L}/><path d="M${b-9} 33 L${b} 40 L${b-9} 47" ${L}/>`}
+ else if(k=='pc'){const a=[30,60,190][z],b=[110,180,290][z];h=`<rect class="gr" x="${a}" y="33" width="${b-a}" height="14" rx="7" fill="${c}"/>`}
+ else{const a=[60,180][z],b=[130,270][z];h=`<line class="gr" x1="${a}" x2="${b-6}" y1="40" y2="40" ${L} stroke-dasharray="6 5"/><path d="M${b-9} 33 L${b} 40 L${b-9} 47" ${L}/>`}
+ return`<svg viewBox="0 0 360 72" class="w-full"><line x1="10" x2="350" y1="40" y2="40" stroke="#475569" stroke-width="2"/><line x1="180" x2="180" y1="20" y2="60" stroke="#d4af37" stroke-width="2" stroke-dasharray="3 3"/><text x="180" y="12" text-anchor="middle" fill="#d4af37" font-size="10" font-weight="700">📍 NOW · you are here</text><text x="10" y="68" fill="#64748b" font-size="9">PAST</text><text x="350" y="68" text-anchor="end" fill="#64748b" font-size="9">FUTURE</text>${h}</svg>`}
+function fx(ok){try{navigator.vibrate&&navigator.vibrate(ok?25:[60,40,60]);const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.frequency.value=ok?880:200;g.gain.value=.06;o.connect(g);g.connect(a.destination);o.onended=()=>a.close();o.start();o.stop(a.currentTime+.12)}catch(e){}}
+const SC={ps:"Ayer fuiste al mercado y volviste a casa. Ya terminó.",pc:"Tu mamá te llamó a las 9 p. m. y te preguntó qué estabas haciendo en ese momento.",pp:"Llegaste a la estación, pero el bus ya se había ido.",ppc:"Estabas agotado porque llevabas horas trabajando antes de que llegara tu jefe.",prs:"Hablas de tu rutina: lo que haces todos los días.",prc:"Tu amigo te llama y le dices qué estás haciendo justo ahora.",prp:"Acabas de terminar tu tarea y quieres decir que ya está hecha.",prpc:"Empezaste a estudiar inglés hace dos años y todavía lo sigues haciendo.",fs:"Decides en este momento: «mañana la voy a llamar».",fc:"Dentro de una semana, a esta hora, estarás en pleno viaje.",fp:"Para el viernes ya habrás entregado el proyecto.",fpc:"En 2030 llevarás diez años trabajando en la misma empresa.",gtp:"Tenías planeado ir a la playa el sábado, pero llovió.",gtf:"Ya compraste los boletos: el mes que viene vas a viajar."};
+let sq=[],stk=0;const shuf=a=>a.sort(()=>Math.random()-.5);
+function scene(){if(!sq.length)sq=shuf(T.map(t=>t[0]));const id=sq.pop();S.sc=id;S.sd=0;const o=shuf([id,...shuf(T.map(t=>t[0]).filter(x=>x!=id)).slice(0,3)]);
+ $('#sc').textContent=SC[id];$('#so').innerHTML=o.map(x=>`<button class="chip !rounded-xl !py-3" data-o="${x}">${T.find(t=>t[0]==x)[1]}</button>`).join('');$('#sf').textContent='';$('#sk').textContent=stk?'🔥 '+stk:''}
+$('#so').onclick=e=>{const b=e.target.closest('[data-o]');if(!b||S.sd)return;const ok=b.dataset.o==S.sc;fx(ok);
+ if(ok){S.sd=1;stk++;$('#sk').textContent='🔥 '+stk;$('#sf').innerHTML='✅ Correct! <span class="text-gray-400">'+ES[S.sc]+'</span>';b.classList.add('on');pick(S.sc);confetti({particleCount:40,spread:50,origin:{y:.6}})}
+ else{stk=0;$('#sk').textContent='';b.classList.add('opacity-40');$('#sf').textContent='❌ Not that one. Think about WHEN and HOW the action is seen.'}};
+$('#sn').onclick=scene;
+$('#dl').onclick=async()=>{halt();const id=S.run;for(const i of ['d1','d2','d3']){const v=$('#'+i).value.trim();if(v){if(id!=S.run)return;await say(v)}}};
+function wrap(x,t,px,y,w,lh){let l='';for(const word of t.split(' ')){const n=l+word+' ';if(x.measureText(n).width>w&&l){x.fillText(l,px,y);y+=lh;l=word+' '}else l=n}x.fillText(l,px,y)}
+$('#cd').onclick=async()=>{const k=cur(),cv=document.createElement('canvas');cv.width=1080;cv.height=1350;const x=cv.getContext('2d');try{await document.fonts.load('700 60px Sora')}catch(e){}
+ const g=x.createLinearGradient(0,0,1080,1350);g.addColorStop(0,'#0d1b3d');g.addColorStop(1,'#05070d');x.fillStyle=g;x.fillRect(0,0,1080,1350);
+ x.fillStyle=COL[k.kind];x.fillRect(80,200,120,8);x.fillStyle='#d4af37';x.font='600 34px Sora';x.fillText('NICA ENGLISH CLUB',80,130);
+ x.fillStyle=COL[k.kind];x.font='700 40px Sora';x.fillText(k.name.toUpperCase(),80,290);x.fillStyle='#fff';x.font='700 78px Sora';wrap(x,k.text,80,440,920,104);
+ x.fillStyle='#94a3b8';x.font='500 32px Inter';x.fillText('Tense Engine · Think → Build → Speak',80,1260);
+ cv.toBlob(async b=>{const f=new File([b],'my-sentence.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});return}catch(e){}}const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='my-sentence.png';a.click()})};
+scene();
+const hw=o=>$('#guide').classList.toggle('on',o);
+$('#hb').onclick=()=>hw(1);$('#hx').onclick=$('#hk').onclick=()=>hw(0);$('#guide').onclick=e=>{if(e.target.id=='guide')hw(0)};
+document.addEventListener('keydown',e=>{if(e.key=='Escape')hw(0)});
+$('#subjS').innerHTML=['I','you','he','she','we','they','my brother','my sister','my friends','my coworkers'].map(x=>`<option>${x}</option>`).join('')+'<option value="__own">✍ Someone else…</option>';
+$('#verbS').innerHTML=[...VERBS].sort().map(x=>`<option>${x}</option>`).join('')+'<option value="__own">✍ My own verb…</option>';
+$('#polS').innerHTML=[['a','Affirmative (+)'],['n','Negative (−)'],['q','Question (?)']].map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+$('#subjS').onchange=e=>{const v=e.target.value;if(v=='__own'){S.so=1;$('#subj').style.display='';$('#subj').focus()}else{S.so=0;S.subj=v;$('#subj').value=''}render()};
+$('#verbS').onchange=e=>{const v=e.target.value;if(v=='__own'){S.vo=1;$('#verb').focus();$('#verb').scrollIntoView({block:'center'})}else{S.vo=0;S.verb=v;['verb','pa','ppv'].forEach(i=>$('#'+i).value='')}render()};
+$('#polS').onchange=e=>{S.pol=e.target.value;render()};
+let ks=0;const KN=5;
+function kstep(i){ks=(i+KN)%KN;const st=document.querySelectorAll('.step');st.forEach((e,j)=>e.classList.toggle('on',j==ks));$('#kt').textContent=st[ks].dataset.t;$('#kd').innerHTML=[...Array(KN)].map((_,j)=>`<i class="w-2 h-2 rounded-full ${j==ks?'bg-[#d4af37]':'bg-white/20'}"></i>`).join('')}
+$('#kp').onclick=()=>kstep(ks-1);$('#kx').onclick=()=>kstep(ks+1);
+let tx=0;$('#ktr').addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});$('#ktr').addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>60&&!/INPUT|SELECT/.test(e.target.tagName))kstep(ks+(d<0?1:-1))});
+kstep(0);
+$('#tl').onclick=e=>{const n=e.target.closest('.node');if(!n)return;const ids=n.dataset.c.split(' ');pick(ids[0],ids)};
+['input','change'].forEach(t=>document.addEventListener(t,e=>{if(e.target.closest&&(e.target.closest('#kit')||e.target.id=='verb'))S.touched=1},true));
+let HT;const NXP={};NODES.forEach(n=>n[3].forEach(c=>NXP[c]=n[1]));
+function focus(x,t){$('#mk').style.left=x+'%';$('#mkt').textContent=t;const w=$('#tlw'),l=$('#tl');w.scrollLeft=l.offsetWidth*x/100-w.clientWidth/2}
+const home=()=>focus(50,'📍 YOU ARE HERE');
+function schedHome(){clearTimeout(HT);HT=setTimeout(()=>{if(!S.open&&!S.prac)home()},5000)}
+function aim(id){focus(NXP[id],"📍 Imagine you're at this point");schedHome()}
+$('#act').onclick=()=>aim(S.sel);setTimeout(home,100);
+try{AOS.init({once:true,duration:700})}catch(e){}
+render();
+</script></body></html>
