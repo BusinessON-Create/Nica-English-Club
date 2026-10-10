@@ -19,11 +19,14 @@
   .tr2-entrega-alumno { font-family:'Playfair Display',serif; font-size:17px; color:#fff; }
   .tr2-entrega-meta { font-size:12px; color:var(--muted); }
   .tr2-entrega-tipo { display:inline-flex; align-items:center; gap:6px; background:var(--gold-dim); color:var(--gold3); font:700 11.5px 'DM Sans',sans-serif; padding:4px 12px; border-radius:99px; }
-  .tr2-entrega-body { background:var(--card2); border-radius:var(--r-sm); padding:12px 14px; font-size:14px; margin:12px 0; }
+  .tr2-entrega-body { background:var(--card2); border-radius:var(--r-sm); padding:12px 14px; font-size:14px; margin:12px 0; white-space:pre-wrap; }
   .tr2-entrega-acciones { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }
   .tr2-btn-aprobar { background:rgba(0,214,143,.14); border:1px solid var(--green); color:var(--green); padding:8px 16px; border-radius:99px; font:700 13px 'DM Sans',sans-serif; cursor:pointer; }
   .tr2-btn-refuerzo { background:rgba(255,92,92,.14); border:1px solid var(--red); color:var(--red); padding:8px 16px; border-radius:99px; font:700 13px 'DM Sans',sans-serif; cursor:pointer; }
   .tr2-feedback-input { flex:1; min-width:200px; background:var(--card); border:1px solid var(--border2); color:var(--text); padding:9px 12px; border-radius:99px; font:400 13px 'DM Sans',sans-serif; }
+  .tr2-ia-botones { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .tr2-btn-ia { background:var(--card2); border:1px solid var(--gold2); color:var(--gold3); padding:7px 14px; border-radius:99px; font:700 12.5px 'DM Sans',sans-serif; cursor:pointer; }
+  .tr2-btn-ia.tr2-btn-ia-suave { border-color:var(--border2); color:var(--muted); }
 </style>
 </head>
 <body>
@@ -35,13 +38,49 @@
 
   <div class="tr2-shell">
     <h1 class="tr2-h1" id="tr2-titulo">Cargando…</h1>
-    <p class="tr2-sub">Speaking y Writing entregados por los alumnos, esperando tu revisión.</p>
+    <p class="tr2-sub">Speaking y Writing entregados por los alumnos, esperando tu revisión. En Writing, la IA deja un borrador: tú decides si lo usas, lo editas o lo descartas. La evaluación final siempre es tuya.</p>
     <div id="tr2-lista" style="margin-top:20px;"></div>
   </div>
 
   <script type="module">
     import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
     import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Todo lo que escribió un alumno (o la IA) se escapa antes de pintarlo.
+    const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    // Solo se reproduce un audio si es realmente un data URI de audio.
+    const AUDIO_OK = /^data:audio\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/;
+
+    function panelIA(ia) {
+      const errores = (ia.errores || []).map((e) =>
+        `<li><span class="tr2-ia-mal">${esc(e.original)}</span> → <span class="tr2-ia-bien">${esc(e.correccion)}</span><small>${esc(e.explicacion)}</small></li>`
+      ).join('');
+      return `
+        <div class="tr2-ia" data-panel-ia>
+          <div class="tr2-ia-head">
+            <span><i class="fa-solid fa-wand-magic-sparkles"></i> Borrador de la IA</span>
+            <span class="tr2-ia-nota">${esc(ia.notaEstimada)}/100 estimada</span>
+          </div>
+          ${ia.comentario ? `<p>${esc(ia.comentario)}</p>` : ''}
+          ${ia.correccion ? `<div class="tr2-ia-corr"><b>Texto corregido:</b><p>${esc(ia.correccion)}</p></div>` : ''}
+          ${errores ? `<ul class="tr2-ia-errores">${errores}</ul>` : ''}
+          <div class="tr2-ia-botones">
+            <button class="tr2-btn-ia" data-ia="usar"><i class="fa-solid fa-check"></i> Usar como feedback</button>
+            <button class="tr2-btn-ia tr2-btn-ia-suave" data-ia="descartar"><i class="fa-solid fa-xmark"></i> Descartar borrador</button>
+          </div>
+        </div>`;
+    }
+
+    // Texto de feedback que se arma a partir del borrador (el coach lo puede editar).
+    function feedbackDesdeIA(ia) {
+      const partes = [];
+      if (ia.comentario) partes.push(ia.comentario);
+      const top = (ia.errores || []).slice(0, 3).map((e) => `"${e.original}" → "${e.correccion}"`);
+      if (top.length) partes.push('Corrige: ' + top.join('; ') + '.');
+      return partes.join(' ');
+    }
 
     (async function init() {
       const resultado = await esperarSesionYAlumno();
@@ -58,6 +97,7 @@
       const snap = await getDocs(q);
       const entregas = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
         .sort((a, b) => (b.fecha?.toMillis?.() || 0) - (a.fecha?.toMillis?.() || 0));
+      const porId = new Map(entregas.map((e) => [e.id, e]));
 
       document.getElementById('tr2-titulo').textContent = `${entregas.length} pendiente${entregas.length === 1 ? '' : 's'}`;
 
@@ -67,25 +107,56 @@
         return;
       }
 
-      lista.innerHTML = entregas.map((e) => `
-        <div class="tr2-entrega-card" data-id="${e.id}">
+      lista.innerHTML = entregas.map((e) => {
+        const esWriting = e.tipo === 'writing';
+        const cuerpo = esWriting
+          ? esc(e.texto || '')
+          : (AUDIO_OK.test(e.audioBase64 || '')
+              ? `<audio controls style="width:100%;" src="${e.audioBase64}"></audio>`
+              : '<span class="tr2-muted">Audio no disponible.</span>');
+        const ia = esWriting
+          ? (e.feedbackIA ? panelIA(e.feedbackIA) : '<p class="tr2-nota" style="margin-bottom:8px;">La IA no generó borrador para esta entrega.</p>')
+          : '';
+        return `
+        <div class="tr2-entrega-card" data-id="${esc(e.id)}">
           <div class="tr2-entrega-head">
             <div>
-              <div class="tr2-entrega-alumno">${e.alumnoNombre || e.alumnoEmail || 'Alumno'}</div>
-              <div class="tr2-entrega-meta">${e.nivelId.toUpperCase()} · ${e.unidadNombre || e.unidadId}</div>
+              <div class="tr2-entrega-alumno">${esc(e.alumnoNombre || e.alumnoEmail || 'Alumno')}</div>
+              <div class="tr2-entrega-meta">${esc(String(e.nivelId || '').toUpperCase())} · ${esc(e.unidadNombre || e.unidadId)}</div>
             </div>
-            <span class="tr2-entrega-tipo"><i class="fa-solid ${e.tipo === 'speaking' ? 'fa-microphone' : 'fa-pen-nib'}"></i> ${e.tipo === 'speaking' ? 'Speaking' : 'Writing'}</span>
+            <span class="tr2-entrega-tipo"><i class="fa-solid ${esWriting ? 'fa-pen-nib' : 'fa-microphone'}"></i> ${esWriting ? 'Writing' : 'Speaking'}</span>
           </div>
-          <div class="tr2-entrega-body">
-            ${e.tipo === 'writing' ? `<p>${e.texto || ''}</p>` : `<audio controls style="width:100%;" src="${e.audioBase64 || ''}"></audio>`}
-          </div>
+          <div class="tr2-entrega-body">${cuerpo}</div>
+          ${ia}
           <div class="tr2-entrega-acciones">
             <input type="text" class="tr2-feedback-input" placeholder="Feedback para el alumno (opcional)">
             <button class="tr2-btn-aprobar" data-veredicto="aprobada"><i class="fa-solid fa-check"></i> Aprobar</button>
             <button class="tr2-btn-refuerzo" data-veredicto="refuerzo"><i class="fa-solid fa-rotate-left"></i> Necesita refuerzo</button>
           </div>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
+
+      // Borrador de la IA: usar / (editar escribiendo) / descartar
+      lista.querySelectorAll('[data-ia]').forEach((btn) => {
+        btn.onclick = () => {
+          const card = btn.closest('.tr2-entrega-card');
+          const input = card.querySelector('.tr2-feedback-input');
+          const ia = porId.get(card.dataset.id).feedbackIA;
+          if (btn.dataset.ia === 'usar') {
+            input.value = feedbackDesdeIA(ia);
+            card.dataset.iaDecision = 'aceptado';
+          } else {
+            card.querySelector('[data-panel-ia]').style.display = 'none';
+            card.dataset.iaDecision = 'descartado';
+          }
+        };
+      });
+      lista.querySelectorAll('.tr2-feedback-input').forEach((input) => {
+        input.addEventListener('input', () => {
+          const card = input.closest('.tr2-entrega-card');
+          if (card.dataset.iaDecision === 'aceptado') card.dataset.iaDecision = 'editado';
+        });
+      });
 
       lista.querySelectorAll('[data-veredicto]').forEach((btn) => {
         btn.onclick = async () => {
@@ -95,6 +166,7 @@
           await updateDoc(doc(db, 'training_v2_entregas', card.dataset.id), {
             estado: btn.dataset.veredicto,
             feedbackCoach: feedback || null,
+            iaDecision: card.dataset.iaDecision || null,
             calificadoPor: alumno.id,
             calificadoEn: serverTimestamp(),
           });
