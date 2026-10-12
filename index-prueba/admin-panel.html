@@ -74,6 +74,9 @@
             <input type="checkbox" id="alumno-es-coach" onchange="toggleCoachHorariosVisibilidad()"> Este alumno es Coach (puede dejar notas de seguimiento)
           </label>
           <div id="alumno-coach-horarios-wrap" style="display:none; margin-bottom:14px; padding:12px; background:rgba(255,255,255,.03); border:1px solid var(--border2); border-radius:12px;">
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:12px; cursor:pointer; font-size:13px; color:var(--text);">
+              <input type="checkbox" id="alumno-ia-coach"> Puede revisar entregas con IA (borrador de ayuda; el alumno solo ve lo que el coach aprueba)
+            </label>
             <p class="form-hint" style="margin-bottom:8px;">Grupos que este coach enseña (puede marcar varios):</p>
             <div id="alumno-coach-horarios-lista"></div>
           </div>

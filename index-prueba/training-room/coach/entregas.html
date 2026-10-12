@@ -38,13 +38,15 @@
 
   <div class="tr2-shell">
     <h1 class="tr2-h1" id="tr2-titulo">Cargando…</h1>
-    <p class="tr2-sub">Speaking y Writing entregados por los alumnos, esperando tu revisión. En Writing, la IA deja un borrador: tú decides si lo usas, lo editas o lo descartas. La evaluación final siempre es tuya.</p>
+    <p class="tr2-sub">Speaking y Writing entregados por los alumnos, esperando tu revisión. El alumno no ve nada hasta que tú apruebes. Si tu cuenta tiene la IA activada, en Writing puedes pedir un borrador y decidir si lo usas, lo editas o lo descartas; si no, revisa de forma manual. La evaluación final siempre es tuya.</p>
     <div id="tr2-lista" style="margin-top:20px;"></div>
   </div>
 
   <script type="module">
     import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
     import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
     // Todo lo que escribió un alumno (o la IA) se escapa antes de pintarlo.
     const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -92,6 +94,7 @@
         return;
       }
 
+      const puedeIA = alumno.iaCoach === true; // lo activa el admin desde su panel
       const db = window.trv2_db;
       const q = query(collection(db, 'training_v2_entregas'), where('estado', '==', 'pendiente'));
       const snap = await getDocs(q);
@@ -114,8 +117,8 @@
           : (AUDIO_OK.test(e.audioBase64 || '')
               ? `<audio controls style="width:100%;" src="${e.audioBase64}"></audio>`
               : '<span class="tr2-muted">Audio no disponible.</span>');
-        const ia = esWriting
-          ? (e.feedbackIA ? panelIA(e.feedbackIA) : '<p class="tr2-nota" style="margin-bottom:8px;">La IA no generó borrador para esta entrega.</p>')
+        const ia = (esWriting && puedeIA)
+          ? `<div class="tr2-ia-zona" data-zona-ia><button class="tr2-btn-ia" data-pedir-ia><i class="fa-solid fa-wand-magic-sparkles"></i> Revisar con IA</button></div>`
           : '';
         return `
         <div class="tr2-entrega-card" data-id="${esc(e.id)}">
@@ -136,20 +139,40 @@
         </div>`;
       }).join('');
 
-      // Borrador de la IA: usar / (editar escribiendo) / descartar
-      lista.querySelectorAll('[data-ia]').forEach((btn) => {
-        btn.onclick = () => {
-          const card = btn.closest('.tr2-entrega-card');
+      // Borrador de la IA: se pide con un botón (solo si el admin activó la IA para este
+      // coach); el borrador llega en la respuesta del servidor, nunca queda en la entrega.
+      const borradores = new Map();
+      lista.addEventListener('click', async (ev) => {
+        const pedir = ev.target.closest('[data-pedir-ia]');
+        const accion = ev.target.closest('[data-ia]');
+        if (pedir) {
+          const card = pedir.closest('.tr2-entrega-card');
+          const zona = card.querySelector('[data-zona-ia]');
+          pedir.disabled = true;
+          pedir.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Generando borrador…';
+          try {
+            const revisar = httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2WritingFeedback');
+            const r = await revisar({ entregaId: card.dataset.id });
+            borradores.set(card.dataset.id, r.data.feedback);
+            zona.innerHTML = panelIA(r.data.feedback);
+          } catch (err) {
+            console.warn('Borrador de IA no disponible:', err);
+            zona.innerHTML = `<p class="tr2-nota" style="margin-bottom:8px;">${esc((err && err.message) || 'No se pudo generar el borrador.')} Puedes revisar de forma manual.</p>`;
+          }
+          return;
+        }
+        if (accion) {
+          const card = accion.closest('.tr2-entrega-card');
           const input = card.querySelector('.tr2-feedback-input');
-          const ia = porId.get(card.dataset.id).feedbackIA;
-          if (btn.dataset.ia === 'usar') {
+          const ia = borradores.get(card.dataset.id);
+          if (accion.dataset.ia === 'usar' && ia) {
             input.value = feedbackDesdeIA(ia);
             card.dataset.iaDecision = 'aceptado';
-          } else {
+          } else if (accion.dataset.ia === 'descartar') {
             card.querySelector('[data-panel-ia]').style.display = 'none';
             card.dataset.iaDecision = 'descartado';
           }
-        };
+        }
       });
       lista.querySelectorAll('.tr2-feedback-input').forEach((input) => {
         input.addEventListener('input', () => {

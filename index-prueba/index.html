@@ -6125,6 +6125,7 @@ window.prepararEdicionAlumno = (id) => {
   document.getElementById('alumno-horario-dias').value = (a.horario && a.horario.dias) || '';
   document.getElementById('alumno-horario-franja').value = (a.horario && a.horario.franja) || '';
   document.getElementById('alumno-es-coach').checked = !!a.esCoach;
+  { const _ia = document.getElementById('alumno-ia-coach'); if (_ia) _ia.checked = !!a.iaCoach; }
   document.getElementById('alumno-coach-horarios-wrap').style.display = a.esCoach ? 'block' : 'none';
   renderCoachHorariosCheckboxes(a.horariosCoach || []);
   document.getElementById('btn-guardar-alumno').innerText = "Actualizar Alumno";
@@ -6160,6 +6161,7 @@ window.registrarAlumno = async () => {
   const horario = (diasH && franjaH) ? { dias: diasH, franja: franjaH } : null;
   const esCoach = document.getElementById('alumno-es-coach').checked;
   const horariosCoach = esCoach ? leerHorariosCoachSeleccionados() : [];
+  const iaCoach = esCoach && !!(document.getElementById('alumno-ia-coach') || {}).checked; // permiso de IA: solo coaches
   if (!n) { showModal('Falta información', 'Escribe el nombre del alumno.'); return; }
 
   const btn = document.getElementById('btn-guardar-alumno');
@@ -6172,7 +6174,7 @@ window.registrarAlumno = async () => {
     const yaVinculado = actual && !!actual.uid;
     if (yaVinculado) {
       // Su cuenta ya existe: solo se actualizan datos de perfil, nunca correo/contraseña aquí.
-      await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach });
+      await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach, iaCoach });
     } else {
       // Alumno antiguo sin cuenta todavía: hay que vincularlo a una cuenta nueva de Firebase Auth.
       // Solo pedimos su correo: la contraseña se genera en código y nunca se maneja manualmente;
@@ -6182,7 +6184,7 @@ window.registrarAlumno = async () => {
       try {
         const passwordTemporal = generarPasswordSegura();
         const cred = await crearCuentaAuthSecundaria(correo, passwordTemporal);
-        await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach, uid: cred.user.uid, email: correo });
+        await updateDoc(doc(db, 'alumnos', id), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach, iaCoach, uid: cred.user.uid, email: correo });
         await sendPasswordResetEmail(auth, correo);
         correoParaAviso = correo;
       } catch (e) {
@@ -6203,7 +6205,7 @@ window.registrarAlumno = async () => {
       const cred = await crearCuentaAuthSecundaria(correo, passwordTemporal);
       const idsExistentes = alumnosCacheAdmin.map(a => a.identidad).filter(Boolean);
       const identidad = generarIdentidadUnica(n, idsExistentes);
-      await addDoc(collection(db,'alumnos'), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach, identidad, uid: cred.user.uid, email: correo, logins:0, total_logins:0, dias_semana:[] });
+      await addDoc(collection(db,'alumnos'), { nombre:n, foto:f, usuario:norm(n), plan, horario, esCoach, horariosCoach, iaCoach, identidad, uid: cred.user.uid, email: correo, logins:0, total_logins:0, dias_semana:[] });
       await sendPasswordResetEmail(auth, correo);
       correoParaAviso = correo;
     } catch (e) {
@@ -6227,6 +6229,7 @@ window.registrarAlumno = async () => {
   document.getElementById('alumno-horario-dias').value = '';
   document.getElementById('alumno-horario-franja').value = '';
   document.getElementById('alumno-es-coach').checked = false;
+  { const _ia = document.getElementById('alumno-ia-coach'); if (_ia) _ia.checked = false; }
   document.getElementById('alumno-coach-horarios-wrap').style.display = 'none';
   document.getElementById('alumno-coach-horarios-lista').innerHTML = '';
   document.getElementById('alumno-cuenta-vinculada-aviso').style.display = 'none';

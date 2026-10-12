@@ -10,8 +10,6 @@
 // alumno graba muy largo, se avisa antes de entregar.
 
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
 const LIMITE_BYTES = 700 * 1024; // ~700KB de margen bajo el límite de 1MB de un doc de Firestore
 
@@ -40,7 +38,6 @@ async function guardarEntrega(ctx, tipo, datos) {
     fecha: serverTimestamp(),
     estado: 'pendiente',
     feedbackCoach: null,
-    feedbackIA: null,
     iaDecision: null,
     calificadoPor: null,
     calificadoEn: null,
@@ -58,16 +55,7 @@ export async function entregarAudio(ctx, audioBase64) {
   await guardarEntrega(ctx, 'speaking', { audioBase64, texto: null });
 }
 
-// Revisión automática (solo Writing). La función del servidor lee la entrega,
-// verifica que sea tuya y guarda el resultado en feedbackIA. Si falla, la
-// entrega igual queda enviada para el coach.
-export async function pedirRevisionIA(ctx) {
-  const functions = getFunctions(getApp(), 'us-central1');
-  const revisar = httpsCallable(functions, 'trv2WritingFeedback');
-  await revisar({ entregaId: idEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'writing') });
-}
-
-// Todo texto escrito por una persona o por la IA se escapa antes de pintarlo.
+// Todo texto escrito por una persona se escapa antes de pintarlo.
 export function esc(t) {
   return String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -77,29 +65,11 @@ export function esc(t) {
 const ETIQUETA = { pendiente: 'Entregada, esperando revisión', aprobada: 'Aprobada por tu coach', refuerzo: 'Necesita refuerzo' };
 const CLASE = { pendiente: 'entregada', aprobada: 'aprobada', refuerzo: 'refuerzo' };
 
-function htmlRevisionIA(ia) {
-  const errores = (ia.errores || []).map((e) =>
-    `<li><span class="tr2-ia-mal">${esc(e.original)}</span> → <span class="tr2-ia-bien">${esc(e.correccion)}</span><small>${esc(e.explicacion)}</small></li>`
-  ).join('');
-  return `
-    <div class="tr2-ia">
-      <div class="tr2-ia-head">
-        <span><i class="fa-solid fa-wand-magic-sparkles"></i> Revisión automática</span>
-        <span class="tr2-ia-nota">${esc(ia.notaEstimada)}/100</span>
-      </div>
-      <p class="tr2-ia-aviso">Es una revisión automática: tu coach dará la evaluación final.</p>
-      ${ia.comentario ? `<p>${esc(ia.comentario)}</p>` : ''}
-      ${ia.correccion ? `<div class="tr2-ia-corr"><b>Tu texto corregido:</b><p>${esc(ia.correccion)}</p></div>` : ''}
-      ${errores ? `<ul class="tr2-ia-errores">${errores}</ul>` : ''}
-    </div>`;
-}
-
 export function pintarEstado(el, entrega) {
   if (!entrega) { el.innerHTML = ''; return; }
   el.innerHTML = `
     <span class="tr2-badge-estado ${CLASE[entrega.estado]}">${ETIQUETA[entrega.estado]}</span>
-    ${entrega.feedbackIA ? htmlRevisionIA(entrega.feedbackIA) : ''}
-    ${entrega.feedbackCoach ? `<p class="tr2-feedback-coach">${esc(entrega.feedbackCoach)}</p>` : ''}
+    ${entrega.estado !== 'pendiente' && entrega.feedbackCoach ? `<p class="tr2-feedback-coach">${esc(entrega.feedbackCoach)}</p>` : ''}
   `;
 }
 
@@ -155,21 +125,8 @@ export function instalarEntregas() {
       btn.disabled = true; btn.textContent = 'Enviando…';
       const estadoEl = cont.querySelector('.tr2-entrega-estado');
       await entregarTexto(ctx, texto);
-      let entrega = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'writing');
+      const entrega = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'writing');
       pintarEstado(estadoEl, entrega);
-      estadoEl.insertAdjacentHTML('beforeend', '<p class="tr2-nota" style="margin-top:8px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Generando revisión automática…</p>');
-      let avisoIA = '';
-      try {
-        await pedirRevisionIA(ctx);
-      } catch (err) {
-        console.warn('Revisión automática no disponible:', err);
-        avisoIA = (err && err.code === 'functions/resource-exhausted' && err.message)
-          ? err.message
-          : 'La revisión automática no está disponible ahora. Tu coach revisará tu entrega.';
-      }
-      entrega = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'writing');
-      pintarEstado(estadoEl, entrega);
-      if (avisoIA) estadoEl.insertAdjacentHTML('beforeend', `<p class="tr2-nota" style="margin-top:8px;">${esc(avisoIA)}</p>`);
       btn.disabled = false; btn.textContent = 'Volver a entregar';
       return;
     }
