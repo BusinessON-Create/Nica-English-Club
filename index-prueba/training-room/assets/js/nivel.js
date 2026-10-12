@@ -5,10 +5,15 @@
 // con audio 🔊 en todo texto en inglés y apoyo visual (íconos/banderas) donde
 // ya está definido en visuales.js (por ahora, Unidad 1 como piloto).
 //
-// NOTA: todavía NO aplica el candado de techo grupal (eso es la fase del
-// motor de estados) — aquí todo se muestra abierto.
+// CANDADO DE TECHO GRUPAL: el contenido de cada unidad NO se lee directo de
+// Firestore; lo entrega la Cloud Function trv2GetPagina solo si el servidor
+// confirma que el coach abrió esa unidad para el grupo del alumno.
+// El coach abre/cierra con trv2SetApertura (los clientes no escriben en
+// training_v2_apertura_grupo).
 
 import { collection, getDocs, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 import { instalarAudio, registrarLista, limpiarParaAudio, ciclarVelocidad, etiquetaVelocidad } from "./audio.js";
 import { instalarJuegos, marcador, renderOpcion, renderOrden, renderParejas } from "./juegos.js";
 import { instalarEntregas, cargarEntrega, pintarEstado } from "./entregas.js";
@@ -102,10 +107,45 @@ export async function cargarUnidades(nivelId) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
+// El contenido lo entrega el SERVIDOR (trv2GetPagina). Si la unidad está cerrada
+// para el grupo, la función lanza permission-denied con un mensaje en español.
 export async function cargarPagina(nivelId, unidadId) {
-  const db = window.trv2_db;
-  const snap = await getDoc(doc(db, 'training_v2_niveles', nivelId, 'unidades', unidadId, 'paginas', 'p1'));
-  return snap.exists() ? snap.data() : null;
+  const pedir = httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2GetPagina');
+  try {
+    const r = await pedir({ nivelId, unidadId });
+    return r.data && r.data.pagina ? r.data.pagina : null;
+  } catch (e) {
+    if (e && e.code === 'functions/not-found') return null;
+    throw e;
+  }
+}
+
+// ── Techo grupal ───────────────────────────────────────────────────────
+// Mismo slug que usa coach/index.html y el servidor, para que los IDs coincidan.
+export function slugGrupo(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+// Unidades abiertas para un grupo → Set de claves "{nivelId}-{unidadId}".
+// Si algo falla, devuelve vacío (todo queda cerrado: falla del lado seguro).
+export async function cargarAperturaGrupo(dias, franja) {
+  const d = slugGrupo(dias), f = slugGrupo(franja);
+  if (!d || !f) return new Set();
+  try {
+    const snap = await getDoc(doc(window.trv2_db, 'training_v2_apertura_grupo', `${d}__${f}`));
+    const lista = snap.exists() && Array.isArray(snap.data().unidades) ? snap.data().unidades : [];
+    return new Set(lista);
+  } catch (e) {
+    console.error('No se pudo leer la apertura del grupo:', e);
+    return new Set();
+  }
+}
+
+// Solo coach/admin: el servidor verifica que el grupo sea realmente suyo.
+export async function setApertura(dias, franja, unidadKey, abierta) {
+  const fn = httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2SetApertura');
+  await fn({ dias, franja, unidadKey, abierta });
 }
 
 // ── Helpers de audio (devuelven el HTML del botón 🔊) ────────────────────
@@ -120,20 +160,29 @@ function btnPlayLista(lineas, etiqueta = 'Escuchar todo') {
 }
 
 // ── Lista de unidades ─────────────────────────────────────────────────
-export function renderListaUnidades(unidades) {
-  return unidades.map((u) => `
-    <div class="tr2-card-unidad" data-unidad="${u.id}">
-      <div class="tr2-uni-icono"><i class="fa-solid ${ICONO_UNIDAD[claveNU(u.id)] || 'fa-book'}"></i></div>
+// abiertas: Set de claves abiertas para el grupo. El coach ve TODAS las unidades
+// (puede entrar a cualquiera) y, si tiene grupo, un interruptor para abrir/cerrar.
+export function renderListaUnidades(unidades, abiertas, { esCoach = false, puedeAbrir = false } = {}) {
+  return unidades.map((u) => {
+    const key = claveNU(u.id);
+    const delGrupo = abiertas.has(key);
+    const accesible = esCoach || delGrupo;
+    const derecha = puedeAbrir
+      ? `<label class="tr2-switch"><input type="checkbox" data-toggle="${key}" ${delGrupo ? 'checked' : ''}><span>${delGrupo ? 'Abierta' : 'Cerrada'}</span></label>`
+      : (accesible ? '<i class="fa-solid fa-chevron-right tr2-uni-flecha"></i>' : '<i class="fa-solid fa-lock tr2-uni-flecha"></i>');
+    return `
+    <div class="tr2-card-unidad ${accesible ? '' : 'locked'}" data-unidad="${u.id}">
+      <div class="tr2-uni-icono"><i class="fa-solid ${ICONO_UNIDAD[key] || 'fa-book'}"></i></div>
       <div class="tr2-uni-txt">
         <div class="tr2-uni-kicker">Unidad ${u.orden} · Semana ${u.semana}</div>
         <div class="tr2-uni-nombre">${u.nombre}</div>
+        ${accesible ? '' : '<div class="tr2-uni-lock">Tu coach la abrirá pronto</div>'}
       </div>
-      <i class="fa-solid fa-chevron-right tr2-uni-flecha"></i>
-    </div>
-  `).join('');
+      ${derecha}
+    </div>`;
+  }).join('');
 }
 
-// ── Portada ────────────────────────────────────────────────────────────
 export function renderPortada(unidad, unidadId) {
   const p = PORTADAS[claveNU(unidadId)] || {
     aprenderas: `a usar lo esencial de "${unidad.nombre}" en una conversación real.`,
