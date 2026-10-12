@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0908">
+    <meta name="description" content="Entrena los verbos en inglés con trivia rápida. Nica English Club: no estudies inglés, entrénalo.">
+    <title>Verb Lab | Nica English Club</title>
+    <link rel="icon" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ==========================================================
+           NICA ENGLISH CLUB — tokens de marca
+           Confirmado en el sitio: fondo #0a0908 (theme-color).
+           El acento amarillo viene de la versión anterior de la app;
+           si el sitio usa otro, cambia solo --accent.
+           ========================================================== */
+        :root {
+            --bg: #0a0908;
+            --surface: #14110f;
+            --surface-2: #1d1916;
+            --line: #2d2825;
+            --text: #f5f2ee;
+            --muted: #a69e96;
+            --accent: #FACC15;
+            --accent-ink: #0a0908;
+            --ok: #22c55e;
+            --bad: #ef4444;
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            background-image: radial-gradient(50rem 26rem at 50% -8%, rgba(250, 204, 21, 0.07), transparent 65%);
+            background-repeat: no-repeat;
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        .hidden { display: none !important; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; touch-action: manipulation; }
+        a { color: inherit; }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+        /* ---------- Barra de marca ---------- */
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 1100px; margin: 0 auto; padding: 18px 16px;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .brand-mark {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: var(--accent); color: var(--accent-ink);
+            display: grid; place-items: center; font-size: 16px;
+        }
+        .brand-logo { height: 38px; width: auto; max-width: 140px; object-fit: contain; border-radius: 8px; }
+        .brand-name { font-weight: 800; letter-spacing: -0.02em; font-size: 1rem; line-height: 1.1; }
+        .brand-sub { display: block; font-weight: 400; font-size: 0.72rem; color: var(--muted); letter-spacing: 0; }
+        .topbar-link { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-decoration: none; }
+        .topbar-link:hover { color: var(--accent); }
+
+        .screen { max-width: 1100px; margin: 0 auto; padding: 8px 16px 40px; }
+
+        /* ---------- Botones ---------- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 15px 22px; border-radius: 14px; font-weight: 800; font-size: 0.95rem;
+            text-decoration: none; transition: transform 0.12s, background 0.2s, border-color 0.2s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-accent { background: var(--accent); color: var(--accent-ink); }
+        .btn-accent:hover { background: #fde047; }
+        .btn-ghost { border: 1.5px solid var(--line); color: var(--text); background: var(--surface); }
+        .btn-ghost:hover { border-color: var(--accent); }
+        .btn-block { width: 100%; }
+
+        /* ---------- Inicio ---------- */
+        .welcome { text-align: center; padding: 28px 0 8px; max-width: 640px; margin: 0 auto; }
+        .pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 999px;
+            border: 1px solid var(--line); background: var(--surface);
+            font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 22px;
+        }
+        .pill i { color: var(--accent); }
+        .welcome h1 {
+            font-size: clamp(2.4rem, 9vw, 4rem); font-weight: 800;
+            letter-spacing: -0.045em; line-height: 1.02; margin-bottom: 16px;
+        }
+        .welcome h1 .accent { color: var(--accent); display: block; }
+        .welcome .lead { color: var(--muted); font-size: 1.02rem; max-width: 460px; margin: 0 auto 28px; }
+        .actions { display: grid; gap: 12px; max-width: 320px; margin: 0 auto; }
+
+        .stats { display: flex; justify-content: center; gap: 28px; margin: 30px 0 6px; color: var(--muted); font-size: 0.82rem; }
+        .stats strong { display: block; color: var(--text); font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+
+        .cta-card {
+            max-width: 560px; margin: 34px auto 0; padding: 22px;
+            border: 1px solid var(--line); border-radius: var(--radius);
+            background: var(--surface); text-align: left;
+        }
+        .cta-card h3 { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
+        .cta-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+        .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+        .cta-row .btn { padding: 12px 18px; font-size: 0.85rem; }
+
+        /* ---------- Lista de verbos ---------- */
+        .back { font-weight: 800; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; color: var(--muted); }
+        .back:hover { color: var(--accent); }
+        .list-head { text-align: center; margin: 6px 0 18px; }
+        .list-head h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.035em; }
+        .list-head p { color: var(--muted); font-size: 0.88rem; }
+
+        .search { position: relative; max-width: 520px; margin: 0 auto 14px; }
+        .search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+        .search input {
+            width: 100%; padding: 14px 16px 14px 44px; border-radius: 14px;
+            border: 1.5px solid var(--line); background: var(--surface); color: var(--text);
+            font: inherit; font-weight: 600; font-size: 0.95rem; outline: none;
+        }
+        .search input:focus { border-color: var(--accent); }
+        .search input::placeholder { color: var(--muted); font-weight: 400; }
+
+        .chips { display: flex; justify-content: center; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+        .chip {
+            padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+            border: 1.5px solid var(--line); color: var(--muted); background: transparent;
+        }
+        .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+        .verbs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+        .verb-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+        .verb-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+        .verb-name { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; }
+        .verb-es { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
+        .badge { font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+        .badge.irr { border-color: rgba(250, 204, 21, 0.5); color: var(--accent); }
+        .forms { display: grid; gap: 2px; margin-bottom: 10px; }
+        .form-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 7px 8px; border-radius: 8px; font-size: 0.82rem; color: var(--muted); cursor: pointer; text-align: left; width: 100%;
+        }
+        .form-row:hover { background: var(--surface-2); }
+        .form-row b { color: var(--text); font-weight: 600; }
+        .example-box {
+            background: var(--surface-2); border-left: 3px solid var(--accent);
+            padding: 10px 12px; border-radius: 0 10px 10px 0;
+            font-size: 0.86rem; font-style: italic; color: #d6cfc8; cursor: pointer;
+        }
+        .example-box .tr { display: block; font-size: 0.76rem; font-style: normal; color: var(--muted); margin-top: 3px; }
+        .empty { text-align: center; color: var(--muted); padding: 40px 0; grid-column: 1 / -1; }
+
+        /* ---------- Trivia ---------- */
+        #gameContainer { max-width: 440px; }
+        .game-box {
+            background: var(--surface); border: 1px solid var(--line); border-radius: 28px;
+            padding: 24px; position: relative; overflow: hidden;
+        }
+        .game-box.shake { animation: shake 0.35s; }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 75% { transform: translateX(7px); } }
+        @keyframes pop-in { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .pop-in { animation: pop-in 0.3s ease-out; }
+
+        .setup-title { text-align: center; margin-bottom: 20px; }
+        .setup-title i { font-size: 1.8rem; color: var(--accent); margin-bottom: 8px; }
+        .setup-title h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em; }
+        .setup-title p { color: var(--muted); font-size: 0.85rem; }
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+        .select {
+            width: 100%; padding: 14px 16px; border-radius: 14px;
+            background: var(--surface-2); color: var(--text);
+            border: 1.5px solid var(--line); font: inherit; font-weight: 600; font-size: 0.92rem;
+            appearance: none; -webkit-appearance: none; outline: none;
+            background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+            background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%;
+            background-size: 6px 6px; background-repeat: no-repeat;
+        }
+        .select:focus { border-color: var(--accent); }
+
+        .hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; min-height: 26px; }
+        .lives { display: flex; gap: 6px; }
+        .lives .fa-heart { color: #ef4444; }
+        .lives .off { color: var(--line); }
+        .streak { background: var(--accent); color: var(--accent-ink); padding: 3px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; }
+        .counter { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+
+        .timer { width: 100%; height: 6px; background: var(--surface-2); border-radius: 10px; margin-bottom: 22px; overflow: hidden; }
+        #timerBar { height: 100%; width: 100%; background: var(--accent); border-radius: 10px; }
+        #timerBar.low { background: var(--bad); }
+
+        .prompt { text-align: center; margin-bottom: 20px; }
+        .instruction { color: var(--muted); font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        #promptVerb { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.045em; line-height: 1.1; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn {
+            width: 100%; padding: 15px 16px; border-radius: 14px;
+            border: 1.5px solid var(--line); background: var(--surface-2); color: var(--text);
+            font-weight: 800; font-size: 0.95rem; text-align: left;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: border-color 0.15s, background 0.15s, transform 0.1s;
+        }
+        .option-btn:not(:disabled):hover { border-color: var(--accent); }
+        .option-btn:not(:disabled):active { transform: scale(0.985); }
+        .option-btn:disabled { cursor: default; }
+        .option-btn i { font-size: 0.75rem; color: var(--muted); }
+        .option-correct { background: var(--ok) !important; border-color: var(--ok) !important; color: #04210f !important; }
+        .option-correct i { color: #04210f !important; }
+        .option-wrong { background: var(--bad) !important; border-color: var(--bad) !important; color: #fff !important; }
+        .option-wrong i { color: #fff !important; }
+
+        #gameExample { margin-top: 16px; }
+        #nextBtn { margin-top: 14px; }
+
+        .results { text-align: center; padding: 10px 0; }
+        .results .icon { font-size: 4.5rem; line-height: 1; margin-bottom: 8px; }
+        .results h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.035em; }
+        .results .score { font-size: 3.6rem; font-weight: 800; letter-spacing: -0.05em; margin: 4px 0; }
+        .results .best { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+        .results .stack { display: grid; gap: 10px; }
+
+        /* ---------- Pie ---------- */
+        .footer { max-width: 1100px; margin: 0 auto; padding: 24px 16px 40px; text-align: center; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
+        .footer strong { color: var(--text); font-weight: 800; }
+        .social { display: flex; justify-content: center; gap: 10px; margin: 14px 0; }
+        .social a {
+            width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+            border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: border-color 0.2s, color 0.2s;
+        }
+        .social a:hover { border-color: var(--accent); color: var(--accent); }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <a class="brand" href="https://www.nicaenglishclub.com" target="_blank" rel="noopener">
+            <span class="brand-mark" id="brandMark"><i class="fas fa-bolt"></i></span>
+            <img class="brand-logo hidden" id="brandLogo" src="logo.png" alt="Nica English Club"
+                 onload="this.classList.remove('hidden');document.getElementById('brandMark').classList.add('hidden')">
+            <span class="brand-name">Nica English Club<span class="brand-sub">Verb Lab</span></span>
+        </a>
+        <a class="topbar-link" href="https://www.nicaenglishclub.com" target="_blank" rel="noopener">nicaenglishclub.com</a>
+    </header>
+
+    <main>
+        <!-- INICIO -->
+        <section id="welcomeScreen" class="screen">
+            <div class="welcome">
+                <div class="pill"><i class="fas fa-dumbbell"></i> Training Room de verbos</div>
+                <h1>No estudies verbos.<span class="accent">Entrénalos.</span></h1>
+                <p class="lead">Practica pasado, participio y traducción en una trivia rápida. Escuchas, respondes y corriges al instante.</p>
+
+                <div class="actions">
+                    <button class="btn btn-accent" onclick="showSetup()"><i class="fas fa-play"></i> Jugar trivia</button>
+                    <button class="btn btn-ghost" onclick="showVerbList()"><i class="fas fa-list"></i> Ver lista de verbos</button>
+                </div>
+
+                <div class="stats">
+                    <div><strong id="verbCount">0</strong>verbos</div>
+                    <div><strong id="irrCount">0</strong>irregulares</div>
+                    <div><strong id="bestStreak">0</strong>mejor racha</div>
+                </div>
+
+                <div class="cta-card">
+                    <h3>¿Quieres entrenar con un coach?</h3>
+                    <p>En Nica English Club usas el inglés desde el primer día, con clases en vivo, Coach IA y corrección directa.</p>
+                    <div class="cta-row">
+                        <a class="btn btn-accent" href="https://app.nicaenglishclub.com/nica-english-club-admision/" target="_blank" rel="noopener">Aplicar a mi cupo</a>
+                        <a class="btn btn-ghost" href="https://wa.me/50583267703?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Nica%20English%20Club" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Escribir por WhatsApp</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LISTA DE VERBOS -->
+        <section id="verbListSection" class="screen hidden">
+            <button class="back" onclick="backToMain()"><i class="fas fa-arrow-left"></i> Volver</button>
+            <div class="list-head">
+                <h2>Base de verbos</h2>
+                <p id="listCount"></p>
+            </div>
+            <div class="search">
+                <i class="fas fa-search"></i>
+                <input type="search" id="verbSearch" oninput="renderVerbs()" placeholder="Busca por verbo, traducción o forma en pasado" autocomplete="off">
+            </div>
+            <div class="chips" role="group" aria-label="Filtrar por tipo">
+                <button class="chip" data-filter="all" aria-pressed="true" onclick="setListFilter('all')">Todos</button>
+                <button class="chip" data-filter="irregular" aria-pressed="false" onclick="setListFilter('irregular')">Irregulares</button>
+                <button class="chip" data-filter="regular" aria-pressed="false" onclick="setListFilter('regular')">Regulares</button>
+            </div>
+            <div id="verbsGrid" class="verbs-grid"></div>
+        </section>
+
+        <!-- TRIVIA -->
+        <section id="gameContainer" class="screen hidden">
+            <button class="back" onclick="backToMain()"><i class="fas fa-arrow-left"></i> Inicio</button>
+            <div id="gameBox" class="game-box">
+
+                <!-- Configuración -->
+                <div id="setupZone">
+                    <div class="setup-title">
+                        <i class="fas fa-sliders"></i>
+                        <h2>Configura tu entrenamiento</h2>
+                        <p>Tienes 3 vidas y 10 segundos por pregunta.</p>
+                    </div>
+                    <div class="field">
+                        <label for="modeSelect">Tipo de reto</label>
+                        <select id="modeSelect" class="select">
+                            <option value="mixed">Mixto (todo)</option>
+                            <option value="past">Pasado simple</option>
+                            <option value="participle">Participio</option>
+                            <option value="translation">Traducción</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="typeSelect">Verbos</label>
+                        <select id="typeSelect" class="select">
+                            <option value="all">Todos</option>
+                            <option value="irregular">Solo irregulares</option>
+                            <option value="regular">Solo regulares</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="lengthSelect">Preguntas</label>
+                        <select id="lengthSelect" class="select">
+                            <option value="10">10 preguntas</option>
+                            <option value="15">15 preguntas</option>
+                            <option value="20">20 preguntas</option>
+                        </select>
+                    </div>
+                    <button onclick="startGame()" class="btn btn-accent btn-block" style="margin-top:8px;">Empezar</button>
+                </div>
+
+                <!-- Juego -->
+                <div id="gameZone" class="hidden pop-in">
+                    <div class="hud">
+                        <div class="lives" id="livesContainer" aria-label="Vidas"></div>
+                        <div id="streakBadge" class="streak hidden"></div>
+                        <div class="counter"><span id="currentNum">1</span>/<span id="totalNum">10</span></div>
+                    </div>
+                    <div class="timer"><div id="timerBar"></div></div>
+
+                    <div class="prompt">
+                        <p id="instructionText" class="instruction"></p>
+                        <h2 id="promptVerb"></h2>
+                    </div>
+
+                    <div id="optionsGrid" class="options"></div>
+
+                    <div id="gameExample" class="hidden">
+                        <div class="example-box" id="exampleBox"></div>
+                    </div>
+
+                    <button id="nextBtn" onclick="nextQuestion()" class="hidden btn btn-accent btn-block">
+                        <span id="nextLabel">Siguiente pregunta</span> <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Resultados -->
+                <div id="resultsZone" class="hidden results pop-in">
+                    <div id="resultIcon" class="icon"></div>
+                    <h2 id="resTitle"></h2>
+                    <div class="score" id="finalScore">0/10</div>
+                    <p class="best" id="resBest"></p>
+                    <div class="stack">
+                        <button onclick="resetToSetup()" class="btn btn-accent">Entrenar otra vez</button>
+                        <a class="btn btn-ghost" href="https://app.nicaenglishclub.com/nica-english-club-admision/" target="_blank" rel="noopener">Quiero entrenar con un coach</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <strong>Nica English Club</strong><br>
+        No solo estudies inglés. Entrénalo.
+        <div class="social">
+            <a href="https://www.instagram.com/nicaenglishclub" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/NicaEnglishClub" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.tiktok.com/@nicaenglishclub" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://wa.me/50583267703?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Nica%20English%20Club" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+        <span>&copy; <span id="year"></span> Nica English Club. Todos los derechos reservados.</span>
+    </footer>
+
+<script>
+    /* ==========================================================
+       BASE DE DATOS DE VERBOS
+       Formato irregulares: infinitivo|pasado|participio|traducción|ejemplo|ejemplo ES[|gerundio|3ra persona]
+       Formato regulares:   infinitivo|traducción|ejemplo|ejemplo ES
+       Un "+" al final del infinitivo duplica la consonante final (stop → stopped / stopping).
+       Pasado, gerundio y 3ra persona de los regulares se calculan solos.
+       Para agregar un verbo, añade una línea al bloque que corresponda.
+       ========================================================== */
+    const IRREGULAR = `
+be|was/were|been|Ser o Estar|I want to be a pilot.|Quiero ser piloto.|being|Is/Am/Are
+become|became|become|Convertirse en|He became a lawyer.|Se convirtió en abogado.
+begin+|began|begun|Empezar|The class begins at eight.|La clase comienza a las ocho.
+beat|beat|beaten|Vencer|We beat them yesterday.|Los vencimos ayer.
+bend|bent|bent|Doblar|Bend your knees.|Dobla las rodillas.
+bet+|bet|bet|Apostar|I bet you are right.|Apuesto a que tienes razón.
+bite|bit|bitten|Morder|The dog bit him.|El perro lo mordió.
+blow|blew|blown|Soplar|Blow out the candles.|Sopla las velas.
+break|broke|broken|Romper|He broke his arm.|Se rompió el brazo.
+bring|brought|brought|Traer|Bring your laptop.|Trae tu computadora.
+build|built|built|Construir|They built a new stadium.|Construyeron un estadio.
+buy|bought|bought|Comprar|I bought a car.|Compré un coche.
+catch|caught|caught|Atrapar|Catch the ball.|Atrapa la pelota.
+choose|chose|chosen|Elegir|Choose the best option.|Elige la mejor opción.
+come|came|come|Venir|Can you come here?|¿Puedes venir aquí?
+cost|cost|cost|Costar|It costs ten dollars.|Cuesta diez dólares.
+cut+|cut|cut|Cortar|Cut the paper.|Corta el papel.
+deal|dealt|dealt|Tratar / Lidiar|I deal with clients.|Trato con clientes.
+dig+|dug|dug|Cavar|They dug a hole.|Cavaron un hoyo.
+do|did|done|Hacer (acción)|Do your homework.|Haz tu tarea.
+draw|drew|drawn|Dibujar|She draws well.|Ella dibuja bien.
+drink|drank|drunk|Beber|She drinks tea.|Ella bebe té.
+drive|drove|driven|Conducir|He drives a truck.|Él conduce un camión.
+eat|ate|eaten|Comer|We ate sushi.|Comimos sushi.
+fall|fell|fallen|Caer|Leaves fall in autumn.|Las hojas caen en otoño.
+feed|fed|fed|Alimentar|Feed the dog.|Alimenta al perro.
+feel|felt|felt|Sentir|I feel tired.|Me siento cansado.
+fight|fought|fought|Pelear|They fought yesterday.|Pelearon ayer.
+find|found|found|Encontrar|I found my keys.|Encontré mis llaves.
+fly|flew|flown|Volar|Birds fly south.|Las aves vuelan al sur.
+forget+|forgot|forgotten|Olvidar|I forgot the milk.|Olvidé la leche.
+forgive|forgave|forgiven|Perdonar|I forgive you.|Te perdono.
+freeze|froze|frozen|Congelar|The water froze.|El agua se congeló.
+get+|got|gotten|Obtener|I got a promotion.|Obtuve un ascenso.
+give|gave|given|Dar|Give me the remote.|Dame el control.
+go|went|gone|Ir|She went to the cinema.|Fue al cine.
+grow|grew|grown|Crecer|Plants grow fast.|Las plantas crecen rápido.
+hang|hung|hung|Colgar|Hang your coat here.|Cuelga tu abrigo aquí.
+have|had|had|Tener|I have two sisters.|Tengo dos hermanas.|having|Has
+hear|heard|heard|Oír|Did you hear that?|¿Oíste eso?
+hide|hid|hidden|Esconder|They hid the treasure.|Escondieron el tesoro.
+hit+|hit|hit|Golpear|He hit the ball.|Golpeó la pelota.
+hold|held|held|Sostener|Hold the line.|Manténgase en la línea.
+hurt|hurt|hurt|Doler / Lastimar|My head hurts.|Me duele la cabeza.
+keep|kept|kept|Mantener|Keep your promise.|Mantén tu promesa.
+know|knew|known|Saber|I know the answer.|Sé la respuesta.
+lead|led|led|Guiar|She leads the team.|Ella guía al equipo.
+leave|left|left|Salir|The train leaves soon.|El tren sale pronto.
+lend|lent|lent|Prestar|Lend me your pen.|Préstame tu bolígrafo.
+let+|let|let|Permitir / Dejar|Let me help you.|Déjame ayudarte.
+light|lit|lit|Encender|Light the candle.|Enciende la vela.
+lose|lost|lost|Perder|I lost my wallet.|Perdí mi cartera.
+make|made|made|Hacer (crear)|She made a cake.|Hizo un pastel.
+mean|meant|meant|Significar|What does this mean?|¿Qué significa esto?
+meet|met|met|Conocer|We met at work.|Nos conocimos en el trabajo.
+oversleep|overslept|overslept|Quedarse dormido|I overslept today.|Hoy me quedé dormido.
+pay|paid|paid|Pagar|I paid for the tickets.|Pagué los boletos.
+put+|put|put|Poner|Put it on the table.|Ponlo en la mesa.
+quit+|quit|quit|Renunciar|He quit his job.|Renunció a su trabajo.
+read|read|read|Leer|I read every day.|Leo cada día.
+rebuild|rebuilt|rebuilt|Reconstruir|They rebuilt the bridge.|Reconstruyeron el puente.
+rewrite|rewrote|rewritten|Reescribir|Rewrite your essay.|Reescribe tu ensayo.
+ride|rode|ridden|Montar|I ride a bike.|Monto bicicleta.
+ring|rang|rung|Sonar (timbre)|The phone rang.|El teléfono sonó.
+rise|rose|risen|Elevarse|The sun rises early.|El sol sale temprano.
+run+|ran|run|Correr|He runs every morning.|Corre cada mañana.
+say|said|said|Decir|What did he say?|¿Qué dijo él?
+see|saw|seen|Ver|I saw a great movie.|Vi una gran película.
+seek|sought|sought|Buscar (formal)|They seek new talent.|Buscan nuevo talento.
+sell|sold|sold|Vender|They sell bread.|Venden pan.
+send|sent|sent|Enviar|I sent a message.|Envié un mensaje.
+set+|set|set|Establecer|Set the alarm.|Pon la alarma.
+shake|shook|shaken|Sacudir|Shake the bottle.|Agita la botella.
+shine|shone|shone|Brillar|The sun shines.|El sol brilla.
+shoot|shot|shot|Tirar / Disparar|He shot the ball into the net.|Metió el balón en la red.
+show|showed|shown|Mostrar|Show me the photo.|Muéstrame la foto.
+shut+|shut|shut|Cerrar (de golpe)|Shut the window.|Cierra la ventana.
+sing|sang|sung|Cantar|She sings well.|Canta bien.
+sink|sank|sunk|Hundirse|The boat sank.|El barco se hundió.
+sit+|sat|sat|Sentarse|Please sit down.|Siéntate por favor.
+sleep|slept|slept|Dormir|The baby is sleeping.|El bebé duerme.
+slide|slid|slid|Deslizar|The kids slide down.|Los niños se deslizan.
+speak|spoke|spoken|Hablar|Do you speak English?|¿Hablas inglés?
+spend|spent|spent|Gastar|I spent a lot of money.|Gasté mucho dinero.
+split+|split|split|Dividir (partir)|Let's split the bill.|Dividamos la cuenta.
+spread|spread|spread|Esparcir|Spread the butter.|Unta la mantequilla.
+stand|stood|stood|Estar de pie|He stood for an hour.|Estuvo parado una hora.
+steal|stole|stolen|Robar|Someone stole my bike.|Robaron mi bici.
+stick|stuck|stuck|Pegar|Stick it on the wall.|Pégalo en la pared.
+sweep|swept|swept|Barrer|Sweep the floor.|Barre el piso.
+swim+|swam|swum|Nadar|I love to swim.|Me encanta nadar.
+take|took|taken|Tomar|Take a deep breath.|Toma aire profundo.
+teach|taught|taught|Enseñar|He teaches math.|Enseña matemáticas.
+tear|tore|torn|Rasgar|Don't tear the paper.|No rasgues el papel.
+tell|told|told|Contar|Tell me the truth.|Dime la verdad.
+think|thought|thought|Pensar|I think it will rain.|Creo que lloverá.
+throw|threw|thrown|Lanzar|Throw me the ball.|Lánzame la pelota.
+undo|undid|undone|Deshacer|Undo the last step.|Deshaz el último paso.
+understand|understood|understood|Entender|I don't understand.|No entiendo.
+wake|woke|woken|Despertar|I wake up at six.|Despierto a las seis.
+wear|wore|worn|Usar (ropa)|She wears glasses.|Usa gafas.
+win+|won|won|Ganar|We won the game.|Ganamos el juego.
+write|wrote|written|Escribir|Write your name.|Escribe tu nombre.
+`;
+
+    const REGULAR = `
+accept|Aceptar|I accept your offer.|Acepto tu oferta.
+add|Añadir|Add some salt.|Añade un poco de sal.
+agree|Estar de acuerdo|I agree with you.|Estoy de acuerdo contigo.
+allow|Permitir|Pets are not allowed.|Mascotas no permitidas.
+answer|Contestar|Answer the phone.|Contesta el teléfono.
+apply|Solicitar|I applied for a job.|Solicité un empleo.
+arrive|Llegar|The bus arrives at nine.|El bus llega a las nueve.
+ask|Preguntar|Ask for help.|Pide ayuda.
+attend|Asistir|I attend class daily.|Asisto a clase a diario.
+avoid|Evitar|Avoid the traffic.|Evita el tráfico.
+bake|Hornear|She baked a cake.|Horneó un pastel.
+believe|Creer|I believe in you.|Creo en ti.
+borrow|Pedir prestado|Can I borrow a pen?|¿Puedo pedir prestado un lápiz?
+brush|Cepillar|Brush your teeth.|Cepíllate los dientes.
+burn|Quemar|Don't burn the toast.|No quemes el pan tostado.
+call|Llamar|Call me later.|Llámame luego.
+cancel|Cancelar|They canceled the meeting.|Cancelaron la reunión.
+carry|Llevar en brazos|I carry my backpack.|Cargo mi mochila.
+celebrate|Celebrar|We celebrate her birthday.|Celebramos su cumpleaños.
+change|Cambiar|Everything changes.|Todo cambia.
+charge|Cargar (batería)|Charge your phone.|Carga tu teléfono.
+chat+|Charlar|We chat every night.|Charlamos cada noche.
+check|Revisar|Check your email.|Revisa tu correo.
+clean|Limpiar|Clean your room.|Limpia tu cuarto.
+click|Hacer clic|Click the green button.|Haz clic en el botón verde.
+climb|Escalar|They climbed the hill.|Escalaron la colina.
+close|Cerrar|Close the door.|Cierra la puerta.
+collect|Coleccionar|He collects stamps.|Colecciona sellos.
+compare|Comparar|Compare the prices.|Compara los precios.
+complete|Completar|Complete the form.|Completa el formulario.
+continue|Continuar|Continue reading.|Continúa leyendo.
+cook|Cocinar|I love cooking.|Amo cocinar.
+copy|Copiar|Don't copy me.|No me copies.
+count|Contar (números)|Count to ten.|Cuenta hasta diez.
+cover|Cubrir|Cover the pot.|Tapa la olla.
+create|Crear|She creates videos.|Ella crea videos.
+cross|Cruzar|Cross the street.|Cruza la calle.
+cry|Llorar|The baby cries.|El bebé llora.
+dance|Bailar|They dance well.|Bailan bien.
+decide|Decidir|I decided to study.|Decidí estudiar.
+delete|Borrar|Delete the old files.|Borra los archivos viejos.
+deliver|Entregar|They deliver food.|Entregan comida.
+depend|Depender|It depends on you.|Depende de ti.
+describe|Describir|Describe your day.|Describe tu día.
+design|Diseñar|He designs logos.|Él diseña logos.
+destroy|Destruir|The storm destroyed the roof.|La tormenta destruyó el techo.
+develop|Desarrollar|We develop apps.|Desarrollamos aplicaciones.
+die|Morir|The plant died.|La planta murió.
+discuss|Debatir|Let's discuss the plan.|Debatamos el plan.
+divide|Dividir|Divide it by two.|Divídelo entre dos.
+download|Descargar|Download the app.|Descarga la aplicación.
+drop+|Soltar|I dropped my phone.|Se me cayó el teléfono.
+dry|Secar|Dry your hands.|Sécate las manos.
+earn|Ganar (dinero)|She earns good money.|Ella gana buen dinero.
+end|Finalizar|The movie ends soon.|La película termina pronto.
+enjoy|Disfrutar|Enjoy the food.|Disfruta la comida.
+enter|Entrar|Enter the room.|Entra al cuarto.
+escape|Escapar|The bird escaped.|El pájaro escapó.
+exercise|Hacer ejercicio|I exercise daily.|Hago ejercicio a diario.
+expect|Esperar (algo)|I expect a call.|Espero una llamada.
+explain|Explicar|Explain it to me.|Explícamelo.
+fail|Reprobar|Don't fail the test.|No repruebes el examen.
+fill|Llenar|Fill the glass.|Llena el vaso.
+finish|Terminar|I finished my work.|Terminé mi trabajo.
+fix|Arreglar|He fixed my phone.|Arregló mi teléfono.
+fold|Doblar (ropa)|Fold the clothes.|Dobla la ropa.
+follow|Seguir|Follow me.|Sígueme.
+fry|Freír|Fry the eggs.|Fríe los huevos.
+gather|Reunir|Gather your things.|Reúne tus cosas.
+grab+|Agarrar|Grab your coat.|Agarra tu abrigo.
+greet|Saludar|Greet the guests.|Saluda a los invitados.
+guess|Adivinar|Guess the answer.|Adivina la respuesta.
+handle|Manejar (situación)|She handles stress well.|Ella maneja bien el estrés.
+happen|Suceder|What happened?|¿Qué pasó?
+hate|Odiar|I hate waiting.|Odio esperar.
+help|Ayudar|Can you help me?|¿Puedes ayudarme?
+hope|Esperar (deseo)|I hope you win.|Espero que ganes.
+hug+|Abrazar|She hugged her mom.|Abrazó a su mamá.
+hurry|Apurarse|Hurry up!|¡Apúrate!
+imagine|Imaginar|Imagine a big house.|Imagina una casa grande.
+improve|Mejorar|I want to improve.|Quiero mejorar.
+include|Incluir|The price includes tax.|El precio incluye impuestos.
+invent|Inventar|He invented a game.|Inventó un juego.
+invite|Invitar|I invited my friends.|Invité a mis amigos.
+jump|Saltar|Jump high.|Salta alto.
+kick|Patear|He kicked the ball.|Pateó la pelota.
+kill|Matar|He killed a fly.|Mató una mosca.
+kiss|Besar|She kissed him.|Ella lo besó.
+knock|Tocar (la puerta)|Knock on the door.|Toca la puerta.
+laugh|Reír|They laughed.|Ellos rieron.
+learn|Aprender|I learn every day.|Aprendo cada día.
+like|Gustar|I like pizza.|Me gusta la pizza.
+lift|Levantar|Lift the box.|Levanta la caja.
+listen|Escuchar|Listen to me.|Escúchame.
+live|Vivir|I live here.|Vivo aquí.
+lock|Cerrar con llave|Lock the door.|Cierra la puerta con llave.
+look|Mirar|Look at this.|Mira esto.
+love|Amar|I love you.|Te amo.
+manage|Administrar|She manages a store.|Ella administra una tienda.
+marry|Casarse|They married in June.|Se casaron en junio.
+measure|Medir|Measure the table.|Mide la mesa.
+mention|Mencionar|Don't mention it.|No lo menciones.
+miss|Extrañar|I miss my family.|Extraño a mi familia.
+mix|Mezclar|Mix the colors.|Mezcla los colores.
+move|Mover|Move that chair.|Mueve esa silla.
+name|Nombrar|They named the dog Max.|Nombraron al perro Max.
+need|Necesitar|I need help.|Necesito ayuda.
+notice|Notar|I noticed a mistake.|Noté un error.
+obey|Obedecer|Obey the rules.|Obedece las reglas.
+offer|Ofrecer|They offered me a job.|Me ofrecieron un trabajo.
+open|Abrir|Open the box.|Abre la caja.
+order|Pedir (ordenar)|I ordered a pizza.|Pedí una pizza.
+organize|Organizar|Organize your desk.|Organiza tu escritorio.
+own|Poseer|She owns a shop.|Ella es dueña de una tienda.
+pack|Empacar|Pack your bag.|Empaca tu bolso.
+paint|Pintar|He paints walls.|Él pinta paredes.
+park|Estacionar|Park here.|Estaciona aquí.
+pass|Pasar (entregar)|Pass the salt.|Pasa la sal.
+pick|Escoger|Pick a card.|Escoge una carta.
+plan+|Planear|We plan a trip.|Planeamos un viaje.
+plant|Plantar|Plant a tree.|Planta un árbol.
+play|Jugar|I play baseball.|Juego béisbol.
+pour|Verter|Pour the milk.|Vierte la leche.
+practice|Practicar|Practice every day.|Practica todos los días.
+pray|Rezar|They pray daily.|Rezan a diario.
+prefer+|Preferir|I prefer coffee.|Prefiero el café.
+prepare|Preparar|Prepare your notes.|Prepara tus notas.
+press|Presionar|Press the button.|Presiona el botón.
+produce|Producir|The farm produces milk.|La finca produce leche.
+promise|Prometer|I promise.|Lo prometo.
+protect|Proteger|Protect your phone.|Protege tu teléfono.
+provide|Brindar|We provide training.|Brindamos entrenamiento.
+pull|Jalar|Pull the door.|Jala la puerta.
+push|Empujar|Push the cart.|Empuja el carrito.
+rain|Llover|It's raining.|Está lloviendo.
+reach|Alcanzar|I reached the top.|Llegué a la cima.
+receive|Recibir|I received your message.|Recibí tu mensaje.
+record|Grabar|Record your voice.|Graba tu voz.
+reduce|Reducir|Reduce the noise.|Reduce el ruido.
+relax|Relajarse|Relax and breathe.|Relájate y respira.
+remember|Recordar|I remember you.|Te recuerdo.
+remind|Recordar (a alguien)|Remind me, please.|Recuérdame, por favor.
+remove|Quitar|Remove your shoes.|Quítate los zapatos.
+rent|Alquilar|We rent a house.|Alquilamos una casa.
+repair|Reparar|He repairs cars.|Él repara carros.
+repeat|Repetir|Repeat after me.|Repite después de mí.
+reply|Responder|Reply to my email.|Responde mi correo.
+rescue|Rescatar|They rescued a dog.|Rescataron a un perro.
+rest|Descansar|Rest for a while.|Descansa un rato.
+return|Regresar|Return at five.|Regresa a las cinco.
+roll|Rodar|The ball rolled away.|La pelota rodó lejos.
+save|Guardar|Save your money.|Ahorra tu dinero.
+search|Buscar|Search online.|Busca en internet.
+serve|Servir|They serve coffee.|Sirven café.
+share|Compartir|Share your ideas.|Comparte tus ideas.
+shop+|Ir de compras|I shop on weekends.|Voy de compras los fines de semana.
+shout|Gritar|Don't shout.|No grites.
+sign|Firmar|Sign here.|Firma aquí.
+skip+|Saltarse|Don't skip class.|No te saltes la clase.
+smile|Sonreír|Smile please.|Sonríe por favor.
+solve|Resolver|Solve the problem.|Resuelve el problema.
+sound|Sonar (parecer)|That sounds great.|Eso suena genial.
+start|Comenzar|Start now.|Empieza ahora.
+stay|Quedarse|Stay with me.|Quédate conmigo.
+stir+|Revolver|Stir the soup.|Revuelve la sopa.
+stop+|Detener|Stop now.|Para ahora.
+study|Estudiar|Study hard.|Estudia duro.
+succeed|Tener éxito|You will succeed.|Tendrás éxito.
+suggest|Sugerir|I suggest a break.|Sugiero un descanso.
+surprise|Sorprender|You surprised me.|Me sorprendiste.
+switch|Cambiar de|Switch the lights off.|Apaga las luces.
+talk|Conversar|Talk to her.|Habla con ella.
+taste|Probar (sabor)|Taste the soup.|Prueba la sopa.
+text|Enviar mensaje|Text me later.|Escríbeme luego.
+thank|Agradecer|Thank you.|Gracias.
+touch|Tocar|Don't touch it.|No lo toques.
+train|Entrenar|We train daily.|Entrenamos a diario.
+travel|Viajar|I travel a lot.|Viajo mucho.
+trust|Confiar|I trust you.|Confío en ti.
+try|Intentar|Try again.|Inténtalo otra vez.
+turn|Girar|Turn left.|Gira a la izquierda.
+type|Teclear|Type your name.|Teclea tu nombre.
+use|Usar|Use this.|Usa esto.
+visit|Visitar|Visit us.|Visítanos.
+vote|Votar|We vote on Sunday.|Votamos el domingo.
+wait|Esperar|Wait for me.|Espérame.
+walk|Caminar|Walk fast.|Camina rápido.
+want|Querer|I want water.|Quiero agua.
+warn|Advertir|I warned him.|Le advertí.
+wash|Lavar|Wash the car.|Lava el carro.
+waste|Desperdiciar|Don't waste time.|No pierdas tiempo.
+watch|Observar|Watch this.|Mira esto.
+whisper|Susurrar|Don't whisper.|No susurres.
+wish|Desear|I wish you luck.|Te deseo suerte.
+wonder|Preguntarse|I wonder why.|Me pregunto por qué.
+work|Trabajar|I work hard.|Trabajo duro.
+worry|Preocuparse|Don't worry.|No te preocupes.
+wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
+`;
+
+    /* ---------- Reglas de conjugación ---------- */
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const capSlash = s => s.split('/').map(cap).join('/');
+    const third = v => /(s|x|z|ch|sh|o)$/.test(v) ? v + 'es' : /[^aeiou]y$/.test(v) ? v.slice(0, -1) + 'ies' : v + 's';
+    const gerundOf = (v, dbl) => /ie$/.test(v) ? v.slice(0, -2) + 'ying' : dbl ? v + v.slice(-1) + 'ing' : /[^eyo]e$/.test(v) ? v.slice(0, -1) + 'ing' : v + 'ing';
+    const pastOf = (v, dbl) => dbl ? v + v.slice(-1) + 'ed' : /e$/.test(v) ? v + 'd' : /[^aeiou]y$/.test(v) ? v.slice(0, -1) + 'ied' : v + 'ed';
+    const parseLines = txt => txt.split('\n').map(l => l.trim()).filter(Boolean).map(l => l.split('|'));
+
+    const verbsDatabase = [
+        ...parseLines(IRREGULAR).map(f => {
+            const dbl = f[0].endsWith('+');
+            const inf = dbl ? f[0].slice(0, -1) : f[0];
+            return {
+                infinitive: cap(inf),
+                thirdPerson: f[7] || cap(third(inf)),
+                past: capSlash(f[1]),
+                participle: capSlash(f[2]),
+                gerund: cap(f[6] || gerundOf(inf, dbl)),
+                translation: f[3], example: f[4], exampleEs: f[5],
+                irregular: true
+            };
+        }),
+        ...parseLines(REGULAR).map(f => {
+            const dbl = f[0].endsWith('+');
+            const inf = dbl ? f[0].slice(0, -1) : f[0];
+            const past = cap(pastOf(inf, dbl));
+            return {
+                infinitive: cap(inf),
+                thirdPerson: cap(third(inf)),
+                past, participle: past,
+                gerund: cap(gerundOf(inf, dbl)),
+                translation: f[1], example: f[2], exampleEs: f[3],
+                irregular: false
+            };
+        })
+    ].sort((a, b) => a.infinitive.localeCompare(b.infinitive));
+
+    /* ---------- Utilidades ---------- */
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+    function speak(t) {
+        if (!t || !('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(t.replace('/', ' or '));
+        msg.lang = 'en-US';
+        msg.rate = 1.0;
+        window.speechSynthesis.speak(msg);
+    }
+    // Un solo listener para todo el audio (evita romper el HTML con apóstrofes)
+    document.addEventListener('click', e => {
+        const el = e.target.closest('[data-speak]');
+        if (el) speak(el.dataset.speak);
+    });
+
+    const BEST_KEY = 'nec_verblab_best_streak';
+    const getBest = () => { try { return parseInt(localStorage.getItem(BEST_KEY), 10) || 0; } catch (e) { return 0; } };
+    const setBest = n => { try { localStorage.setItem(BEST_KEY, String(n)); } catch (e) {} };
+
+    /* ---------- Navegación ---------- */
+    function hideAll() {
+        ['welcomeScreen', 'verbListSection', 'gameContainer'].forEach(id => $(id).classList.add('hidden'));
+    }
+    function backToMain() {
+        clearInterval(timerInterval);
+        hideAll();
+        $('welcomeScreen').classList.remove('hidden');
+        $('bestStreak').textContent = getBest();
+        window.scrollTo(0, 0);
+    }
+    function showSetup() {
+        hideAll();
+        $('gameContainer').classList.remove('hidden');
+        resetToSetup();
+    }
+    function resetToSetup() {
+        clearInterval(timerInterval);
+        $('setupZone').classList.remove('hidden');
+        $('gameZone').classList.add('hidden');
+        $('resultsZone').classList.add('hidden');
+        window.scrollTo(0, 0);
+    }
+    function showVerbList() {
+        hideAll();
+        $('verbListSection').classList.remove('hidden');
+        renderVerbs();
+        window.scrollTo(0, 0);
+    }
+
+    /* ---------- Lista ---------- */
+    let listFilter = 'all';
+    function setListFilter(f) {
+        listFilter = f;
+        document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.filter === f));
+        renderVerbs();
+    }
+
+    function renderVerbs() {
+        const q = $('verbSearch').value.trim().toLowerCase();
+        const list = verbsDatabase.filter(v => {
+            if (listFilter === 'irregular' && !v.irregular) return false;
+            if (listFilter === 'regular' && v.irregular) return false;
+            if (!q) return true;
+            return v.infinitive.toLowerCase().includes(q) || v.translation.toLowerCase().includes(q) || v.past.toLowerCase().includes(q) || v.participle.toLowerCase().includes(q);
+        });
+        $('listCount').textContent = `${list.length} de ${verbsDatabase.length} verbos. Toca cualquier forma para escucharla.`;
+
+        const grid = $('verbsGrid');
+        if (!list.length) { grid.innerHTML = '<p class="empty">No encontramos ese verbo. Prueba con otra palabra.</p>'; return; }
+
+        grid.innerHTML = list.map(v => `
+            <article class="verb-card">
+                <div class="verb-top">
+                    <h3 class="verb-name" data-speak="${esc(v.infinitive)}">${esc(v.infinitive)}</h3>
+                    <span class="badge ${v.irregular ? 'irr' : ''}">${v.irregular ? 'Irregular' : 'Regular'}</span>
+                </div>
+                <p class="verb-es">${esc(v.translation)}</p>
+                <div class="forms">
+                    <button class="form-row" data-speak="${esc(v.past)}"><span>Pasado</span><b>${esc(v.past)}</b></button>
+                    <button class="form-row" data-speak="${esc(v.participle)}"><span>Participio</span><b>${esc(v.participle)}</b></button>
+                    <button class="form-row" data-speak="${esc(v.thirdPerson)}"><span>3ra persona</span><b>${esc(v.thirdPerson)}</b></button>
+                    <button class="form-row" data-speak="${esc(v.gerund)}"><span>Gerundio (-ing)</span><b>${esc(v.gerund)}</b></button>
+                </div>
+                <div class="example-box" data-speak="${esc(v.example)}">"${esc(v.example)}"<span class="tr">${esc(v.exampleEs)}</span></div>
+            </article>
+        `).join('');
+    }
+
+    /* ---------- Trivia ---------- */
+    let currentMode, selectedVerbs, currentIndex, score, lives, currentTask, streak, maxStreak, total, answered;
+    let timerInterval, timeLeft;
+
+    // Grupos de sinónimos en español: evita que dos respuestas correctas aparezcan a la vez
+    const SYN = [['empezar', 'comenzar'], ['terminar', 'finalizar', 'acabar'], ['mirar', 'observar'], ['hablar', 'conversar'], ['escoger', 'elegir'], ['arreglar', 'reparar'], ['responder', 'contestar']];
+    function transKey(t) {
+        const k = t.toLowerCase().split(/[ (\/]/)[0];
+        const g = SYN.findIndex(grp => grp.includes(k));
+        return g >= 0 ? 'syn' + g : k;
+    }
+
+    const LABELS = {
+        translation: 'Traducción correcta',
+        past: 'Forma en pasado simple',
+        participle: 'Forma en participio'
+    };
+
+    function startGame() {
+        currentMode = $('modeSelect').value;
+        const type = $('typeSelect').value;
+        total = parseInt($('lengthSelect').value, 10);
+
+        let pool = verbsDatabase.filter(v => type === 'all' || (type === 'irregular') === v.irregular);
+        selectedVerbs = shuffle(pool).slice(0, total);
+        total = selectedVerbs.length;
+
+        currentIndex = 0; score = 0; lives = 3; streak = 0; maxStreak = 0;
+        $('totalNum').textContent = total;
+        $('setupZone').classList.add('hidden');
+        $('resultsZone').classList.add('hidden');
+        $('gameZone').classList.remove('hidden');
+        $('streakBadge').classList.add('hidden');
+        updateLives();
+        showQuestion();
+    }
+
+    function generateOptions(v, task) {
+        const correct = v[task];
+        const keyOf = task === 'translation' ? transKey : s => s.toLowerCase();
+        let pool = verbsDatabase.filter(x => x !== v);
+        if (task !== 'translation') {
+            // Distractores del mismo grupo (irregular con irregular) para que el reto sea real
+            const same = pool.filter(x => x.irregular === v.irregular);
+            if (same.length >= 20) pool = same;
+        }
+        const seen = new Set([keyOf(correct)]);
+        const picked = [];
+        for (const x of shuffle(pool)) {
+            const val = x[task], k = keyOf(val);
+            if (seen.has(k)) continue;
+            seen.add(k); picked.push(val);
+            if (picked.length === 3) break;
+        }
+        return shuffle([correct, ...picked]);
+    }
+
+    function showQuestion() {
+        answered = false;
+        const v = selectedVerbs[currentIndex];
+        currentTask = currentMode === 'mixed'
+            ? ['translation', 'past', 'participle'][Math.floor(Math.random() * 3)]
+            : currentMode;
+
+        $('currentNum').textContent = currentIndex + 1;
+        $('promptVerb').textContent = v.infinitive;
+        $('instructionText').textContent = LABELS[currentTask];
+
+        const grid = $('optionsGrid');
+        grid.innerHTML = '';
+        generateOptions(v, currentTask).forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.dataset.value = opt;
+            const label = document.createElement('span');
+            label.textContent = opt;
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-chevron-right';
+            btn.append(label, icon);
+            btn.onclick = () => handleSelection(opt, btn);
+            grid.appendChild(btn);
+        });
+
+        $('gameExample').classList.add('hidden');
+        $('nextBtn').classList.add('hidden');
+        startTimer();
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 100;
+        const bar = $('timerBar');
+        bar.style.width = '100%';
+        bar.classList.remove('low');
+        timerInterval = setInterval(() => {
+            timeLeft -= 1; // 100 ticks x 100 ms = 10 segundos
+            bar.style.width = timeLeft + '%';
+            bar.classList.toggle('low', timeLeft < 30);
+            if (timeLeft <= 0) { clearInterval(timerInterval); autoFail(); }
+        }, 100);
+    }
+
+    function revealCorrect(correct) {
+        document.querySelectorAll('.option-btn').forEach(b => {
+            b.disabled = true;
+            if (b.dataset.value === correct) {
+                b.classList.add('option-correct');
+                b.querySelector('i').className = 'fas fa-check';
+            }
+        });
+    }
+
+    function afterAnswer() {
+        const v = selectedVerbs[currentIndex];
+        $('exampleBox').dataset.speak = v.example;
+        $('exampleBox').innerHTML = `"${esc(v.example)}"<span class="tr">${esc(v.exampleEs)}</span>`;
+        $('gameExample').classList.remove('hidden');
+
+        if (lives <= 0) {
+            setTimeout(showResults, 1800);
+        } else {
+            $('nextLabel').textContent = currentIndex >= total - 1 ? 'Ver resultados' : 'Siguiente pregunta';
+            $('nextBtn').classList.remove('hidden');
+        }
+    }
+
+    function handleSelection(selected, btn) {
+        if (answered) return;
+        answered = true;
+        clearInterval(timerInterval);
+        const correct = selectedVerbs[currentIndex][currentTask];
+
+        if (selected === correct) {
+            score++; streak++;
+            maxStreak = Math.max(maxStreak, streak);
+            btn.classList.add('option-correct');
+            btn.querySelector('i').className = 'fas fa-check';
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        } else {
+            lives--; streak = 0;
+            btn.classList.add('option-wrong');
+            btn.querySelector('i').className = 'fas fa-xmark';
+            revealCorrect(correct);
+            updateLives();
+            const box = $('gameBox');
+            box.classList.add('shake');
+            setTimeout(() => box.classList.remove('shake'), 350);
+        }
+        showStreak();
+        speak(correct);
+        afterAnswer();
+    }
+
+    function autoFail() {
+        if (answered) return;
+        answered = true;
+        lives--; streak = 0;
+        updateLives();
+        showStreak();
+        revealCorrect(selectedVerbs[currentIndex][currentTask]);
+        afterAnswer();
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex >= total) showResults();
+        else showQuestion();
+    }
+
+    function showStreak() {
+        const s = $('streakBadge');
+        if (streak > 1) { s.textContent = `Racha x${streak}`; s.classList.remove('hidden'); }
+        else s.classList.add('hidden');
+    }
+
+    function updateLives() {
+        $('livesContainer').innerHTML = [0, 1, 2].map(i => `<i class="fas fa-heart ${i < lives ? '' : 'off'}"></i>`).join('');
+    }
+
+    function showResults() {
+        clearInterval(timerInterval);
+        $('gameZone').classList.add('hidden');
+        $('resultsZone').classList.remove('hidden');
+        $('finalScore').textContent = `${score}/${total}`;
+
+        const best = getBest();
+        const isRecord = maxStreak > best;
+        if (isRecord) setBest(maxStreak);
+        $('resBest').textContent = isRecord && maxStreak > 1
+            ? `Nueva mejor racha: ${maxStreak}`
+            : `Tu racha en esta ronda: ${maxStreak} · Mejor racha: ${Math.max(best, maxStreak)}`;
+
+        let icon, title;
+        if (score === total) { icon = '🏆'; title = '¡Maestro supremo!'; }
+        else if (lives <= 0) { icon = '💪'; title = 'Te quedaste sin vidas. Vuelve a entrenar.'; }
+        else if (score / total >= 0.7) { icon = '⭐'; title = '¡Excelente puntaje!'; }
+        else { icon = '📓'; title = 'A entrenar más.'; }
+        $('resultIcon').textContent = icon;
+        $('resTitle').textContent = title;
+    }
+
+    /* ---------- Inicio ---------- */
+    $('verbCount').textContent = verbsDatabase.length;
+    $('irrCount').textContent = verbsDatabase.filter(v => v.irregular).length;
+    $('bestStreak').textContent = getBest();
+    $('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
