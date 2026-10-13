@@ -17,12 +17,7 @@
 </head>
 <body>
 
-  <nav class="tr2-nav">
-    <span class="tr2-title"><i class="fa-solid fa-brain"></i>Training Room</span>
-    <div class="tr2-nav-right">
-      <span id="tr2-user-info" class="tr2-chip"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando…</span>
-    </div>
-  </nav>
+  <nav class="tr2-nav" id="tr2-nav"></nav>
 
   <div class="tr2-shell">
     <h1 class="tr2-h1">Elige tu nivel</h1>
@@ -36,14 +31,16 @@
   <script type="module">
     import { esperarSesionYAlumno } from "./assets/js/auth-init.js";
     import { pintarNiveles } from "./assets/js/training-room.js";
+    import { montarBarra, pintarAvatar } from "./assets/js/barra-red.js";
+
+    montarBarra({ portal: '../' }); // en esta pantalla "atrás" sería igual que Inicio
 
     (async function init() {
       const resultado = await esperarSesionYAlumno();
       if (!resultado) return; // auth-init.js ya redirige al login si no hay sesión/perfil
       const { alumno } = resultado;
 
-      document.getElementById("tr2-user-info").innerHTML =
-        `<i class="fa-solid fa-user"></i> ${alumno.nombre || alumno.email || ''}`;
+      pintarAvatar(alumno);
 
       await pintarNiveles(alumno);
     })();
