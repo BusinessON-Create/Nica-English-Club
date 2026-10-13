@@ -248,7 +248,10 @@ h1,h2,h3,p { margin:0; }
 .tr2-circ:hover { color:var(--gold); border-color:var(--gold-dim); background:var(--gold-dim); }
 .tr2-avatar-chip { overflow:hidden; background:var(--card); color:var(--gold3); font:800 15px 'DM Sans',sans-serif; }
 .tr2-avatar-chip:hover { border-color:var(--gold2); }
-.tr2-avatar-chip img { width:100%; height:100%; object-fit:cover; display:block; }
+/* La foto llena el círculo y se centra como en el portal (antes quedaba pegada arriba y la cabeza
+   se veía más abajo). Con foto, el círculo es un bloque con la imagen absoluta; con inicial, se centra. */
+.tr2-avatar-chip.con-foto { display:block; position:relative; }
+.tr2-avatar-chip img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
 /* Táctil: sin el cuadrito gris del navegador al tocar, sin color "pegado" después del toque,
    y un pequeño efecto de presionado (igual que los botones del portal). */
 .tr2-circ, .tr2-avatar-chip { -webkit-tap-highlight-color:transparent; tap-highlight-color:transparent; outline:none; -webkit-user-select:none; user-select:none; }

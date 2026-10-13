@@ -27,6 +27,8 @@ nav.top .brand i{color:var(--gold);}
 nav.top .actions{display:flex;align-items:center;gap:8px;}
 .coach-avatar{width:34px;height:34px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold3);font-size:13px;overflow:hidden;border:1px solid var(--border2);flex-shrink:0;}
 .coach-avatar img{width:100%;height:100%;object-fit:cover;}
+a.coach-avatar{text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+a.coach-avatar:hover{border-color:var(--gold2);}
 .ico-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:.2s var(--ease);}
 .ico-btn:hover{color:#fff;border-color:var(--gold2);}
 h1{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin:20px 0 4px;display:flex;align-items:center;gap:12px;}
@@ -96,10 +98,10 @@ textarea:focus,input:focus{border-color:var(--gold2);}
 <nav class="top">
   <a class="brand" href="../"><i class="fa-solid fa-chalkboard-user"></i> Notas de Coach</a>
   <div class="actions">
-    <div class="coach-avatar" id="coach-avatar"></div>
     <button class="ico-btn" onclick="location.href='../'" title="Volver al portal"><i class="fa-solid fa-arrow-left"></i></button>
     <button class="ico-btn" onclick="location.href='../training-room/index.html'" title="Training Room v2 (solo lectura)"><i class="fa-solid fa-flask"></i></button>
     <button class="ico-btn" onclick="location.href='../training-room/coach/entregas.html'" title="Entregas pendientes (Speaking/Writing)"><i class="fa-solid fa-inbox"></i></button>
+    <a class="coach-avatar" id="coach-avatar" href="../?ir=perfil" title="Mi perfil" aria-label="Mi perfil"></a>
     <button class="ico-btn" onclick="cerrarSesionCoach()" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
   </div>
 </nav>
@@ -214,6 +216,18 @@ let estadoAlumnos = {};    // { [alumnoId]: { etiqueta, nota, compartido } } —
 let solicitudActual = null; // solicitudBorrado de la sesión cargada ahora mismo (o null)
 
 function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+// Igual que en el portal: un enlace de Google Drive se convierte en imagen directa. Solo se aceptan
+// URLs http(s): la foto de un alumno la escribe él mismo, así que nunca se pega sin validar.
+function resolverUrlDrive(url) {
+  if (!url) return url;
+  if (url.includes('drive.google.com')) {
+    const m = url.match(/\/d\/(.+?)\/|id=(.+?)(&|$)/);
+    const id = m ? (m[1] || m[2]) : null;
+    if (id) return `https://lh3.googleusercontent.com/d/${id}`;
+  }
+  return url;
+}
+function urlFotoSegura(url) { const u = resolverUrlDrive(url || ''); return /^https?:\/\//i.test(u) ? u : ''; }
 function slug(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
 function idSesion(dias, franja, fecha) { return `${slug(dias)}__${slug(franja)}__${fecha}`; }
 function docIdNota(coachId, dias, franja, fecha) { return `${coachId}__${idSesion(dias, franja, fecha)}`; }
@@ -268,7 +282,20 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('contenido').hidden = false;
     document.getElementById('coach-nombre').innerText = coach.nombre || '';
     const inicial = (coach.nombre || '?').charAt(0).toUpperCase();
-    document.getElementById('coach-avatar').innerHTML = coach.foto ? `<img src="${coach.foto}" onerror="this.parentElement.innerHTML='${inicial}'">` : inicial;
+    {
+      const av = document.getElementById('coach-avatar');
+      const u = urlFotoSegura(coach.foto);
+      if (u) {
+        const img = new Image();
+        img.alt = '';
+        img.onerror = () => { av.textContent = inicial; };
+        img.src = u;
+        av.textContent = '';
+        av.appendChild(img);
+      } else {
+        av.textContent = inicial;
+      }
+    }
     document.getElementById('fecha-sesion').value = hoyStr();
     document.getElementById('fecha-sesion').addEventListener('change', () => cargarSesion());
     document.getElementById('nota-general-compartida').addEventListener('change', pintarToggleGeneral);
@@ -321,7 +348,10 @@ async function cargarRoster() {
   if (!rosterActual.length) return;
   cont.innerHTML = rosterActual.map(a => {
     const inicial = (a.nombre || '?').charAt(0).toUpperCase();
-    const foto = a.foto ? `<img src="${a.foto}" onerror="this.parentElement.innerHTML='${inicial}'">` : inicial;
+    const urlFoto = urlFotoSegura(a.foto);
+    const foto = urlFoto
+      ? `<img src="${escHtml(urlFoto)}" data-i="${escHtml(inicial)}" onerror="this.parentElement.textContent=this.dataset.i">`
+      : escHtml(inicial);
     return `<div class="roster-item" data-alumno="${a.id}">
       <div class="roster-head">
         <div class="roster-head-left"><div class="avatar-mini">${foto}</div><span class="roster-nombre">${escHtml(a.nombre)}</span></div>

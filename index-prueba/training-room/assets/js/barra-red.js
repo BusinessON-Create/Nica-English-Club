@@ -39,7 +39,7 @@ export function pintarAvatar(alumno) {
   const chip = document.getElementById('tr2-avatar');
   if (!chip || !alumno) return;
   const inicial = (String(alumno.nombre || alumno.email || '?').trim().charAt(0) || '?').toUpperCase();
-  const ponerInicial = () => { chip.textContent = inicial; };
+  const ponerInicial = () => { chip.classList.remove('con-foto'); chip.textContent = inicial; };
   const url = resolverUrlDrive(alumno.foto || '');
   if (url && /^https?:\/\//i.test(url)) {
     const img = new Image();
@@ -47,6 +47,7 @@ export function pintarAvatar(alumno) {
     img.onerror = ponerInicial;
     img.src = url;
     chip.textContent = '';
+    chip.classList.add('con-foto');
     chip.appendChild(img);
   } else {
     ponerInicial();
