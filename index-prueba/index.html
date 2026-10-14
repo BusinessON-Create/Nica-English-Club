@@ -1275,6 +1275,54 @@ body.tr-room-lock { overflow:hidden; }
 .tr-room #recursos-section, .tr-room .video-gallery-section { margin-top:20px !important; }
 /* Sala de Recursos: filtros de categoría fijos arriba al hacer scroll (funcional, no decorativo) */
 .tr-room .cat-tabs-row { position:sticky; top:calc(58px + env(safe-area-inset-top)); z-index:6; margin:0 -16px; padding:10px 16px 16px; background:rgba(8,8,10,.72); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); -webkit-mask-image:linear-gradient(#000 72%, transparent); mask-image:linear-gradient(#000 72%, transparent); }
+
+/* ===== HOME UNIFICADO: pantalla principal compacta + NECLUB debajo ===== */
+#s-student .hero-banner { padding:14px 16px; margin-top:12px; }
+#s-student .avatar-ring { width:58px; height:58px; padding:2px; }
+#s-student .welcome-eyebrow, #s-student .welcome-sub { display:none; }
+#s-student .welcome-name { font-size:21px; }
+#s-student .welcome-name-row { margin-top:0; gap:8px; }
+#s-student .status-row { margin-top:8px; }
+/* Invitar amigos: una sola fila delgada */
+#s-student .share-bar { padding:9px 14px; margin:12px 0; gap:10px; flex-wrap:nowrap; border-radius:14px; }
+#s-student .share-bar p { font-size:12px; gap:8px; min-width:0; }
+#s-student .btn-share { padding:7px 12px; font-size:11.5px; flex-shrink:0; }
+/* Racha: más pequeña, no se quita */
+#s-student .week-card.compact { padding:9px 14px; margin-bottom:12px; }
+#s-student .week-card .racha-badge { padding:3px 10px 3px 8px; }
+#s-student .week-card .racha-badge span { display:none; }
+#s-student .week-card .streak-new { margin-top:4px; gap:0; }
+#s-student .week-card .streak-ring-wrap { display:none; }
+#s-student .week-card .streak-copy { min-width:0; flex:1 1 100%; }
+#s-student .week-card .streak-copy .n { font-size:11.5px; margin-bottom:2px; }
+#s-student .week-card .streak-days-row { margin-top:0; gap:6px; }
+#s-student .week-card .streak-day { gap:3px; }
+#s-student .week-card .streak-day-circle { width:22px; height:22px; font-size:9px; box-shadow:none; }
+#s-student .week-card .streak-day-label { font-size:9px; }
+/* Video de hoy: fila con miniatura; el video carga solo al tocarla */
+#s-student .banner-projection-wrap { margin-bottom:12px; }
+#s-student .banner-projection-eyebrow { margin-bottom:6px; }
+#s-student .banner-projection.lite { aspect-ratio:auto; border-radius:14px; box-shadow:none; justify-content:flex-start; }
+#s-student .banner-projection.playing { aspect-ratio:16/9; }
+.banner-lite { display:flex; align-items:center; gap:12px; width:100%; padding:8px; border:0; background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.banner-lite-thumb { position:relative; width:96px; height:54px; flex:none; border-radius:10px; overflow:hidden; background:#000; }
+.banner-lite-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.banner-lite-play { position:absolute; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.38); color:#fff; font-size:15px; }
+.banner-lite-txt { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.banner-lite-txt b { color:#fff; font-size:13.5px; }
+.banner-lite-txt span { color:var(--muted); font-size:11.5px; }
+/* Tarjetas de abajo, más compactas */
+#s-student .top3-card { padding:14px 16px; margin-bottom:14px; }
+#s-student #retos-card { margin-bottom:14px !important; }
+#s-student .mindset-card { padding:16px 18px; min-height:0; border-radius:var(--r-lg); }
+#s-student .mindset-card h3 { font-size:17px; }
+#s-student .mindset-card p { margin-bottom:10px; }
+/* NECLUB dentro de la pantalla principal */
+.home-neclub-head { display:flex; align-items:center; gap:8px; margin:22px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--border2); scroll-margin-top:76px; }
+.home-neclub-head h2 { font-size:12px; letter-spacing:2px; color:var(--gold); font-weight:800; text-transform:uppercase; }
+#home-neclub .neclub-shell { max-width:100%; padding:0 0 40px; }
+.neclub-feed-mas { display:flex; justify-content:center; padding:6px 0 4px; }
+.neclub-ver-mas { background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold3); font:700 12.5px 'DM Sans',sans-serif; padding:10px 20px; border-radius:99px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 </style>
 </head>
 <body>
@@ -1436,6 +1484,12 @@ body.tr-room-lock { overflow:hidden; }
         <h3 id="mindset-titulo">Entrena tu mente, domina tu inglés.</h3>
         <p id="mindset-frase">Disciplina hoy, libertad mañana.</p>
         <button class="btn-ver-mas" type="button" onclick="abrirModalPractica()">Envía una práctica</button>
+      </div>
+
+      <!-- NECLUB dentro de la pantalla principal (se llena por JS; oculto si se usa ?home=clasico) -->
+      <div id="home-neclub" style="display:none;">
+        <div class="home-neclub-head" id="home-neclub-anchor"><i class="fa-solid fa-hashtag" style="color:var(--gold);"></i><h2>NECLUB</h2></div>
+        <div id="home-neclub-slot"></div>
       </div>
     </div>
   </div>
@@ -2418,6 +2472,10 @@ function precargarPanelChatHTML() {
 // "escuchar" novedades apenas el alumno inicia sesión, así que su HTML se pide de
 // una vez en segundo plano (sin bloquear la pantalla principal) para que esté listo
 // tanto si el alumno toca la pestaña como si le llega una notificación sin haberla abierto.
+// ===== HOME UNIFICADO: la pantalla principal y NECLUB son una sola pantalla =====
+// Poner ?home=clasico en la URL vuelve a NECLUB como pantalla aparte (para comparar o revertir).
+const HOME_UNIFICADO = new URLSearchParams(location.search).get('home') !== 'clasico';
+let neclubEnHome = false; // true cuando el feed de NECLUB ya vive dentro de la pantalla principal
 let neclubPanelPromise = null;
 function precargarPanelNeclubHTML() {
   if (!neclubPanelPromise) {
@@ -2427,7 +2485,8 @@ function precargarPanelNeclubHTML() {
         return resp.text();
       })
       .then(html => {
-        document.getElementById('app-root').insertAdjacentHTML('beforeend', html);
+        if (HOME_UNIFICADO && !neclubModoVisitante) montarNeclubEnHome(html);
+        else document.getElementById('app-root').insertAdjacentHTML('beforeend', html);
         aplicarLogo(); // este HTML trae su propio ".app-logo" (el ícono de la esquina); aplicarLogo() ya corrió antes de que existiera, así que hay que repetirlo acá
         pintarAvatarChips(); // este HTML también trae su propio ".nav-avatar-chip" (tu foto, arriba a la izquierda de NECLUB), vacío hasta ahora por el mismo motivo
         // Si Firestore ya había mandado los posts ANTES de que este HTML existiera, el primer
@@ -2444,10 +2503,104 @@ function precargarPanelNeclubHTML() {
   }
   return neclubPanelPromise;
 }
+// Mueve el feed de NECLUB (historias, caja de publicar y muro) al final de la pantalla principal.
+// Se conservan TODOS los ids, así que el resto del código de NECLUB sigue funcionando igual.
+// El modo visitante (?ver=neclub) sigue usando la pantalla NECLUB completa de siempre.
+function montarNeclubEnHome(html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  const slot = document.getElementById('home-neclub-slot');
+  const caja = document.getElementById('home-neclub');
+  const shell = tpl.content.querySelector('#neclub-shell');
+  const barra = tpl.content.querySelector('#neclub-new-posts-bar');
+  if (!slot || !caja || !shell) { // por seguridad: si algo falta, NECLUB como pantalla aparte
+    document.getElementById('app-root').insertAdjacentHTML('beforeend', html);
+    return;
+  }
+  if (barra) slot.appendChild(barra);
+  slot.appendChild(shell);
+  caja.style.display = '';
+  neclubEnHome = true;
+  // La campana de NECLUB pasa al encabezado de la pantalla principal.
+  const acciones = document.querySelector('#s-student .nav-actions');
+  if (acciones && !document.getElementById('neclub-notif-badge')) {
+    const campana = document.createElement('div');
+    campana.className = 'notif-wrap';
+    campana.innerHTML = '<button class="notif-bell-btn" onclick="toggleNeclubNotifDropdown()" title="Notificaciones de NECLUB"><i class="fa-solid fa-bell"></i><span class="notif-badge" id="neclub-notif-badge">0</span></button>';
+    acciones.insertBefore(campana, acciones.querySelector('button[onclick^="abrirChatFlotante"]') || acciones.firstChild);
+    renderNeclubNotifBadge();
+  }
+}
+// Lleva al alumno al inicio del feed de NECLUB, dentro de la pantalla principal.
+function irAlFeedNeclubEnHome() {
+  const activa = document.querySelector('.screen.active');
+  if (!activa || activa.id !== 's-student') showScreen('s-student');
+  setTimeout(() => {
+    const ancla = document.getElementById('home-neclub-anchor');
+    if (ancla) ancla.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 120);
+}
 window.abrirNeclub = async function () {
   await precargarPanelNeclubHTML();
+  if (neclubEnHome) { irAlFeedNeclubEnHome(); return; }
   showScreen('s-neclub');
 };
+
+// ----- Muro paginado: se pintan unos pocos posts y el resto carga al bajar -----
+function actualizarVerMasNeclub() {
+  const cont = document.getElementById('neclub-feed');
+  if (!cont) return;
+  let mas = document.getElementById('neclub-feed-mas');
+  if (!mas) {
+    mas = document.createElement('div');
+    mas.id = 'neclub-feed-mas';
+    mas.className = 'neclub-feed-mas';
+    cont.insertAdjacentElement('afterend', mas);
+  }
+  const restantes = Math.max(0, neclubPostsCache.length - cont.children.length);
+  if (!restantes || cont.querySelector('.neclub-empty')) {
+    mas.innerHTML = '';
+    if (neclubMasObs) neclubMasObs.disconnect();
+    return;
+  }
+  mas.innerHTML = `<button type="button" class="neclub-ver-mas" onclick="verMasFeedNeclub()">Ver más publicaciones (${restantes})</button>`;
+  if ('IntersectionObserver' in window) {
+    if (!neclubMasObs) {
+      neclubMasObs = new IntersectionObserver((entradas) => {
+        entradas.forEach((e) => { if (e.isIntersecting) verMasFeedNeclub(); });
+      }, { rootMargin: '700px 0px' });
+    }
+    neclubMasObs.disconnect();
+    neclubMasObs.observe(mas);
+  }
+}
+window.verMasFeedNeclub = function () {
+  const cont = document.getElementById('neclub-feed');
+  if (!cont) return;
+  const miId = sessionActiva ? sessionActiva.id : null;
+  neclubFeedLimite = cont.children.length + NECLUB_FEED_PAGINA;
+  neclubPostsCache.slice(0, neclubFeedLimite).forEach((p) => {
+    if (document.getElementById('neclub-post-' + p.id)) return;
+    cont.insertAdjacentHTML('beforeend', renderNeclubPostHTML(p, miId));
+  });
+  inicializarAutoplayVideosNeclub();
+  actualizarVerMasNeclub();
+};
+// Si hay que saltar a un post que todavía no se pintó (p. ej. desde una notificación), se pinta hasta ahí.
+function asegurarPostPintadoNeclub(postId) {
+  const cont = document.getElementById('neclub-feed');
+  if (!cont || document.getElementById('neclub-post-' + postId)) return;
+  const idx = neclubPostsCache.findIndex((p) => p.id === postId);
+  if (idx < 0) return;
+  const miId = sessionActiva ? sessionActiva.id : null;
+  neclubFeedLimite = Math.max(neclubFeedLimite, idx + 1);
+  neclubPostsCache.slice(0, neclubFeedLimite).forEach((p) => {
+    if (document.getElementById('neclub-post-' + p.id)) return;
+    cont.insertAdjacentHTML('beforeend', renderNeclubPostHTML(p, miId));
+  });
+  inicializarAutoplayVideosNeclub();
+  actualizarVerMasNeclub();
+}
 
 // ===== CARGA DIFERIDA DEL PANEL DE ADMIN =====
 // El HTML del panel de admin ya no viene incrustado en este archivo — vive en
@@ -2707,27 +2860,52 @@ function escucharBanner() {
         if (sessionActiva) necGuardarCache('banner', sessionActiva.id, data);
     });
 }
+let ultimoBannerData = null;
+let bannerObs = null;
 function renderBanner(data) {
     const area = document.getElementById('banner-area');
     if (!area || !data || !data.url) return;
+    ultimoBannerData = data;
     const url = data.url;
     const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]{11})/);
+    area.classList.remove('playing');
     if (ytMatch) {
-        area.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0" allowfullscreen></iframe>`;
+        const yt = ytMatch[1];
+        if (!/^[A-Za-z0-9_-]{11}$/.test(yt)) return; // id raro: no se pinta nada
+        // Solo una miniatura: el reproductor de YouTube (pesado) se carga cuando el alumno toca play.
+        area.classList.add('lite');
+        area.innerHTML = `<button type="button" class="banner-lite" aria-label="Ver el video de hoy">
+          <span class="banner-lite-thumb"><img src="https://i.ytimg.com/vi/${yt}/mqdefault.jpg" alt="" loading="lazy"><span class="banner-lite-play"><i class="fa-solid fa-play"></i></span></span>
+          <span class="banner-lite-txt"><b>Video de hoy</b><span>Toca para verlo</span></span>
+        </button>`;
+        area.querySelector('.banner-lite').onclick = () => activarBannerVideo(yt);
     } else {
+        area.classList.remove('lite');
         area.innerHTML = `<img src="${resolverUrlDrive(url)}">`;
     }
 }
-// El banner es un <iframe> de YouTube: a diferencia de un <video>, no se puede simplemente
-// "pausar" desde afuera. Si el alumno le dio play y se va a otra pantalla, la única forma
-// confiable de cortar el audio es recargar el iframe (por eso el paso por "about:blank").
+function activarBannerVideo(yt) {
+  const area = document.getElementById('banner-area');
+  if (!area) return;
+  area.classList.remove('lite');
+  area.classList.add('playing');
+  area.innerHTML = `<iframe src="https://www.youtube.com/embed/${yt}?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  // Si el alumno baja o se va a otra pantalla, el video vuelve a ser miniatura (así se corta el audio).
+  if ('IntersectionObserver' in window) {
+    if (bannerObs) bannerObs.disconnect();
+    bannerObs = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (!e.isIntersecting && ultimoBannerData) { bannerObs.disconnect(); renderBanner(ultimoBannerData); }
+      });
+    }, { threshold: 0.15 });
+    bannerObs.observe(area);
+  }
+}
+// El video es un <iframe> de YouTube: no se puede "pausar" desde afuera. Si el alumno le dio play y
+// se va a otra pantalla, la forma confiable de cortar el audio es volver a dibujar la miniatura.
 window.pausarBannerVideo = function () {
   const area = document.getElementById('banner-area');
-  const iframe = area && area.querySelector('iframe');
-  if (!iframe) return;
-  const src = iframe.src;
-  iframe.src = 'about:blank';
-  setTimeout(() => { iframe.src = src; }, 50);
+  if (area && area.querySelector('iframe') && ultimoBannerData) renderBanner(ultimoBannerData);
 };
 
 /* ===== GALERÍA DE VIDEOS (categorías con carrusel automático) ===== */
@@ -3061,6 +3239,9 @@ function tiempoRelativoNeclub(fechaMs) {
 let neclubUltimoTopId = null;
 let neclubUltimoTap = {};
 let neclubFeedPintadoAlMenosUnaVez = false;
+const NECLUB_FEED_PAGINA = 8;      // cuántos posts se pintan de entrada y por cada "ver más"
+let neclubFeedLimite = NECLUB_FEED_PAGINA;
+let neclubMasObs = null;
 
 function escucharNeclub() {
   if (neclubFeedYaEscuchado) return;
@@ -3088,7 +3269,12 @@ window.irArribaFeedNeclub = () => {
   try {
     const barra = document.getElementById('neclub-new-posts-bar');
     if (barra) barra.style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (neclubEnHome) {
+      const ancla = document.getElementById('home-neclub-anchor');
+      if (ancla) ancla.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   } catch (e) { console.error('irArribaFeedNeclub falló:', e); }
 };
 
@@ -3166,12 +3352,14 @@ function renderFeedNeclub() {
   if (!neclubPostsCache.length) {
     cont.innerHTML = `<div class="neclub-empty"><i class="fa-solid fa-hashtag"></i>No posts yet. Be the first to share something in English! <i class="fa-solid fa-language"></i></div>`;
     neclubFeedPintadoAlMenosUnaVez = false;
+    actualizarVerMasNeclub(); // limpia un "Ver más" que haya quedado de antes
     return;
   }
   const miId = sessionActiva ? sessionActiva.id : null;
-  cont.innerHTML = neclubPostsCache.map(p => renderNeclubPostHTML(p, miId)).join('');
+  cont.innerHTML = neclubPostsCache.slice(0, neclubFeedLimite).map(p => renderNeclubPostHTML(p, miId)).join('');
   inicializarAutoplayVideosNeclub();
   neclubFeedPintadoAlMenosUnaVez = true;
+  actualizarVerMasNeclub();
   renderFlashesNeclub();
 }
 
@@ -3207,6 +3395,7 @@ function aplicarCambiosFeedNeclub(cambios) {
     // Insertamos cada post nuevo en su posición correcta según el orden actual, sin tocar los demás.
     neclubPostsCache.forEach((p, idx) => {
       if (document.getElementById('neclub-post-'+p.id)) return;
+      if (idx >= neclubFeedLimite) return; // los de más abajo se cargan con "ver más"
       const envoltorio = document.createElement('div');
       envoltorio.innerHTML = renderNeclubPostHTML(p, miId);
       const nodoNuevo = envoltorio.firstElementChild;
@@ -3216,6 +3405,7 @@ function aplicarCambiosFeedNeclub(cambios) {
     });
     inicializarAutoplayVideosNeclub(); // re-observa (incluye los nuevos); no reinicia los videos que ya estaban
   }
+  actualizarVerMasNeclub();
   renderFlashesNeclub(); // agrega/quita flashes según los cambios, sin rebarajar el orden ya mostrado
 }
 function actualizarLikesYComentariosNeclub(nodo, p, miId) {
@@ -3284,7 +3474,7 @@ function renderFlashesNeclub(forzarNuevoOrden) {
 
   const mapaPosts = {};
   candidatos.forEach(p => { mapaPosts[p.id] = p; });
-  const itemsHtml = neclubFlashesOrden.map(id => renderNeclubFlashCardHTML(mapaPosts[id])).join('');
+  const itemsHtml = neclubFlashesOrden.slice(0, 12).map(id => renderNeclubFlashCardHTML(mapaPosts[id])).join(''); // máximo 12 en la franja (más liviano al entrar)
   wrap.style.display = '';
   wrap.innerHTML = carruselHTML('neclub-flashes-track', itemsHtml);
   iniciarCarruselAvanzado('neclub-flashes-track', 0.4);
@@ -3831,7 +4021,13 @@ window.toggleNeclubNotifDropdown = (forceClose) => {
 window.irAPostDesdeNotifNeclub = async (postId) => {
   toggleNeclubNotifDropdown(true);
   await precargarPanelNeclubHTML();
-  showScreen('s-neclub');
+  if (neclubEnHome) {
+    const activa = document.querySelector('.screen.active');
+    if (!activa || activa.id !== 's-student') showScreen('s-student');
+    asegurarPostPintadoNeclub(postId);
+  } else {
+    showScreen('s-neclub');
+  }
   setTimeout(() => {
     const el = document.getElementById('neclub-post-'+postId);
     if (el) el.scrollIntoView({ behavior:'smooth', block:'center' });
@@ -6835,7 +7031,7 @@ function showScreen(id, opciones = {}) {
   const el = document.getElementById(id);
   if (!el) return;
   const pantallaAnterior = document.querySelector('.screen.active');
-  if (pantallaAnterior && pantallaAnterior.id === 's-neclub' && id !== 's-neclub' && typeof pausarTodosLosVideosNeclub === 'function') {
+  if (pantallaAnterior && id !== pantallaAnterior.id && (pantallaAnterior.id === 's-neclub' || (neclubEnHome && pantallaAnterior.id === 's-student')) && typeof pausarTodosLosVideosNeclub === 'function') {
     pausarTodosLosVideosNeclub();
   }
   if (pantallaAnterior && pantallaAnterior.id === 's-student' && id !== 's-student') {
@@ -6847,7 +7043,8 @@ function showScreen(id, opciones = {}) {
   if (modalVideoGaleria && modalVideoGaleria.classList.contains('open') && typeof window.cerrarVideoPlayer === 'function') {
     window.cerrarVideoPlayer();
   }
-  if ((!pantallaAnterior || pantallaAnterior.id !== 's-neclub') && id === 's-neclub' && typeof renderFlashesNeclub === 'function') {
+  const entraANeclub = id === 's-neclub' || (neclubEnHome && id === 's-student');
+  if (entraANeclub && (!pantallaAnterior || pantallaAnterior.id !== id) && typeof renderFlashesNeclub === 'function') {
     renderFlashesNeclub(true); // se rebaraja el orden de los Flashes cada vez que se entra a NECLUB
   }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
