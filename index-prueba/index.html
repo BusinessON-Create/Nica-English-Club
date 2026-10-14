@@ -1332,6 +1332,46 @@ body.tr-room-lock { overflow:hidden; }
 #home-neclub .neclub-shell { max-width:100%; padding:0 0 40px; }
 .neclub-feed-mas { display:flex; justify-content:center; padding:6px 0 4px; }
 .neclub-ver-mas { background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold3); font:700 12.5px 'DM Sans',sans-serif; padding:10px 20px; border-radius:99px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+
+/* ===== Racha dentro del banner de perfil: franja delgada ===== */
+#s-student .hero-banner .week-card { background:transparent; border:0; border-top:1px solid rgba(255,255,255,.14); border-radius:0; padding:8px 0 0; margin:10px 0 0; }
+#s-student .hero-banner .week-card .card-eyebrow { font-size:9px; letter-spacing:1.4px; }
+#s-student .hero-banner .week-card .racha-badge { padding:2px 9px 2px 7px; background:rgba(240,180,41,.12); }
+#s-student .hero-banner .week-card .racha-badge b { font-size:13px; }
+#s-student .hero-banner .week-card .streak-new { margin-top:6px; }
+#s-student .hero-banner .week-card .streak-copy .n { display:none; }
+#s-student .hero-banner .week-card .streak-days-row { gap:4px; }
+#s-student .hero-banner .week-card .streak-day { flex-direction:column-reverse; gap:3px; }
+#s-student .hero-banner .week-card .streak-day-circle { width:20px; height:20px; font-size:8px; }
+#s-student .hero-banner .week-card .streak-day-label { font-size:8.5px; }
+/* ===== "Para ti" + saludo ===== */
+.banner-projection-eyebrow { flex-wrap:nowrap; }
+.para-ti-saludo { text-transform:none; letter-spacing:0; font-weight:600; font-size:11.5px; color:#fff; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.para-ti-saludo:empty { display:none; }
+.para-ti-saludo::before { content:'·'; color:var(--gold); margin:0 7px 0 2px; }
+/* ===== Perfil: hoja que sube desde abajo, sin salirse de la pantalla ===== */
+@keyframes sheetUp { from { transform:translateY(28px); opacity:0; } to { transform:none; opacity:1; } }
+#modal-perfil-bg { align-items:flex-end; padding:0; }
+#modal-perfil-bg .perfil-sheet { max-width:480px; width:100%; max-height:92vh; max-height:92dvh; padding:0; display:flex; flex-direction:column; overflow:hidden; border-radius:22px 22px 0 0; text-align:left; animation:sheetUp .28s var(--ease) both; }
+@media (min-width:600px) { #modal-perfil-bg { align-items:center; padding:20px; } #modal-perfil-bg .perfil-sheet { border-radius:var(--r-xl); } }
+.perfil-head { flex:none; display:flex; align-items:center; justify-content:space-between; padding:16px 18px 12px; border-bottom:1px solid var(--border); }
+.perfil-head h3 { margin:0; font-family:'Playfair Display'; font-size:20px; color:#fff; text-align:left; }
+.perfil-head .modal-close-x { position:static; flex:none; }
+.perfil-body { flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:16px 18px calc(20px + env(safe-area-inset-bottom)); }
+.perfil-id-card { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+.perfil-id-card .profile-avatar-edit { margin:0; flex:none; width:72px; height:72px; }
+.perfil-id-card .profile-avatar-edit img, .perfil-id-card .profile-avatar-edit .avatar-default { width:72px; height:72px; }
+.perfil-id-txt { min-width:0; flex:1; }
+.perfil-id-txt .perfil-nombre { text-align:left; margin:0 0 2px; font-size:16px; color:#fff; font-weight:700; }
+.perfil-id-txt .student-id-badge { text-align:left; margin:0 0 8px; }
+.perfil-id-txt .info-badges-row { justify-content:flex-start; gap:6px; }
+.perfil-acc { background:var(--card2); border:1px solid var(--border); border-radius:14px; margin-bottom:10px; overflow:hidden; }
+.perfil-acc > summary { list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 14px; cursor:pointer; color:#fff; font-size:13.5px; font-weight:700; -webkit-tap-highlight-color:transparent; }
+.perfil-acc > summary::-webkit-details-marker { display:none; }
+.perfil-acc > summary span i { color:var(--gold2); width:18px; margin-right:6px; text-align:center; }
+.perfil-acc > summary .chevron { color:var(--muted); font-size:12px; transition:transform .2s var(--ease); }
+.perfil-acc[open] > summary .chevron { transform:rotate(180deg); }
+.perfil-acc-body { padding:2px 14px 14px; }
 </style>
 </head>
 <body>
@@ -1390,7 +1430,7 @@ body.tr-room-lock { overflow:hidden; }
         <div class="nav-logo-box app-logo">NEC</div>
       </a>
       <div class="nav-actions">
-        <button class="btn-coach-panel" id="btn-coach-notes" style="display:none;" onclick="irANotasCoach()" title="Tu centro de mando: notas de seguimiento, entregas y Training Room"><i class="fa-solid fa-gauge-high"></i><span class="cp-txt">Panel de coach</span><span class="coach-pend-badge" id="coach-pend-badge" style="display:none;">0</span></button>
+        <button class="btn-coach-panel" id="btn-coach-notes" style="display:none;" onclick="irANotasCoach()" title="Tu centro de mando: notas de seguimiento, entregas y Class Room"><i class="fa-solid fa-gauge-high"></i><span class="cp-txt">Panel de coach</span><span class="coach-pend-badge" id="coach-pend-badge" style="display:none;">0</span></button>
         <button class="btn-salir" onclick="abrirChatFlotante()" title="Mensajes"><i class="fa-solid fa-comments"></i><span class="chat-notif-badge" id="chat-notif-badge">0</span></button>
         <button class="btn-salir hamburger-btn" id="btn-hamburger" onclick="toggleSideDrawer()" title="Menú">
           <i class="fa-solid fa-bars"></i>
@@ -1410,7 +1450,7 @@ body.tr-room-lock { overflow:hidden; }
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); abrirPerfil();"><i class="fa-solid fa-user"></i> Perfil</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); abrirNeclub();"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-training');"><i class="fa-solid fa-brain"></i> Training room</button>
-        <button class="side-drawer-item" onclick="toggleSideDrawer(false); window.location.href='./training-room/index.html';"><i class="fa-solid fa-flask"></i> Training Room v2 (beta)</button>
+        <button class="side-drawer-item" onclick="toggleSideDrawer(false); window.location.href='./training-room/index.html';"><i class="fa-solid fa-chalkboard-user"></i> Class Room</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); toggleNotifDropdown();"><i class="fa-solid fa-list-check"></i> Actividades<span class="drawer-item-badge" id="notif-badge">0</span></button>
         <div id="drawer-eflinks-container"></div>
         <button class="side-drawer-item logout-item" onclick="toggleSideDrawer(false); cerrarSesion();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
@@ -1427,15 +1467,6 @@ body.tr-room-lock { overflow:hidden; }
           <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
           <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
         </div>
-      </div>
-
-      <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
-      <div class="week-card compact">
-        <div class="card-eyebrow-row">
-          <p class="card-eyebrow">Your training streak</p>
-          <div class="racha-badge"><i class="fa-solid fa-fire"></i><b id="racha-badge-num">0</b><span>días<br>racha</span></div>
-        </div>
-        <div class="graph-container" id="streak-graph"></div>
       </div>
 
       <div class="hero-banner">
@@ -1456,6 +1487,14 @@ body.tr-room-lock { overflow:hidden; }
         <div class="status-row">
           <div class="info-badges-row" id="info-badges-row"></div>
         </div>
+      <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
+      <div class="week-card compact">
+        <div class="card-eyebrow-row">
+          <p class="card-eyebrow">Your training streak</p>
+          <div class="racha-badge"><i class="fa-solid fa-fire"></i><b id="racha-badge-num">0</b><span>días<br>racha</span></div>
+        </div>
+        <div class="graph-container" id="streak-graph"></div>
+      </div>
       </div>
 
       <!-- Tarjeta del anillo "Completa los 7 días de la semana" eliminada: duplicaba el mismo
@@ -1481,7 +1520,7 @@ body.tr-room-lock { overflow:hidden; }
 
       <!-- PARA TI (video o imagen importante). Por defecto va aquí; en la pantalla unificada el JS lo coloca entre la caja de publicar y el muro de NECLUB -->
       <div class="banner-projection-wrap" id="para-ti-wrap">
-        <p class="banner-projection-eyebrow"><i class="fa-solid fa-star"></i> Para ti</p>
+        <p class="banner-projection-eyebrow"><i class="fa-solid fa-star"></i> Para ti<span class="para-ti-saludo" id="para-ti-saludo"></span></p>
         <div style="position:relative;">
           <div id="banner-area" class="banner-projection">
               <div class="banner-default-text">
@@ -1735,61 +1774,77 @@ body.tr-room-lock { overflow:hidden; }
   <iframe id="modal-iframe-tool-frame" src="about:blank" allow="camera; microphone; fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
 </div>
 
-<!-- MODAL: PERFIL -->
+<!-- MODAL: PERFIL (hoja que sube desde abajo: encabezado fijo + contenido con scroll propio) -->
 <div class="modal-bg" id="modal-perfil-bg">
-  <div class="modal-box modal-box-form" style="position:relative;">
-    <button class="modal-close-x" onclick="cerrarPerfil()"><i class="fa-solid fa-xmark"></i></button>
-    <h3 style="color:#fff; font-family:'Playfair Display'; font-size:21px;">Mi perfil</h3>
-    <div class="profile-avatar-edit">
-      <div id="perfil-avatar-preview"></div>
-      <label for="perfil-foto-input"><i class="fa-solid fa-camera"></i></label>
-      <input type="file" id="perfil-foto-input" accept="image/*" onchange="subirFotoPerfil(event)">
+  <div class="modal-box modal-box-form perfil-sheet" style="position:relative;">
+    <div class="perfil-head">
+      <h3>Mi perfil</h3>
+      <button class="modal-close-x" onclick="cerrarPerfil()" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <p class="form-hint" style="text-align:center; margin-bottom:2px;" id="perfil-nombre-txt"></p>
-    <p class="student-id-badge" style="text-align:center; margin-bottom:14px;" id="perfil-id-txt"></p>
-    <div class="info-badges-row" id="perfil-info-badges" style="justify-content:center; margin-bottom:22px;"></div>
-
-    <div class="perfil-section">
-      <p class="perfil-section-title">Tu progreso</p>
-      <div class="perfil-stats-row" id="perfil-stats-row"></div>
-      <div class="tr-badges-row" id="perfil-badges-row" style="margin-top:10px;"></div>
-    </div>
-
-    <div class="perfil-section">
-      <p class="perfil-section-title">Mi seguimiento</p>
-      <p class="form-hint" style="margin-bottom:10px;">Notas que tu coach decidió compartir contigo.</p>
-      <div id="perfil-seguimiento-lista"></div>
-      <p class="form-hint" id="perfil-seguimiento-vacio" style="display:none;">Todavía no tenés notas de seguimiento compartidas.</p>
-    </div>
-
-    <div class="perfil-section">
-      <p class="perfil-section-title">Contacto</p>
-      <p class="field-label">Número de WhatsApp</p>
-      <p class="form-hint" style="margin-top:2px; margin-bottom:8px;">Ej: +505 8888 8888</p>
-      <div class="input-shell">
-        <i class="fa-brands fa-whatsapp input-icon"></i>
-        <input type="tel" id="perfil-whatsapp" class="field-input" placeholder="+505 8888 8888">
-      </div>
-      <button class="btn-login btn-outline-gold" onclick="guardarWhatsappPerfil()">Guardar WhatsApp</button>
-    </div>
-
-    <div class="perfil-section">
-      <p class="perfil-section-title">Seguridad</p>
-      <button type="button" class="perfil-pass-toggle" id="perfil-pass-toggle" onclick="perfilTogglePass()">
-        <span class="lbl-left"><i class="fa-solid fa-lock"></i>Actualizar contraseña</span>
-        <i class="fa-solid fa-chevron-down chevron"></i>
-      </button>
-      <div id="perfil-pass-fields" style="display:none; margin-top:12px;">
-        <div class="input-shell">
-          <i class="fa-solid fa-lock input-icon"></i>
-          <input type="password" id="perfil-pass-nueva" class="field-input" placeholder="Nueva contraseña">
+    <div class="perfil-body">
+      <div class="perfil-id-card">
+        <div class="profile-avatar-edit">
+          <div id="perfil-avatar-preview"></div>
+          <label for="perfil-foto-input"><i class="fa-solid fa-camera"></i></label>
+          <input type="file" id="perfil-foto-input" accept="image/*" onchange="subirFotoPerfil(event)">
         </div>
-        <div class="input-shell">
-          <i class="fa-solid fa-lock input-icon"></i>
-          <input type="password" id="perfil-pass-confirmar" class="field-input" placeholder="Confirmar contraseña">
+        <div class="perfil-id-txt">
+          <p class="form-hint perfil-nombre" id="perfil-nombre-txt"></p>
+          <p class="student-id-badge" id="perfil-id-txt"></p>
+          <div class="info-badges-row" id="perfil-info-badges"></div>
         </div>
-        <button class="btn-login" onclick="guardarPassPerfil()">Actualizar contraseña</button>
       </div>
+
+      <details class="perfil-acc" open>
+        <summary><span><i class="fa-solid fa-chart-line"></i>Tu progreso</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+        <div class="perfil-acc-body">
+          <div class="perfil-stats-row" id="perfil-stats-row"></div>
+          <div class="tr-badges-row" id="perfil-badges-row" style="margin-top:10px;"></div>
+        </div>
+      </details>
+
+      <details class="perfil-acc" open>
+        <summary><span><i class="fa-solid fa-clipboard-list"></i>Mi seguimiento</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+        <div class="perfil-acc-body">
+          <p class="form-hint" style="margin-bottom:10px;">Notas que tu coach decidió compartir contigo.</p>
+          <div id="perfil-seguimiento-lista"></div>
+          <p class="form-hint" id="perfil-seguimiento-vacio" style="display:none;">Todavía no tenés notas de seguimiento compartidas.</p>
+        </div>
+      </details>
+
+      <details class="perfil-acc">
+        <summary><span><i class="fa-brands fa-whatsapp"></i>Contacto</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+        <div class="perfil-acc-body">
+          <p class="field-label">Número de WhatsApp</p>
+          <p class="form-hint" style="margin-top:2px; margin-bottom:8px;">Ej: +505 8888 8888</p>
+          <div class="input-shell">
+            <i class="fa-brands fa-whatsapp input-icon"></i>
+            <input type="tel" id="perfil-whatsapp" class="field-input" placeholder="+505 8888 8888">
+          </div>
+          <button class="btn-login btn-outline-gold" onclick="guardarWhatsappPerfil()">Guardar WhatsApp</button>
+        </div>
+      </details>
+
+      <details class="perfil-acc">
+        <summary><span><i class="fa-solid fa-shield-halved"></i>Seguridad</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+        <div class="perfil-acc-body">
+          <button type="button" class="perfil-pass-toggle" id="perfil-pass-toggle" onclick="perfilTogglePass()">
+            <span class="lbl-left"><i class="fa-solid fa-lock"></i>Actualizar contraseña</span>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </button>
+          <div id="perfil-pass-fields" style="display:none; margin-top:12px;">
+            <div class="input-shell">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="perfil-pass-nueva" class="field-input" placeholder="Nueva contraseña">
+            </div>
+            <div class="input-shell">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="perfil-pass-confirmar" class="field-input" placeholder="Confirmar contraseña">
+            </div>
+            <button class="btn-login" onclick="guardarPassPerfil()">Actualizar contraseña</button>
+          </div>
+        </div>
+      </details>
     </div>
   </div>
 </div>
@@ -2751,6 +2806,7 @@ function renderUI(alumno) {
   let fotoFinal = resolverUrlDrive(alumno.foto || '');
   container.innerHTML = fotoFinal ? `<img src="${fotoFinal}" class="avatar-img" onerror="this.outerHTML='<div class=\\'avatar-default\\'>${initial}</div>'">` : `<div class="avatar-default">${initial}</div>`;
   document.getElementById('nombre-alumno-ui').innerText = alumno.nombre;
+  pintarSaludoParaTi(alumno.nombre);
   const btnCoachNotes = document.getElementById('btn-coach-notes');
   if (btnCoachNotes) btnCoachNotes.style.display = alumno.esCoach ? 'flex' : 'none';
   if (alumno.esCoach) cargarPendientesCoach(alumno);
@@ -2871,12 +2927,21 @@ function escucharBanner() {
         if (sessionActiva) necGuardarCache('banner', sessionActiva.id, data);
     });
 }
+// "¡Vamos, Ana! Hora de entrenar" junto a "Para ti" (solo el primer nombre; se escribe como texto, nunca como HTML).
+function pintarSaludoParaTi(nombreCompleto) {
+  const el = document.getElementById('para-ti-saludo');
+  if (!el) return;
+  const primero = String(nombreCompleto || (sessionActiva && sessionActiva.nombre) || '').trim().split(/\s+/)[0] || '';
+  const nombre = primero ? primero.charAt(0).toUpperCase() + primero.slice(1).toLowerCase() : '';
+  el.textContent = nombre ? `¡Vamos, ${nombre}! Hora de entrenar` : '';
+}
 let ultimoBannerData = null;
 let bannerObs = null;
 function renderBanner(data) {
     const area = document.getElementById('banner-area');
     if (!area || !data || !data.url) return;
     ultimoBannerData = data;
+    pintarSaludoParaTi();
     const url = data.url;
     const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]{11})/);
     area.classList.remove('playing');

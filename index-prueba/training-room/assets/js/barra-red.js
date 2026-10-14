@@ -16,7 +16,7 @@ export function resolverUrlDrive(url) {
 
 // portal: ruta relativa al portal (index-prueba/) desde la página actual.
 // volver: { href, title } o null (en la pantalla de niveles el atrás sería igual a Inicio).
-export function montarBarra({ portal, volver = null, titulo = 'Training Room', icono = 'fa-brain' }) {
+export function montarBarra({ portal, volver = null, titulo = 'Class Room', icono = 'fa-brain' }) {
   const nav = document.getElementById('tr2-nav');
   if (!nav) return;
   const circ = (href, ic, etiqueta) =>
