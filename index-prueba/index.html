@@ -1311,6 +1311,15 @@ body.tr-room-lock { overflow:hidden; }
 .banner-lite-txt { display:flex; flex-direction:column; gap:2px; min-width:0; }
 .banner-lite-txt b { color:#fff; font-size:13.5px; }
 .banner-lite-txt span { color:var(--muted); font-size:11.5px; }
+/* Orden nuevo: Mentalidad NEC arriba (con "Invita a tus amigos"), luego racha, luego perfil */
+#s-student .mindset-card { margin:12px 0; }
+#s-student .hero-banner { margin-bottom:14px; }
+#s-student .mindset-card .mindset-invite { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,.14); }
+#s-student .mindset-card .mindset-invite p { margin:0; color:rgba(255,255,255,.85); font-size:12px; display:flex; align-items:center; gap:8px; min-width:0; }
+#s-student .mindset-card .mindset-invite p i.fa-people-group { color:var(--gold2); font-size:14px; }
+#s-student .mindset-card .mindset-invite b { color:#fff; }
+/* "Para ti" dentro del bloque de NECLUB */
+#home-neclub .banner-projection-wrap { margin:0 0 14px; }
 /* Tarjetas de abajo, más compactas */
 #s-student .top3-card { padding:14px 16px; margin-bottom:14px; }
 #s-student #retos-card { margin-bottom:14px !important; }
@@ -1409,6 +1418,26 @@ body.tr-room-lock { overflow:hidden; }
     </div>
 
     <div class="dashboard-shell">
+      <!-- MENTALIDAD NEC + INVITA A TUS AMIGOS (arriba de todo) -->
+      <div class="mindset-card">
+        <span class="mindset-badge"><i class="fa-solid fa-crown"></i> Mentalidad NEC</span>
+        <h3 id="mindset-titulo">Entrena tu mente, domina tu inglés.</h3>
+        <p id="mindset-frase">Disciplina hoy, libertad mañana.</p>
+        <div class="mindset-invite">
+          <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
+          <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
+        </div>
+      </div>
+
+      <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
+      <div class="week-card compact">
+        <div class="card-eyebrow-row">
+          <p class="card-eyebrow">Your training streak</p>
+          <div class="racha-badge"><i class="fa-solid fa-fire"></i><b id="racha-badge-num">0</b><span>días<br>racha</span></div>
+        </div>
+        <div class="graph-container" id="streak-graph"></div>
+      </div>
+
       <div class="hero-banner">
         <div class="profile-row" style="display:flex; align-items:flex-start; gap:15px; justify-content:space-between; flex-wrap:wrap;">
           <div style="display:flex; align-items:center; gap:15px;">
@@ -1426,35 +1455,6 @@ body.tr-room-lock { overflow:hidden; }
         </div>
         <div class="status-row">
           <div class="info-badges-row" id="info-badges-row"></div>
-        </div>
-      </div>
-
-      <!-- COMPARTIR -->
-      <div class="share-bar">
-        <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
-        <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
-      </div>
-
-      <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
-      <div class="week-card compact">
-        <div class="card-eyebrow-row">
-          <p class="card-eyebrow">Your training streak</p>
-          <div class="racha-badge"><i class="fa-solid fa-fire"></i><b id="racha-badge-num">0</b><span>días<br>racha</span></div>
-        </div>
-        <div class="graph-container" id="streak-graph"></div>
-      </div>
-
-      <!-- BANNER AREA -->
-      <div class="banner-projection-wrap">
-        <p class="banner-projection-eyebrow"><i class="fa-solid fa-sparkles"></i> Today's training</p>
-        <div style="position:relative;">
-          <div id="banner-area" class="banner-projection">
-              <div class="banner-default-text">
-                  <i class="fa-solid fa-play"></i>
-                  <h2>NICA ENGLISH CLUB</h2>
-              <p>train your english</p>
-          </div>
-          </div>
         </div>
       </div>
 
@@ -1479,11 +1479,18 @@ body.tr-room-lock { overflow:hidden; }
         <div id="retos-list"></div>
       </div>
 
-      <div class="mindset-card">
-        <span class="mindset-badge"><i class="fa-solid fa-crown"></i> Mentalidad NEC</span>
-        <h3 id="mindset-titulo">Entrena tu mente, domina tu inglés.</h3>
-        <p id="mindset-frase">Disciplina hoy, libertad mañana.</p>
-        <button class="btn-ver-mas" type="button" onclick="abrirModalPractica()">Envía una práctica</button>
+      <!-- PARA TI (video o imagen importante). Por defecto va aquí; en la pantalla unificada el JS lo coloca entre la caja de publicar y el muro de NECLUB -->
+      <div class="banner-projection-wrap" id="para-ti-wrap">
+        <p class="banner-projection-eyebrow"><i class="fa-solid fa-star"></i> Para ti</p>
+        <div style="position:relative;">
+          <div id="banner-area" class="banner-projection">
+              <div class="banner-default-text">
+                  <i class="fa-solid fa-play"></i>
+                  <h2>NICA ENGLISH CLUB</h2>
+              <p>train your english</p>
+          </div>
+          </div>
+        </div>
       </div>
 
       <!-- NECLUB dentro de la pantalla principal (se llena por JS; oculto si se usa ?home=clasico) -->
@@ -2519,6 +2526,10 @@ function montarNeclubEnHome(html) {
   }
   if (barra) slot.appendChild(barra);
   slot.appendChild(shell);
+  // "Para ti" va EXACTAMENTE entre la caja de publicar y el muro, para que siempre esté a la vista.
+  const paraTi = document.getElementById('para-ti-wrap');
+  const muro = shell.querySelector('#neclub-feed');
+  if (paraTi && muro) shell.insertBefore(paraTi, muro);
   caja.style.display = '';
   neclubEnHome = true;
   // La campana de NECLUB pasa al encabezado de la pantalla principal.
@@ -2874,9 +2885,9 @@ function renderBanner(data) {
         if (!/^[A-Za-z0-9_-]{11}$/.test(yt)) return; // id raro: no se pinta nada
         // Solo una miniatura: el reproductor de YouTube (pesado) se carga cuando el alumno toca play.
         area.classList.add('lite');
-        area.innerHTML = `<button type="button" class="banner-lite" aria-label="Ver el video de hoy">
+        area.innerHTML = `<button type="button" class="banner-lite" aria-label="Abrir Para ti">
           <span class="banner-lite-thumb"><img src="https://i.ytimg.com/vi/${yt}/mqdefault.jpg" alt="" loading="lazy"><span class="banner-lite-play"><i class="fa-solid fa-play"></i></span></span>
-          <span class="banner-lite-txt"><b>Video de hoy</b><span>Toca para verlo</span></span>
+          <span class="banner-lite-txt"><b>Para ti</b><span>Toca para ver</span></span>
         </button>`;
         area.querySelector('.banner-lite').onclick = () => activarBannerVideo(yt);
     } else {
