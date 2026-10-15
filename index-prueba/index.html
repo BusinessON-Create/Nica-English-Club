@@ -1334,16 +1334,16 @@ body.tr-room-lock { overflow:hidden; }
 .neclub-ver-mas { background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold3); font:700 12.5px 'DM Sans',sans-serif; padding:10px 20px; border-radius:99px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 
 /* ===== Racha dentro del banner de perfil: franja delgada ===== */
-#s-student .hero-banner .week-card { background:transparent; border:0; border-top:1px solid rgba(255,255,255,.14); border-radius:0; padding:8px 0 0; margin:10px 0 0; }
-#s-student .hero-banner .week-card .card-eyebrow { font-size:9px; letter-spacing:1.4px; }
-#s-student .hero-banner .week-card .racha-badge { padding:2px 9px 2px 7px; background:rgba(240,180,41,.12); }
-#s-student .hero-banner .week-card .racha-badge b { font-size:13px; }
-#s-student .hero-banner .week-card .streak-new { margin-top:6px; }
-#s-student .hero-banner .week-card .streak-copy .n { display:none; }
-#s-student .hero-banner .week-card .streak-days-row { gap:4px; }
-#s-student .hero-banner .week-card .streak-day { flex-direction:column-reverse; gap:3px; }
-#s-student .hero-banner .week-card .streak-day-circle { width:20px; height:20px; font-size:8px; }
-#s-student .hero-banner .week-card .streak-day-label { font-size:8.5px; }
+#s-student .home-unified .week-card { background:transparent; border:0; border-top:1px solid rgba(255,255,255,.14); border-radius:0; padding:8px 0 0; margin:10px 0 0; }
+#s-student .home-unified .week-card .card-eyebrow { font-size:9px; letter-spacing:1.4px; }
+#s-student .home-unified .week-card .racha-badge { padding:2px 9px 2px 7px; background:rgba(240,180,41,.12); }
+#s-student .home-unified .week-card .racha-badge b { font-size:13px; }
+#s-student .home-unified .week-card .streak-new { margin-top:6px; }
+#s-student .home-unified .week-card .streak-copy .n { display:none; }
+#s-student .home-unified .week-card .streak-days-row { gap:4px; }
+#s-student .home-unified .week-card .streak-day { flex-direction:column-reverse; gap:3px; }
+#s-student .home-unified .week-card .streak-day-circle { width:20px; height:20px; font-size:8px; }
+#s-student .home-unified .week-card .streak-day-label { font-size:8.5px; }
 /* ===== "Para ti" + saludo ===== */
 .banner-projection-eyebrow { flex-wrap:nowrap; }
 .para-ti-saludo { text-transform:none; letter-spacing:0; font-weight:600; font-size:11.5px; color:#fff; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -1372,6 +1372,22 @@ body.tr-room-lock { overflow:hidden; }
 .perfil-acc > summary .chevron { color:var(--muted); font-size:12px; transition:transform .2s var(--ease); }
 .perfil-acc[open] > summary .chevron { transform:rotate(180deg); }
 .perfil-acc-body { padding:2px 14px 14px; }
+
+/* ===== TARJETA PRINCIPAL UNIDA (perfil + Mentalidad NEC + racha + invitar) ===== */
+#s-student .home-unified { margin:12px 0 14px; padding:14px 16px 12px; min-height:0; border-radius:var(--r-lg); justify-content:flex-start; }
+#s-student .home-unified::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(180deg, rgba(8,9,13,.84) 0%, rgba(8,9,13,.78) 50%, rgba(8,9,13,.9) 100%); }
+#s-student .home-unified > * { position:relative; z-index:1; }
+#s-student .home-unified .avatar-ring { width:52px; height:52px; padding:2px; }
+#s-student .home-unified .welcome-name { font-size:19px; }
+#s-student .home-unified .status-row { margin-top:8px; }
+#s-student .home-unified .info-badges-row { gap:6px; }
+#s-student .home-unified .hu-mind { margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,.14); }
+#s-student .home-unified .hu-mind .mindset-badge { margin-bottom:6px; }
+/* La frase nunca crece sin control: máximo 2 líneas y "…" si es más larga */
+#s-student .home-unified .hu-mind h3 { font-size:16.5px; line-height:1.25; margin:0 0 4px; max-width:none; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+#s-student .home-unified .hu-mind p { font-size:12px; line-height:1.4; margin:0; color:rgba(255,255,255,.72); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+#s-student .home-unified .mindset-invite { margin-top:10px; padding-top:9px; }
+#s-student .home-unified .mindset-invite p { font-size:11.5px; }
 </style>
 </head>
 <body>
@@ -1458,18 +1474,8 @@ body.tr-room-lock { overflow:hidden; }
     </div>
 
     <div class="dashboard-shell">
-      <!-- MENTALIDAD NEC + INVITA A TUS AMIGOS (arriba de todo) -->
-      <div class="mindset-card">
-        <span class="mindset-badge"><i class="fa-solid fa-crown"></i> Mentalidad NEC</span>
-        <h3 id="mindset-titulo">Entrena tu mente, domina tu inglés.</h3>
-        <p id="mindset-frase">Disciplina hoy, libertad mañana.</p>
-        <div class="mindset-invite">
-          <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
-          <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
-        </div>
-      </div>
-
-      <div class="hero-banner">
+      <!-- TARJETA PRINCIPAL UNIDA: perfil + Mentalidad NEC + racha + invitar, todo sobre la foto de Mentalidad NEC -->
+      <div class="mindset-card home-unified">
         <div class="profile-row" style="display:flex; align-items:flex-start; gap:15px; justify-content:space-between; flex-wrap:wrap;">
           <div style="display:flex; align-items:center; gap:15px;">
             <div class="avatar-ring" id="avatar-container" onclick="abrirPerfil()" style="cursor:pointer;"></div>
@@ -1487,6 +1493,11 @@ body.tr-room-lock { overflow:hidden; }
         <div class="status-row">
           <div class="info-badges-row" id="info-badges-row"></div>
         </div>
+        <div class="hu-mind">
+        <span class="mindset-badge"><i class="fa-solid fa-crown"></i> Mentalidad NEC</span>
+        <h3 id="mindset-titulo">Entrena tu mente, domina tu inglés.</h3>
+        <p id="mindset-frase">Disciplina hoy, libertad mañana.</p>
+        </div>
       <!-- GRÁFICO (IMPORTANTE: MANTENER ESTE ID) -->
       <div class="week-card compact">
         <div class="card-eyebrow-row">
@@ -1495,6 +1506,11 @@ body.tr-room-lock { overflow:hidden; }
         </div>
         <div class="graph-container" id="streak-graph"></div>
       </div>
+
+        <div class="mindset-invite">
+          <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
+          <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
+        </div>
       </div>
 
       <!-- Tarjeta del anillo "Completa los 7 días de la semana" eliminada: duplicaba el mismo
