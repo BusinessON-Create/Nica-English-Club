@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test de ubicación | Nica English Club</title>
+<meta name="description" content="Descubre tu nivel real de inglés (A1 a C1) con el test de ubicación gratuito de Nica English Club.">
+<link rel="icon" href="logo.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nicaenglishclub.com/test/">
+<meta property="og:image" content="https://nicaenglishclub.com/test/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nicaenglishclub.com/test/preview.jpg">
+<meta property="og:title" content="Test de ubicación gratis | Nica English Club">
+<meta property="og:description" content="Descubre tu nivel real de inglés de A1 a C1 en 20 minutos.">
+<meta name="theme-color" content="#0a0908">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0908;--card:#16130f;--line:#2a251e;--tx:#f3efe8;--mu:#a39b8f;--ac:#ffc400;--ok:#8fd6a4;--r:14px}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0)}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+h1,h2,h3{font-family:"Bricolage Grotesque",Georgia,serif;line-height:1.1;margin:0 0 .5em;letter-spacing:-.02em}
+h1{font-size:clamp(2.2rem,7vw,3.6rem);font-weight:800}
+h2{font-size:clamp(1.4rem,4vw,1.9rem)}
+main{max-width:720px;margin:0 auto;padding:24px 20px 64px}
+.brand{font-family:"Bricolage Grotesque",Georgia,serif;font-weight:700;color:var(--mu);margin-bottom:28px}
+.brand b{color:var(--tx)}
+p{margin:0 0 1em;color:var(--mu)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+label{display:block;font-size:.9rem;color:var(--mu);margin:14px 0 6px}
+input,select{width:100%;background:#0f0d0a;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:13px;font:inherit}
+input:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.btn{display:inline-block;background:var(--ac);color:#1a1300;border:0;border-radius:999px;padding:14px 26px;font:700 1rem inherit;font-family:inherit;cursor:pointer;text-decoration:none;margin-top:18px}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+.err{color:#ff8a7a;font-size:.9rem;min-height:1.2em;margin-top:10px}
+.bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#ffc400,#ffe27a);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--mu);margin-bottom:22px}
+.read{border-left:3px solid var(--ac);padding:4px 0 4px 14px;margin:0 0 18px;color:var(--tx);font-style:italic}
+.q{font-size:1.25rem;color:var(--tx);margin-bottom:18px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;font:inherit;cursor:pointer}
+.opt:hover{border-color:var(--mu)}
+.opt.on{border-color:var(--ac);background:#2a2208}
+.lvl{font-family:"Bricolage Grotesque",Georgia,serif;font-size:clamp(5rem,26vw,8rem);font-weight:800;line-height:.9;color:var(--ac);margin:6px 0}
+.sec{margin:12px 0}.sec div{display:flex;justify-content:space-between;font-size:.9rem}
+.code{font-family:ui-monospace,Menlo,monospace;background:#0f0d0a;border:1px dashed var(--line);padding:2px 8px;border-radius:6px;color:var(--tx)}
+.ladder{display:flex;gap:6px;margin:18px 0}.ladder span{flex:1;text-align:center;padding:8px 0;border-radius:8px;border:1px solid var(--line);font-size:.85rem;color:var(--mu)}.ladder .hit{background:var(--ac);color:#1a1300;border-color:var(--ac);font-weight:700}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:.85rem;color:var(--mu)}.chk input{width:auto;margin-top:4px}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(560px circle at var(--mx,75%) var(--my,8%),rgba(255,196,0,.14),transparent 62%)}
+main{position:relative;z-index:1}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.in{animation:up .4s both}
+.opt{animation:up .35s both;transition:transform .15s,border-color .15s,background .15s}.opt:nth-child(2){animation-delay:.06s}.opt:nth-child(3){animation-delay:.12s}.opt:nth-child(4){animation-delay:.18s}
+.opt:active{transform:scale(.98)}.opt.on{transform:translateX(6px)}
+.ladder span{transition:background .3s,color .3s,transform .3s}.ladder .hit{transform:translateY(-3px)}
+.score{font:800 clamp(2.4rem,9vw,3.4rem) "Bricolage Grotesque",Georgia,serif;color:var(--tx);margin:4px 0 14px}.score small{font-size:1rem;font-weight:500;color:var(--mu)}
+.fb{list-style:none;padding:0;margin:0 0 18px}.fb li{padding:4px 0 4px 16px;border-left:3px solid var(--ac);margin:0 0 14px;color:var(--tx);animation:up .5s both}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:5}
+header,.brand{display:flex;align-items:center;gap:12px}.brand img{height:40px;width:auto}.brand span{color:var(--mu);font-size:.9rem;border-left:1px solid var(--line);padding-left:12px}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:26px 4px 30px}
+.shots figure{margin:0;position:relative;aspect-ratio:3/4;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:radial-gradient(circle at 30% 20%,#3a2e0a,#14110b 70%);transition:transform .3s;animation:up .6s both}
+.shots figure:nth-child(1){transform:rotate(-3deg)}.shots figure:nth-child(2){transform:translateY(-12px);animation-delay:.1s}.shots figure:nth-child(3){transform:rotate(3deg);animation-delay:.2s}
+.shots figure:hover{transform:none}.ov{position:absolute;inset:0;z-index:2;border-radius:16px}.ov:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+.shots img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.shots figcaption{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 10px;font:700 .85rem "Bricolage Grotesque",Georgia,serif;background:linear-gradient(transparent,rgba(10,9,8,.9))}
+.how{list-style:none;counter-reset:s;padding:0;margin:0 0 26px;display:grid;gap:10px}.how li{counter-increment:s;display:flex;gap:12px;align-items:center;color:var(--mu)}.how li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--ac);color:#1a1300;font-weight:800;display:grid;place-items:center}.how b{color:var(--tx)}
+.player{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:20px}
+.play{flex:none;width:58px;height:58px;border-radius:50%;border:0;background:var(--ac);color:#1a1300;font-size:1.3rem;cursor:pointer;transition:transform .15s}.play:active{transform:scale(.93)}.play:disabled{opacity:.4;cursor:default}
+.pi{flex:1}.eq{display:flex;gap:4px;height:22px;align-items:flex-end;margin-bottom:8px}.eq i{width:5px;height:6px;background:var(--ac);border-radius:3px}
+.on .eq i{animation:eq .7s ease-in-out infinite alternate}.eq i:nth-child(2){animation-delay:.12s}.eq i:nth-child(3){animation-delay:.24s}.eq i:nth-child(4){animation-delay:.36s}.eq i:nth-child(5){animation-delay:.48s}
+@keyframes eq{to{height:22px}}.player small{color:var(--mu);font-size:.8rem}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="cf"></canvas>
+<main id="app"></main>
+<script>
+// ====== CONFIGURACIÓN ======
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQMsJ-EFLAqytkzQeJN2Ain2NZYoo0t3mspkfEqvw0oCbFU3qci4ujImipAkz4hsE/exec"; // pega aquí la URL de tu Apps Script (termina en /exec)
+const WA = "50583267703";
+const ADMISION = "https://app.nicaenglishclub.com/nica-english-club-admision/";
+
+// ====== BANCO DE PREGUNTAS ======
+// [nivel(0=A1..4=C1), sección(g=gramática,v=vocabulario,r=lectura), texto, [correcta, ...distractores], lectura opcional]
+const Q = [
+[0,'g','Hello! I ___ from Nicaragua.',['am','is','are','be']],
+[0,'g','She ___ a teacher.',['is','are','am','be']],
+[0,'v','At the café: “Can I have a ___ of coffee, please?”',['cup','door','shoe','bed']],
+[0,'g','We ___ two brothers.',['have','has','is','do']],
+[0,'v','Monday, Tuesday, ___',['Wednesday','January','Morning','Summer']],
+[0,'r','Where does Ana live?',['In León','In a shop','In Managua','In Granada'],'Ana is 20. She lives in León with her mother. She works in a shop on Saturdays.'],
+[1,'g','Yesterday I ___ to the market with my mother.',['went','go','goes','going']],
+[1,'g','There isn’t ___ milk in the fridge.',['any','some','a','many']],
+[1,'v','You need a ___ to enter another country.',['passport','fridge','blanket','menu']],
+[1,'g','My sister is ___ than me.',['taller','more tall','tallest','the tall']],
+[1,'r','What should Sam bring?',['A drink','Food','A gift','Chairs'],'Hi Sam, the party is on Friday at 7 p.m. at my house. Please bring a drink. Don’t be late! — Lucy'],
+[1,'g','What ___ you doing right now?',['are','do','did','will']],
+[2,'g','If it rains tomorrow, we ___ at home.',['will stay','stay','stayed','would stayed']],
+[2,'g','I have lived in Managua ___ 2015.',['since','for','during','from']],
+[2,'v','The meeting was ___ because the manager was sick.',['cancelled','borrowed','wore','locked']],
+[2,'g','She asked me where I ___.',['worked','work','do work','am working']],
+[2,'r','What problem do remote workers mention?',['They find it hard to stop working.','They earn less money.','They dislike their managers.','They have no internet.'],'Many people think that remote work is easier. However, workers often say it is harder to switch off after work, so they end up working longer hours.'],
+[2,'g','You ___ wear a helmet. It’s the law.',['must','may','would','used']],
+[3,'g','I wish I ___ more time to study last year.',['had had','had','would have','have had']],
+[3,'g','By the time we arrived, the movie ___.',['had already started','already started','has already started','was already starting']],
+[3,'v','The company decided to ___ the project due to lack of funding.',['abandon','afford','admire','adopt']],
+[3,'g','Not only ___ late, but he also forgot the documents.',['did he arrive','he arrived','arrived he','he did arrive']],
+[3,'r','What do the researchers concede?',['The effect is not the same for everyone.','Sleep has no effect.','Six hours is ideal for all.','The study was too short.'],'The study found that people who sleep fewer than six hours are more likely to make poor decisions, although researchers admit the effect varies widely between individuals.'],
+[3,'g','He suggested ___ the meeting to Monday.',['moving','to move','move','moved']],
+[4,'g','Had I known about the delay, I ___ earlier.',['would have left','would leave','had left','left']],
+[4,'v','Her argument was so ___ that nobody could refute it.',['compelling','compulsory','compliant','complacent']],
+[4,'g','Seldom ___ such dedication in a young employee.',['have I seen','I have seen','I saw','did I saw']],
+[4,'g','The proposal, ___ merits are obvious, was rejected.',['whose','which','who','what']],
+[4,'v','He’s very ___ with money; he never wastes a cent.',['frugal','fragile','frantic','fertile']],
+[4,'r','What is the critics’ main point?',['Good intentions may produce harmful results.','Landlords support the policy.','Rents have fallen sharply.','The policy was never approved.'],'Critics argue the policy is well-intentioned yet ultimately counterproductive: by capping rents, it discourages landlords from maintaining properties.'],
+[0,'g','They ___ students.',['are','is','am','be']],
+[0,'g','This is my sister. ___ name is Laura.',['Her','His','She','Hers']],
+[0,'g','___ you like pizza?',['Do','Does','Are','Is']],
+[0,'v','I wash my hands in the ___.',['bathroom','tree','bridge','roof']],
+[0,'v','Water, juice and milk are ___.',['drinks','clothes','animals','jobs']],
+[0,'r','What time does the shop open?',['At nine','At six','At ten','At noon'],'Mario’s Shop opens at nine and closes at six, Monday to Saturday.'],
+[1,'g','I ___ my homework before dinner yesterday.',['did','do','doing','done']],
+[1,'g','How ___ water do you drink every day?',['much','many','few','long']],
+[1,'g','We are ___ to visit my grandmother this weekend.',['going','went','go','will going']],
+[1,'v','A person who cooks in a restaurant is a ___.',['chef','nurse','driver','pilot']],
+[1,'v','It’s very cold today, so take your ___.',['coat','sandals','fan','swimsuit']],
+[1,'r','Why is Tom tired?',['He went to bed very late.','He is sick.','He has too much work.','He didn’t eat breakfast.'],'Tom went to bed at 3 a.m. because he was playing video games. Now he can’t stop yawning at work.'],
+[2,'g','I’m not used to ___ up so early.',['getting','get','got','gets']],
+[2,'g','The book ___ by millions of people last year.',['was read','read','is reading','has reading']],
+[2,'g','If I ___ you, I would apologize.',['were','am','will be','would be']],
+[2,'v','Please ___ me a favor and close the window.',['do','make','take','put']],
+[2,'v','I need to ___ this form before Friday.',['fill out','fill off','fill away','fill under']],
+[2,'r','Why did Marta choose the small hotel?',['It was quieter.','It was cheaper.','It was closer to the beach.','It had a pool.'],'Marta booked the small hotel instead of the big resort. It cost a little more, but she wanted a quiet place to rest after a stressful year.'],
+[3,'g','I’d rather you ___ smoke in here.',['didn’t','don’t','won’t','not']],
+[3,'g','The manager, ___ I spoke yesterday, was very helpful.',['with whom','whose','which','who']],
+[3,'g','It’s high time we ___ a decision.',['made','make','will make','are making']],
+[3,'v','The results were ___ with what we expected.',['consistent','insistent','persistent','resistant']],
+[3,'v','He tried to ___ the blame onto his colleague.',['shift','shrink','shave','shout']],
+[3,'r','What is the writer’s attitude to the new app?',['Cautiously optimistic','Strongly opposed','Totally indifferent','Wildly enthusiastic'],'The new app may well save commuters time, but it’s too early to say whether people will actually use it; let’s wait for the first real data.'],
+[4,'g','Little ___ she know that the surprise was already ruined.',['did','does','was','has']],
+[4,'g','Should you ___ any questions, do not hesitate to contact us.',['have','had','having','to have']],
+[4,'g','___ the weather, the event went ahead as planned.',['Despite','Although','Even','However']],
+[4,'v','The politician’s remarks were deliberately ___, leaving everyone confused.',['ambiguous','ambitious','amiable','abundant']],
+[4,'v','Years of work had ___ in a major breakthrough.',['culminated','cultivated','cultured','curtailed']],
+[4,'r','What does the author imply about the reform?',['Its impact is overstated.','It has failed completely.','It is universally praised.','It was rushed through.'],'Supporters have hailed the reform as transformative, yet the available figures show only a marginal improvement, which hardly justifies the fanfare.']
+];
+// Escucha: [archivo en /audio, nivel, [[pregunta,[correcta,...]],[pregunta,[correcta,...]]]]
+[['a1-1',0,[['Where does Daniel live?',['Granada','León','Managua','Masaya']],['What does he do on weekends?',['He plays soccer','He studies','He works','He cooks']]]],
+['a1-2',0,[['What does the customer order?',['A coffee and a sandwich','Tea and cake','Juice and bread','Water and soup']],['How much is it?',['Five dollars','Fifteen dollars','Fifty dollars','Four dollars']]]],
+['a2-1',1,[['What time does the party start?',['Eight','Seven','Nine','Six']],['What does Marco ask Sofia to bring?',['Music','Food','Drinks','A cake']]]],
+['a2-2',1,[['Why is the flight delayed?',['Bad weather','A technical problem','Too many passengers','A strike']],['Where should passengers wait?',['Gate 6','Gate 16','Gate 4','At the restaurant']]]],
+['b1-1',2,[['What bothers the woman about the apartment?',['The rent','The size','The location','The noise']],['When will she go back?',['Tomorrow after five','Today after five','Tomorrow morning','On Friday']]]],
+['b1-2',2,[['When is the best time for a picnic?',['In the morning','In the afternoon','At night','Tomorrow evening']],['What will tomorrow be like?',['Cooler','Hotter','Rainier','Windier']]]],
+['b2-1',3,[['What is the problem?',['The client wants an earlier deadline','The client wants to cancel now','The design team quit','The budget is too low']],['What does Luis suggest?',['Delivering part of the work earlier','Hiring more people','Ignoring the email','Cancelling the contract']]]],
+['b2-2',3,[['What does research say about multitasking?',['It reduces productivity','It improves productivity','It saves time','It has no effect']],['What does the speaker recommend?',['Short focused blocks with breaks','Working longer hours','Doing several tasks at once','Avoiding breaks']]]],
+['c1-1',4,[['What does the speaker criticize?',['The policy ignored its wider effects','The policy was illegal','The government acted too slowly','Fuel prices were too low']],['What could save the measure?',['Quick compensation for affected households','Raising prices further','Cancelling transport','Waiting for food prices to fall']]]],
+['c1-2',4,[['How does the author feel about the divided reviews?',['She welcomes them','She is deeply hurt','She regrets the ending','She is confused by them']],['What was the aim of the ending?',['To leave readers with questions','To please everyone','To close every plot','To shock the critics']]]]
+].forEach(([f,l,qs])=>qs.forEach(([t,o])=>Q.push([l,'l',t,o,null,f])));
+const LV = ['A1','A2','B1','B2','C1'];
+const SPEED = {a1:.6, a2:.8}; // velocidad interna por nivel (el resto va a 1.0); el alumno no la ve
+const PER = 10, PASS = 7; // 10 preguntas por nivel (8 + 1 audio con 2 preguntas) = 50 por intento; se aprueba un nivel con 7/10
+const RES = [
+ {n:'Pre-A1',t:'Estás en el punto de partida ideal: aquí entrenas desde la primera clase con frases simples y mucha guía.',a:'Preséntate en inglés: tu nombre, de dónde eres y qué te gusta hacer.'},
+ {n:'A1',t:'Ya manejas lo básico. Tu entrenamiento se enfoca en hablar con seguridad en situaciones cotidianas.',a:'Cuéntanos cómo es tu día normal, de la mañana a la noche.'},
+ {n:'A2',t:'Te defiendes en situaciones simples. Toca ganar fluidez y dejar de traducir en tu cabeza.',a:'Cuéntanos qué hiciste el fin de semana pasado y qué planeas hacer el próximo.'},
+ {n:'B1',t:'Te comunicas bien con ideas claras. El siguiente salto es hablar con más precisión y naturalidad.',a:'Describe un problema que tuviste recientemente y cómo lo resolviste.'},
+ {n:'B2',t:'Tienes un nivel sólido e independiente. Entrenamos matices, argumentación y corrección fina.',a:'Da tu opinión: ¿el trabajo remoto es mejor que el presencial? Defiende tu postura.'},
+ {n:'C1',t:'Tu nivel es avanzado. El entrenamiento se centra en precisión, registro y conversación sin esfuerzo.',a:'Explica un tema que domines como si se lo contaras a alguien que no sabe nada de él.'}
+];
+
+// ====== ESTADO ======
+const app = document.getElementById('app');
+const S = {lead:{},i:0,pick:null,ans:[],code:'NEC-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,6).toUpperCase(),t0:0};
+const P = new URLSearchParams(location.search);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function send(d){ if(!SCRIPT_URL) return; try{ fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(d)}); }catch(e){} }
+const head = `<div class="brand"><img src="logo.png" alt="Nica English Club" onerror="this.outerHTML='<b>Nica English Club</b>'"><span>Test de ubicación</span></div>`;
+
+// ====== PANTALLAS ======
+function intro(){
+ app.innerHTML = head+`<h1>Descubre tu nivel real de inglés.</h1>
+ <p>50 preguntas de gramática, vocabulario, lectura y comprensión auditiva, de A1 a C1, alineadas al Marco Común Europeo. Unos 25 minutos, gratis. Recibes tu nivel, tu NEC Score y tu plan de entrenamiento.</p>
+ <div class="shots">${[['Plataforma','captura1','https://app.nicaenglishclub.com'],['Coach IA','captura2'],['Clase en vivo','captura3']].map(([t,f,u])=>`<figure><img src="${f}.jpeg" data-b="${f}" alt="${t}" onerror="nx(this)"><figcaption>${t}</figcaption>${u?`<a class="ov" href="${u}" target="_blank" rel="noopener" aria-label="Ir a la ${t}"></a>`:''}</figure>`).join('')}</div>
+ <ol class="how"><li><b>Haz el test.</b> Cada intento sortea preguntas y audios distintos.</li><li><b>Recibe tu nivel</b> y tu NEC Score al instante.</li><li><b>Envía un audio</b> y un coach confirma tu nivel contigo.</li></ol>
+ <div class="card"><h2>Antes de empezar</h2>
+ <label for="n">Nombre completo</label><input id="n" autocomplete="name">
+ <label for="w">WhatsApp (con código de país)</label><input id="w" type="tel" placeholder="+505 ..." autocomplete="tel">
+ <label for="c">Correo</label><input id="c" type="email" autocomplete="email">
+ <label for="o">¿Para qué quieres inglés?</label><select id="o"><option value="">Elige una opción</option><option>Trabajo</option><option>Viajar</option><option>Estudios</option><option>Migrar</option><option>Crecimiento personal</option></select>
+ <label for="s">¿Cómo nos conociste?</label><select id="s"><option value="">Elige una opción</option><option>TikTok</option><option>Instagram</option><option>Facebook</option><option>Un amigo</option><option>Google</option><option>Otro</option></select>
+ <div class="chk"><input id="k" type="checkbox"><label for="k" style="margin:0">Acepto que Nica English Club use mis datos para enviarme mi resultado y contactarme sobre mi cupo.</label></div>
+ <div class="err" id="e" role="alert"></div>
+ <button class="btn" id="go">Empezar el test</button></div>
+ <p style="margin-top:18px;font-size:.9rem">Usa audífonos y responde sin ayuda ni traductor: así tu resultado será real. Si no sabes una respuesta, elige la que creas más probable.</p>`;
+ document.getElementById('go').onclick = start;
+}
+function start(){
+ const v = id => document.getElementById(id).value.trim(), e = document.getElementById('e');
+ const l = {nombre:v('n'),whatsapp:v('w'),correo:v('c'),objetivo:v('o'),origen:v('s')};
+ if(l.nombre.length<3) return e.textContent='Escribe tu nombre completo.';
+ if(l.whatsapp.replace(/\D/g,'').length<8) return e.textContent='Escribe un número de WhatsApp válido.';
+ if(!/^\S+@\S+\.\S+$/.test(l.correo)) return e.textContent='Escribe un correo válido.';
+ if(!l.objetivo||!l.origen) return e.textContent='Completa todas las opciones.';
+ if(!document.getElementById('k').checked) return e.textContent='Debes aceptar el uso de tus datos para continuar.';
+ S.lead = l; S.t0 = Date.now();
+ const ix=Q.map((q,i)=>i);
+ const units=LV.flatMap((_,l)=>{const one=shuffle(ix.filter(i=>Q[i][0]===l&&Q[i][1]!=='l')).slice(0,PER-2).map(i=>[i]);const fs=[...new Set(ix.filter(i=>Q[i][0]===l&&Q[i][1]==='l').map(i=>Q[i][5]))],f=fs[Math.random()*fs.length|0];return one.concat([ix.filter(i=>Q[i][5]===f)]);});
+ S.order = shuffle(units).flat(); // 8 al azar + 1 audio por nivel, orden aleatorio (las 2 preguntas de un audio van juntas)
+ send({...l,codigo:S.code,estado:'inició',utm:P.get('utm_source')||P.get('ref')||'',fecha:new Date().toISOString()});
+ ask();
+}
+function ask(){
+ const n = S.i, q = Q[S.order[n]], opts = shuffle(q[3].map((t,k)=>({t,ok:k===0})));
+ if(S.au){S.au.pause();S.au=null}
+ S.cur = opts; S.pick = null;
+ app.innerHTML = head+`<div class="in"><div class="bar"><i style="width:${n/S.order.length*100}%"></i></div>
+ <div class="meta"><span>Pregunta ${n+1} de ${S.order.length}</span><span>Sin retroceso</span></div>
+ ${q[4]?`<p class="read">${esc(q[4])}</p>`:''}
+ ${q[5]?'<div class="player" id="pl"><button class="play" id="pb" aria-label="Reproducir audio">▶</button><div class="pi"><div class="eq"><i></i><i></i><i></i><i></i><i></i></div><div class="bar"><i id="pg" style="width:0"></i></div><small id="pn"></small></div></div>':''}
+ <div class="q">${esc(q[2])}</div>
+ <div id="os">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o.t)}</button>`).join('')}</div>
+ <button class="btn" id="nx" disabled>${n===S.order.length-1?'Ver mi resultado':'Continuar'}</button></div>`;
+ requestAnimationFrame(()=>{const b=document.querySelector('.bar i');b.style.width=((n+1)/S.order.length*100)+'%'});
+ document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{S.pick=+b.dataset.k;document.querySelectorAll('.opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('nx').disabled=false;});
+ document.getElementById('nx').onclick=()=>{S.ans.push(S.cur[S.pick].ok);S.i++;S.i<S.order.length?ask():finish();};
+ if(q[5])bindAudio(q[5]);
+}
+const FB=[
+{m:['Revisamos tus respuestas y estás muy cerca de abrir el nivel A1: ya reconoces varias estructuras básicas.','Revisamos tus respuestas: {t} de 50 aciertos nos dicen exactamente dónde empezar contigo, sin presión.'],s:'En {x} mostraste más base que en el resto, y desde ahí vamos a construir.',w:'Con {x} avanzaremos paso a paso: es donde más rápido vas a notar progreso.',p:['Respondiste con agilidad, y eso ayuda mucho a aprender hablando.','Tomaste tu tiempo en cada respuesta, y esa calma sirve para construir bases firmes.'],t:'Tu mejor jugada: unos minutos de práctica real cada día desde la primera semana.'},
+{m:['Estás a pocas respuestas de A2: tu base ya es firme.','Tu base A1 es sólida: lo esencial lo respondiste con seguridad.'],s:'Tu punto fuerte hoy es {x}; se nota que ya lo usas con naturalidad.',w:'Un poco más de práctica en {x} te dará el salto más visible.',p:['Tu ritmo fue ágil: reconoces rápido lo básico.','Fuiste con calma y constancia, que es como se consolida lo básico.'],t:'En tu nivel, hablar en frases cortas todos los días vale más que memorizar reglas.'},
+{m:['Estás rozando el B1: varias respuestas de nivel intermedio ya te salieron bien.','Tu A2 es estable: te defiendes bien en situaciones del día a día.'],s:'En {x} se nota buen manejo, y eso es una ventaja real en tus conversaciones.',w:'Tu mayor oportunidad ahora está en {x}; con práctica enfocada avanzarás rápido.',p:['Respondiste con buen ritmo, señal de que ya piensas en frases cortas en inglés.','Tu ritmo fue pausado y cuidadoso, lo que ayuda a ganar precisión.'],t:'Tu siguiente salto está en dejar de traducir en tu cabeza: entrenar respuestas rápidas.'},
+{m:['Estás muy cerca del B2: ya resolviste parte de las preguntas más avanzadas.','Tu B1 es firme: te comunicas con ideas claras y estructuras variadas.'],s:'Tu mejor resultado fue en {x}, un buen motor para tu avance.',w:'Reforzar {x} te va a dar mucha más naturalidad al hablar.',p:['Mantuviste un ritmo ágil incluso en las preguntas largas.','Tomaste el tiempo para razonar, y eso se nota en tu precisión.'],t:'Ahora toca ganar precisión: hablar más, con corrección directa sobre tus errores reales.'},
+{m:['Estás a un paso del C1: resolviste varias preguntas de alto nivel.','Tu B2 es sólido: manejas estructuras complejas con independencia.'],s:'Destacas en {x}, y es una base excelente para el nivel avanzado.',w:'En {x} están los matices que separan un B2 de un C1; vale la pena pulirlos.',p:['Tu ritmo fue rápido y seguro frente a preguntas exigentes.','Fuiste reflexivo en cada respuesta, justo lo que pide este nivel.'],t:'Tu entrenamiento ideal: debate, opinión y corrección fina de matices.'},
+{m:['Tu resultado es de nivel avanzado: dominaste casi todo el test, incluidas las estructuras más difíciles.','Llegaste al nivel más alto del test: acertaste {t} de 50, un resultado muy sólido.'],s:'Tu dominio de {x} destaca incluso dentro de un nivel avanzado.',w:'Podemos afinar {x} hasta que suene totalmente natural.',p:['Mantuviste un ritmo muy ágil, como alguien que ya usa el idioma a diario.','Cuidaste cada respuesta con atención, y se nota en el resultado.'],t:'En tu nivel, lo que suma es conversación sin esfuerzo, registro y precisión.'}];
+const SN={g:'la gramática en contexto',v:'el vocabulario',r:'la lectura',l:'la comprensión auditiva'};
+function count(id,to,ms){const el=document.getElementById(id),t0=performance.now();(function f(t){const p=Math.min((t-t0)/ms,1);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)})(t0)}
+function confetti(){const c=document.getElementById('cf'),x=c.getContext('2d');if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;c.width=innerWidth;c.height=innerHeight;const cols=['#ffc400','#ffe27a','#f3efe8','#ff9f1c'];const ps=Array.from({length:130},()=>({x:innerWidth/2,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:Math.random()*7+3,c:cols[Math.random()*4|0],r:Math.random()*6}));let n=0;(function f(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.r+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});if(++n<170)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})()}
+const EXT=['jpeg','jpg','png','webp'];function nx(i){const n=+(i.dataset.n||0)+1;if(n<EXT.length){i.dataset.n=n;i.src=i.dataset.b+'.'+EXT[n]}else i.remove()} // acepta jpeg, jpg, png o webp
+function bindAudio(f){
+ const pb=document.getElementById('pb'),pn=document.getElementById('pn'),pg=document.getElementById('pg'),pl=document.getElementById('pl');
+ S.plays=S.plays||{};const left=()=>2-(S.plays[f]||0);
+ const lab=()=>pn.textContent=left()>0?'Escucha el audio. Reproducciones disponibles: '+left()+' de 2':'Ya usaste tus 2 reproducciones';
+ const a=new Audio('audio/'+f+'.mp3');S.au=a;lab();if(left()<1)pb.disabled=true;
+ a.onerror=()=>{pn.textContent='No se pudo cargar el audio. Revisa tu conexión y recarga la página.';pb.disabled=true};
+ a.ontimeupdate=()=>pg.style.width=(a.currentTime/(a.duration||1)*100)+'%';
+ a.onended=()=>{pl.classList.remove('on');pg.style.width='0';pb.textContent='▶';pb.disabled=left()<1;lab()};
+ pb.onclick=()=>{if(left()<1)return;S.plays[f]=(S.plays[f]||0)+1;pb.disabled=true;pb.textContent='♪';pl.classList.add('on');lab();a.currentTime=0;a.playbackRate=SPEED[f.slice(0,2)]||1;a.preservesPitch=true;a.play().catch(()=>{})};
+}
+function finish(){
+ const lv=[0,0,0,0,0], sc={g:[0,0],v:[0,0],r:[0,0],l:[0,0]};
+ S.order.forEach((qi,n)=>{const q=Q[qi],ok=S.ans[n];if(ok){lv[q[0]]++;sc[q[1]][0]++}sc[q[1]][1]++;});
+ let k=0; while(k<5&&lv[k]>=PASS)k++; // aprueba un nivel con 6/8 o más, de forma consecutiva
+ const R=RES[k], F=FB[k], total=S.ans.filter(Boolean).length, pct=x=>Math.round(x[0]/x[1]*100);
+ const mins=Math.round((Date.now()-S.t0)/60000);
+ const score=Math.round(lv.reduce((a,c,i)=>a+c*(i+1),0)/(PER*15)*1000);
+ const ks=Object.keys(sc).sort((a,b)=>pct(sc[b])-pct(sc[a])), close=k<5?lv[k]>=PER/2:lv[4]===PER;
+ const fb=[F.m[close?0:1].replace('{t}',total),F.s.replace('{x}',SN[ks[0]]),F.w.replace('{x}',SN[ks[3]]),F.p[mins<16?0:1],F.t];
+ send({...S.lead,codigo:S.code,estado:'completo',nivel:R.n,puntaje:total+'/'+S.order.length,score:score,gramatica:pct(sc.g),vocabulario:pct(sc.v),lectura:pct(sc.r),escucha:pct(sc.l),porNivel:LV.map((n,i)=>n+':'+lv[i]+'/'+PER).join(' '),minutos:mins,utm:P.get('utm_source')||P.get('ref')||'',fecha:new Date().toISOString()});
+ const wa='https://wa.me/'+WA+'?text='+encodeURIComponent(`Hola, soy ${S.lead.nombre}. Mi código de test es ${S.code} y mi nivel es ${R.n}. Te envío mi audio:`);
+ const bar=(t,x)=>`<div class="sec"><div><span>${t}</span><span>${pct(x)}%</span></div><div class="bar"><i style="width:0" data-w="${pct(x)}"></i></div></div>`;
+ app.innerHTML = head+`<div class="in"><p>${esc(S.lead.nombre.split(' ')[0])}, tu nivel de inglés es</p>
+ <div class="lvl">${R.n}</div>
+ <div class="ladder">${LV.map(n=>`<span>${n}</span>`).join('')}</div>
+ <div class="score"><span id="sc">0</span><small> / 1000 · NEC Score</small></div>
+ <p>${R.t}</p>
+ <h2>Lo que vimos en tu test</h2><ul class="fb">${fb.map((t,i)=>`<li style="animation-delay:${.4+i*.2}s">${esc(t)}</li>`).join('')}</ul>
+ <div class="card">${bar('Gramática en contexto',sc.g)}${bar('Vocabulario',sc.v)}${bar('Lectura',sc.r)}${bar('Comprensión auditiva',sc.l)}</div>
+ <div class="card" style="margin-top:16px"><h2>Último paso: tu audio</h2>
+ <p>Para confirmar tu nivel, un coach necesita escucharte. Envía un audio de 30 a 60 segundos por WhatsApp respondiendo esto, en inglés:</p>
+ <p class="read">${esc(R.a)}</p>
+ <p>Tu código de test: <span class="code">${S.code}</span></p>
+ <a class="btn" href="${wa}" target="_blank" rel="noopener">Enviar mi audio por WhatsApp</a></div>
+ <div style="margin-top:18px"><a class="btn ghost" href="${ADMISION}">Aplicar a mi cupo</a></div>
+ <p style="margin-top:22px;font-size:.85rem">Este test es una estimación inicial. Tu nivel se confirma con tu audio y con tu coach.</p></div>`;
+ S.done=true; scrollTo(0,0);
+ setTimeout(()=>document.querySelectorAll('[data-w]').forEach(b=>b.style.width=b.dataset.w+'%'),500);
+ document.querySelectorAll('.ladder span').forEach((el,i)=>{if(i<k)setTimeout(()=>el.classList.add('hit'),300+i*260)});
+ count('sc',score,1600); confetti();
+}
+addEventListener('beforeunload',e=>{if(S.t0&&!S.done){e.preventDefault();e.returnValue=''}});
+addEventListener('pointermove',e=>{document.body.style.setProperty('--mx',e.clientX+'px');document.body.style.setProperty('--my',e.clientY+'px')});
+intro();
+</script>
+</body>
+</html>
