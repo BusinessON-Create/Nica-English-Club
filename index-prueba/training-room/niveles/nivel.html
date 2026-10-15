@@ -39,7 +39,7 @@
 
   <script type="module">
     import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
-    import { montarBarra, pintarAvatar } from "../assets/js/barra-red.js";
+    import { montarBarra, pintarAvatar, pintarNotifBadge } from "../assets/js/barra-red.js";
     import { cargarUnidades, cargarPagina, cargarAperturaGrupo, setApertura, renderListaUnidades, renderPortada, renderContenido, activarVelocidad, setContexto, setUnidadActual, cargarEstadosEntrega } from "../assets/js/nivel.js";
 
     montarBarra({ portal: '../../', volver: { href: '../index.html', title: 'Niveles' } });
@@ -56,6 +56,7 @@
       if (!resultado) return; // auth-init.js ya redirige si no hay sesión/perfil
       const { alumno } = resultado;
       pintarAvatar(alumno);
+      pintarNotifBadge(alumno);
 
       setContexto({
         alumnoId: alumno.id,

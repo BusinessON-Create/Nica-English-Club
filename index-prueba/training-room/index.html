@@ -31,7 +31,7 @@
   <script type="module">
     import { esperarSesionYAlumno } from "./assets/js/auth-init.js";
     import { pintarNiveles } from "./assets/js/training-room.js";
-    import { montarBarra, pintarAvatar } from "./assets/js/barra-red.js";
+    import { montarBarra, pintarAvatar, pintarNotifBadge } from "./assets/js/barra-red.js";
 
     montarBarra({ portal: '../' }); // en esta pantalla "atrás" sería igual que Inicio
 
@@ -41,6 +41,7 @@
       const { alumno } = resultado;
 
       pintarAvatar(alumno);
+      pintarNotifBadge(alumno);
 
       await pintarNiveles(alumno);
     })();

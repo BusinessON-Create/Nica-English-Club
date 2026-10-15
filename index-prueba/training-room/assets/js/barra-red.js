@@ -3,6 +3,8 @@
 // Training Room se sienta parte de una sola red. Los botones llevan al portal con un
 // enlace directo (?ir=...) que el portal abre al entrar.
 
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
 // Igual que en el portal: convierte un enlace de Google Drive en una URL de imagen directa.
 export function resolverUrlDrive(url) {
   if (!url) return url;
@@ -51,5 +53,24 @@ export function pintarAvatar(alumno) {
     chip.appendChild(img);
   } else {
     ponerInicial();
+  }
+}
+
+// Globito rojo en la campana con los avisos sin leer (entregas nuevas o revisadas).
+// Solo pide los avisos de ESTA persona; si algo falla, la campana simplemente queda sin globito.
+export async function pintarNotifBadge(alumno) {
+  try {
+    const db = window.trv2_db;
+    if (!db || !alumno || !alumno.id) return;
+    const snap = await getDocs(query(collection(db, 'training_v2_notificaciones'), where('destinatarioId', '==', alumno.id)));
+    const sinLeer = snap.docs.filter((d) => d.data().leido !== true).length;
+    const campana = document.querySelector('#tr2-nav a[title="Notificaciones"]');
+    if (!campana) return;
+    let globo = campana.querySelector('.tr2-badge');
+    if (!sinLeer) { if (globo) globo.remove(); return; }
+    if (!globo) { globo = document.createElement('span'); globo.className = 'tr2-badge'; campana.appendChild(globo); }
+    globo.textContent = sinLeer > 9 ? '9+' : String(sinLeer);
+  } catch (e) {
+    console.warn('No se pudo contar los avisos:', e);
   }
 }

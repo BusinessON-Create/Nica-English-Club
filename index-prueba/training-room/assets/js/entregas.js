@@ -10,6 +10,8 @@
 // alumno graba muy largo, se avisa antes de entregar.
 
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
 const LIMITE_BYTES = 700 * 1024; // ~700KB de margen bajo el límite de 1MB de un doc de Firestore
 
@@ -44,8 +46,20 @@ async function guardarEntrega(ctx, tipo, datos) {
   }, { merge: true });
 }
 
+// Avisa a los coaches del grupo que llegó una entrega (aparece en su campana). Si falla, la entrega
+// ya quedó guardada: solo se pierde el aviso, nunca la entrega ni el trabajo del alumno.
+function avisarAlCoach(ctx, tipo) {
+  try {
+    httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2Notificar')({
+      entregaId: idEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, tipo),
+      evento: 'entregada',
+    }).catch((err) => console.warn('No se pudo avisar al coach:', err));
+  } catch (err) { console.warn('No se pudo avisar al coach:', err); }
+}
+
 export async function entregarTexto(ctx, texto) {
   await guardarEntrega(ctx, 'writing', { texto, audioBase64: null });
+  avisarAlCoach(ctx, 'writing');
 }
 
 export async function entregarAudio(ctx, audioBase64) {
@@ -53,6 +67,7 @@ export async function entregarAudio(ctx, audioBase64) {
     throw new Error('La grabación es muy larga. Grábala de nuevo, más corta.');
   }
   await guardarEntrega(ctx, 'speaking', { audioBase64, texto: null });
+  avisarAlCoach(ctx, 'speaking');
 }
 
 // Todo texto escrito por una persona se escapa antes de pintarlo.

@@ -2406,7 +2406,13 @@ function abrirDestinoDesdeUrl(destino) {
     if (destino === 'neclub' && window.abrirNeclub) window.abrirNeclub();
     else if (destino === 'perfil' && window.abrirPerfil) window.abrirPerfil();
     else if (destino === 'chat' && window.abrirChatFlotante) window.abrirChatFlotante();
-    else if (destino === 'notif' && window.toggleNotifDropdown) window.toggleNotifDropdown();
+    else if (destino === 'notif') {
+      // La campana unificada (NECLUB + Class Room) vive en la pantalla principal; si todavía no cargó, se espera.
+      Promise.resolve(precargarPanelNeclubHTML()).catch(() => {}).then(() => {
+        if (neclubEnHome && window.toggleNeclubNotifDropdown) window.toggleNeclubNotifDropdown();
+        else if (window.toggleNotifDropdown) window.toggleNotifDropdown();
+      });
+    }
   }, 500);
 }
 
@@ -3339,6 +3345,7 @@ function escucharNeclub() {
   });
   limpiarNeclubExpirados(); // solo el alumno hace esta limpieza de mantenimiento, el visitante público no
   escucharNeclubNotifs();
+  escucharTrv2Notifs();
 }
 window.irArribaFeedNeclub = () => {
   document.activeElement?.blur(); // suelta el "highlight" del botón en móvil
@@ -4036,6 +4043,7 @@ window.toggleLikeComentarioNeclub = async (postId, comentarioId) => {
 
 /* ===== NECLUB: notificaciones de likes/comentarios, dirigidas por ID de alumno ===== */
 let neclubNotifsCache = [];
+let trv2NotifsCache = []; // avisos del Class Room (entrega nueva / entrega revisada); los crea el servidor
 async function crearNotifNeclub(destinatarioId, tipo, postId) {
   if (!destinatarioId || !sessionActiva || destinatarioId === sessionActiva.id) return;
   try {
@@ -4060,10 +4068,22 @@ function escucharNeclubNotifs() {
     if (list) list.innerHTML = `<div class="notif-empty">No se pudieron cargar las notificaciones.<br>Revisa la consola del navegador (F12) — probablemente falta un índice en Firestore.</div>`;
   });
 }
+// Avisos del Class Room. Se pide solo por destinatario (sin ordenar en el servidor) para no
+// necesitar un índice nuevo en Firestore; el orden se hace aquí al mostrarlos.
+function escucharTrv2Notifs() {
+  if (!sessionActiva) return;
+  onSnapshot(query(collection(db,'training_v2_notificaciones'), where('destinatarioId','==', sessionActiva.id)), snap => {
+    trv2NotifsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    renderNeclubNotifBadge();
+    if (document.getElementById('neclub-notif-dropdown')?.classList.contains('open')) renderNeclubNotifList();
+  }, err => {
+    console.warn('No se pudieron escuchar los avisos del Class Room (¿reglas sin publicar?):', err);
+  });
+}
 function renderNeclubNotifBadge() {
   const badge = document.getElementById('neclub-notif-badge');
   if (!badge) return;
-  const pendientes = neclubNotifsCache.filter(n => !n.leido).length;
+  const pendientes = neclubNotifsCache.filter(n => !n.leido).length + trv2NotifsCache.filter(n => !n.leido).length;
   badge.innerText = pendientes > 9 ? '9+' : pendientes;
   badge.classList.toggle('show', pendientes > 0);
 }
@@ -4074,13 +4094,44 @@ function textoNotifNeclub(n) {
   if (n.tipo === 'like_comentario') return `${nombre} liked your comment`;
   return `${nombre} interacted with your post`;
 }
+// La fecha de los avisos de NECLUB es un número (ms); la de los avisos del Class Room es una fecha de Firestore.
+function fechaMsNotif(n) {
+  return typeof n.fecha === 'number' ? n.fecha : (n.fecha && n.fecha.toMillis ? n.fecha.toMillis() : Date.now());
+}
+function htmlNotifNeclub(n) {
+  return `<div class="notif-item" style="cursor:pointer;" onclick="irAPostDesdeNotifNeclub('${n.postId}')"><i class="fa-solid ${n.tipo==='comentario'?'fa-comment':'fa-heart'}" style="color:${n.tipo==='comentario'?'var(--gold)':'var(--red)'}; margin-right:8px;"></i>${textoNotifNeclub(n)}<small style="color:var(--muted); display:block; margin-top:2px;">${tiempoRelativoNeclub(n.fecha)}</small></div>`;
+}
+function htmlNotifTrv2(n) {
+  const que = n.entregaTipo === 'speaking' ? 'Speaking' : 'Writing';
+  const donde = escNeclub(String(n.nivelId || '').toUpperCase()) + (n.unidadNombre ? ' · ' + escNeclub(n.unidadNombre) : '');
+  let icono = 'fa-inbox', color = 'var(--gold)', texto;
+  if (n.tipo === 'entrega_nueva') texto = `${escNeclub(n.alumnoNombre || 'Un alumno')} entregó un ${que}`;
+  else if (n.estado === 'aprobada') { icono = 'fa-circle-check'; color = 'var(--green)'; texto = `${escNeclub(n.coachNombre || 'Tu coach')} aprobó tu ${que}`; }
+  else { icono = 'fa-rotate-left'; color = 'var(--red)'; texto = `${escNeclub(n.coachNombre || 'Tu coach')} te pidió reforzar tu ${que}`; }
+  const idSeguro = String(n.id).replace(/[^A-Za-z0-9_-]/g, '');
+  return `<div class="notif-item" style="cursor:pointer;" onclick="irAClassRoomDesdeNotif('${idSeguro}')"><i class="fa-solid ${icono}" style="color:${color}; margin-right:8px;"></i>${texto}<small style="color:var(--muted); display:block; margin-top:2px;">${donde} · ${tiempoRelativoNeclub(fechaMsNotif(n))}</small></div>`;
+}
 function renderNeclubNotifList() {
   const list = document.getElementById('neclub-notif-list');
   if (!list) return;
-  list.innerHTML = neclubNotifsCache.length
-    ? neclubNotifsCache.map(n => `<div class="notif-item" style="cursor:pointer;" onclick="irAPostDesdeNotifNeclub('${n.postId}')"><i class="fa-solid ${n.tipo==='comentario'?'fa-comment':'fa-heart'}" style="color:${n.tipo==='comentario'?'var(--gold)':'var(--red)'}; margin-right:8px;"></i>${textoNotifNeclub(n)}<small style="color:var(--muted); display:block; margin-top:2px;">${tiempoRelativoNeclub(n.fecha)}</small></div>`).join('')
+  // Una sola lista: avisos de NECLUB + del Class Room, lo más nuevo primero.
+  const todos = [
+    ...neclubNotifsCache.map(n => ({ n, t: fechaMsNotif(n), classroom: false })),
+    ...trv2NotifsCache.map(n => ({ n, t: fechaMsNotif(n), classroom: true })),
+  ].sort((x, y) => y.t - x.t).slice(0, 30);
+  list.innerHTML = todos.length
+    ? todos.map(x => x.classroom ? htmlNotifTrv2(x.n) : htmlNotifNeclub(x.n)).join('')
     : `<div class="notif-empty">No notifications yet.</div>`;
 }
+// Tocar un aviso del Class Room: el coach va a sus entregas; el alumno, al nivel de esa entrega.
+window.irAClassRoomDesdeNotif = (id) => {
+  const n = trv2NotifsCache.find(x => x.id === id);
+  if (!n) return;
+  toggleNeclubNotifDropdown(true);
+  location.href = n.tipo === 'entrega_nueva'
+    ? './training-room/coach/entregas.html'
+    : './training-room/niveles/nivel.html?nivel=' + encodeURIComponent(n.nivelId || 'a1');
+};
 window.toggleNeclubNotifDropdown = (forceClose) => {
   document.activeElement?.blur(); // suelta el "highlight" del botón en móvil
   const dd = document.getElementById('neclub-notif-dropdown');
@@ -4092,6 +4143,7 @@ window.toggleNeclubNotifDropdown = (forceClose) => {
   if (abrir) {
     renderNeclubNotifList();
     neclubNotifsCache.filter(n => !n.leido).forEach(n => updateDoc(doc(db,'neclub_notificaciones',n.id), { leido:true }).catch(()=>{}));
+    trv2NotifsCache.filter(n => !n.leido).forEach(n => updateDoc(doc(db,'training_v2_notificaciones',n.id), { leido:true }).catch(()=>{}));
   }
 };
 window.irAPostDesdeNotifNeclub = async (postId) => {

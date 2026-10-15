@@ -67,7 +67,7 @@
 
   <script type="module">
     import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
-    import { montarBarra, pintarAvatar } from "../assets/js/barra-red.js";
+    import { montarBarra, pintarAvatar, pintarNotifBadge } from "../assets/js/barra-red.js";
     import { collection, query, where, orderBy, limit, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
@@ -194,6 +194,7 @@
       if (!resultado) return;
       const { alumno } = resultado;
       pintarAvatar(alumno);
+      pintarNotifBadge(alumno);
       const titulo = document.getElementById('tr2-titulo');
 
       if (!alumno.esCoach) {
@@ -345,6 +346,11 @@
             return;
           }
           procesadas.add(card.dataset.id);
+          // Avisa al alumno que ya le revisaron (si falla, la revisión ya quedó guardada; no pasa nada).
+          try {
+            httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2Notificar')({ entregaId: card.dataset.id, evento: 'revisada' })
+              .catch((err) => console.warn('No se pudo avisar al alumno:', err));
+          } catch (err) { console.warn('No se pudo avisar al alumno:', err); }
           card.style.opacity = '.4';
           card.querySelectorAll('button,input').forEach((el) => (el.disabled = true));
           const quedan = pendientes.filter((e) => !procesadas.has(e.id)).length;
