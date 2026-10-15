@@ -155,10 +155,10 @@ async function sheetsLoadAll(){
       if(finished) return; finished = true;
       clearTimeout(timer); delete window[cb]; s.remove();
       if(data && data.ok){ sheetsOK = true; sheetsData = data; }
-      else if(data && data.error==='auth'){ window.__authDenied = true; }
+      else if(data && data.error==='auth'){ window.__authDenied = true; window.__authInfo = data; }
       resolve();
     };
-    const timer = setTimeout(()=>done(null), 15000);
+    const timer = setTimeout(()=>done(null), 30000);
     window[cb] = (data)=>{ called = true; done(data); };
     s.onerror = ()=>done(null);
     s.onload  = ()=>{ if(!called) done(null); };   // respondió algo que no es el formato nuevo
@@ -1157,7 +1157,16 @@ async function init(){
   await sheetsLoadAll();
   if(sheetsOK) setSaveStatus(true);
   else{
-    $('storageMode').textContent = '⚠ Sin conexión a Google Sheets: usando datos de este navegador (no se sincroniza)';
+    let why = 'el script no respondió (revisa la implementación: acceso "Cualquier usuario")';
+    if(window.__authDenied){
+      const i = window.__authInfo || {};
+      if(!i.version) why = 'el script publicado es una VERSIÓN VIEJA (falta "Nueva versión" en Implementar)';
+      else if(i.reason==='not_admin') why = 'el script no tiene autorizado el correo ' + (i.email||'');
+      else if(i.reason==='not_verified') why = 'Firebase dice que el correo ' + (i.email||'') + ' no está verificado';
+      else if(i.reason==='lookup_failed') why = 'el script no pudo consultar a Firebase (' + (i.detail||'?') + ')';
+      else why = 'el script rechazó la sesión (' + (i.reason||'sin motivo') + ')';
+    }
+    $('storageMode').textContent = '⚠ Sin conexión a Google Sheets: ' + why;
     $('storageMode').style.color = '#ff8a80';
   }
 
