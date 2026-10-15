@@ -140,6 +140,17 @@ async function getToken(){
   return u ? await u.getIdToken() : '';
 }
 
+// Lectura SIN cookies de Google (evita el error "No se pudo abrir el archivo" cuando hay varias cuentas abiertas)
+async function sheetsFetchJSON(tk){
+  try{
+    const ctl = new AbortController();
+    const t = setTimeout(()=>ctl.abort(), 30000);
+    const res = await fetch(`${SHEETS_URL}?token=${encodeURIComponent(tk)}`, {credentials:'omit', redirect:'follow', signal:ctl.signal});
+    clearTimeout(t);
+    const txt = await res.text();
+    return JSON.parse(txt);
+  }catch(e){ return null; }
+}
 let sheetsOK = false;      // true solo si se pudo leer el Sheet al abrir
 let sheetsData = null;
 
@@ -147,6 +158,9 @@ let sheetsData = null;
 // así funciona desde cualquier dominio (app.nicaenglishclub.com, GitHub Pages, etc.)
 async function sheetsLoadAll(){
   const tk = await getToken();
+  const direct = await sheetsFetchJSON(tk);
+  if(direct && direct.ok){ sheetsOK = true; sheetsData = direct; return; }
+  if(direct && direct.error==='auth'){ window.__authDenied = true; window.__authInfo = direct; return; }
   return new Promise(resolve=>{
     const cb = '__sheets_cb_' + Date.now();
     const s = document.createElement('script');
@@ -170,6 +184,8 @@ async function sheetsLoadAll(){
 let __cbN = 0;
 async function sheetsReadRaw(){
   const tk = await getToken();
+  const direct = await sheetsFetchJSON(tk);
+  if(direct) return direct;
   return new Promise(resolve=>{
     const cb = '__sheets_v_' + Date.now() + '_' + (++__cbN);
     const s = document.createElement('script');
