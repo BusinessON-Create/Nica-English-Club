@@ -12,6 +12,7 @@
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+import { mostrarAviso } from "./ui.js";
 
 const LIMITE_BYTES = 700 * 1024; // ~700KB de margen bajo el límite de 1MB de un doc de Firestore
 
@@ -153,7 +154,7 @@ export function instalarEntregas() {
         btn.innerHTML = '<i class="fa-solid fa-stop"></i> Detener';
         btn.classList.add('tr2-grabando');
       } catch (err) {
-        alert('No se pudo acceder al micrófono. Revisa los permisos del navegador.');
+        mostrarAviso('No se pudo acceder al micrófono. Revisa los permisos del navegador.');
       }
       return;
     }
@@ -183,7 +184,7 @@ export function instalarEntregas() {
         pintarEstado(cont.querySelector('.tr2-entrega-estado'), entrega);
         btn.textContent = 'Entregado ✓';
       } catch (err) {
-        alert(err.message);
+        mostrarAviso(err.message);
         btn.disabled = false; btn.textContent = 'Entregar';
       }
       return;

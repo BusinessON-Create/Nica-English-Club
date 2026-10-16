@@ -170,13 +170,18 @@ export function renderListaUnidades(unidades, abiertas, { esCoach = false, puede
     const derecha = puedeAbrir
       ? `<label class="tr2-switch"><input type="checkbox" data-toggle="${key}" ${delGrupo ? 'checked' : ''}><span>${delGrupo ? 'Abierta' : 'Cerrada'}</span></label>`
       : (accesible ? '<i class="fa-solid fa-chevron-right tr2-uni-flecha"></i>' : '<i class="fa-solid fa-lock tr2-uni-flecha"></i>');
+    // Estado a la vista (el coach ya lo ve en su interruptor): abierta, o "tu coach la abrirá pronto".
+    const estado = esCoach ? ''
+      : (accesible
+          ? '<span class="tr2-uni-chip abierta"><i class="fa-solid fa-circle"></i> Abierta</span>'
+          : '<span class="tr2-uni-lock tr2-uni-chip cerrada"><i class="fa-solid fa-lock"></i> Tu coach la abrirá pronto</span>');
     return `
     <div class="tr2-card-unidad ${accesible ? '' : 'locked'}" data-unidad="${u.id}">
       <div class="tr2-uni-icono"><i class="fa-solid ${ICONO_UNIDAD[key] || 'fa-book'}"></i></div>
       <div class="tr2-uni-txt">
         <div class="tr2-uni-kicker">Unidad ${u.orden} · Semana ${u.semana}</div>
         <div class="tr2-uni-nombre">${u.nombre}</div>
-        ${accesible ? '' : '<div class="tr2-uni-lock">Tu coach la abrirá pronto</div>'}
+        ${estado}
       </div>
       ${derecha}
     </div>`;

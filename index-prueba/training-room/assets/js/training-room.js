@@ -16,6 +16,7 @@
 // siguiente fase, sobre esta misma base.
 
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { mostrarAviso, NIVEL_INFO } from "./ui.js";
 
 const NIVELES = [
   { id: "a1", nombre: "A1" },
@@ -52,16 +53,30 @@ export async function pintarNiveles(alumno) {
 
     const card = document.createElement("div");
     card.className = `tr2-card-nivel ${desbloqueado ? "" : "locked"}`;
+    card.dataset.nivel = nivel.id;
+    card.setAttribute("role", "button");
+    if (!desbloqueado) card.setAttribute("aria-disabled", "true");
+    const info = NIVEL_INFO[nivel.id] || {};
+    const pos = NIVELES.indexOf(nivel);
+    // "Tu camino": 5 rayitas, encendidas hasta la posición de este nivel (A1 = 1 ... C1 = 5)
+    const camino = NIVELES.map((_, i) => `<i class="${i <= pos ? "on" : ""}"></i>`).join("");
     card.innerHTML = `
-      <div class="tr2-nivel-nombre">${nivel.nombre}</div>
-      <div class="tr2-nivel-estado ${desbloqueado ? "unlocked" : ""}">
-        ${desbloqueado ? "Disponible" : "Tu coach lo desbloqueará pronto"}
+      <div class="tr2-nivel-badge">${nivel.nombre}</div>
+      <div class="tr2-nivel-info">
+        <div class="tr2-nivel-nombre">${info.nombre || nivel.nombre}</div>
+        <div class="tr2-nivel-estado ${desbloqueado ? "unlocked" : ""}">
+          ${desbloqueado ? "Disponible" : "Tu coach lo desbloqueará pronto"}
+        </div>
+        <div class="tr2-nivel-camino" aria-hidden="true">${camino}</div>
       </div>
+      <i class="fa-solid ${desbloqueado ? "fa-chevron-right" : "fa-lock"} tr2-nivel-flecha"></i>
     `;
     if (desbloqueado) {
       card.onclick = () => {
         window.location.href = `./niveles/nivel.html?nivel=${nivel.id}`;
       };
+    } else {
+      card.onclick = () => mostrarAviso(`Tu coach desbloqueará el nivel ${nivel.nombre} cuando estés listo.`);
     }
     grid.appendChild(card);
   }

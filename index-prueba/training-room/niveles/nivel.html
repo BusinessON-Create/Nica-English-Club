@@ -31,6 +31,7 @@
 
   <div class="tr2-shell" id="tr2-vista-lista">
     <h1 class="tr2-h1" id="tr2-nivel-titulo">Cargando…</h1>
+    <p class="tr2-sub" id="tr2-nivel-sub"></p>
     <div id="tr2-selector-grupo"></div>
     <div class="tr2-lista-unidades" id="tr2-lista-unidades"></div>
   </div>
@@ -40,6 +41,7 @@
   <script type="module">
     import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
     import { montarBarra, pintarAvatar, pintarNotifBadge } from "../assets/js/barra-red.js";
+    import { mostrarAviso, NIVEL_INFO } from "../assets/js/ui.js";
     import { cargarUnidades, cargarPagina, cargarAperturaGrupo, setApertura, renderListaUnidades, renderPortada, renderContenido, activarVelocidad, setContexto, setUnidadActual, cargarEstadosEntrega } from "../assets/js/nivel.js";
 
     montarBarra({ portal: '../../', volver: { href: '../index.html', title: 'Niveles' } });
@@ -70,6 +72,7 @@
 
       esCoach = !!alumno.esCoach;
       unidadesCache = await cargarUnidades(nivelId);
+      actualizarSub();
       const lista = document.getElementById('tr2-lista-unidades');
 
       if (!unidadesCache.length) {
@@ -111,12 +114,13 @@
       const lista = document.getElementById('tr2-lista-unidades');
       abiertas = grupoActivo ? await cargarAperturaGrupo(grupoActivo.dias, grupoActivo.franja) : new Set();
       lista.innerHTML = renderListaUnidades(unidadesCache, abiertas, { esCoach, puedeAbrir: esCoach && !!grupoActivo });
+      actualizarSub();
 
       lista.querySelectorAll('.tr2-card-unidad').forEach((card) => {
         card.onclick = (ev) => {
           if (ev.target.closest('.tr2-switch')) return; // el interruptor no abre la unidad
           if (card.classList.contains('locked')) {
-            alert('Tu coach todavía no ha abierto esta unidad.');
+            mostrarAviso('Tu coach todavía no ha abierto esta unidad.');
             return;
           }
           abrirUnidad(card.dataset.unidad);
@@ -132,13 +136,28 @@
             await setApertura(grupoActivo.dias, grupoActivo.franja, key, quiere);
             if (quiere) abiertas.add(key); else abiertas.delete(key);
             inp.nextElementSibling.textContent = quiere ? 'Abierta' : 'Cerrada';
+            actualizarSub(); // el resumen de arriba ("N abiertas para este grupo") se mantiene al día
           } catch (e) {
             inp.checked = !quiere;
-            alert((e && e.message) || 'No se pudo guardar. Intenta de nuevo.');
+            mostrarAviso((e && e.message) || 'No se pudo guardar. Intenta de nuevo.');
           }
           inp.disabled = false;
         };
       });
+    }
+
+    // "Primeros pasos · 7 unidades · 3 abiertas por tu coach": un resumen a la vista (solo muestra datos que ya se cargaron).
+    function actualizarSub() {
+      const el = document.getElementById('tr2-nivel-sub');
+      if (!el) return;
+      const info = NIVEL_INFO[nivelId] || {};
+      const n = unidadesCache.length;
+      const partes = [info.nombre, `${n} ${n === 1 ? 'unidad' : 'unidades'}`];
+      if (grupoActivo) {
+        const ab = unidadesCache.filter((u) => abiertas.has(`${nivelId}-${u.id}`)).length;
+        partes.push(`${ab} ${ab === 1 ? 'abierta' : 'abiertas'} ${esCoach ? 'para este grupo' : 'por tu coach'}`);
+      }
+      el.textContent = partes.filter(Boolean).join(' · ');
     }
 
     async function abrirUnidad(unidadId) {
@@ -147,11 +166,11 @@
       try {
         pagina = await cargarPagina(nivelId, unidadId);
       } catch (e) {
-        alert((e && e.message) || 'No se pudo abrir la unidad. Intenta de nuevo.');
+        mostrarAviso((e && e.message) || 'No se pudo abrir la unidad. Intenta de nuevo.');
         return;
       }
       if (!pagina || !unidad) {
-        alert('Esta unidad todavía no tiene contenido cargado.');
+        mostrarAviso('Esta unidad todavía no tiene contenido cargado.');
         return;
       }
 

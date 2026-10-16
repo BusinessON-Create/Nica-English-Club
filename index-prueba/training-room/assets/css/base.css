@@ -267,3 +267,67 @@ h1,h2,h3,p { margin:0; }
   .tr2-circ, .tr2-avatar-chip { width:34px; height:34px; }
 }
 .tr2-badge { position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:var(--red); color:#fff; font:800 10px 'DM Sans',sans-serif; display:grid; place-items:center; border:2px solid var(--bg, #0b0c10); box-sizing:content-box; line-height:1; }
+
+/* ═══════════════ LOTE 2: Class Room más amable (celular primero) ═══════════════ */
+.tr2-shell { padding-bottom:calc(70px + env(safe-area-inset-bottom)); }
+.tr2-card-nivel, .tr2-card-unidad, .tr2-tab, .tr2-opcion, .tr2-pieza, .tr2-pareja-item, .tr2-btn-entrar, .tr2-btn-entregar, .tr2-btn-grabar, .tr2-speak, .tr2-play, .tr2-volver { -webkit-tap-highlight-color:transparent; }
+
+/* Niveles: tarjeta en fila con insignia, nombre amable y "tu camino" */
+.tr2-grid-niveles { grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); }
+.tr2-card-nivel { position:relative; overflow:hidden; display:flex; align-items:center; gap:14px; padding:16px 18px; }
+.tr2-card-nivel::after { content:''; position:absolute; inset:0; pointer-events:none; opacity:0; background:radial-gradient(120% 90% at 0% 0%, var(--gold-dim), transparent 60%); transition:opacity .25s var(--ease); }
+.tr2-card-nivel:not(.locked)::after { opacity:1; }
+.tr2-card-nivel.locked { opacity:.6; }
+.tr2-nivel-badge { flex:none; width:58px; height:58px; border-radius:18px; display:grid; place-items:center; font:700 22px 'Playfair Display',serif; color:var(--gold); background:var(--gold-dim); border:1px solid var(--gold2); position:relative; z-index:1; }
+.tr2-card-nivel.locked .tr2-nivel-badge { color:var(--muted-dim); background:var(--card2); border-color:var(--border2); }
+.tr2-nivel-info { flex:1; min-width:0; position:relative; z-index:1; }
+.tr2-card-nivel .tr2-nivel-nombre { font-size:19px; }
+.tr2-nivel-camino { display:flex; gap:4px; margin-top:10px; }
+.tr2-nivel-camino i { flex:1; max-width:26px; height:4px; border-radius:99px; background:var(--border2); }
+.tr2-nivel-camino i.on { background:var(--gold); }
+.tr2-card-nivel.locked .tr2-nivel-camino i.on { background:var(--muted-dim); }
+.tr2-nivel-flecha { flex:none; color:var(--muted-dim); position:relative; z-index:1; }
+.tr2-card-nivel:not(.locked) .tr2-nivel-flecha { color:var(--gold); }
+
+/* Unidades: estado a la vista y un área de toque cómoda */
+.tr2-lista-unidades { gap:10px; }
+.tr2-card-unidad { padding:14px 16px; min-height:72px; }
+.tr2-uni-chip { display:inline-flex; align-items:center; gap:5px; margin-top:6px; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:99px; }
+.tr2-uni-chip.abierta { color:var(--green); background:rgba(0,214,143,.10); }
+.tr2-uni-chip.abierta i { font-size:6px; }
+.tr2-uni-chip.cerrada { color:var(--muted); background:var(--card2); border:1px solid var(--border2); opacity:1; }
+.tr2-uni-chip.cerrada i { font-size:10px; }
+#tr2-nivel-titulo { margin-bottom:4px; }
+#tr2-nivel-sub { margin-bottom:2px; }
+
+/* Dentro de una unidad: pestañas fijas arriba, repartidas a lo ancho */
+.tr2-volver { padding:8px 0; font-size:14px; }
+.tr2-unit-head h2 { font-size:24px; }
+.tr2-tabs { position:sticky; top:63px; z-index:40; display:flex; width:100%; gap:4px; margin:14px 0 20px; padding:4px; overflow-x:auto; scrollbar-width:none; background:rgba(18,18,20,.92); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+.tr2-tabs::-webkit-scrollbar { display:none; }
+.tr2-tab { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:11px 8px; font-size:13px; white-space:nowrap; }
+.tr2-tab i { margin-right:0; }
+#btn-velocidad { flex:none; padding:11px 12px; }
+.tr2-btn-entrar { width:100%; max-width:320px; padding:16px 30px; font-size:15px; }
+
+/* Letra y botones cómodos para el pulgar (mínimo ~44px de alto) */
+.tr2-juego-pregunta, .tr2-globo p, .tr2-tarea p { font-size:15px; }
+.tr2-ven { font-size:15px; }
+.tr2-speak { width:36px; height:36px; font-size:13px; }
+.tr2-play { min-height:40px; }
+.tr2-opcion, .tr2-pieza, .tr2-pareja-item, .tr2-btn-grabar { min-height:44px; }
+.tr2-opcion { padding:10px 18px; }
+.tr2-btn-entregar { min-height:44px; padding:10px 22px; }
+.tr2-textarea { font-size:16px; }   /* 16px evita que el iPhone haga zoom al escribir */
+
+/* Aviso flotante (reemplaza al alert del navegador) */
+.tr2-toast { position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); max-width:min(92vw,420px); background:var(--card2); color:var(--text); border:1px solid var(--gold2); border-radius:14px; padding:12px 16px; font:600 13.5px/1.4 'DM Sans',sans-serif; box-shadow:var(--shadow-card); opacity:0; pointer-events:none; transition:opacity .25s var(--ease), transform .25s var(--ease); z-index:200; }
+.tr2-toast.show { opacity:1; transform:translate(-50%,0); }
+
+/* Celulares: niveles en una columna, pestañas compactas; táctil sin "hover pegado" */
+@media (max-width:560px) { .tr2-grid-niveles { grid-template-columns:1fr; } }
+@media (max-width:420px) { .tr2-tab i { display:none; } .tr2-tab { padding:11px 4px; font-size:12.5px; } }
+.tr2-card-nivel:active:not(.locked), .tr2-card-unidad:active:not(.locked) { transform:scale(.985); }
+@media (hover:none) {
+  .tr2-card-nivel:hover, .tr2-card-unidad:hover { transform:none; box-shadow:none; border-color:var(--border2); }
+}

@@ -71,6 +71,7 @@
     import { collection, query, where, orderBy, limit, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+    import { mostrarAviso } from "../assets/js/ui.js";
 
     // Todo lo que escribió un alumno (o la IA) se escapa antes de pintarlo.
     const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -342,7 +343,7 @@
           } catch (err) {
             console.error(err);
             veredicto.disabled = false;
-            alert('No se pudo guardar. Intenta de nuevo.');
+            mostrarAviso('No se pudo guardar. Intenta de nuevo.');
             return;
           }
           procesadas.add(card.dataset.id);
