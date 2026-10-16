@@ -1388,6 +1388,11 @@ body.tr-room-lock { overflow:hidden; }
 #s-student .home-unified .hu-mind p { font-size:12px; line-height:1.4; margin:0; color:rgba(255,255,255,.72); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 #s-student .home-unified .mindset-invite { margin-top:10px; padding-top:9px; }
 #s-student .home-unified .mindset-invite p { font-size:11.5px; }
+/* Menú: Recursos y Videos con estrella dorada (se ve que son algo especial) */
+.side-drawer-item.premium { margin:2px 0; border:1px solid rgba(240,180,41,.24); background:linear-gradient(90deg, rgba(240,180,41,.10), transparent 75%); }
+.side-drawer-item.premium:hover { background:linear-gradient(90deg, rgba(240,180,41,.17), transparent 85%); }
+.side-drawer-item .premium-star { margin-left:auto; width:auto; font-size:11px; color:var(--gold3); filter:drop-shadow(0 0 4px rgba(240,180,41,.55)); }
+.side-drawer-item[hidden] { display:none; }
 </style>
 </head>
 <body>
@@ -1467,6 +1472,8 @@ body.tr-room-lock { overflow:hidden; }
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); abrirNeclub();"><i class="fa-solid fa-hashtag"></i> NECLUB</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); showScreen('s-training');"><i class="fa-solid fa-brain"></i> Training room</button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); window.location.href='./training-room/index.html';"><i class="fa-solid fa-chalkboard-user"></i> Class Room</button>
+    <button class="side-drawer-item premium" id="drawer-item-recursos" onclick="toggleSideDrawer(false); abrirSalaDirecta('recursos');"><i class="fa-solid fa-book-open-reader"></i> Recursos <i class="fa-solid fa-star premium-star"></i></button>
+    <button class="side-drawer-item premium" id="drawer-item-videos" hidden onclick="toggleSideDrawer(false); abrirSalaDirecta('videos');"><i class="fa-solid fa-circle-play"></i> Videos <i class="fa-solid fa-star premium-star"></i></button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); toggleNotifDropdown();"><i class="fa-solid fa-list-check"></i> Actividades<span class="drawer-item-badge" id="notif-badge">0</span></button>
         <div id="drawer-eflinks-container"></div>
         <button class="side-drawer-item logout-item" onclick="toggleSideDrawer(false); cerrarSesion();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
@@ -7628,7 +7635,7 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
 /* ===== TRAINING ROOM: abre/cierra las salas al instante (sin animación) y muestra la
    tarjeta de videos solo cuando la galería tiene contenido. ===== */
 (function () {
-  var abierta = null, historyPush = false;
+  var abierta = null, historyPush = false, desdeMenu = false;
   function $(id) { return document.getElementById(id); }
   window.abrirSalaTraining = function (id) {
     if (abierta) return;
@@ -7640,6 +7647,16 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     room.classList.add('open');
     try { history.pushState({ screen: 's-training', sala: id }, '', '#s-training'); historyPush = true; } catch (e) { historyPush = false; }
   };
+  // Desde el menú: abre la sala directo (la pantalla Training room queda detrás, sin entrada extra en el
+  // historial). Al cerrar la sala, el alumno vuelve a donde estaba, no a la pantalla Training room.
+  window.abrirSalaDirecta = function (id) {
+    if (abierta || !$('tr-room-' + id) || !$('tr-portal-' + id)) return;
+    var st = $('s-training');
+    if (!st) return;
+    desdeMenu = true;
+    if (!st.classList.contains('active') && window.showScreen) window.showScreen('s-training', { noHistory: true });
+    window.abrirSalaTraining(id);
+  };
   function cerrarInterno() {
     if (!abierta) return;
     var a = abierta; abierta = null; historyPush = false;
@@ -7649,6 +7666,11 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
       window.cerrarVideoPlayer();
     }
     a.room.classList.remove('open');
+    if (desdeMenu) {   // se abrió desde el menú: si seguimos en Training room, volvemos a la pantalla principal
+      desdeMenu = false;
+      var activa = document.querySelector('.screen.active');
+      if (activa && activa.id === 's-training' && window.showScreen) window.showScreen('s-student', { noHistory: true });
+    }
   }
   window.cerrarSalaTraining = function () {
     if (!abierta) return;
@@ -7666,7 +7688,11 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
 
   // La tarjeta de videos solo aparece cuando la galería tiene videos (misma regla que ya usaba la sección)
   var sec = $('video-gallery-section'), wrapV = $('tr-portal-wrap-videos');
-  function sync() { if (sec && wrapV) wrapV.hidden = (getComputedStyle(sec).display === 'none'); }
+  function sync() {
+    var vacia = !sec || getComputedStyle(sec).display === 'none';
+    if (sec && wrapV) wrapV.hidden = vacia;
+    var mv = $('drawer-item-videos'); if (mv) mv.hidden = vacia;   // botón del menú: solo si hay videos
+  }
   sync();
   if (sec && window.MutationObserver) new MutationObserver(sync).observe(sec, { attributes: true, attributeFilter: ['style'] });
 })();
