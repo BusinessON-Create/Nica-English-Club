@@ -91,15 +91,79 @@ textarea:focus,input:focus{border-color:var(--gold2);}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--gold2);color:#fff;padding:12px 20px;border-radius:99px;font-size:12.5px;font-weight:700;opacity:0;pointer-events:none;transition:.3s var(--ease);z-index:50;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 [hidden]{display:none !important;}
+
+/* ═══════════ LOTE 3: panel del coach más amable (celular primero) ═══════════ */
+.wrap { padding-bottom:calc(90px + env(safe-area-inset-bottom)); }
+nav.top .brand { font-size:15px; }
+.ico-btn, a.coach-avatar, .grupo-tab, .vista-tab, .etq-chip, .item-mini-btn, .btn-guardar, .btn-borrado, .mando-btn, .roster-todos { -webkit-tap-highlight-color:transparent; }
+a.coach-avatar { width:38px; height:38px; }
+
+/* Centro de mando */
+.mando { display:grid; grid-template-columns:1fr; gap:10px; margin:0 0 18px; }
+@media (min-width:520px) { .mando { grid-template-columns:1fr 1fr; } }
+.mando-btn { position:relative; display:flex; align-items:center; gap:14px; min-height:68px; padding:14px 16px; border-radius:var(--r-lg); background:var(--card); border:1px solid var(--border2); text-decoration:none; color:#fff; transition:transform .2s var(--ease), border-color .2s var(--ease); }
+.mando-btn.principal { background:linear-gradient(135deg, rgba(240,180,41,.16), rgba(240,180,41,.05)); border-color:rgba(240,180,41,.4); }
+.mando-btn > i { flex:none; width:42px; height:42px; border-radius:14px; display:grid; place-items:center; font-size:17px; color:var(--gold3); background:var(--gold-dim); border:1px solid rgba(240,180,41,.3); }
+.mando-txt { display:flex; flex-direction:column; min-width:0; flex:1; }
+.mando-txt b { font-size:14px; }
+.mando-txt small { font-size:11.5px; color:var(--muted); margin-top:2px; }
+.mando-badge { flex:none; min-width:24px; height:24px; padding:0 7px; border-radius:99px; background:var(--red); color:#fff; font:800 12px 'DM Sans',sans-serif; display:grid; place-items:center; }
+.mando-btn:active { transform:scale(.985); }
+
+/* Grupos: botones de dos líneas que se deslizan de lado */
+.grupo-tabs { flex-wrap:nowrap; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; padding-bottom:2px; }
+.grupo-tabs::-webkit-scrollbar { display:none; }
+.grupo-tab { flex:none; scroll-snap-align:start; min-height:52px; padding:8px 18px; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+.grupo-tab b { font-size:12.5px; }
+.grupo-tab small { font-size:11px; font-weight:600; opacity:.8; }
+
+/* Pestañas Notas / Actividades / Reuniones: fijas debajo del encabezado */
+.vista-tabs { position:sticky; top:67px; z-index:9; background:rgba(18,18,20,.94); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+.vista-tab { min-height:42px; font-size:12.5px; }
+
+/* Lista de alumnos plegable */
+.roster-todos { background:transparent; border:1px solid var(--border2); color:var(--muted); font:700 11px 'DM Sans',sans-serif; padding:6px 12px; border-radius:99px; cursor:pointer; text-transform:none; letter-spacing:0; }
+details.roster-item { display:block; padding:0; border-bottom:1px solid var(--border); }
+details.roster-item:last-child { border-bottom:none; }
+summary.roster-head { list-style:none; cursor:pointer; padding:12px 0; min-height:56px; -webkit-tap-highlight-color:transparent; }
+summary.roster-head::-webkit-details-marker { display:none; }
+.roster-head-left { min-width:0; flex:1; }
+.roster-nombre { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.roster-resumen { display:flex; align-items:center; gap:8px; flex:none; }
+.resumen-nota, .resumen-compartido { font-size:12px; color:var(--gold3); }
+.resumen-compartido { color:var(--green); }
+.etq-resumen { font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:99px; border:1px solid var(--border2); background:rgba(255,255,255,.03); color:var(--muted); white-space:nowrap; }
+.etq-resumen.vacio { color:var(--muted-dim); }
+.etq-resumen[data-etq="Excelente"] { background:rgba(0,214,143,.14); border-color:var(--green); color:var(--green); }
+.etq-resumen[data-etq="Buen progreso"] { background:rgba(77,159,255,.14); border-color:var(--blue); color:var(--blue); }
+.etq-resumen[data-etq="Necesita repaso"] { background:rgba(255,217,102,.14); border-color:var(--gold3); color:var(--gold3); }
+.etq-resumen[data-etq="Ausente"] { background:rgba(255,92,92,.14); border-color:var(--red); color:var(--red); }
+.roster-resumen .chevron { color:var(--muted-dim); font-size:11px; transition:transform .2s var(--ease); }
+details.roster-item[open] .roster-resumen .chevron { transform:rotate(180deg); }
+.roster-body { display:flex; flex-direction:column; gap:10px; padding:0 0 14px 44px; }
+.roster-body .etiquetas { margin-left:0; }
+.roster-body .nota-mini { margin-left:0; width:100%; }
+.etq-chip { min-height:36px; padding:8px 14px; font-size:12px; }
+.roster-body .compartir-toggle { padding:6px 0; font-size:12.5px; }
+.compartir-toggle input { width:18px; height:18px; }
+
+/* Guardar siempre al alcance; borrar, discreto y lejos del botón principal */
+#btn-guardar { position:sticky; bottom:calc(12px + env(safe-area-inset-bottom)); z-index:20; min-height:48px; box-shadow:0 10px 28px rgba(0,0,0,.55); }
+.btn-borrado { width:auto; display:block; margin:22px auto 4px; padding:10px 18px; font-size:12px; background:transparent; }
+
+/* Comodidad al escribir y tocar */
+input[type=text].campo-simple, input[type=url], input[type=date], textarea, .nota-mini { font-size:16px; }   /* 16px: el iPhone no hace zoom al escribir */
+.item-mini-btn { width:38px; height:38px; font-size:13px; }
+.historial-item { min-height:46px; }
+@media (hover:none) { .mando-btn:hover, .grupo-tab:hover, .historial-item:hover { transform:none; } .historial-item:hover { color:var(--muted); } }
 </style>
 </head>
 <body>
 
 <nav class="top">
-  <a class="brand" href="../"><i class="fa-solid fa-chalkboard-user"></i> Notas de Coach</a>
+  <a class="brand" href="../"><i class="fa-solid fa-chalkboard-user"></i> Panel de coach</a>
   <div class="actions">
     <button class="ico-btn" onclick="location.href='../'" title="Volver al portal"><i class="fa-solid fa-arrow-left"></i></button>
-    <button class="ico-btn" onclick="location.href='../training-room/index.html'" title="Class Room (solo lectura)"><i class="fa-solid fa-flask"></i></button>
     <button class="ico-btn" onclick="location.href='../training-room/coach/entregas.html'" title="Entregas pendientes (Speaking/Writing)"><i class="fa-solid fa-inbox"></i></button>
     <a class="coach-avatar" id="coach-avatar" href="../?ir=perfil" title="Mi perfil" aria-label="Mi perfil"></a>
     <button class="ico-btn" onclick="cerrarSesionCoach()" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -118,6 +182,19 @@ textarea:focus,input:focus{border-color:var(--gold2);}
   <div id="contenido" hidden>
     <h1>Hola, <span id="coach-nombre"></span></h1>
     <p class="sub">Dejá la nota de la sesión, asigná actividades o mandá el enlace de la clase — todo desde acá.</p>
+
+    <!-- CENTRO DE MANDO: lo más importante, a un toque -->
+    <div class="mando">
+      <a class="mando-btn principal" href="../training-room/coach/entregas.html" id="mando-entregas">
+        <i class="fa-solid fa-inbox"></i>
+        <span class="mando-txt"><b>Entregas por revisar</b><small id="mando-entregas-sub">Speaking y Writing de tus alumnos</small></span>
+        <span class="mando-badge" id="mando-entregas-badge" hidden>0</span>
+      </a>
+      <a class="mando-btn" href="../training-room/index.html" id="mando-classroom">
+        <i class="fa-solid fa-chalkboard-user"></i>
+        <span class="mando-txt"><b>Class Room</b><small>Niveles y unidades</small></span>
+      </a>
+    </div>
 
     <div class="card">
       <p class="label"><i class="fa-solid fa-people-group"></i> Grupo</p>
@@ -146,7 +223,7 @@ textarea:focus,input:focus{border-color:var(--gold2);}
       </div>
 
       <div class="card">
-        <p class="label"><i class="fa-solid fa-user-graduate"></i> Alumnos de este grupo</p>
+        <p class="label"><span><i class="fa-solid fa-user-graduate"></i> Alumnos de este grupo</span><button type="button" class="roster-todos" id="btn-roster-todos" onclick="toggleRosterTodos()">Abrir todos</button></p>
         <div id="roster"></div>
         <p class="form-hint" id="roster-vacio" hidden>No hay alumnos asignados a este grupo todavía.</p>
       </div>
@@ -307,6 +384,7 @@ onAuthStateChanged(auth, async (user) => {
     }
     pintarTabsGrupos(grupos);
     seleccionarGrupo(grupos[0]);
+    cargarMando(grupos);
   } catch (e) {
     console.error(e);
     mostrarSinAcceso('No se pudo cargar tu información. Intentá de nuevo más tarde.');
@@ -315,13 +393,14 @@ onAuthStateChanged(auth, async (user) => {
 
 function pintarTabsGrupos(grupos) {
   const cont = document.getElementById('grupo-tabs');
-  cont.innerHTML = grupos.map((g, i) => `<button class="grupo-tab" data-i="${i}">${escHtml(g.dias)} · ${escHtml(g.franja)}</button>`).join('');
+  cont.innerHTML = grupos.map((g, i) => `<button class="grupo-tab" data-i="${i}"><b>${escHtml(g.dias)}</b><small>${escHtml(g.franja)}</small></button>`).join('');
   cont.querySelectorAll('.grupo-tab').forEach((btn, i) => btn.addEventListener('click', () => seleccionarGrupo(grupos[i])));
 }
 
 async function seleccionarGrupo(g) {
   grupoActivo = g;
-  document.querySelectorAll('.grupo-tab').forEach(btn => btn.classList.toggle('active', btn.innerText === `${g.dias} · ${g.franja}`));
+  const posicion = String((coach.horariosCoach || []).indexOf(g));
+  document.querySelectorAll('.grupo-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.i === posicion));
   await cargarRoster();
   await cargarSesion();
   await cargarHistorial();
@@ -345,6 +424,7 @@ async function cargarRoster() {
   rosterActual = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   document.getElementById('roster-vacio').hidden = rosterActual.length > 0;
   cont.innerHTML = '';
+  document.getElementById('btn-roster-todos').textContent = 'Abrir todos';
   if (!rosterActual.length) return;
   cont.innerHTML = rosterActual.map(a => {
     const inicial = (a.nombre || '?').charAt(0).toUpperCase();
@@ -352,14 +432,22 @@ async function cargarRoster() {
     const foto = urlFoto
       ? `<img src="${escHtml(urlFoto)}" data-i="${escHtml(inicial)}" onerror="this.parentElement.textContent=this.dataset.i">`
       : escHtml(inicial);
-    return `<div class="roster-item" data-alumno="${a.id}">
-      <div class="roster-head">
+    return `<details class="roster-item" data-alumno="${a.id}">
+      <summary class="roster-head">
         <div class="roster-head-left"><div class="avatar-mini">${foto}</div><span class="roster-nombre">${escHtml(a.nombre)}</span></div>
-        <label class="compartir-toggle" data-alumno-toggle="${a.id}"><input type="checkbox" class="compartir-alumno-check" data-alumno="${a.id}"> Compartir</label>
+        <div class="roster-resumen">
+          <i class="fa-solid fa-comment-dots resumen-nota" title="Tiene nota" hidden></i>
+          <i class="fa-solid fa-share-nodes resumen-compartido" title="Compartido con el alumno" hidden></i>
+          <span class="etq-resumen vacio">Sin etiquetar</span>
+          <i class="fa-solid fa-chevron-down chevron"></i>
+        </div>
+      </summary>
+      <div class="roster-body">
+        <div class="etiquetas">${ETIQUETAS.map(e => `<button type="button" class="etq-chip" data-etq="${e}" data-alumno="${a.id}">${e}</button>`).join('')}</div>
+        <input type="text" class="nota-mini" data-alumno="${a.id}" placeholder="Nota corta (opcional)" maxlength="140">
+        <label class="compartir-toggle" data-alumno-toggle="${a.id}"><input type="checkbox" class="compartir-alumno-check" data-alumno="${a.id}"> Compartir con este alumno</label>
       </div>
-      <div class="etiquetas">${ETIQUETAS.map(e => `<button type="button" class="etq-chip" data-etq="${e}" data-alumno="${a.id}">${e}</button>`).join('')}</div>
-      <input type="text" class="nota-mini" data-alumno="${a.id}" placeholder="Nota corta (opcional)" maxlength="140">
-    </div>`;
+    </details>`;
   }).join('');
   cont.querySelectorAll('.etq-chip').forEach(chip => chip.addEventListener('click', () => {
     const id = chip.dataset.alumno, etq = chip.dataset.etq;
@@ -395,6 +483,44 @@ function pintarEstadoRoster() {
     chk.checked = compartido;
     chk.closest('[data-alumno-toggle]').classList.toggle('on', compartido);
   });
+  // Resumen a la vista en la fila plegada: etiqueta elegida, si tiene nota y si se comparte.
+  document.querySelectorAll('.roster-item').forEach(item => {
+    const est = estadoAlumnos[item.dataset.alumno] || {};
+    const r = item.querySelector('.etq-resumen');
+    if (r) { r.textContent = est.etiqueta || 'Sin etiquetar'; r.dataset.etq = est.etiqueta || ''; r.classList.toggle('vacio', !est.etiqueta); }
+    const nt = item.querySelector('.resumen-nota'); if (nt) nt.hidden = !(est.nota && String(est.nota).trim());
+    const sh = item.querySelector('.resumen-compartido'); if (sh) sh.hidden = !est.compartido;
+  });
+}
+
+// "Abrir todos / Cerrar todos" las filas de alumnos (solo cambia lo que se ve; no toca ningún dato).
+window.toggleRosterTodos = () => {
+  const filas = [...document.querySelectorAll('#roster details.roster-item')];
+  if (!filas.length) return;
+  const abrir = filas.some(d => !d.open);
+  filas.forEach(d => { d.open = abrir; });
+  document.getElementById('btn-roster-todos').textContent = abrir ? 'Cerrar todos' : 'Abrir todos';
+};
+
+// Centro de mando: cuántas entregas esperan al coach (de TODOS sus grupos). Es la misma consulta que
+// hace el botón "Panel de coach" del portal. Si falla, el botón igual funciona; solo no muestra el número.
+async function cargarMando(grupos) {
+  const badge = document.getElementById('mando-entregas-badge');
+  const sub = document.getElementById('mando-entregas-sub');
+  try {
+    const ids = new Set();
+    for (const g of grupos) {
+      const s = await getDocs(query(collection(db, 'alumnos'), where('horario.dias', '==', g.dias), where('horario.franja', '==', g.franja)));
+      s.docs.forEach(d => ids.add(d.id));
+    }
+    const p = await getDocs(query(collection(db, 'training_v2_entregas'), where('estado', '==', 'pendiente')));
+    const n = p.docs.filter(d => ids.has(d.data().alumnoId)).length;
+    badge.textContent = n > 99 ? '99+' : String(n);
+    badge.hidden = !n;
+    sub.textContent = n ? (n === 1 ? '1 entrega esperando tu revisión' : `${n} entregas esperando tu revisión`) : 'Todo al día';
+  } catch (e) {
+    console.warn('No se pudo contar las entregas pendientes:', e);
+  }
 }
 
 function pintarToggleGeneral() {
