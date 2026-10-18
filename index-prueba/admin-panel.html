@@ -1,9 +1,12 @@
   <!-- ADMIN SCREEN -->
   <div id="s-admin" class="screen">
     <div class="admin-wrap">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="font-family:'Playfair Display'; color:#fff; font-size:28px;">Panel Control</h2>
-        <button onclick="cerrarSesion()" style="color:var(--red); background:transparent; border:none; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit;">SALIR</button>
+      <div class="admin-head">
+        <div class="admin-head-txt">
+          <h2>Panel Control</h2>
+          <p>Administración de Nica English Club</p>
+        </div>
+        <button class="admin-salir" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
       </div>
       <div class="admin-card">
         <div class="admin-menu-grid" id="admin-menu-grid">
@@ -31,6 +34,7 @@
           <input type="text" id="link-titulo" class="admin-input" placeholder="Título de la clase">
           <input type="url" id="link-url" class="admin-input" placeholder="https://url-clase.com">
           <button class="btn-login" id="btn-guardar-enlace" onclick="guardarEnlace()">Publicar Enlace</button>
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-link"></i> Enlaces publicados</p>
           <div id="lista-enlaces-ui" style="margin-top:20px;"></div>
         </div>
         <div id="tab-coachsolicitudes" class="tab-content" style="padding:20px; display:none;">
@@ -42,12 +46,16 @@
         <div id="tab-alumnos" class="tab-content" style="padding:20px; display:none;">
           <input type="hidden" id="alumno-id-edicion">
           <input type="hidden" id="alumno-identidad-edicion">
+          <div class="admin-bloque">
+          <p class="admin-label"><i class="fa-solid fa-id-card"></i> Datos del alumno</p>
           <input type="text" id="alumno-nombre" class="admin-input" placeholder="Nombre completo del alumno">
           <div id="alumno-cuenta-vinculada-aviso" style="display:none; font-size:12px; color:var(--gold3); margin:-2px 0 10px;"><i class="fa-solid fa-circle-check"></i> Cuenta ya vinculada — para cambiar su acceso usa "Enviar restablecimiento de contraseña".</div>
           <input type="email" id="alumno-correo" class="admin-input" placeholder="Correo del alumno (para su acceso)" autocomplete="off">
           <p class="form-hint" id="alumno-pass-hint" style="margin-top:-6px; margin-bottom:10px;">No necesitas crear una contraseña: al guardar, se le enviará automáticamente un correo a este alumno para que configure su propia contraseña.</p>
           <button type="button" class="btn-login btn-outline-gold" id="btn-reset-pass-alumno" style="display:none; margin-bottom:10px;" onclick="enviarResetPassAlumno()"><i class="fa-solid fa-envelope"></i> Enviar restablecimiento de contraseña</button>
           <input type="url" id="alumno-foto" class="admin-input" placeholder="URL Foto Perfil">
+          </div>
+          <div class="admin-bloque">
           <p class="admin-label"><i class="fa-solid fa-gem"></i> Plan de suscripción</p>
           <select id="alumno-plan" class="admin-input">
             <option value="">-- Sin plan asignado --</option>
@@ -69,6 +77,8 @@
             <option value="3:15 - 4:45 PM">3:15 - 4:45 PM</option>
             <option value="6:15 - 7:15 PM">6:15 - 7:15 PM</option>
           </select>
+          </div>
+          <div class="admin-bloque">
           <p class="admin-label"><i class="fa-solid fa-chalkboard-user"></i> Rol de Coach</p>
           <label style="display:flex; align-items:center; gap:8px; margin-bottom:10px; cursor:pointer; font-size:13px; color:var(--text);">
             <input type="checkbox" id="alumno-es-coach" onchange="toggleCoachHorariosVisibilidad()"> Este alumno es Coach (puede dejar notas de seguimiento)
@@ -80,8 +90,14 @@
             <p class="form-hint" style="margin-bottom:8px;">Grupos que este coach enseña (puede marcar varios):</p>
             <div id="alumno-coach-horarios-lista"></div>
           </div>
+          </div>
+          <div class="admin-guardar-barra">
           <button class="btn-login" id="btn-guardar-alumno" onclick="registrarAlumno()">Crear Alumno</button>
+          </div>
+          <details class="zona-delicada"><summary><span><i class="fa-solid fa-triangle-exclamation"></i> Acciones delicadas</span><i class="fa-solid fa-chevron-down chevron"></i></summary><div class="zona-cuerpo">
           <button onclick="resetearAsistenciaSemanal()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">RESETEAR SEMANA MANUAL</button>
+          </div></details>
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-users"></i> Alumnos registrados</p>
           <div id="lista-alumnos-ui" style="margin-top:20px;"></div>
         </div>
 
@@ -114,7 +130,10 @@
             <div id="dest-lista-alumnos" style="display:none;"></div>
           </div>
           <button class="btn-login" id="btn-guardar-actividad" onclick="guardarActividad()">Publicar actividad</button>
+          <details class="zona-delicada"><summary><span><i class="fa-solid fa-triangle-exclamation"></i> Acciones delicadas</span><i class="fa-solid fa-chevron-down chevron"></i></summary><div class="zona-cuerpo">
           <button onclick="limpiarActividadesAnteriores()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">LIMPIAR ACTIVIDADES DE SEMANAS ANTERIORES</button>
+          </div></details>
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-list-check"></i> Actividades publicadas</p>
           <div id="lista-actividades-ui" style="margin-top:20px;"></div>
 
           <div class="admin-section" style="border-top:1px solid var(--border2); margin-top:28px; padding-top:22px; border-bottom:none;">
@@ -167,6 +186,7 @@
             <div id="meet-dest-lista-alumnos" style="display:none;"></div>
           </div>
           <button class="btn-login" id="btn-enviar-meet" onclick="enviarMeet()"><i class="fa-solid fa-video"></i> Enviar enlace de Meet</button>
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-video"></i> Reuniones activas</p>
           <div id="lista-reuniones-ui" style="margin-top:20px;"></div>
         </div>
         <div id="tab-internaltools" class="tab-content" style="padding:20px; display:none;">
@@ -207,6 +227,7 @@
             <button class="btn-login" id="btn-guardar-eflink" onclick="guardarEflink()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar herramienta</button>
             <button class="btn-login btn-outline-gold" id="btn-cancelar-eflink" onclick="cancelarEdicionEflink()" style="display:none; flex:0 0 auto; padding-left:18px; padding-right:18px;">Cancelar</button>
           </div>
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-toolbox"></i> Herramientas actuales</p>
           <div id="lista-eflinks-ui" style="margin-top:20px;"></div>
         </div>
         <div id="tab-neclub" class="tab-content" style="padding:20px; display:none;">
@@ -231,6 +252,7 @@
           <p class="admin-label"><i class="fa-solid fa-book-open-reader"></i> Biblioteca de semanas</p>
           <p class="form-hint">Crea el contenido de cada semana (Foundations, Everyday English, Confidence, Fluency Mode). Los alumnos avanzan solos por la biblioteca según su propio ritmo — tú solo la mantienes llena.</p>
           <button class="btn-login btn-outline-gold" onclick="abrirEditorSemanaTraining()"><i class="fa-solid fa-plus"></i> Nueva semana</button>
+          <details class="zona-ejemplos"><summary><span><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar semanas de ejemplo (13)</span><i class="fa-solid fa-chevron-down chevron"></i></summary><div class="zona-cuerpo">
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemanaTraining()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 1 — Who Are You?)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana2Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 2 — My Day, My Words)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana3Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 3 — Where Is It?)</button>
@@ -244,6 +266,7 @@
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana11Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 11 — Bigger, Better, Best)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana12Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 12 — What Should I Do?)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana13Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 13 — This Is My Life)</button>
+          </div></details>
 
           <div id="tr-editor-wrap" style="display:none; margin-top:18px; border-top:1px solid var(--border); padding-top:18px;">
             <input type="hidden" id="tr-semana-id-edicion">

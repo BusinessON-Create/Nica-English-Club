@@ -1393,6 +1393,54 @@ body.tr-room-lock { overflow:hidden; }
 .side-drawer-item.premium:hover { background:linear-gradient(90deg, rgba(240,180,41,.17), transparent 85%); }
 .side-drawer-item .premium-star { margin-left:auto; width:auto; font-size:11px; color:var(--gold3); filter:drop-shadow(0 0 4px rgba(240,180,41,.55)); }
 .side-drawer-item[hidden] { display:none; }
+
+/* ═══════════ LOTE 4: panel admin más amable (celular primero) ═══════════ */
+.admin-wrap { padding:20px 16px calc(40px + env(safe-area-inset-bottom)); }
+.admin-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.admin-head h2 { font-family:'Playfair Display',serif; color:#fff; font-size:26px; line-height:1.15; }
+.admin-head p { color:var(--muted); font-size:12px; margin-top:3px; }
+.admin-salir { flex:none; display:inline-flex; align-items:center; gap:7px; min-height:40px; padding:0 16px; border-radius:99px; border:1px solid rgba(255,92,92,.35); background:rgba(255,92,92,.08); color:var(--red); font:700 12.5px 'DM Sans',sans-serif; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+
+/* Menú: barra compacta que se desliza de lado y se queda fija arriba */
+.admin-card { overflow:visible; }
+.admin-menu-grid { display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; -webkit-overflow-scrolling:touch; position:sticky; top:0; z-index:30; padding:calc(10px + env(safe-area-inset-top)) 44px 10px 14px; background:var(--card); border-bottom:1px solid var(--border2); border-radius:var(--r-xl) var(--r-xl) 0 0; -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent); mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent); }
+.admin-menu-grid::-webkit-scrollbar { display:none; }
+.admin-menu-card { flex:none; flex-direction:row; gap:8px; min-height:42px; padding:9px 15px; border-radius:99px; scroll-snap-align:start; white-space:nowrap; -webkit-tap-highlight-color:transparent; }
+.admin-menu-card i { font-size:14px; }
+.admin-menu-card span { font-size:12.5px; }
+.tab-content { scroll-margin-top:72px; }
+
+/* Formularios en bloques con título */
+.admin-bloque { background:rgba(255,255,255,.025); border:1px solid var(--border2); border-radius:16px; padding:14px; margin-bottom:14px; }
+.admin-bloque > .admin-label { margin-bottom:12px; }
+.admin-bloque > .admin-label:not(:first-child) { margin-top:6px; }
+.admin-bloque > :last-child { margin-bottom:0; }
+.admin-lista-titulo { margin-top:26px; padding-top:18px; border-top:1px solid var(--border2); }
+.admin-guardar-barra { position:sticky; bottom:calc(10px + env(safe-area-inset-bottom)); z-index:25; padding:10px 0 4px; background:linear-gradient(180deg,transparent,var(--card) 38%); }
+
+/* Cajones plegados: acciones delicadas y ejemplos */
+details.zona-delicada, details.zona-ejemplos { margin-top:20px; border-radius:14px; }
+details.zona-delicada { border:1px dashed rgba(255,92,92,.38); background:rgba(255,92,92,.04); }
+details.zona-ejemplos { border:1px solid var(--border2); background:rgba(255,255,255,.02); }
+details.zona-delicada > summary, details.zona-ejemplos > summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:46px; padding:0 14px; font-size:12.5px; font-weight:700; -webkit-tap-highlight-color:transparent; }
+details.zona-delicada > summary { color:var(--red); }
+details.zona-ejemplos > summary { color:var(--gold); }
+details.zona-delicada > summary::-webkit-details-marker, details.zona-ejemplos > summary::-webkit-details-marker { display:none; }
+details > summary .chevron { font-size:11px; transition:transform .2s var(--ease); }
+details[open] > summary .chevron { transform:rotate(180deg); }
+details.zona-delicada .zona-cuerpo { padding:0 14px 14px; }
+details.zona-delicada .zona-cuerpo > button { margin-top:0 !important; }
+details.zona-ejemplos .zona-cuerpo { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:0 14px 14px; }
+details.zona-ejemplos .zona-cuerpo > button { margin-top:0 !important; font-size:12px; padding:12px 8px; }
+@media (max-width:400px) { details.zona-ejemplos .zona-cuerpo { grid-template-columns:1fr; } }
+
+/* Comodidad al escribir y tocar */
+.admin-input, select.admin-input { font-size:16px; min-height:48px; }
+.form-textarea { font-size:16px; }
+.dest-all-row, .dest-row { min-height:40px; }
+.dest-row input, .dest-all-row input { width:18px; height:18px; }
+.admin-input[type=file] { padding:11px 14px; font-size:14px; }
+@media (hover:none) { .admin-menu-card:hover { transform:none; } }
 </style>
 </head>
 <body>
@@ -6631,6 +6679,8 @@ window.switchTab = (n, b) => {
   document.querySelectorAll('.admin-menu-card').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
   b.classList.add('active'); document.getElementById('tab-'+n).style.display='block';
+  // Solo visual: centra el botón activo en la barra y lleva la vista al inicio de la pestaña elegida.
+  try { b.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' }); document.getElementById('tab-'+n).scrollIntoView({ block:'start', behavior:'smooth' }); } catch (e) {}
 };
 window.showModal = (t, d, icono) => {
   document.getElementById('modal-title').innerText=t;
