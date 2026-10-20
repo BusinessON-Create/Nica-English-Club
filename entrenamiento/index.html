@@ -246,7 +246,11 @@ function hl(){$('#tl').classList.add('has');document.querySelectorAll('.node').f
 function pick(id,ids){S.sel=id;S.hl=ids||[id];document.querySelectorAll('.mc').forEach(e=>e.classList.toggle('sel',S.hl.includes(e.dataset.id)));hl();aim(id);if(S.open)fill()}
 
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-function say(txt,sl){return new Promise(r=>{const u=new SpeechSynthesisUtterance(txt);u.lang=$('#acc').value;u.rate=(sl||$('#slow').checked)?.65:.95;u.onend=u.onerror=r;speechSynthesis.speak(u)})}
+// Prefiere una voz LOCAL del dispositivo (responde al instante); las voces en línea (Google/Natural) tardan en bajar el audio
+function pickVoice(){let vs=[];try{vs=speechSynthesis.getVoices()||[]}catch(e){}const L=$('#acc').value,nl=v=>(v.lang||'').replace('_','-'),ex=vs.filter(v=>nl(v)==L),loc=ex.filter(v=>v.localService);
+ return loc[0]||ex[0]||vs.find(v=>v.localService&&nl(v).slice(0,2)=='en')||null}
+try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',pickVoice)}catch(e){}
+function say(txt,sl){return new Promise(r=>{const u=new SpeechSynthesisUtterance(txt);u.lang=$('#acc').value;const v=pickVoice();if(v)u.voice=v;u.rate=(sl||$('#slow').checked)?.65:.95;u.onend=u.onerror=r;speechSynthesis.speak(u)})}
 function halt(){S.run++;speechSynthesis.cancel();if(S.rec){const r=S.rec;S.rec=null;try{r.abort()}catch(e){}setMic(0)}$('#st').textContent=''}
 /* ===== SPEAKING: reconocimiento de voz + puntaje ===== */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -261,7 +265,13 @@ const SFX={"'s":['is','has'],"'d":['had','would'],"'ve":['have'],"'ll":['will'],
 const HOM=[['to','too','two','2'],['there','their'],['write','right'],['no','know'],['by','buy','bye'],['here','hear'],['for','four','4'],['one','won','1'],['wait','weight'],['see','sea'],['read','red'],['our','hour'],['would','wood'],['wear','where'],['new','knew'],['week','weak'],['son','sun'],['meet','meat'],['ate','eight','8']];
 const HM={};HOM.forEach((g,i)=>g.forEach(w=>HM[w]=i));
 // Convierte texto en "tokens"; cada token es una lista de formas aceptables (she's → she + [is|has])
-function toks(s){const out=[],ws=s.toLowerCase().replace(/[’`´]/g,"'").replace(/[^a-z0-9' ]+/g,' ').split(/\s+/).filter(Boolean);
+// Normaliza horas y siglas antes de comparar: "8:00 p.m." = "8 PM", "U.S." = "US", "2,024" = "2024"
+const nt=s=>s.replace(/\b(?:[a-z]\.){2,}/gi,m=>m.replace(/\./g,''))
+ .replace(/(\d{1,2}):([0-5]\d)\s*([ap]m)\b/gi,(m,h,mi,ap)=>mi=='00'?h+' '+ap:h+' '+mi+' '+ap)
+ .replace(/(\d)\s*([ap]m)\b/gi,'$1 $2')
+ .replace(/(\d{1,2}):00\b/g,'$1')
+ .replace(/(\d),(?=\d{3}\b)/g,'$1');
+function toks(s){const out=[],ws=nt(s).toLowerCase().replace(/[’`´]/g,"'").replace(/[^a-z0-9' ]+/g,' ').split(/\s+/).filter(Boolean);
  for(let i=0;i<ws.length;i++){let w=ws[i].replace(/^'+|'+$/g,'');if(!w)continue;
   if(isNW(w)){let k=i,r=[];while(k<ws.length&&isNW(ws[k]))r.push(ws[k++]);out.push([numVal(r)]);i=k-1;continue}
   if(CTR[w]){CTR[w].forEach(x=>out.push([x]));continue}
