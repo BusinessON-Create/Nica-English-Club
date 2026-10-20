@@ -316,6 +316,24 @@
             opacity: 0; pointer-events: none; transform: translate(-50%, 30px) scale(0.9);
             transition: opacity 0.25s, transform 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
         }
+        .toast.has-undo.show { pointer-events: auto; }
+        .toast .undo-btn { margin-left: 6px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); font-weight: 800; font-size: 0.82rem; cursor: pointer; }
+        .toast .undo-btn:active { transform: scale(0.95); }
+        .verb-card { transition: opacity 0.28s, transform 0.28s; }
+        .verb-card.fading { opacity: 0; transform: scale(0.94); }
+        .listen-box { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 4px 0 2px; }
+        .listen-btn { width: 112px; height: 112px; border-radius: 50%; border: none; background: var(--accent); color: var(--accent-ink); font-size: 2.6rem; display: grid; place-items: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.35); transition: transform 0.12s; }
+        .listen-btn:active { transform: scale(0.93); }
+        .listen-btn.playing { animation: listen-pulse 0.9s ease-out; }
+        @keyframes listen-pulse { 0% { box-shadow: 0 0 0 0 rgba(250,204,21,0.55); } 100% { box-shadow: 0 0 0 28px rgba(250,204,21,0); } }
+        .listen-cap { font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+        .listen-hint { font-size: 0.9rem; color: var(--muted); }
+        .listen-hint b { color: var(--text); }
+        .option-btn .opt-main { display: flex; flex-direction: column; gap: 2px; }
+        .option-btn .opt-sub { font-size: 0.72rem; font-weight: 600; color: var(--muted); }
+        .option-correct .opt-sub, .option-wrong .opt-sub { color: inherit !important; opacity: 0.85; }
+        .text-input.invalid { border-color: var(--bad) !important; animation: nec-shake 0.35s; }
+        @keyframes nec-shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
         .toast.done { border-color: var(--ok); }
         .toast .ti { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: var(--accent); color: var(--accent-ink); flex: none; }
@@ -482,7 +500,14 @@
                     <div class="setup-title">
                         <i class="fas fa-sliders"></i>
                         <h2>Configura tu entrenamiento</h2>
-                        <p>Tienes 3 vidas y 10 segundos por pregunta.</p>
+                        <p id="setupSub">Tienes 3 vidas y 10 segundos por pregunta.</p>
+                    </div>
+                    <div class="field">
+                        <label for="gameTypeSelect">Tipo de juego</label>
+                        <select id="gameTypeSelect" class="select" onchange="updateSetup()">
+                            <option value="trivia">Trivia clásica</option>
+                            <option value="listen">Listening (escuchar y elegir)</option>
+                        </select>
                     </div>
                     <div class="field">
                         <label for="sourceSelect">Modo</label>
@@ -491,7 +516,7 @@
                             <option value="favs">Práctica con mis favoritos</option>
                         </select>
                     </div>
-                    <div class="field">
+                    <div class="field" id="modeField">
                         <label for="modeSelect">Tipo de reto</label>
                         <select id="modeSelect" class="select">
                             <option value="mixed">Mixto (todo)</option>
@@ -506,7 +531,7 @@
                     </div>
                     <div class="field" id="typeField">
                         <label for="typeSelect">Verbos</label>
-                        <select id="typeSelect" class="select">
+                        <select id="typeSelect" class="select" onchange="updateSetup()">
                             <option value="all">Todos</option>
                             <option value="irregular">Solo irregulares</option>
                             <option value="regular">Solo regulares</option>
@@ -518,6 +543,7 @@
                             <option value="10">10 preguntas</option>
                             <option value="15">15 preguntas</option>
                             <option value="20">20 preguntas</option>
+                            <option value="all">Todos los verbos</option>
                         </select>
                     </div>
                     <button onclick="startGame()" id="startBtn" class="btn btn-accent btn-block" style="margin-top:8px;">Empezar</button>
@@ -536,6 +562,11 @@
                     <div class="prompt">
                         <p id="instructionText" class="instruction"></p>
                         <h2 id="promptVerb"></h2>
+                        <div class="listen-box hidden" id="listenBox">
+                            <button class="listen-btn" id="listenBtn" aria-label="Escuchar la palabra"><i class="fas fa-volume-high"></i></button>
+                            <span class="listen-cap">Toca para escuchar otra vez</span>
+                            <span class="listen-hint" id="listenHint"></span>
+                        </div>
                         <div class="prompt-tools">
                             <button class="icon-btn" id="replayBtn" aria-label="Escuchar el verbo otra vez"><i class="fas fa-volume-high"></i></button>
                             <button class="icon-btn" id="gameFav" aria-label="Guardar en favoritos" aria-pressed="false"><i class="far fa-heart"></i></button>
@@ -543,7 +574,7 @@
                     </div>
 
                     <div id="optionsGrid" class="options"></div>
-                    <p class="kbd-hint">Atajos: teclas 1–4 para responder · Enter para continuar</p>
+                    <p class="kbd-hint" id="kbdHint">Atajos: teclas 1–4 para responder · Enter para continuar</p>
 
                     <div id="gameExample" class="hidden">
                         <div class="example-box" id="exampleBox"></div>
@@ -964,7 +995,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
        anterior abierta o en caché se actualizan solos, y conservan
        sus favoritos porque los datos viven aparte, en el navegador.
        ========================================================== */
-    const APP_VERSION = '2026.10.19.6';
+    const APP_VERSION = '2026.10.20.1';
 
     /* ---------- Sonidos (sin archivos: se generan en el navegador) ---------- */
     let audioCtx;
@@ -1075,8 +1106,8 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         store.set(MISS_KEY, JSON.stringify(misses));
         if (misses[k] % 2 !== 0) return;              // cada 2do fallo
         const f = favs[k];
-        if (f && f.s === 'learning') return;           // ya está en Aprendiendo
-        if (f) f.s = 'learning'; else favs[k] = { s: 'learning', t: Date.now() };
+        if (!f || f.s === 'learning') return;          // solo aplica a favoritos; si ya está en Aprendiendo no hace nada
+        f.s = 'learning';
         saveFavs();
         refreshFavUI(k);
         setTimeout(() => celebrate(v.infinitive, 'learning', true), 900); // después del sonido de error
@@ -1100,7 +1131,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         t.className = 'toast ' + st;
         t.innerHTML = `<span class="ti"><i class="fas ${done ? 'fa-circle-check' : 'fa-dumbbell'}"></i></span>
             <span class="tx"><strong>${done ? '¡' + esc(name) + ' está listo!' : esc(name) + ' pasó a Aprendiendo'}</strong>
-            <span>${done ? 'Lo moviste a tu lista de Listo' : auto ? 'Lo fallaste dos veces: lo guardamos en tus favoritos' : 'Sigue practicándolo, vas bien'}</span></span>`;
+            <span>${done ? 'Lo moviste a tu lista de Listo' : auto ? 'Lo fallaste dos veces: lo regresamos a Aprendiendo' : 'Sigue practicándolo, vas bien'}</span></span>`;
         if (done) {
             const colors = ['#22c55e', '#FACC15', '#60a5fa', '#f472b6', '#f5f2ee'];
             for (let i = 0; i < 16; i++) {
@@ -1145,17 +1176,45 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         saveFavs();
         refreshFavUI(k);
     }
+    function favUndoToast(k) {
+        const v = verbsDatabase.find(x => vKey(x) === k); if (!v) return;
+        const t = $('toast');
+        clearTimeout(toastTimer);
+        t.className = 'toast has-undo';
+        t.innerHTML = `<span class="ti"><i class="fas fa-heart"></i></span>
+            <span class="tx"><strong>${esc(v.infinitive)}</strong><span>Guardado en Mis favoritos</span></span>
+            <button class="undo-btn" type="button">Deshacer</button>`;
+        t.querySelector('.undo-btn').onclick = () => {
+            if (favs[k]) { delete favs[k]; saveFavs(); refreshFavUI(k); }
+            if (!$('verbListSection').classList.contains('hidden')) renderVerbs();
+            t.classList.remove('show');
+        };
+        void t.offsetWidth;
+        t.classList.add('show');
+        toastTimer = setTimeout(() => t.classList.remove('show'), 4500);
+    }
     function setStatus(k, st) {
         if (!favs[k] || !STATUSES.some(x => x.id === st)) return;
         const changed = favs[k].s !== st;
         favs[k].s = st;
+        if (changed && st === 'done' && misses[k]) { delete misses[k]; store.set(MISS_KEY, JSON.stringify(misses)); } // conteo de fallos desde cero
         saveFavs();
         refreshFavUI(k);
         if (changed && st !== 'new') celebrate(verbsDatabase.find(v => vKey(v) === k).infinitive, st);
     }
     document.addEventListener('click', e => {
         const f = e.target.closest('[data-fav]');
-        if (f && f.dataset.fav) { toggleFav(f.dataset.fav); return; }
+        if (f && f.dataset.fav) {
+            const k = f.dataset.fav, card = f.closest('#verbsGrid .verb-card');
+            if (card && !favs[k]) {                                   // se guarda desde la Base: desaparece de la lista
+                toggleFav(k);
+                card.classList.add('fading');
+                setTimeout(renderVerbs, 280);
+                favUndoToast(k);
+                return;
+            }
+            toggleFav(k); return;
+        }
         const st = e.target.closest('[data-status]');
         if (st) setStatus(st.dataset.verb, st.dataset.status);
     });
@@ -1210,17 +1269,20 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
 
     function renderVerbs() {
         const q = $('verbSearch').value.trim().toLowerCase();
-        const list = verbsDatabase.filter(v => {
-            if (listFilter === 'irregular' && !v.irregular) return false;
-            if (listFilter === 'regular' && v.irregular) return false;
-            if (!q) return true;
-            return v.infinitive.toLowerCase().includes(q) || v.translation.toLowerCase().includes(q) || v.past.toLowerCase().includes(q) || v.participle.toLowerCase().includes(q);
-        });
-        $('listCount').textContent = `${list.length} de ${verbsDatabase.length} verbos. Toca cualquier forma para escucharla.`;
+        const inFilter = v => !(listFilter === 'irregular' && !v.irregular) && !(listFilter === 'regular' && v.irregular);
+        const base = verbsDatabase.filter(inFilter);
+        const visible = base.filter(v => !favs[vKey(v)]);          // los favoritos viven solo en "Mis favoritos"
+        const hiddenFavs = base.length - visible.length;
+        const list = visible.filter(v => !q || v.infinitive.toLowerCase().includes(q) || v.translation.toLowerCase().includes(q) || v.past.toLowerCase().includes(q) || v.participle.toLowerCase().includes(q));
+        $('listCount').textContent = `${list.length} de ${visible.length} verbos. Toca cualquier forma para escucharla.` + (hiddenFavs ? (hiddenFavs === 1 ? ' (1 ya está en tus favoritos)' : ` (${hiddenFavs} ya están en tus favoritos)`) : '');
 
         const grid = $('verbsGrid');
-        if (!list.length) { grid.innerHTML = '<p class="empty">No encontramos ese verbo. Prueba con otra palabra.</p>'; return; }
-
+        if (!list.length) {
+            grid.innerHTML = (!q && !visible.length && hiddenFavs)
+                ? '<div style="text-align:center;"><p class="empty">¡Ya guardaste todos estos verbos en tus favoritos! 🎉</p><button class="btn btn-accent" onclick="showFavs()"><i class="fas fa-heart"></i> Ver mis favoritos</button></div>'
+                : '<p class="empty">No encontramos ese verbo. Prueba con otra palabra.</p>';
+            return;
+        }
         grid.innerHTML = list.map(v => verbCard(v, false)).join('');
     }
 
@@ -1311,12 +1373,24 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         $('shareToggle').setAttribute('aria-expanded', open);
         if (open) $('sharePanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-    const shareNote = t => { $('shareMsg').textContent = t; };
+    const shareNote = t => { $('shareMsg').classList.remove('warn'); $('shareMsg').textContent = t; };
 
+    function requireName() {
+        const inp = $('studentName'), name = inp.value.trim();
+        if (((name.match(/\p{L}/gu)) || []).length >= 2) { inp.classList.remove('invalid'); return true; }
+        inp.classList.remove('invalid'); void inp.offsetWidth; inp.classList.add('invalid');
+        $('shareMsg').classList.add('warn');
+        $('shareMsg').textContent = 'Escribe tu nombre primero para que tu profe sepa de quién es la lista.';
+        inp.focus();
+        return false;
+    }
+    $('studentName').addEventListener('input', () => { $('studentName').classList.remove('invalid'); if ($('shareMsg').classList.contains('warn')) { $('shareMsg').classList.remove('warn'); $('shareMsg').textContent = ''; } });
     function shareWhatsApp() {
+        if (!requireName()) return;
         window.open(`https://wa.me/${TEACHER_WA}?text=${encodeURIComponent(buildShareText())}`, '_blank', 'noopener');
     }
     async function shareList() {
+        if (!requireName()) return;
         const text = buildShareText();
         if (navigator.share) {
             try { await navigator.share({ title: 'Mi lista de verbos', text }); return; }
@@ -1352,6 +1426,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         participle: 'Forma en participio'
     };
 
+    const getLength = n => $('lengthSelect').value === 'all' ? n : Math.min(n, parseInt($('lengthSelect').value, 10));
     function setupPool() {
         if ($('sourceSelect').value === 'favs') {
             const st = $('favStatusSelect').value || 'all';
@@ -1362,6 +1437,11 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     }
     function updateSetup() {
         const practice = $('sourceSelect').value === 'favs';
+        const listening = $('gameTypeSelect').value === 'listen';
+        $('modeField').classList.toggle('hidden', listening);
+        $('setupSub').textContent = listening
+            ? 'Escuchas una palabra y eliges cómo se escribe. Tienes 3 vidas y 15 segundos por pregunta.'
+            : 'Tienes 3 vidas y 10 segundos por pregunta.';
         $('typeField').classList.toggle('hidden', practice);
         $('favStatusField').classList.toggle('hidden', !practice);
 
@@ -1371,6 +1451,10 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
             return `<option value="${st.id}">${st.label} (${n})</option>`;
         }).join('');
         sel.value = cur;
+
+        const poolN = setupPool().length;
+        const allOpt = $('lengthSelect').querySelector('option[value="all"]');
+        if (allOpt) allOpt.textContent = `Todos los verbos (${poolN})`;
 
         const note = $('setupNote'), btn = $('startBtn');
         btn.disabled = false;
@@ -1383,18 +1467,18 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
                     ? 'No tienes verbos con ese estado. Elige otro o cambia el estado de tus favoritos.'
                     : 'Aún no tienes favoritos. Guarda verbos con el corazón y vuelve a practicar.';
             } else {
-                const q = Math.min(n, parseInt($('lengthSelect').value, 10));
+                const q = getLength(n);
                 note.textContent = `Práctica de ${q} pregunta${q === 1 ? '' : 's'} solo con tus verbos.`;
             }
         }
     }
 
     function startGame() {
-        currentMode = $('modeSelect').value;
-        total = parseInt($('lengthSelect').value, 10);
+        currentMode = $('gameTypeSelect').value === 'listen' ? 'listen' : $('modeSelect').value;
 
         let pool = setupPool();
         if (!pool.length) return;
+        total = getLength(pool.length);
         selectedVerbs = pickVerbs(pool, total, $('sourceSelect').value !== 'favs');
         total = selectedVerbs.length;
 
@@ -1428,6 +1512,27 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         return shuffle([correct, ...picked]);
     }
 
+    // Listening: formas del mismo verbo; las que suenan igual se unen en un solo botón
+    const FORMS = [['infinitive', 'Infinitivo'], ['past', 'Pasado'], ['participle', 'Participio'], ['thirdPerson', '3ra persona'], ['gerund', 'Gerundio']];
+    function listenQuestion(v) {
+        const groups = [];
+        FORMS.forEach(([key, label]) => {
+            const text = v[key]; if (!text) return;
+            const g = groups.find(x => x.text.toLowerCase() === text.toLowerCase());
+            if (g) g.labels.push(label); else groups.push({ text, labels: [label], keys: [key] });
+            if (g) g.keys.push(key);
+        });
+        const played = groups[Math.floor(Math.random() * groups.length)];
+        return { options: shuffle(groups.map(g => ({ text: g.text, sub: g.labels.join(' / ') }))), correct: played.text, sub: played.labels.join(' / ') };
+    }
+    let listenText = '', currentCorrect = '', listenSub = '';
+    function playListen() {
+        if (!listenText) return;
+        const b = $('listenBtn'); b.classList.remove('playing'); void b.offsetWidth; b.classList.add('playing');
+        speak(listenText);
+    }
+    $('listenBtn').addEventListener('click', playListen);
+
     let verbSpeakTimer;
     const VERB_DELAY = 2000; // el verbo se pronuncia 2 s después de aparecer
     const cancelVerbSpeak = () => clearTimeout(verbSpeakTimer);
@@ -1436,23 +1541,47 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         answered = false;
         cancelVerbSpeak();
         const v = selectedVerbs[currentIndex];
-        currentTask = currentMode === 'mixed'
-            ? ['translation', 'past', 'participle'][Math.floor(Math.random() * 3)]
+        const listening = currentMode === 'listen';
+        currentTask = listening ? 'listen'
+            : currentMode === 'mixed' ? ['translation', 'past', 'participle'][Math.floor(Math.random() * 3)]
             : currentMode;
 
         $('currentNum').textContent = currentIndex + 1;
-        $('promptVerb').textContent = v.infinitive;
-        $('instructionText').textContent = LABELS[currentTask];
+        $('promptVerb').classList.toggle('hidden', listening);
+        $('replayBtn').classList.toggle('hidden', listening);
+        $('listenBox').classList.toggle('hidden', !listening);
+        $('kbdHint').textContent = listening ? 'Atajos: teclas 1–5 para responder · Enter para continuar' : 'Atajos: teclas 1–4 para responder · Enter para continuar';
+        let opts;
+        if (listening) {
+            const q = listenQuestion(v);
+            opts = q.options; currentCorrect = q.correct; listenSub = q.sub;
+            listenText = q.correct;
+            $('promptVerb').textContent = '';
+            $('instructionText').textContent = 'Escucha y elige la palabra correcta';
+            $('listenHint').innerHTML = `Pista: <b>${esc(v.translation)}</b>`;
+        } else {
+            $('promptVerb').textContent = v.infinitive;
+            $('instructionText').textContent = LABELS[currentTask];
+            currentCorrect = v[currentTask];
+            opts = generateOptions(v, currentTask);
+        }
         syncGameFav();
 
         const grid = $('optionsGrid');
         grid.innerHTML = '';
-        generateOptions(v, currentTask).forEach((opt, idx) => {
+        opts.forEach((o, idx) => {
+            const opt = typeof o === 'string' ? o : o.text;
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.dataset.value = opt;
             const label = document.createElement('span');
-            label.textContent = opt;
+            if (typeof o === 'string') label.textContent = opt;
+            else {
+                label.className = 'opt-main';
+                const m = document.createElement('span'); m.textContent = opt;
+                const sb = document.createElement('span'); sb.className = 'opt-sub'; sb.textContent = o.sub;
+                label.append(m, sb);
+            }
             const icon = document.createElement('i');
             icon.className = 'fas fa-chevron-right';
             const key = document.createElement('kbd');
@@ -1465,20 +1594,22 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
 
         $('gameExample').classList.add('hidden');
         $('nextBtn').classList.add('hidden');
-        verbSpeakTimer = setTimeout(() => { if (!answered) speak(v.infinitive); }, VERB_DELAY);
+        if (listening) verbSpeakTimer = setTimeout(() => { if (!answered) playListen(); }, 500);
+        else verbSpeakTimer = setTimeout(() => { if (!answered) speak(v.infinitive); }, VERB_DELAY);
         startTimer();
     }
 
     function startTimer() {
         clearInterval(timerInterval);
-        timeLeft = 100;
+        const ticks = currentMode === 'listen' ? 150 : 100; // x 100 ms = 15 s en listening, 10 s en trivia
+        timeLeft = ticks;
         const bar = $('timerBar');
         bar.style.width = '100%';
         bar.classList.remove('low');
         timerInterval = setInterval(() => {
-            timeLeft -= 1; // 100 ticks x 100 ms = 10 segundos
-            bar.style.width = timeLeft + '%';
-            bar.classList.toggle('low', timeLeft < 30);
+            timeLeft -= 1;
+            bar.style.width = (timeLeft / ticks * 100) + '%';
+            bar.classList.toggle('low', timeLeft / ticks < 0.3);
             if (timeLeft <= 0) { clearInterval(timerInterval); autoFail(); }
         }, 100);
     }
@@ -1498,6 +1629,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         $('exampleBox').dataset.speak = v.example;
         $('exampleBox').innerHTML = `"${esc(v.example)}"<span class="tr">${esc(v.exampleEs)}</span>`;
         $('gameExample').classList.remove('hidden');
+        if (currentTask === 'listen') $('instructionText').textContent = `Era: ${currentCorrect} · ${listenSub} · ${v.translation}`;
 
         if (lives <= 0) {
             setTimeout(showResults, 1800);
@@ -1512,7 +1644,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         answered = true;
         cancelVerbSpeak();
         clearInterval(timerInterval);
-        const correct = selectedVerbs[currentIndex][currentTask];
+        const correct = currentCorrect;
 
         if (selected === correct) {
             score++; streak++;
@@ -1544,14 +1676,15 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         updateLives();
         registerMiss(selectedVerbs[currentIndex]);
         showStreak();
-        revealCorrect(selectedVerbs[currentIndex][currentTask]);
+        revealCorrect(currentCorrect);
         playWrong();
-        speakAnswer(selectedVerbs[currentIndex][currentTask]);
+        speakAnswer(currentCorrect);
         afterAnswer();
     }
 
     // Solo se pronuncia la respuesta si está en inglés (pasado / participio); la traducción no se lee
     function speakAnswer(ans) {
+        if (currentTask === 'listen') return;
         if (currentTask !== 'translation') setTimeout(() => speak(ans), 450);
     }
     document.addEventListener('keydown', e => {
@@ -1559,7 +1692,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         const ae = document.activeElement;
         if (ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) return;
-        if (/^[1-4]$/.test(e.key) && !answered) {
+        if (/^[1-5]$/.test(e.key) && !answered) {
             const b = $('optionsGrid').children[parseInt(e.key, 10) - 1];
             if (b) { e.preventDefault(); b.click(); }
         } else if ((e.key === 'Enter' || e.key === ' ') && !$('nextBtn').classList.contains('hidden')) {
