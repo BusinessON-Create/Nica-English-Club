@@ -458,9 +458,7 @@
                 <div id="homeProgress" class="progress-wrap"></div>
                 <div class="guide-wrap">
                     <button type="button" class="guide-btn" id="guideBtn" onclick="openGuide()"><i class="fas fa-circle-question"></i> Guía de uso</button>
-                    <p class="guide-warn" id="syncWarn"><i class="fas fa-triangle-exclamation"></i> Tus datos se guardan solo en este dispositivo. Usa siempre el mismo para no perder tu progreso.</p>
-                    <p class="guide-warn" id="syncStatus"></p>
-                    <button type="button" class="guide-btn hidden" id="syncBtn" onclick="window.VerbLabSyncNow && window.VerbLabSyncNow()"><i class="fas fa-rotate"></i> Sincronizar ahora</button>
+                    <p class="guide-warn hidden" id="syncWarn"></p>
                 </div>
             </div>
         </section>
@@ -680,9 +678,8 @@
 
             <details open>
                 <summary>💾 Cuida tu progreso</summary>
-                <p>Tus favoritos, tus estados y tu racha se guardan en tu cuenta de Nica English Club cuando hay internet. Así los ves igual en <strong>cualquier celular o computadora</strong>: solo entra con tu misma cuenta de Google.</p>
-                <p>Sin internet no pasa nada: todo se guarda en tu dispositivo y se sube cuando vuelvas a conectarte. Toca <strong>Sincronizar ahora</strong> si quieres hacerlo tú.</p>
-                <p class="guide-alert">⚠️ Después de practicar, abre la app con internet al menos una vez. Si borras los datos del navegador antes de que se sincronice, podrías perder lo último que hiciste.</p>
+                <p>Tus favoritos, tus estados y tu racha se guardan <strong>solos</strong> en tu cuenta de Nica English Club. Para verlos en otro celular o computadora, solo entra con <strong>tu misma cuenta de Google</strong>.</p>
+                <p>Si practicas sin internet no pasa nada: se guarda en tu dispositivo y se sube cuando vuelvas a conectarte.</p>
             </details>
 
             <button type="button" class="btn btn-accent btn-block" onclick="closeGuide()" style="margin-top:14px;">¡Entendido, a practicar!</button>
@@ -1084,7 +1081,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
        anterior abierta o en caché se actualizan solos, y conservan
        sus favoritos porque los datos viven aparte, en el navegador.
        ========================================================== */
-    const APP_VERSION = '2026.10.20.3';
+    const APP_VERSION = '2026.10.20.4';
 
     /* ---------- Sonidos (sin archivos: se generan en el navegador) ---------- */
     let audioCtx;
@@ -1950,14 +1947,11 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
             return merged;
         },
         clearStash() { if (stash) { stash = null; try { localStorage.removeItem(STASH_PREFIX + syncId); } catch (e) {} } },
-        status(kind, ts) {
-            const w = $('syncWarn'), st = $('syncStatus'), b = $('syncBtn');
-            if (kind === 'ok') {
-                w.innerHTML = '<i class="fas fa-cloud"></i> Tu progreso se guarda en tu cuenta y te sigue a cualquier dispositivo.';
-                st.textContent = 'Última sincronización: ' + new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-                b.classList.remove('hidden');
-            } else if (kind === 'syncing') st.textContent = 'Sincronizando…';
-            else if (kind === 'error') { st.textContent = 'Sin conexión con la nube: se sincronizará cuando vuelvas a conectarte.'; b.classList.remove('hidden'); }
+        // Silencioso: solo avisa si la nube falla; el alumno no ve nada mientras todo va bien
+        status(kind) {
+            const w = $('syncWarn');
+            if (kind === 'error') { w.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Sin conexión: tu progreso queda en este dispositivo y se guardará en tu cuenta cuando vuelvas a conectarte.'; w.classList.remove('hidden'); }
+            else if (kind === 'ok') w.classList.add('hidden');
         }
     };
 
