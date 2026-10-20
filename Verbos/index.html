@@ -316,6 +316,29 @@
             opacity: 0; pointer-events: none; transform: translate(-50%, 30px) scale(0.9);
             transition: opacity 0.25s, transform 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
         }
+        .guide-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 14px; text-align: center; }
+        .guide-btn { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface-2); color: var(--text); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: border-color 0.15s, transform 0.1s; }
+        .guide-btn:hover { border-color: var(--accent); }
+        .guide-btn:active { transform: scale(0.96); }
+        .guide-warn { font-size: 0.74rem; color: var(--muted); max-width: 340px; line-height: 1.4; }
+        .guide-warn i { color: var(--accent); margin-right: 3px; }
+        .guide-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, 0.65); display: flex; align-items: center; justify-content: center; padding: 16px; }
+        .guide-panel { width: 100%; max-width: 520px; max-height: calc(100vh - 32px); overflow-y: auto; background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 20px 18px 18px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); }
+        .guide-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+        .guide-head h2 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.03em; }
+        .guide-intro { color: var(--muted); font-size: 0.88rem; margin-bottom: 12px; }
+        .guide-panel details { background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 14px; margin-bottom: 8px; padding: 0 14px; }
+        .guide-panel details[open] { border-color: var(--accent); }
+        .guide-panel summary { cursor: pointer; font-weight: 800; font-size: 0.95rem; padding: 13px 0; list-style: none; }
+        .guide-panel summary::-webkit-details-marker { display: none; }
+        .guide-panel summary::after { content: '+'; float: right; color: var(--muted); font-size: 1.2rem; line-height: 1; }
+        .guide-panel details[open] summary::after { content: '–'; }
+        .guide-panel details p, .guide-panel details li { font-size: 0.86rem; line-height: 1.5; color: var(--text); }
+        .guide-panel details p { margin-bottom: 8px; }
+        .guide-panel details ul { padding-left: 18px; margin-bottom: 12px; display: grid; gap: 5px; }
+        .guide-panel details > :last-child { margin-bottom: 14px; }
+        .guide-alert { background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.45); border-radius: 12px; padding: 10px 12px; }
+        body.guide-open { overflow: hidden; }
         .toast.has-undo.show { pointer-events: auto; }
         .toast .undo-btn { margin-left: 6px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); font-weight: 800; font-size: 0.82rem; cursor: pointer; }
         .toast .undo-btn:active { transform: scale(0.95); }
@@ -433,6 +456,12 @@
                     <div><strong id="doneCount">0</strong>aprendidos</div>
                 </div>
                 <div id="homeProgress" class="progress-wrap"></div>
+                <div class="guide-wrap">
+                    <button type="button" class="guide-btn" id="guideBtn" onclick="openGuide()"><i class="fas fa-circle-question"></i> Guía de uso</button>
+                    <p class="guide-warn" id="syncWarn"><i class="fas fa-triangle-exclamation"></i> Tus datos se guardan solo en este dispositivo. Usa siempre el mismo para no perder tu progreso.</p>
+                    <p class="guide-warn" id="syncStatus"></p>
+                    <button type="button" class="guide-btn hidden" id="syncBtn" onclick="window.VerbLabSyncNow && window.VerbLabSyncNow()"><i class="fas fa-rotate"></i> Sincronizar ahora</button>
+                </div>
             </div>
         </section>
 
@@ -500,14 +529,7 @@
                     <div class="setup-title">
                         <i class="fas fa-sliders"></i>
                         <h2>Configura tu entrenamiento</h2>
-                        <p id="setupSub">Tienes 3 vidas y 10 segundos por pregunta.</p>
-                    </div>
-                    <div class="field">
-                        <label for="gameTypeSelect">Tipo de juego</label>
-                        <select id="gameTypeSelect" class="select" onchange="updateSetup()">
-                            <option value="trivia">Trivia clásica</option>
-                            <option value="listen">Listening (escuchar y elegir)</option>
-                        </select>
+                        <p id="setupSub">Tienes 3 vidas. Cada pregunta dura 10 segundos (15 en Listening).</p>
                     </div>
                     <div class="field">
                         <label for="sourceSelect">Modo</label>
@@ -523,6 +545,7 @@
                             <option value="past">Pasado simple</option>
                             <option value="participle">Participio</option>
                             <option value="translation">Traducción</option>
+                            <option value="listen">Listening</option>
                         </select>
                     </div>
                     <div class="field hidden" id="favStatusField">
@@ -599,6 +622,72 @@
             </div>
         </section>
     </main>
+
+    <div id="guideOverlay" class="guide-overlay hidden" onclick="if(event.target===this)closeGuide()">
+        <div class="guide-panel" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+            <div class="guide-head">
+                <h2 id="guideTitle">👋 ¡Bienvenido a Verb Lab!</h2>
+                <button type="button" class="icon-btn" id="guideClose" onclick="closeGuide()" aria-label="Cerrar guía"><i class="fas fa-xmark"></i></button>
+            </div>
+            <p class="guide-intro">Aquí entrenas tus verbos en inglés a tu ritmo. Toca cada tema para ver cómo funciona.</p>
+
+            <details>
+                <summary>📚 Base de verbos</summary>
+                <p>Aquí están todos los verbos con sus formas: pasado, participio, 3ra persona y gerundio.</p>
+                <ul>
+                    <li>Toca cualquier forma para <strong>escuchar cómo se pronuncia</strong>.</li>
+                    <li>Toca el corazón ❤️ para guardar un verbo en <strong>Mis favoritos</strong>. Desaparece de la lista para que veas solo los que te faltan.</li>
+                    <li>¿Te equivocaste? Toca <strong>Deshacer</strong> en el aviso que aparece abajo.</li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>❤️ Mis favoritos y tus estados</summary>
+                <p>Cada favorito tiene un estado para que sepas cómo vas:</p>
+                <ul>
+                    <li>🌱 <strong>Nuevo:</strong> acabas de guardarlo.</li>
+                    <li>💪 <strong>Aprendiendo:</strong> lo estás practicando.</li>
+                    <li>✅ <strong>Listo:</strong> ya lo dominas.</li>
+                </ul>
+                <p>Si marcas un verbo como Listo pero lo fallas <strong>dos veces</strong> en la trivia, vuelve solito a Aprendiendo. ¡Así no se te olvida!</p>
+            </details>
+
+            <details>
+                <summary>🎮 Trivia</summary>
+                <ul>
+                    <li>Tienes <strong>3 vidas</strong> y 10 segundos por pregunta.</li>
+                    <li>Elige el tipo de reto: Mixto, Pasado, Participio, Traducción o Listening.</li>
+                    <li>Juega con <strong>10, 15, 20 o todos</strong> los verbos, o practica solo con tus favoritos.</li>
+                    <li>Si aciertas seguido, ganas una <strong>racha</strong> 🔥. ¡Intenta superar la tuya!</li>
+                    <li>Atajos en computadora: teclas 1 a 5 para responder y Enter para continuar.</li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>🎧 Listening</summary>
+                <ul>
+                    <li>Suena una forma de un verbo. Escúchala y elige <strong>cómo se escribe</strong>.</li>
+                    <li>Tienes <strong>15 segundos</strong>. Toca el botón 🔊 las veces que necesites.</li>
+                    <li>Te damos la traducción como pista.</li>
+                    <li>Algunas formas suenan igual (como <em>worked</em> en pasado y participio). Las juntamos en una sola opción, así no hay trampa.</li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>📲 Enviar tu lista a tu profe</summary>
+                <p>Entra a Mis favoritos, toca <strong>Compartir</strong>, escribe tu nombre y envía tu lista por WhatsApp. El nombre es obligatorio para que tu profe sepa de quién es.</p>
+            </details>
+
+            <details open>
+                <summary>💾 Cuida tu progreso</summary>
+                <p>Tus favoritos, tus estados y tu racha se guardan en tu cuenta de Nica English Club cuando hay internet. Así los ves igual en <strong>cualquier celular o computadora</strong>: solo entra con tu misma cuenta de Google.</p>
+                <p>Sin internet no pasa nada: todo se guarda en tu dispositivo y se sube cuando vuelvas a conectarte. Toca <strong>Sincronizar ahora</strong> si quieres hacerlo tú.</p>
+                <p class="guide-alert">⚠️ Después de practicar, abre la app con internet al menos una vez. Si borras los datos del navegador antes de que se sincronice, podrías perder lo último que hiciste.</p>
+            </details>
+
+            <button type="button" class="btn btn-accent btn-block" onclick="closeGuide()" style="margin-top:14px;">¡Entendido, a practicar!</button>
+        </div>
+    </div>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
@@ -995,7 +1084,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
        anterior abierta o en caché se actualizan solos, y conservan
        sus favoritos porque los datos viven aparte, en el navegador.
        ========================================================== */
-    const APP_VERSION = '2026.10.20.1';
+    const APP_VERSION = '2026.10.20.3';
 
     /* ---------- Sonidos (sin archivos: se generan en el navegador) ---------- */
     let audioCtx;
@@ -1060,14 +1149,24 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
             Object.keys(src).forEach(k => {
                 const e = src[k];
                 if (!e || typeof e !== 'object') return;
-                if (valid.has(k)) out[k] = { s: STATUSES.some(st => st.id === e.s) ? e.s : 'new', t: Number(e.t) || 0 };
+                if (valid.has(k)) out[k] = { s: STATUSES.some(st => st.id === e.s) ? e.s : 'new', t: Number(e.t) || 0, u: Number(e.u) || 0 };
                 else orphans[k] = e;
             });
             return out;
         } catch (e) { return {}; }
     }
     let favs = loadFavs();
-    const saveFavs = () => store.set(FAV_KEY, JSON.stringify({ v: SCHEMA, favs: { ...orphans, ...favs } }));
+    // Aviso interno: cada vez que algo cambia, la sincronización con la nube (si existe) se entera
+    const notifySync = () => { try { document.dispatchEvent(new Event('verblab-changed')); } catch (e) {} };
+    const saveFavs = () => { store.set(FAV_KEY, JSON.stringify({ v: SCHEMA, favs: { ...orphans, ...favs } })); notifySync(); };
+    // Verbos que el alumno quitó de favoritos (para que no reaparezcan al sincronizar con otro dispositivo)
+    const DEL_KEY = 'nec_verblab_deleted';
+    function loadDeleted() {
+        try { const o = JSON.parse(store.get(DEL_KEY) || '{}'), out = {}; Object.keys(o).forEach(k => { const n = Number(o[k]); if (n > 0) out[k] = n; }); return out; }
+        catch (e) { return {}; }
+    }
+    let deleted = loadDeleted();
+    const saveDeleted = () => store.set(DEL_KEY, JSON.stringify(deleted));
     const favCountTotal = () => Object.keys(favs).length;
     const doneTotal = () => Object.keys(favs).filter(k => favs[k].s === 'done').length;
     function updateStats() {
@@ -1103,11 +1202,11 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     function registerMiss(v) {
         const k = vKey(v);
         misses[k] = (misses[k] || 0) + 1;
-        store.set(MISS_KEY, JSON.stringify(misses));
+        store.set(MISS_KEY, JSON.stringify(misses)); notifySync();
         if (misses[k] % 2 !== 0) return;              // cada 2do fallo
         const f = favs[k];
         if (!f || f.s === 'learning') return;          // solo aplica a favoritos; si ya está en Aprendiendo no hace nada
-        f.s = 'learning';
+        f.s = 'learning'; f.u = Date.now();
         saveFavs();
         refreshFavUI(k);
         setTimeout(() => celebrate(v.infinitive, 'learning', true), 900); // después del sonido de error
@@ -1172,10 +1271,28 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         if (!$('setupZone').classList.contains('hidden')) updateSetup();
     }
     function toggleFav(k) {
-        if (favs[k]) delete favs[k]; else favs[k] = { s: 'new', t: Date.now() };
+        const now = Date.now();
+        if (favs[k]) { delete favs[k]; deleted[k] = now; }
+        else { favs[k] = { s: 'new', t: now, u: now }; delete deleted[k]; }
+        saveDeleted();
         saveFavs();
         refreshFavUI(k);
     }
+    /* ---------- Guía de uso ---------- */
+    let guideReturnFocus = null;
+    function openGuide() {
+        guideReturnFocus = document.activeElement;
+        $('guideOverlay').classList.remove('hidden');
+        document.body.classList.add('guide-open');
+        $('guideClose').focus();
+    }
+    function closeGuide() {
+        $('guideOverlay').classList.add('hidden');
+        document.body.classList.remove('guide-open');
+        if (guideReturnFocus && guideReturnFocus.focus) guideReturnFocus.focus();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('guideOverlay').classList.contains('hidden')) closeGuide(); });
+
     function favUndoToast(k) {
         const v = verbsDatabase.find(x => vKey(x) === k); if (!v) return;
         const t = $('toast');
@@ -1185,7 +1302,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
             <span class="tx"><strong>${esc(v.infinitive)}</strong><span>Guardado en Mis favoritos</span></span>
             <button class="undo-btn" type="button">Deshacer</button>`;
         t.querySelector('.undo-btn').onclick = () => {
-            if (favs[k]) { delete favs[k]; saveFavs(); refreshFavUI(k); }
+            if (favs[k]) toggleFav(k);
             if (!$('verbListSection').classList.contains('hidden')) renderVerbs();
             t.classList.remove('show');
         };
@@ -1196,7 +1313,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     function setStatus(k, st) {
         if (!favs[k] || !STATUSES.some(x => x.id === st)) return;
         const changed = favs[k].s !== st;
-        favs[k].s = st;
+        favs[k].s = st; favs[k].u = Date.now();
         if (changed && st === 'done' && misses[k]) { delete misses[k]; store.set(MISS_KEY, JSON.stringify(misses)); } // conteo de fallos desde cero
         saveFavs();
         refreshFavUI(k);
@@ -1221,7 +1338,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
 
     const BEST_KEY = 'nec_verblab_best_streak';
     const getBest = () => { try { return parseInt(localStorage.getItem(BEST_KEY), 10) || 0; } catch (e) { return 0; } };
-    const setBest = n => { try { localStorage.setItem(BEST_KEY, String(n)); } catch (e) {} };
+    const setBest = n => { try { localStorage.setItem(BEST_KEY, String(n)); } catch (e) {} notifySync(); };
 
     /* ---------- Navegación ---------- */
     function hideAll() {
@@ -1367,7 +1484,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         lines.push('', 'Mejor racha en trivia: ' + getBest());
         return lines.join('\n');
     }
-    $('studentName').addEventListener('input', e => store.set(NAME_KEY, e.target.value.trim()));
+    $('studentName').addEventListener('input', e => { store.set(NAME_KEY, e.target.value.trim()); notifySync(); });
     function toggleSharePanel() {
         const open = $('sharePanel').classList.toggle('hidden') === false;
         $('shareToggle').setAttribute('aria-expanded', open);
@@ -1437,11 +1554,6 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     }
     function updateSetup() {
         const practice = $('sourceSelect').value === 'favs';
-        const listening = $('gameTypeSelect').value === 'listen';
-        $('modeField').classList.toggle('hidden', listening);
-        $('setupSub').textContent = listening
-            ? 'Escuchas una palabra y eliges cómo se escribe. Tienes 3 vidas y 15 segundos por pregunta.'
-            : 'Tienes 3 vidas y 10 segundos por pregunta.';
         $('typeField').classList.toggle('hidden', practice);
         $('favStatusField').classList.toggle('hidden', !practice);
 
@@ -1474,7 +1586,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     }
 
     function startGame() {
-        currentMode = $('gameTypeSelect').value === 'listen' ? 'listen' : $('modeSelect').value;
+        currentMode = $('modeSelect').value;
 
         let pool = setupPool();
         if (!pool.length) return;
@@ -1541,10 +1653,10 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         answered = false;
         cancelVerbSpeak();
         const v = selectedVerbs[currentIndex];
-        const listening = currentMode === 'listen';
-        currentTask = listening ? 'listen'
-            : currentMode === 'mixed' ? ['translation', 'past', 'participle'][Math.floor(Math.random() * 3)]
+        currentTask = currentMode === 'mixed'
+            ? ['translation', 'past', 'participle', 'listen'][Math.floor(Math.random() * 4)]
             : currentMode;
+        const listening = currentTask === 'listen';
 
         $('currentNum').textContent = currentIndex + 1;
         $('promptVerb').classList.toggle('hidden', listening);
@@ -1601,7 +1713,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
 
     function startTimer() {
         clearInterval(timerInterval);
-        const ticks = currentMode === 'listen' ? 150 : 100; // x 100 ms = 15 s en listening, 10 s en trivia
+        const ticks = currentTask === 'listen' ? 150 : 100; // x 100 ms = 15 s en listening, 10 s en trivia
         timeLeft = ticks;
         const bar = $('timerBar');
         bar.style.width = '100%';
@@ -1774,6 +1886,81 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     }
     document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
 
+    /* ---------- Sincronización (puente con la nube) ----------
+       Aquí vive TODA la lógica de combinar datos; el módulo de Firebase (al final del archivo)
+       solo lee y escribe. Regla de oro: nunca se reemplaza, siempre se COMBINA, y gana lo más reciente. */
+    const OWNER_KEY = 'nec_verblab_owner', STASH_PREFIX = 'nec_verblab_stash_';
+    const stable = o => JSON.stringify(o, (k, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.keys(v).sort().reduce((a, x) => (a[x] = v[x], a), {}) : v);
+    function mergeProgress(L, R) {
+        L = L || {}; R = R || {};
+        const fl = L.favs || {}, fr = R.favs || {}, dl = L.deleted || {}, dr = R.deleted || {};
+        const out = { favs: {}, deleted: {}, misses: {}, best: Math.max(Number(L.best) || 0, Number(R.best) || 0), name: String(L.name || R.name || '').slice(0, 40) };
+        const ts = e => e && typeof e === 'object' ? (Number(e.u) || Number(e.t) || 1) : 0;
+        const fromRemote = new Set(), cutoff = Date.now() - 90 * 864e5;
+        new Set([...Object.keys(fl), ...Object.keys(fr), ...Object.keys(dl), ...Object.keys(dr)]).forEach(k => {
+            const tl = ts(fl[k]), tr = ts(fr[k]), td = Math.max(Number(dl[k]) || 0, Number(dr[k]) || 0), tf = Math.max(tl, tr);
+            const win = tl >= tr ? fl[k] : fr[k];
+            if (win && tf >= td) {
+                out.favs[k] = { s: STATUSES.some(x => x.id === win.s) ? win.s : 'new', t: Number(win.t) || tf, u: tf };
+                if (tr > tl) fromRemote.add(k);
+            } else if (td > cutoff) out.deleted[k] = td;
+        });
+        const ml = L.misses || {}, mr = R.misses || {};
+        new Set([...Object.keys(ml), ...Object.keys(mr)]).forEach(k => {
+            const n = Math.max(parseInt(ml[k], 10) || 0, parseInt(mr[k], 10) || 0);
+            const reset = out.favs[k] && out.favs[k].s === 'done' && fromRemote.has(k); // lo marcó Listo en otro dispositivo: fallos desde cero
+            if (n > 0 && !reset) out.misses[k] = n;
+        });
+        return out;
+    }
+    const syncSnapshot = () => ({ favs: { ...orphans, ...favs }, deleted: { ...deleted }, misses: { ...misses }, best: getBest(), name: store.get(NAME_KEY) || '' });
+    let syncId = null, stash = null;
+    function refreshAfterSync() {
+        updateStats(); updateSetup();
+        $('bestStreak').textContent = getBest();
+        if (!$('favSection').classList.contains('hidden')) { $('studentName').value = store.get(NAME_KEY) || ''; renderFavs(); }
+        if (!$('verbListSection').classList.contains('hidden')) renderVerbs();
+        if (!$('gameZone').classList.contains('hidden')) syncGameFav();
+    }
+    function applyProgress(m) {
+        store.set(FAV_KEY, JSON.stringify({ v: SCHEMA, favs: m.favs }));
+        orphans = {}; favs = loadFavs();
+        deleted = { ...m.deleted }; saveDeleted();
+        misses = { ...m.misses }; store.set(MISS_KEY, JSON.stringify(misses));
+        if (m.best !== getBest()) { try { localStorage.setItem(BEST_KEY, String(m.best)); } catch (e) {} }
+        if (m.name !== (store.get(NAME_KEY) || '')) store.set(NAME_KEY, m.name);
+        refreshAfterSync();
+    }
+    window.VerbLabBridge = {
+        merge: mergeProgress, stable,
+        // Dispositivo compartido: si entra otro alumno, los datos del anterior se guardan aparte y no se mezclan
+        begin(id) {
+            const o = store.get(OWNER_KEY);
+            if (o && o !== id) {
+                try { localStorage.setItem(STASH_PREFIX + o, JSON.stringify(syncSnapshot())); } catch (e) {}
+                applyProgress({ favs: {}, deleted: {}, misses: {}, best: 0, name: '' });
+            }
+            store.set(OWNER_KEY, id); syncId = id;
+            try { const x = localStorage.getItem(STASH_PREFIX + id); stash = x ? JSON.parse(x) : null; } catch (e) { stash = null; }
+        },
+        // Combina lo local con lo de la nube, actualiza la pantalla si algo cambió y devuelve el resultado
+        reconcile(remote) {
+            const cur = syncSnapshot(), merged = mergeProgress(stash ? mergeProgress(cur, stash) : cur, remote);
+            if (stable(merged) !== stable(mergeProgress(cur, null))) applyProgress(merged);
+            return merged;
+        },
+        clearStash() { if (stash) { stash = null; try { localStorage.removeItem(STASH_PREFIX + syncId); } catch (e) {} } },
+        status(kind, ts) {
+            const w = $('syncWarn'), st = $('syncStatus'), b = $('syncBtn');
+            if (kind === 'ok') {
+                w.innerHTML = '<i class="fas fa-cloud"></i> Tu progreso se guarda en tu cuenta y te sigue a cualquier dispositivo.';
+                st.textContent = 'Última sincronización: ' + new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                b.classList.remove('hidden');
+            } else if (kind === 'syncing') st.textContent = 'Sincronizando…';
+            else if (kind === 'error') { st.textContent = 'Sin conexión con la nube: se sincronizará cuando vuelvas a conectarte.'; b.classList.remove('hidden'); }
+        }
+    };
+
     /* ---------- Inicio ---------- */
     $('verbCount').textContent = verbsDatabase.length;
     $('irrCount').textContent = verbsDatabase.filter(v => v.irregular).length;
@@ -1782,6 +1969,64 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     $('year').textContent = new Date().getFullYear();
     $('appVer').textContent = 'v' + APP_VERSION;
     checkForUpdate();
+</script>
+
+<script type="module">
+/* Sincronización con tu Firebase (proyecto nicaenglishportal). Si algo falla aquí, la app sigue funcionando
+   igual con los datos locales. Guarda en la colección nueva "verblab", un documento por alumno. */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+(function () {
+    const B = window.VerbLabBridge;
+    if (!B || window.NEC_BLOQUEADO || !/^https?:$/.test(location.protocol)) return;
+    const app = initializeApp({
+        apiKey: "AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",
+        authDomain: "nicaenglishportal.firebaseapp.com",
+        projectId: "nicaenglishportal",
+        storageBucket: "nicaenglishportal.firebasestorage.app",
+        messagingSenderId: "30475218925",
+        appId: "1:30475218925:web:bd98007b81d1f3860fdc44"
+    });
+    const auth = getAuth(app), db = getFirestore(app);
+    const ADMIN = '95gusmg@gmail.com';
+    let ref = null, busy = false, again = false, timer = null, last = 0;
+
+    async function syncNow() {
+        if (!ref) return;
+        if (busy) { again = true; return; }
+        busy = true; B.status('syncing');
+        try {
+            const snap = await getDoc(ref);
+            const remote = snap.exists() ? snap.data() : null;
+            const merged = B.reconcile(remote);
+            const vacio = !Object.keys(merged.favs).length && !Object.keys(merged.misses).length && !merged.best && !merged.name;
+            if (remote ? B.stable(B.merge({}, remote)) !== B.stable(merged) : !vacio) await setDoc(ref, { ...merged, v: 1, updatedAt: Date.now() });
+            B.clearStash(); last = Date.now(); B.status('ok', last);
+        } catch (e) { console.warn('Verb Lab: no se pudo sincronizar', e); B.status('error'); }
+        finally { busy = false; if (again) { again = false; schedule(2000); } }
+    }
+    const schedule = ms => { clearTimeout(timer); timer = setTimeout(syncNow, ms); };
+    window.VerbLabSyncNow = () => syncNow();
+
+    let started = false;
+    onAuthStateChanged(auth, user => {
+        if (started) return;
+        let id = null; try { id = localStorage.getItem('nica_alumno_id'); } catch (e) {}
+        if (!user || user.isAnonymous || !id || (user.email || '').toLowerCase() === ADMIN) return;
+        started = true;
+        ref = doc(db, 'verblab', id);
+        B.begin(id);
+        syncNow();
+        document.addEventListener('verblab-changed', () => schedule(8000));            // sube 8 s después del último cambio
+        window.addEventListener('online', () => syncNow());
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') { clearTimeout(timer); syncNow(); }
+            else if (Date.now() - last > 60000) syncNow();
+        });
+    });
+})();
 </script>
 </body>
 </html>
