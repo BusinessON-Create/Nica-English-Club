@@ -1,0 +1,14 @@
+/* ==========================================================
+   PIE
+   Pie de página.
+   ========================================================== */
+
+/* ---------- Pie ---------- */
+.footer { max-width: 1100px; margin: 0 auto; padding: 24px 16px 40px; text-align: center; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
+.footer strong { color: var(--text); font-weight: 800; }
+.social { display: flex; justify-content: center; gap: 10px; margin: 14px 0; }
+.social a {
+    width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+    border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: border-color 0.2s, color 0.2s;
+}
+.social a:hover { border-color: var(--accent); color: var(--accent); }

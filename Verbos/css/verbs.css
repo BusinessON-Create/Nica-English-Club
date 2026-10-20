@@ -1,0 +1,50 @@
+/* ==========================================================
+   LISTA DE VERBOS
+   Tarjetas y filtros de la lista de verbos.
+   ========================================================== */
+
+/* ---------- Lista de verbos ---------- */
+.back { font-weight: 800; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; color: var(--muted); }
+.back:hover { color: var(--accent); }
+.list-head { text-align: center; margin: 6px 0 18px; }
+.list-head h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.035em; }
+.list-head p { color: var(--muted); font-size: 0.88rem; }
+
+.search { position: relative; max-width: 520px; margin: 0 auto 14px; }
+.search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.search input {
+    width: 100%; padding: 14px 16px 14px 44px; border-radius: 14px;
+    border: 1.5px solid var(--line); background: var(--surface); color: var(--text);
+    font: inherit; font-weight: 600; font-size: 0.95rem; outline: none;
+}
+.search input:focus { border-color: var(--accent); }
+.search input::placeholder { color: var(--muted); font-weight: 400; }
+
+.chips { display: flex; justify-content: center; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+.chip {
+    padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+    border: 1.5px solid var(--line); color: var(--muted); background: transparent;
+}
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.verbs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.verb-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+.verb-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+.verb-name { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; }
+.verb-es { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
+.badge { font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.badge.irr { border-color: rgba(250, 204, 21, 0.5); color: var(--accent); }
+.forms { display: grid; gap: 2px; margin-bottom: 10px; }
+.form-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 8px; border-radius: 8px; font-size: 0.82rem; color: var(--muted); cursor: pointer; text-align: left; width: 100%;
+}
+.form-row:hover { background: var(--surface-2); }
+.form-row b { color: var(--text); font-weight: 600; }
+.example-box {
+    background: var(--surface-2); border-left: 3px solid var(--accent);
+    padding: 10px 12px; border-radius: 0 10px 10px 0;
+    font-size: 0.86rem; font-style: italic; color: #d6cfc8; cursor: pointer;
+}
+.example-box .tr { display: block; font-size: 0.76rem; font-style: normal; color: var(--muted); margin-top: 3px; }
+.empty { text-align: center; color: var(--muted); padding: 40px 0; grid-column: 1 / -1; }

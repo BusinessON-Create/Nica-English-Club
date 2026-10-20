@@ -1,0 +1,71 @@
+/* ==========================================================
+   NICA ENGLISH CLUB — tokens de marca
+   Confirmado en el sitio: fondo #0a0908 (theme-color).
+   El acento amarillo viene de la versión anterior de la app;
+   si el sitio usa otro, cambia solo --accent.
+   ========================================================== */
+:root {
+    --bg: #0a0908;
+    --surface: #14110f;
+    --surface-2: #1d1916;
+    --line: #2d2825;
+    --text: #f5f2ee;
+    --muted: #a69e96;
+    --accent: #FACC15;
+    --accent-ink: #0a0908;
+    --ok: #22c55e;
+    --bad: #ef4444;
+    --radius: 18px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    background-image: radial-gradient(50rem 26rem at 50% -8%, rgba(250, 204, 21, 0.07), transparent 65%);
+    background-repeat: no-repeat;
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+}
+
+.hidden { display: none !important; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; touch-action: manipulation; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+/* ---------- Barra de marca ---------- */
+.topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1100px; margin: 0 auto; padding: 18px 16px;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--accent); color: var(--accent-ink);
+    display: grid; place-items: center; font-size: 16px;
+}
+.brand-logo { height: 38px; width: auto; max-width: 140px; object-fit: contain; border-radius: 8px; }
+.brand-name { font-weight: 800; letter-spacing: -0.02em; font-size: 1rem; line-height: 1.1; }
+.brand-sub { display: block; font-weight: 400; font-size: 0.72rem; color: var(--muted); letter-spacing: 0; }
+.topbar-link { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-decoration: none; }
+.topbar-link:hover { color: var(--accent); }
+
+.screen { max-width: 1100px; margin: 0 auto; padding: 8px 16px 40px; }
+
+/* ---------- Botones ---------- */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 15px 22px; border-radius: 14px; font-weight: 800; font-size: 0.95rem;
+    text-decoration: none; transition: transform 0.12s, background 0.2s, border-color 0.2s;
+}
+.btn:active { transform: scale(0.98); }
+.btn-accent { background: var(--accent); color: var(--accent-ink); }
+.btn-accent:hover { background: #fde047; }
+.btn-ghost { border: 1.5px solid var(--line); color: var(--text); background: var(--surface); }
+.btn-ghost:hover { border-color: var(--accent); }
+.btn-block { width: 100%; }
