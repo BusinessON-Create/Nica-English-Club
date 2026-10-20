@@ -2,6 +2,34 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <script src="../seguridad.js"></script>
+    <!--
+    ==============================================================
+     NOTAS DE MANTENIMIENTO (para quien edite este archivo: persona o IA)
+    ==============================================================
+     1. SUBE LA VERSIÓN: cada vez que modifiques este archivo y lo vayas a publicar,
+        cambia APP_VERSION (busca "const APP_VERSION" en el script), por ejemplo
+        '2026.10.20.1'. Así los alumnos se actualizan solos al abrir la app.
+        Si no se cambia, verán la versión vieja hasta que expire la caché del hosting.
+     2. NO RENOMBRES las claves de localStorage (nec_verblab_favs, nec_verblab_misses,
+        nec_verblab_name, nec_verblab_best_streak). Si las cambias, los alumnos pierden
+        sus favoritos y su progreso.
+     3. Si cambias la ESTRUCTURA de lo que se guarda, sube SCHEMA y agrega un paso en
+        migrateData() para convertir los datos viejos. No borres datos de los alumnos.
+     4. Si agregas o quitas verbos, no hace falta tocar nada más: los favoritos de un
+        verbo que ya no existe se conservan guardados por si vuelve.
+     5. SEGURIDAD: la etiqueta <script src="../seguridad.js"></script> debe seguir siendo
+        el primer script del <head>. Este archivo vive en una subcarpeta (un nivel bajo la
+        raíz donde está seguridad.js). No la quites ni la muevas. seguridad.js nunca debe
+        usar localStorage.clear(): borraría los favoritos de los alumnos.
+    Cuando no hay sesión, seguridad.js pone window.NEC_BLOQUEADO = true y esta página
+    no debe hacer nada en segundo plano (checkForUpdate ya lo respeta).
+     6. RUTAS: el logo se llama como "logo.png" (relativo a esta carpeta). Si se mueve el
+        archivo, revisa esa ruta.
+     7. Al terminar una actualización, recuérdale a la persona qué número de versión
+        quedó y que lo suba junto con el archivo.
+    ==============================================================
+    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#0a0908">
     <meta name="description" content="Entrena los verbos en inglés con trivia rápida. Nica English Club: no estudies inglés, entrénalo.">
@@ -102,7 +130,8 @@
         .actions { display: grid; gap: 12px; max-width: 320px; margin: 0 auto; }
 
         .hint { color: var(--muted); font-size: 0.8rem; margin-top: 14px; }
-        .stats { display: flex; justify-content: center; gap: 28px; margin: 30px 0 6px; color: var(--muted); font-size: 0.82rem; }
+        .stats { display: flex; justify-content: center; gap: 18px; margin: 30px 0 6px; color: var(--muted); font-size: 0.82rem; }
+        .stats > div { text-align: center; }
         .stats strong { display: block; color: var(--text); font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
 
         /* ---------- Lista de verbos ---------- */
@@ -231,6 +260,121 @@
         }
         .social a:hover { border-color: var(--accent); color: var(--accent); }
 
+        /* ---------- Favoritos, estados y compartir ---------- */
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn:disabled:active { transform: none; }
+        .count-badge { background: var(--accent); color: var(--accent-ink); border-radius: 999px; font-size: 0.72rem; padding: 1px 9px; font-weight: 800; }
+        .count-badge:empty { display: none; }
+        .verb-actions { display: flex; align-items: center; gap: 8px; }
+        .icon-btn {
+            width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+            border: 1.5px solid var(--line); color: var(--muted); background: var(--surface-2); font-size: 0.95rem;
+            transition: border-color 0.15s, color 0.15s, transform 0.1s;
+        }
+        .icon-btn:hover { border-color: var(--accent); color: var(--text); }
+        .icon-btn:active { transform: scale(0.92); }
+        .icon-btn.on { color: var(--bad); border-color: rgba(239, 68, 68, 0.55); }
+        .verb-actions .icon-btn { width: 34px; height: 34px; font-size: 0.85rem; }
+        .prompt-tools { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
+
+        .status-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .status-seg button {
+            padding: 8px 4px; border-radius: 10px; font-size: 0.74rem; font-weight: 800;
+            border: 1.5px solid var(--line); color: var(--muted); background: transparent;
+        }
+        .status-seg button.active[data-status="new"] { background: #60a5fa; border-color: #60a5fa; color: #0a0908; }
+        .status-seg button.active[data-status="learning"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+        .status-seg button.active[data-status="done"] { background: var(--ok); border-color: var(--ok); color: #04210f; }
+
+        .fav-section { margin-bottom: 28px; }
+        .section-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+        .section-title span { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+        .section-title i { color: var(--accent); }
+
+        .share-panel { max-width: 520px; margin: 0 auto 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+        .share-panel label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+        .text-input {
+            width: 100%; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line);
+            background: var(--surface-2); color: var(--text); font: inherit; font-weight: 600; outline: none; margin-bottom: 12px;
+        }
+        .text-input:focus { border-color: var(--accent); }
+        .share-actions { display: grid; gap: 10px; }
+        .share-panel .hint { margin-top: 10px; text-align: center; min-height: 1.2em; }
+        .setup-note { color: var(--muted); font-size: 0.82rem; text-align: center; margin-top: 12px; }
+        .warn { color: #fbbf24; }
+
+        /* ---------- Barra de favoritos + aviso animado ---------- */
+        .fav-toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 520px; margin: 0 auto 14px; }
+        .fav-toolbar .btn { padding: 12px 16px; }
+        .share-panel.hidden { display: none; }
+
+        .toast {
+            position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 50;
+            display: flex; align-items: center; gap: 12px; width: max-content; max-width: calc(100vw - 32px);
+            padding: 12px 18px 12px 12px; border-radius: 18px; background: var(--surface-2);
+            border: 1.5px solid var(--accent); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+            opacity: 0; pointer-events: none; transform: translate(-50%, 30px) scale(0.9);
+            transition: opacity 0.25s, transform 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        .toast.done { border-color: var(--ok); }
+        .toast .ti { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: var(--accent); color: var(--accent-ink); flex: none; }
+        .toast.done .ti { background: var(--ok); color: #04210f; }
+        .toast.show .ti { animation: ti-pop 0.6s 0.1s both; }
+        @keyframes ti-pop { 0% { transform: scale(0.3) rotate(-30deg); } 60% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+        .toast .tx { font-size: 0.88rem; line-height: 1.3; }
+        .toast .tx strong { display: block; font-size: 0.95rem; font-weight: 800; }
+        .toast .tx span { color: var(--muted); font-size: 0.78rem; }
+        .confetti { position: absolute; left: 20px; top: 50%; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: confetti 0.9s ease-out forwards; }
+        @keyframes confetti { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; } }
+
+        .ver { display: block; margin-top: 6px; font-size: 0.7rem; opacity: 0.6; }
+
+        /* ---------- Progreso ---------- */
+        .progress-wrap { max-width: 360px; margin: 20px auto 0; text-align: left; }
+        .progress-wrap.thin { max-width: 520px; margin: 0 auto 16px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+        .progress-label strong { color: var(--text); font-weight: 800; }
+        .progress-track { height: 8px; background: var(--surface-2); border-radius: 10px; overflow: hidden; }
+        .thin .progress-track { height: 5px; }
+        .progress-fill { height: 100%; background: var(--ok); border-radius: 10px; transition: width 0.5s ease; }
+        .progress-invite { width: 100%; padding: 12px 16px; border-radius: 14px; border: 1.5px dashed var(--line); color: var(--muted); font-size: 0.82rem; font-weight: 600; }
+        .progress-invite:hover { border-color: var(--accent); color: var(--text); }
+        .progress-invite i { color: var(--bad); }
+        .chip-fav i { color: var(--bad); margin-right: 4px; }
+
+        /* ---------- Teclado / cómodo en PC y celular ---------- */
+        .option-btn > span { flex: 1; }
+        .key { display: none; width: 24px; height: 24px; place-items: center; border-radius: 7px; margin-right: 12px; flex: none;
+               border: 1px solid var(--line); background: var(--bg); color: var(--muted); font: 800 0.72rem 'Inter', sans-serif; }
+        .kbd-hint { display: none; text-align: center; color: var(--muted); font-size: 0.74rem; margin-top: 12px; }
+        @media (pointer: coarse) {
+            .icon-btn { width: 44px; height: 44px; }
+            .verb-actions .icon-btn { width: 42px; height: 42px; }
+            .status-seg button { padding: 13px 4px; font-size: 0.8rem; }
+            .chip { padding: 11px 16px; }
+            .form-row { padding: 11px 8px; }
+            .option-btn { padding: 17px 16px; }
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .key { display: inline-grid; }
+            .kbd-hint { display: block; }
+            .status-seg button:hover, .chip:hover { border-color: var(--accent); color: var(--text); }
+            .status-seg button.active:hover { color: inherit; }
+            .chip[aria-pressed="true"]:hover { color: var(--accent-ink); }
+            .icon-btn { cursor: pointer; }
+            .verb-card { transition: border-color 0.2s, transform 0.2s; }
+            .verb-card:hover { border-color: #463f3a; transform: translateY(-2px); }
+        }
+        @media (min-width: 900px) {
+            #gameContainer { max-width: 520px; }
+            .game-box { padding: 32px; }
+            #promptVerb { font-size: 3rem; }
+            .toast { padding: 14px 24px 14px 14px; }
+            .toast .tx strong { font-size: 1.02rem; }
+            .toast .tx span { font-size: 0.85rem; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
         }
@@ -258,6 +402,7 @@
 
                 <div class="actions">
                     <button class="btn btn-accent" onclick="showSetup()"><i class="fas fa-play"></i> Jugar trivia</button>
+                    <button class="btn btn-ghost" onclick="showFavs()"><i class="fas fa-heart"></i> Mis favoritos <span class="count-badge" id="favBadge"></span></button>
                     <button class="btn btn-ghost" onclick="showVerbList()"><i class="fas fa-list"></i> Ver lista de verbos</button>
                     <a class="btn btn-ghost" href="https://app.nicaenglishclub.com/entrenamiento/" target="_blank" rel="noopener"><i class="fas fa-timeline"></i> Ir a Entrenamiento</a>
                 </div>
@@ -267,7 +412,9 @@
                     <div><strong id="verbCount">0</strong>verbos</div>
                     <div><strong id="irrCount">0</strong>irregulares</div>
                     <div><strong id="bestStreak">0</strong>mejor racha</div>
+                    <div><strong id="doneCount">0</strong>aprendidos</div>
                 </div>
+                <div id="homeProgress" class="progress-wrap"></div>
             </div>
         </section>
 
@@ -286,8 +433,43 @@
                 <button class="chip" data-filter="all" aria-pressed="true" onclick="setListFilter('all')">Todos</button>
                 <button class="chip" data-filter="irregular" aria-pressed="false" onclick="setListFilter('irregular')">Irregulares</button>
                 <button class="chip" data-filter="regular" aria-pressed="false" onclick="setListFilter('regular')">Regulares</button>
+                <button class="chip chip-fav" onclick="showFavs()" aria-label="Ir a Mis favoritos"><i class="fas fa-heart"></i>Favoritos<span id="listFavBadge"></span></button>
             </div>
             <div id="verbsGrid" class="verbs-grid"></div>
+        </section>
+
+        <!-- MIS FAVORITOS -->
+        <section id="favSection" class="screen hidden">
+            <button class="back" onclick="backToMain()"><i class="fas fa-arrow-left"></i> Volver</button>
+            <div class="list-head">
+                <h2 id="favTitle">Mis verbos favoritos</h2>
+                <p id="favCount"></p>
+            </div>
+
+            <div id="favEmpty" class="hidden" style="text-align:center;">
+                <p class="empty" style="padding:24px 0 18px;">Aún no tienes favoritos.<br>Toca el corazón <i class="far fa-heart"></i> en cualquier verbo para guardarlo aquí.</p>
+                <button class="btn btn-accent" onclick="showVerbList()"><i class="fas fa-list"></i> Ir a la lista de verbos</button>
+            </div>
+
+            <div id="favContent">
+                <div id="favProgress" class="progress-wrap thin"></div>
+                <div class="fav-toolbar">
+                    <button class="btn btn-ghost" id="shareToggle" onclick="toggleSharePanel()" aria-expanded="false" aria-controls="sharePanel"><i class="fas fa-share-nodes"></i> Compartir</button>
+                    <button class="btn btn-accent" onclick="showVerbList()" aria-label="Agregar más verbos"><i class="fas fa-plus"></i> Agregar</button>
+                </div>
+                <div class="share-panel hidden" id="sharePanel">
+                    <label for="studentName">Tu nombre (para que tu profe sepa de quién es la lista)</label>
+                    <input type="text" id="studentName" class="text-input" maxlength="40" autocomplete="name" placeholder="Ej. María López">
+                    <div class="share-actions">
+                        <button class="btn btn-accent" onclick="shareWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</button>
+                        <button class="btn btn-ghost" onclick="shareList()"><i class="fas fa-copy"></i> Compartir o copiar</button>
+                    </div>
+                    <p class="hint" id="shareMsg" aria-live="polite"></p>
+                </div>
+                <div class="chips" id="favChips" role="group" aria-label="Filtrar por estado"></div>
+                <div id="favGrid"></div>
+            </div>
+            <p class="hint warn hidden" id="storageWarn" style="text-align:center;">Tu navegador no permite guardar datos: tus favoritos se perderán al cerrar la página.</p>
         </section>
 
         <!-- TRIVIA -->
@@ -303,6 +485,13 @@
                         <p>Tienes 3 vidas y 10 segundos por pregunta.</p>
                     </div>
                     <div class="field">
+                        <label for="sourceSelect">Modo</label>
+                        <select id="sourceSelect" class="select" onchange="updateSetup()">
+                            <option value="all">Trivia normal</option>
+                            <option value="favs">Práctica con mis favoritos</option>
+                        </select>
+                    </div>
+                    <div class="field">
                         <label for="modeSelect">Tipo de reto</label>
                         <select id="modeSelect" class="select">
                             <option value="mixed">Mixto (todo)</option>
@@ -311,7 +500,11 @@
                             <option value="translation">Traducción</option>
                         </select>
                     </div>
-                    <div class="field">
+                    <div class="field hidden" id="favStatusField">
+                        <label for="favStatusSelect">Qué favoritos practicar</label>
+                        <select id="favStatusSelect" class="select" onchange="updateSetup()"></select>
+                    </div>
+                    <div class="field" id="typeField">
                         <label for="typeSelect">Verbos</label>
                         <select id="typeSelect" class="select">
                             <option value="all">Todos</option>
@@ -321,13 +514,14 @@
                     </div>
                     <div class="field">
                         <label for="lengthSelect">Preguntas</label>
-                        <select id="lengthSelect" class="select">
+                        <select id="lengthSelect" class="select" onchange="updateSetup()">
                             <option value="10">10 preguntas</option>
                             <option value="15">15 preguntas</option>
                             <option value="20">20 preguntas</option>
                         </select>
                     </div>
-                    <button onclick="startGame()" class="btn btn-accent btn-block" style="margin-top:8px;">Empezar</button>
+                    <button onclick="startGame()" id="startBtn" class="btn btn-accent btn-block" style="margin-top:8px;">Empezar</button>
+                    <p class="setup-note hidden" id="setupNote"></p>
                 </div>
 
                 <!-- Juego -->
@@ -342,9 +536,14 @@
                     <div class="prompt">
                         <p id="instructionText" class="instruction"></p>
                         <h2 id="promptVerb"></h2>
+                        <div class="prompt-tools">
+                            <button class="icon-btn" id="replayBtn" aria-label="Escuchar el verbo otra vez"><i class="fas fa-volume-high"></i></button>
+                            <button class="icon-btn" id="gameFav" aria-label="Guardar en favoritos" aria-pressed="false"><i class="far fa-heart"></i></button>
+                        </div>
                     </div>
 
                     <div id="optionsGrid" class="options"></div>
+                    <p class="kbd-hint">Atajos: teclas 1–4 para responder · Enter para continuar</p>
 
                     <div id="gameExample" class="hidden">
                         <div class="example-box" id="exampleBox"></div>
@@ -370,6 +569,8 @@
         </section>
     </main>
 
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
     <footer class="footer">
         <strong>Nica English Club</strong><br>
         No solo estudies inglés. Entrénalo.
@@ -380,6 +581,7 @@
             <a href="https://wa.me/50583267703?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Nica%20English%20Club" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
         <span>&copy; <span id="year"></span> Nica English Club. Todos los derechos reservados.</span>
+        <span class="ver" id="appVer"></span>
     </footer>
 
 <script>
@@ -754,20 +956,228 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         if (el) speak(el.dataset.speak);
     });
 
+    /* ==========================================================
+       VERSIÓN DE LA APP
+       >>> Cada vez que se modifique este archivo, SUBE este número <<<
+       (si eres una IA o editor: hazlo siempre, aunque no te lo pidan)
+       (por ejemplo '2026.10.20.1'). Los alumnos que tengan la versión
+       anterior abierta o en caché se actualizan solos, y conservan
+       sus favoritos porque los datos viven aparte, en el navegador.
+       ========================================================== */
+    const APP_VERSION = '2026.10.19.6';
+
+    /* ---------- Sonidos (sin archivos: se generan en el navegador) ---------- */
+    let audioCtx;
+    function tone(freq, start, dur, type, vol) {
+        try {
+            audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const t0 = audioCtx.currentTime + start;
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+            osc.type = type; osc.frequency.value = freq;
+            g.gain.setValueAtTime(0.0001, t0);
+            g.gain.exponentialRampToValueAtTime(vol, t0 + 0.01);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.start(t0); osc.stop(t0 + dur + 0.05);
+        } catch (e) {}
+    }
+    const playCorrect = () => { tone(988, 0, 0.18, 'sine', 0.22); tone(1319, 0.1, 0.5, 'sine', 0.22); };   // ¡ding!
+    const playLearning = () => { tone(523, 0, 0.16, 'sine', 0.2); tone(659, 0.12, 0.35, 'sine', 0.2); };
+    const playDone = () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.1, i === 3 ? 0.6 : 0.2, 'sine', 0.22));
+    const playWrong = () => { tone(196, 0, 0.2, 'triangle', 0.25); tone(147, 0.16, 0.35, 'triangle', 0.25); }; // buzz suave
+
+    /* ---------- Almacenamiento local (funciona con o sin datos guardados) ---------- */
+    const store = (() => {
+        const mem = {};
+        let ok = true;
+        try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); } catch (e) { ok = false; }
+        return {
+            get persistent() { return ok; },
+            get(k) { try { return ok ? localStorage.getItem(k) : (k in mem ? mem[k] : null); } catch (e) { return null; } },
+            set(k, v) { if (ok) { try { localStorage.setItem(k, v); return; } catch (e) { ok = false; } } mem[k] = v; }
+        };
+    })();
+
+    const FAV_KEY = 'nec_verblab_favs';
+    const NAME_KEY = 'nec_verblab_name';
+    const TEACHER_WA = '50583267703'; // WhatsApp que recibe las listas
+    const STATUSES = [
+        { id: 'new', label: 'Nuevo', icon: 'fa-seedling' },
+        { id: 'learning', label: 'Aprendiendo', icon: 'fa-dumbbell' },
+        { id: 'done', label: 'Listo', icon: 'fa-circle-check' }
+    ];
+    const vKey = v => v.infinitive.toLowerCase();
+
+    // Versión del formato de los datos guardados. Si algún día cambias la estructura,
+    // sube este número y agrega un paso en migrateData() para convertir lo viejo.
+    const SCHEMA = 1;
+    function migrateData(data) {
+        // if (data.v < 2) { ...convertir a formato 2...; data.v = 2; }
+        return data;
+    }
+
+    let orphans = {}; // favoritos de verbos que hoy no están en la base: se conservan por si vuelven
+    function loadFavs() {
+        try {
+            const raw = store.get(FAV_KEY);
+            if (!raw) return {};                                   // primera vez: sin datos
+            const data = migrateData(JSON.parse(raw));
+            const src = data && typeof data.favs === 'object' && data.favs ? data.favs : {};
+            const valid = new Set(verbsDatabase.map(vKey));
+            const out = {};
+            Object.keys(src).forEach(k => {
+                const e = src[k];
+                if (!e || typeof e !== 'object') return;
+                if (valid.has(k)) out[k] = { s: STATUSES.some(st => st.id === e.s) ? e.s : 'new', t: Number(e.t) || 0 };
+                else orphans[k] = e;
+            });
+            return out;
+        } catch (e) { return {}; }
+    }
+    let favs = loadFavs();
+    const saveFavs = () => store.set(FAV_KEY, JSON.stringify({ v: SCHEMA, favs: { ...orphans, ...favs } }));
+    const favCountTotal = () => Object.keys(favs).length;
+    const doneTotal = () => Object.keys(favs).filter(k => favs[k].s === 'done').length;
+    function updateStats() {
+        $('favBadge').textContent = favCountTotal() || '';
+        $('listFavBadge').textContent = favCountTotal() ? ' · ' + favCountTotal() : '';
+        $('doneCount').textContent = doneTotal();
+        renderProgress();
+    }
+
+    function progressHTML() {
+        const n = favCountTotal(), d = doneTotal(), pct = n ? Math.round(d / n * 100) : 0;
+        return `<div class="progress-label"><span><strong>${d}</strong> de <strong>${n}</strong> favoritos listos</span><span>${pct}%</span></div>
+            <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+    }
+    function renderProgress() {
+        const has = favCountTotal() > 0;
+        $('favProgress').innerHTML = has ? progressHTML() : '';
+        $('homeProgress').innerHTML = has
+            ? progressHTML()
+            : '<button class="progress-invite" onclick="showVerbList()"><i class="far fa-heart"></i> Guarda tu primer verbo con el corazón</button>';
+    }
+
+    /* ---------- Verbos que cuestan: 2 fallos del mismo verbo → pasa solo a Aprendiendo ---------- */
+    const MISS_KEY = 'nec_verblab_misses';
+    function loadMisses() {
+        try {
+            const o = JSON.parse(store.get(MISS_KEY) || '{}'), out = {};
+            Object.keys(o).forEach(k => { const n = parseInt(o[k], 10); if (n > 0) out[k] = n; });
+            return out;
+        } catch (e) { return {}; }
+    }
+    let misses = loadMisses();
+    function registerMiss(v) {
+        const k = vKey(v);
+        misses[k] = (misses[k] || 0) + 1;
+        store.set(MISS_KEY, JSON.stringify(misses));
+        if (misses[k] % 2 !== 0) return;              // cada 2do fallo
+        const f = favs[k];
+        if (f && f.s === 'learning') return;           // ya está en Aprendiendo
+        if (f) f.s = 'learning'; else favs[k] = { s: 'learning', t: Date.now() };
+        saveFavs();
+        refreshFavUI(k);
+        setTimeout(() => celebrate(v.infinitive, 'learning', true), 900); // después del sonido de error
+    }
+    function pickVerbs(pool, n, weighted) {
+        const sh = shuffle(pool);
+        if (!weighted) return sh.slice(0, n);
+        // ~1 de cada 3 preguntas sale de los verbos que más le cuestan (los "Listo" no cuentan)
+        const hard = sh.filter(v => misses[vKey(v)] > 0 && !(favs[vKey(v)] && favs[vKey(v)].s === 'done'));
+        const want = Math.min(hard.length, Math.round(n / 3));
+        const picked = hard.slice(0, want);
+        const rest = sh.filter(v => !picked.includes(v));
+        return shuffle([...picked, ...rest.slice(0, n - want)]);
+    }
+
+    let toastTimer;
+    function celebrate(name, st, auto) {
+        const t = $('toast'), done = st === 'done';
+        clearTimeout(toastTimer);
+        t.classList.remove('show');
+        t.className = 'toast ' + st;
+        t.innerHTML = `<span class="ti"><i class="fas ${done ? 'fa-circle-check' : 'fa-dumbbell'}"></i></span>
+            <span class="tx"><strong>${done ? '¡' + esc(name) + ' está listo!' : esc(name) + ' pasó a Aprendiendo'}</strong>
+            <span>${done ? 'Lo moviste a tu lista de Listo' : auto ? 'Lo fallaste dos veces: lo guardamos en tus favoritos' : 'Sigue practicándolo, vas bien'}</span></span>`;
+        if (done) {
+            const colors = ['#22c55e', '#FACC15', '#60a5fa', '#f472b6', '#f5f2ee'];
+            for (let i = 0; i < 16; i++) {
+                const c = document.createElement('i');
+                c.className = 'confetti';
+                c.style.background = colors[i % colors.length];
+                c.style.setProperty('--dx', (Math.random() * 200 - 60) + 'px');
+                c.style.setProperty('--dy', (-30 - Math.random() * 90) + 'px');
+                c.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+                t.appendChild(c);
+            }
+        }
+        void t.offsetWidth; // reinicia la animación
+        t.classList.add('show');
+        done ? playDone() : playLearning();
+        if (navigator.vibrate) { try { navigator.vibrate(done ? [30, 40, 60] : 30); } catch (e) {} }
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    function setHeart(btn, on) {
+        btn.classList.toggle('on', on);
+        btn.setAttribute('aria-pressed', on);
+        btn.setAttribute('aria-label', on ? 'Quitar de favoritos' : 'Guardar en favoritos');
+        const i = btn.querySelector('i');
+        if (i) i.className = (on ? 'fas' : 'far') + ' fa-heart';
+    }
+    function syncGameFav() {
+        const v = selectedVerbs && selectedVerbs[currentIndex];
+        if (!v) return;
+        $('gameFav').dataset.fav = vKey(v);
+        setHeart($('gameFav'), !!favs[vKey(v)]);
+    }
+    function refreshFavUI(k) {
+        updateStats();
+        if (!$('favSection').classList.contains('hidden')) renderFavs();
+        document.querySelectorAll('#verbsGrid [data-fav]').forEach(b => { if (b.dataset.fav === k) setHeart(b, !!favs[k]); });
+        syncGameFav();
+        if (!$('setupZone').classList.contains('hidden')) updateSetup();
+    }
+    function toggleFav(k) {
+        if (favs[k]) delete favs[k]; else favs[k] = { s: 'new', t: Date.now() };
+        saveFavs();
+        refreshFavUI(k);
+    }
+    function setStatus(k, st) {
+        if (!favs[k] || !STATUSES.some(x => x.id === st)) return;
+        const changed = favs[k].s !== st;
+        favs[k].s = st;
+        saveFavs();
+        refreshFavUI(k);
+        if (changed && st !== 'new') celebrate(verbsDatabase.find(v => vKey(v) === k).infinitive, st);
+    }
+    document.addEventListener('click', e => {
+        const f = e.target.closest('[data-fav]');
+        if (f && f.dataset.fav) { toggleFav(f.dataset.fav); return; }
+        const st = e.target.closest('[data-status]');
+        if (st) setStatus(st.dataset.verb, st.dataset.status);
+    });
+
     const BEST_KEY = 'nec_verblab_best_streak';
     const getBest = () => { try { return parseInt(localStorage.getItem(BEST_KEY), 10) || 0; } catch (e) { return 0; } };
     const setBest = n => { try { localStorage.setItem(BEST_KEY, String(n)); } catch (e) {} };
 
     /* ---------- Navegación ---------- */
     function hideAll() {
-        ['welcomeScreen', 'verbListSection', 'gameContainer'].forEach(id => $(id).classList.add('hidden'));
+        ['welcomeScreen', 'verbListSection', 'favSection', 'gameContainer'].forEach(id => $(id).classList.add('hidden'));
     }
     function backToMain() {
         clearInterval(timerInterval);
+        cancelVerbSpeak();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         hideAll();
         $('welcomeScreen').classList.remove('hidden');
         $('bestStreak').textContent = getBest();
+        updateStats();
         window.scrollTo(0, 0);
+        applyUpdate();
     }
     function showSetup() {
         hideAll();
@@ -776,9 +1186,11 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     }
     function resetToSetup() {
         clearInterval(timerInterval);
+        cancelVerbSpeak();
         $('setupZone').classList.remove('hidden');
         $('gameZone').classList.add('hidden');
         $('resultsZone').classList.add('hidden');
+        updateSetup();
         window.scrollTo(0, 0);
     }
     function showVerbList() {
@@ -792,7 +1204,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     let listFilter = 'all';
     function setListFilter(f) {
         listFilter = f;
-        document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.filter === f));
+        document.querySelectorAll('#verbListSection .chip[data-filter]').forEach(c => c.setAttribute('aria-pressed', c.dataset.filter === f));
         renderVerbs();
     }
 
@@ -809,13 +1221,22 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         const grid = $('verbsGrid');
         if (!list.length) { grid.innerHTML = '<p class="empty">No encontramos ese verbo. Prueba con otra palabra.</p>'; return; }
 
-        grid.innerHTML = list.map(v => `
+        grid.innerHTML = list.map(v => verbCard(v, false)).join('');
+    }
+
+    function verbCard(v, inFavs) {
+        const k = vKey(v), f = favs[k];
+        return `
             <article class="verb-card">
                 <div class="verb-top">
                     <h3 class="verb-name" data-speak="${esc(v.infinitive)}">${esc(v.infinitive)}</h3>
-                    <span class="badge ${v.irregular ? 'irr' : ''}">${v.irregular ? 'Irregular' : 'Regular'}</span>
+                    <div class="verb-actions">
+                        <span class="badge ${v.irregular ? 'irr' : ''}">${v.irregular ? 'Irregular' : 'Regular'}</span>
+                        <button class="icon-btn ${f ? 'on' : ''}" data-fav="${esc(k)}" aria-pressed="${!!f}" aria-label="${f ? 'Quitar de favoritos' : 'Guardar en favoritos'}"><i class="${f ? 'fas' : 'far'} fa-heart"></i></button>
+                    </div>
                 </div>
                 <p class="verb-es">${esc(v.translation)}</p>
+                ${inFavs && f ? `<div class="status-seg" role="group" aria-label="Estado del verbo">${STATUSES.map(st => `<button data-verb="${esc(k)}" data-status="${st.id}" class="${f.s === st.id ? 'active' : ''}" aria-pressed="${f.s === st.id}">${st.label}</button>`).join('')}</div>` : ''}
                 <div class="forms">
                     <button class="form-row" data-speak="${esc(v.past)}"><span>Pasado</span><b>${esc(v.past)}</b></button>
                     <button class="form-row" data-speak="${esc(v.participle)}"><span>Participio</span><b>${esc(v.participle)}</b></button>
@@ -823,8 +1244,94 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
                     <button class="form-row" data-speak="${esc(v.gerund)}"><span>Gerundio (-ing)</span><b>${esc(v.gerund)}</b></button>
                 </div>
                 <div class="example-box" data-speak="${esc(v.example)}">"${esc(v.example)}"<span class="tr">${esc(v.exampleEs)}</span></div>
-            </article>
-        `).join('');
+            </article>`;
+    }
+
+    /* ---------- Mis favoritos ---------- */
+    let favFilter = 'all';
+    function setFavFilter(f) { favFilter = f; renderFavs(); }
+    function showFavs() {
+        hideAll();
+        $('favSection').classList.remove('hidden');
+        $('studentName').value = store.get(NAME_KEY) || '';
+        $('storageWarn').classList.toggle('hidden', store.persistent);
+        updateStats();
+        $('shareMsg').textContent = '';
+        $('sharePanel').classList.add('hidden');
+        $('shareToggle').setAttribute('aria-expanded', 'false');
+        renderFavs();
+        window.scrollTo(0, 0);
+    }
+    function renderFavs() {
+        const all = verbsDatabase.filter(v => favs[vKey(v)]);
+        $('favEmpty').classList.toggle('hidden', all.length > 0);
+        $('favContent').classList.toggle('hidden', all.length === 0);
+        $('favTitle').textContent = all.length ? `Mis verbos favoritos (${all.length})` : 'Mis verbos favoritos';
+        $('favCount').textContent = all.length ? 'Marca cómo vas con cada uno para mantenerlos ordenados.' : '';
+        if (!all.length) return;
+
+        const counts = { all: all.length };
+        STATUSES.forEach(st => counts[st.id] = all.filter(v => favs[vKey(v)].s === st.id).length);
+        $('favChips').innerHTML = [{ id: 'all', label: 'Todos' }, ...STATUSES].map(st =>
+            `<button class="chip" data-filter="${st.id}" aria-pressed="${favFilter === st.id}" onclick="setFavFilter('${st.id}')">${st.label} · ${counts[st.id]}</button>`
+        ).join('');
+
+        const grid = $('favGrid');
+        if (favFilter === 'all') {
+            grid.innerHTML = STATUSES.map(st => {
+                const items = all.filter(v => favs[vKey(v)].s === st.id);
+                if (!items.length) return '';
+                return `<div class="fav-section"><h3 class="section-title"><i class="fas ${st.icon}"></i> ${st.label} <span>${items.length}</span></h3><div class="verbs-grid">${items.map(v => verbCard(v, true)).join('')}</div></div>`;
+            }).join('');
+        } else {
+            const items = all.filter(v => favs[vKey(v)].s === favFilter);
+            grid.innerHTML = items.length
+                ? `<div class="verbs-grid">${items.map(v => verbCard(v, true)).join('')}</div>`
+                : '<p class="empty">No tienes verbos en este estado todavía.</p>';
+        }
+    }
+
+    /* ---------- Compartir ---------- */
+    function buildShareText() {
+        const name = $('studentName').value.trim();
+        const all = verbsDatabase.filter(v => favs[vKey(v)]);
+        const lines = ['Verb Lab · Nica English Club'];
+        if (name) lines.push('Alumno/a: ' + name);
+        lines.push(`Mi lista de verbos (${all.length})`);
+        STATUSES.forEach(st => {
+            const items = all.filter(v => favs[vKey(v)].s === st.id).map(v => v.infinitive);
+            if (items.length) lines.push('', `${st.label} (${items.length}): ${items.join(', ')}`);
+        });
+        lines.push('', 'Mejor racha en trivia: ' + getBest());
+        return lines.join('\n');
+    }
+    $('studentName').addEventListener('input', e => store.set(NAME_KEY, e.target.value.trim()));
+    function toggleSharePanel() {
+        const open = $('sharePanel').classList.toggle('hidden') === false;
+        $('shareToggle').setAttribute('aria-expanded', open);
+        if (open) $('sharePanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    const shareNote = t => { $('shareMsg').textContent = t; };
+
+    function shareWhatsApp() {
+        window.open(`https://wa.me/${TEACHER_WA}?text=${encodeURIComponent(buildShareText())}`, '_blank', 'noopener');
+    }
+    async function shareList() {
+        const text = buildShareText();
+        if (navigator.share) {
+            try { await navigator.share({ title: 'Mi lista de verbos', text }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch (e) {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); } catch (err) {}
+            ta.remove();
+        }
+        shareNote('Lista copiada. Pégala en el chat para enviarla.');
     }
 
     /* ---------- Trivia ---------- */
@@ -845,13 +1352,50 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         participle: 'Forma en participio'
     };
 
+    function setupPool() {
+        if ($('sourceSelect').value === 'favs') {
+            const st = $('favStatusSelect').value || 'all';
+            return verbsDatabase.filter(v => { const f = favs[vKey(v)]; return f && (st === 'all' || f.s === st); });
+        }
+        const type = $('typeSelect').value;
+        return verbsDatabase.filter(v => type === 'all' || (type === 'irregular') === v.irregular);
+    }
+    function updateSetup() {
+        const practice = $('sourceSelect').value === 'favs';
+        $('typeField').classList.toggle('hidden', practice);
+        $('favStatusField').classList.toggle('hidden', !practice);
+
+        const sel = $('favStatusSelect'), cur = sel.value || 'all';
+        sel.innerHTML = [{ id: 'all', label: 'Todos mis favoritos' }, ...STATUSES].map(st => {
+            const n = Object.keys(favs).filter(k => st.id === 'all' || favs[k].s === st.id).length;
+            return `<option value="${st.id}">${st.label} (${n})</option>`;
+        }).join('');
+        sel.value = cur;
+
+        const note = $('setupNote'), btn = $('startBtn');
+        btn.disabled = false;
+        note.classList.toggle('hidden', !practice);
+        if (practice) {
+            const n = setupPool().length;
+            if (!n) {
+                btn.disabled = true;
+                note.textContent = favCountTotal()
+                    ? 'No tienes verbos con ese estado. Elige otro o cambia el estado de tus favoritos.'
+                    : 'Aún no tienes favoritos. Guarda verbos con el corazón y vuelve a practicar.';
+            } else {
+                const q = Math.min(n, parseInt($('lengthSelect').value, 10));
+                note.textContent = `Práctica de ${q} pregunta${q === 1 ? '' : 's'} solo con tus verbos.`;
+            }
+        }
+    }
+
     function startGame() {
         currentMode = $('modeSelect').value;
-        const type = $('typeSelect').value;
         total = parseInt($('lengthSelect').value, 10);
 
-        let pool = verbsDatabase.filter(v => type === 'all' || (type === 'irregular') === v.irregular);
-        selectedVerbs = shuffle(pool).slice(0, total);
+        let pool = setupPool();
+        if (!pool.length) return;
+        selectedVerbs = pickVerbs(pool, total, $('sourceSelect').value !== 'favs');
         total = selectedVerbs.length;
 
         currentIndex = 0; score = 0; lives = 3; streak = 0; maxStreak = 0;
@@ -884,8 +1428,13 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         return shuffle([correct, ...picked]);
     }
 
+    let verbSpeakTimer;
+    const VERB_DELAY = 2000; // el verbo se pronuncia 2 s después de aparecer
+    const cancelVerbSpeak = () => clearTimeout(verbSpeakTimer);
+
     function showQuestion() {
         answered = false;
+        cancelVerbSpeak();
         const v = selectedVerbs[currentIndex];
         currentTask = currentMode === 'mixed'
             ? ['translation', 'past', 'participle'][Math.floor(Math.random() * 3)]
@@ -894,10 +1443,11 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         $('currentNum').textContent = currentIndex + 1;
         $('promptVerb').textContent = v.infinitive;
         $('instructionText').textContent = LABELS[currentTask];
+        syncGameFav();
 
         const grid = $('optionsGrid');
         grid.innerHTML = '';
-        generateOptions(v, currentTask).forEach(opt => {
+        generateOptions(v, currentTask).forEach((opt, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.dataset.value = opt;
@@ -905,13 +1455,17 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
             label.textContent = opt;
             const icon = document.createElement('i');
             icon.className = 'fas fa-chevron-right';
-            btn.append(label, icon);
+            const key = document.createElement('kbd');
+            key.className = 'key';
+            key.textContent = idx + 1;
+            btn.append(key, label, icon);
             btn.onclick = () => handleSelection(opt, btn);
             grid.appendChild(btn);
         });
 
         $('gameExample').classList.add('hidden');
         $('nextBtn').classList.add('hidden');
+        verbSpeakTimer = setTimeout(() => { if (!answered) speak(v.infinitive); }, VERB_DELAY);
         startTimer();
     }
 
@@ -956,6 +1510,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
     function handleSelection(selected, btn) {
         if (answered) return;
         answered = true;
+        cancelVerbSpeak();
         clearInterval(timerInterval);
         const correct = selectedVerbs[currentIndex][currentTask];
 
@@ -971,12 +1526,14 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
             btn.querySelector('i').className = 'fas fa-xmark';
             revealCorrect(correct);
             updateLives();
+            registerMiss(selectedVerbs[currentIndex]);
             const box = $('gameBox');
             box.classList.add('shake');
             setTimeout(() => box.classList.remove('shake'), 350);
         }
         showStreak();
-        speak(correct);
+        selected === correct ? playCorrect() : playWrong();
+        speakAnswer(correct);
         afterAnswer();
     }
 
@@ -985,10 +1542,33 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         answered = true;
         lives--; streak = 0;
         updateLives();
+        registerMiss(selectedVerbs[currentIndex]);
         showStreak();
         revealCorrect(selectedVerbs[currentIndex][currentTask]);
+        playWrong();
+        speakAnswer(selectedVerbs[currentIndex][currentTask]);
         afterAnswer();
     }
+
+    // Solo se pronuncia la respuesta si está en inglés (pasado / participio); la traducción no se lee
+    function speakAnswer(ans) {
+        if (currentTask !== 'translation') setTimeout(() => speak(ans), 450);
+    }
+    document.addEventListener('keydown', e => {
+        if ($('gameContainer').classList.contains('hidden') || $('gameZone').classList.contains('hidden')) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const ae = document.activeElement;
+        if (ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) return;
+        if (/^[1-4]$/.test(e.key) && !answered) {
+            const b = $('optionsGrid').children[parseInt(e.key, 10) - 1];
+            if (b) { e.preventDefault(); b.click(); }
+        } else if ((e.key === 'Enter' || e.key === ' ') && !$('nextBtn').classList.contains('hidden')) {
+            if (ae && ae.tagName === 'BUTTON' && !ae.disabled) return; // el botón enfocado ya reacciona solo
+            e.preventDefault();
+            $('nextBtn').click();
+        }
+    });
+    $('replayBtn').addEventListener('click', () => speak(selectedVerbs[currentIndex].infinitive));
 
     function nextQuestion() {
         currentIndex++;
@@ -1008,6 +1588,7 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
 
     function showResults() {
         clearInterval(timerInterval);
+        cancelVerbSpeak();
         $('gameZone').classList.add('hidden');
         $('resultsZone').classList.remove('hidden');
         $('finalScore').textContent = `${score}/${total}`;
@@ -1028,11 +1609,46 @@ wrap+|Envolver|Wrap the gift.|Envuelve el regalo.
         $('resTitle').textContent = title;
     }
 
+    /* ---------- Auto-actualización ----------
+       Pide el index.html "fresco" al servidor (ignorando la caché) y compara APP_VERSION.
+       Si hay una versión nueva: recarga sola (o espera a que termine la partida).
+       Los favoritos NO se tocan: viven en localStorage, no en el archivo. */
+    let navigate = u => location.replace(u);
+    let pendingUpdate = null, lastCheck = 0;
+    const gameRunning = () => !$('gameContainer').classList.contains('hidden') && !$('gameZone').classList.contains('hidden');
+
+    function applyUpdate() {
+        if (!pendingUpdate || gameRunning()) return;
+        const v = pendingUpdate; pendingUpdate = null;
+        navigate(location.pathname + '?v=' + encodeURIComponent(v)); // URL distinta = salta la caché
+    }
+    async function checkForUpdate() {
+        if (window.NEC_BLOQUEADO) return;                      // seguridad.js bloqueó la página: no hacer nada
+        if (!/^https?:$/.test(location.protocol) || Date.now() - lastCheck < 60000) return;
+        lastCheck = Date.now();
+        try {
+            const r = await fetch(location.pathname + '?_=' + Date.now(), { cache: 'no-store' });
+            if (!r.ok) return;
+            const m = (await r.text()).match(/const APP_VERSION = '([^']+)'/);
+            if (!m || m[1] === APP_VERSION) return;
+            let tried = null;
+            try { tried = sessionStorage.getItem('nec_upd_tried'); } catch (e) {}
+            if (tried === m[1]) return;                            // evita recargas en bucle
+            try { sessionStorage.setItem('nec_upd_tried', m[1]); } catch (e) {}
+            pendingUpdate = m[1];
+            applyUpdate();
+        } catch (e) { /* sin conexión: se sigue con la versión actual */ }
+    }
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
+
     /* ---------- Inicio ---------- */
     $('verbCount').textContent = verbsDatabase.length;
     $('irrCount').textContent = verbsDatabase.filter(v => v.irregular).length;
     $('bestStreak').textContent = getBest();
+    updateStats();
     $('year').textContent = new Date().getFullYear();
+    $('appVer').textContent = 'v' + APP_VERSION;
+    checkForUpdate();
 </script>
 </body>
 </html>
