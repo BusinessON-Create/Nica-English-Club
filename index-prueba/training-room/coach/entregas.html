@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
 
@@ -16,33 +16,34 @@
 <style>
   .tr2-entrega-card { background:var(--card); border:1px solid var(--border2); border-radius:var(--r); padding:18px; margin-bottom:14px; }
   .tr2-entrega-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-  .tr2-entrega-alumno { font-family:'Playfair Display',serif; font-size:17px; color:#fff; }
+  .tr2-entrega-alumno { font-family:var(--fh); font-size:17px; color:#fff; }
   .tr2-entrega-meta { font-size:12px; color:var(--muted); }
-  .tr2-entrega-tipo { display:inline-flex; align-items:center; gap:6px; background:var(--gold-dim); color:var(--gold3); font:700 11.5px 'DM Sans',sans-serif; padding:4px 12px; border-radius:99px; }
+  .tr2-entrega-tipo { display:inline-flex; align-items:center; gap:6px; background:var(--gold-dim); color:var(--gold3); font:700 11.5px var(--fb); padding:4px 12px; border-radius:99px; }
   .tr2-entrega-body { background:var(--card2); border-radius:var(--r-sm); padding:12px 14px; font-size:14px; margin:12px 0; white-space:pre-wrap; }
   .tr2-entrega-acciones { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }
-  .tr2-btn-aprobar { background:rgba(0,214,143,.14); border:1px solid var(--green); color:var(--green); padding:8px 16px; border-radius:99px; font:700 13px 'DM Sans',sans-serif; cursor:pointer; }
-  .tr2-btn-refuerzo { background:rgba(255,92,92,.14); border:1px solid var(--red); color:var(--red); padding:8px 16px; border-radius:99px; font:700 13px 'DM Sans',sans-serif; cursor:pointer; }
-  .tr2-feedback-input { flex:1; min-width:200px; background:var(--card); border:1px solid var(--border2); color:var(--text); padding:9px 12px; border-radius:99px; font:400 13px 'DM Sans',sans-serif; }
+  .tr2-btn-aprobar { background:rgba(143,214,164,.14); border:1px solid var(--green); color:var(--green); padding:8px 16px; border-radius:99px; font:700 13px var(--fb); cursor:pointer; }
+  .tr2-btn-refuerzo { background:rgba(255,92,92,.14); border:1px solid var(--red); color:var(--red); padding:8px 16px; border-radius:99px; font:700 13px var(--fb); cursor:pointer; }
+  .tr2-feedback-input { flex:1; min-width:200px; background:var(--card); border:1px solid var(--border2); color:var(--text); padding:9px 12px; border-radius:99px; font:400 13px var(--fb); }
   .tr2-ia-botones { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-  .tr2-btn-ia { background:var(--card2); border:1px solid var(--gold2); color:var(--gold3); padding:7px 14px; border-radius:99px; font:700 12.5px 'DM Sans',sans-serif; cursor:pointer; }
+  .tr2-btn-ia { background:var(--card2); border:1px solid var(--gold2); color:var(--gold3); padding:7px 14px; border-radius:99px; font:700 12.5px var(--fb); cursor:pointer; }
   .tr2-btn-ia.tr2-btn-ia-suave { border-color:var(--border2); color:var(--muted); }
 
   .tr2-barra { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:18px; }
   .tr2-seg { display:inline-flex; background:var(--card2); border:1px solid var(--border2); border-radius:99px; padding:3px; }
-  .tr2-seg button { background:transparent; border:0; color:var(--muted); font:700 12.5px 'DM Sans',sans-serif; padding:7px 16px; border-radius:99px; cursor:pointer; }
+  .tr2-seg button { background:transparent; border:0; color:var(--muted); font:700 12.5px var(--fb); padding:7px 16px; border-radius:99px; cursor:pointer; }
   .tr2-seg button.on { background:var(--gold-dim); color:var(--gold3); }
   #sel-grupo { font:inherit; font-size:13px; padding:8px 12px; border-radius:99px; background:var(--card); color:var(--text); border:1px solid var(--border2); max-width:100%; }
   .tr2-seccion { margin-top:22px; }
   .tr2-seccion-head { display:flex; align-items:baseline; gap:10px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border2); }
-  .tr2-seccion-head span { font-family:'Playfair Display',serif; font-size:18px; color:#fff; }
+  .tr2-seccion-head span { font-family:var(--fh); font-size:18px; color:#fff; }
   .tr2-seccion-head small { color:var(--muted); font-size:12px; }
-  .tr2-seccion-head b { margin-left:auto; background:var(--gold-dim); color:var(--gold3); font:700 12px 'DM Sans',sans-serif; padding:2px 10px; border-radius:99px; }
-  .tr2-estado-rev { display:inline-block; font:700 11.5px 'DM Sans',sans-serif; padding:3px 12px; border-radius:99px; }
-  .tr2-estado-rev.aprobada { background:rgba(0,214,143,.14); color:var(--green); }
+  .tr2-seccion-head b { margin-left:auto; background:var(--gold-dim); color:var(--gold3); font:700 12px var(--fb); padding:2px 10px; border-radius:99px; }
+  .tr2-estado-rev { display:inline-block; font:700 11.5px var(--fb); padding:3px 12px; border-radius:99px; }
+  .tr2-estado-rev.aprobada { background:rgba(143,214,164,.14); color:var(--green); }
   .tr2-estado-rev.refuerzo { background:rgba(255,92,92,.14); color:var(--red); }
   .tr2-fb-rev { background:var(--card2); border-radius:var(--r-sm); padding:10px 14px; font-size:13.5px; margin-top:8px; white-space:pre-wrap; }
 </style>
+<link rel="stylesheet" href="../../identidad/identidad.css?v=1">
 </head>
 <body>
 

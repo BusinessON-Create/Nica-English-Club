@@ -1,0 +1,72 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   identidad.css — fuente ÚNICA de la identidad visual de Nica English Club (v1)
+   Misma identidad que la página de test del sitio web: negro cálido, amarillo #ffc400 usado con
+   sobriedad (en detalles pequeños, no en superficies grandes), títulos en Bricolage Grotesque,
+   botones en píldora con brillo suave. La cargan el portal, el Class Room y el panel del coach.
+   Las VARIABLES (colores, tipografías, sombras de botón) viven aquí y mandan sobre las de cada página.
+   Ojo: algunos tintes transparentes (rgba) siguen escritos dentro de cada página; si algún día se cambia el
+   amarillo de base, hay que cambiar también esos tintes (la prueba identidad.test.js avisa si algo se desalinea).
+   ════════════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:#0a0908; --canvas:#0c0b09; --card:#16130f; --card2:#1d1912; --card-hover:#221d15;
+  --border:#231f18; --border2:#2a251e;
+  --gold:#ffc400; --gold2:#d9a400; --gold3:#ffe27a; --gold-rgb:255 196 0;
+  --gold-dim:rgba(255,196,0,.08); --gold-glow:rgba(255,196,0,.13);
+  --green:#8fd6a4; --red:#ff5c5c; --blue:#4d9fff;
+  --muted:#a39b8f; --muted-dim:#6b645a; --text:#f3efe8; --white:#ffffff; --ink:#1a1300;
+  --fh:"Bricolage Grotesque",Georgia,serif;
+  --fb:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --btn-sh:0 6px 18px rgb(var(--gold-rgb) / .14), inset 0 1px 0 rgba(255,255,255,.30);
+  --btn-sh-h:0 10px 26px rgb(var(--gold-rgb) / .26), inset 0 1px 0 rgba(255,255,255,.38);
+}
+body { font-family:var(--fb); }
+h1, h2, h3 { font-family:var(--fh); letter-spacing:-.02em; }
+
+/* Detalles finos */
+body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; background:radial-gradient(560px circle at 75% 6%, var(--gold-glow), transparent 62%); }
+::selection { background:rgb(var(--gold-rgb) / .28); color:#fff; }
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+
+/* ── Botón principal: píldora, brillo que cruza al pasar, se achica al presionar ── */
+.btn-login:not(.btn-outline-gold), .tr2-btn-entrar, .tr2-btn-entregar, .btn-guardar {
+  position:relative; overflow:hidden; border:0; border-radius:999px;
+  background:linear-gradient(180deg, #ffd23a, var(--gold)); color:var(--ink);
+  box-shadow:var(--btn-sh);
+  transition:transform .18s var(--ease), box-shadow .25s var(--ease), filter .2s, opacity .2s;
+}
+.btn-login:not(.btn-outline-gold)::after, .tr2-btn-entrar::after, .tr2-btn-entregar::after, .btn-guardar::after {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(105deg, transparent 32%, rgba(255,255,255,.5) 50%, transparent 68%);
+  transform:translateX(-130%); transition:transform .7s var(--ease);
+}
+/* Anula el "hover" 3D de antes (también en pantallas táctiles, donde se queda pegado) */
+.btn-login:not(.btn-outline-gold):hover, .tr2-btn-entrar:hover, .tr2-btn-entregar:hover, .btn-guardar:hover { transform:none; box-shadow:var(--btn-sh); filter:none; }
+@media (hover:hover) {
+  .btn-login:not(.btn-outline-gold):hover, .tr2-btn-entrar:hover, .tr2-btn-entregar:hover, .btn-guardar:hover { transform:translateY(-2px); box-shadow:var(--btn-sh-h); }
+  .btn-login:not(.btn-outline-gold):hover::after, .tr2-btn-entrar:hover::after, .tr2-btn-entregar:hover::after, .btn-guardar:hover::after { transform:translateX(130%); }
+}
+.btn-login:not(.btn-outline-gold):active:not(:disabled), .tr2-btn-entrar:active, .tr2-btn-entregar:active:not(:disabled), .btn-guardar:active:not(:disabled) { transform:scale(.97); box-shadow:0 3px 10px rgb(var(--gold-rgb) / .16); }
+.btn-login:not(.btn-outline-gold):disabled, .tr2-btn-entregar:disabled, .btn-guardar:disabled { opacity:.4; box-shadow:none; }
+
+/* ── Botón secundario (contorno amarillo suave) ── */
+.btn-login.btn-outline-gold { background:transparent; color:var(--gold); border:1px solid rgb(var(--gold-rgb) / .38); border-radius:999px; box-shadow:none; }
+.btn-login.btn-outline-gold:hover { background:var(--gold-dim); border-color:var(--gold); transform:none; box-shadow:none; }
+@media (hover:hover) { .btn-login.btn-outline-gold:hover { transform:translateY(-1px); } }
+.btn-login.btn-outline-gold:active:not(:disabled) { transform:scale(.97); box-shadow:none; }
+
+/* ── Píldoras con borde amarillo: borde más sobrio, y se llenan al pasar ── */
+.btn-share, .btn-ver-mas, .neclub-ver-mas, .btn-coach-panel, .tr2-btn-ia, .roster-todos { border-color:rgb(var(--gold-rgb) / .38); }
+@media (hover:hover) { .btn-share:hover, .btn-ver-mas:hover, .neclub-ver-mas:hover, .btn-coach-panel:hover, .tr2-btn-ia:hover { border-color:var(--gold); } }
+.btn-borrado { border-radius:999px; }
+
+/* ── Entradas suaves: las tarjetas suben y aparecen, una tras otra ── */
+@keyframes idUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+#s-student .dashboard-shell > *, .tr2-shell > h1, .tr2-shell > .tr2-sub, .tr2-grid-niveles > *, .wrap > h1, .wrap > .sub, .wrap > .mando > *, .admin-head, .admin-card { animation:idUp .45s var(--ease) both; }
+#s-student .dashboard-shell > *:nth-child(2), .tr2-grid-niveles > *:nth-child(2), .wrap > .mando > *:nth-child(2) { animation-delay:.06s; }
+#s-student .dashboard-shell > *:nth-child(3), .tr2-grid-niveles > *:nth-child(3) { animation-delay:.12s; }
+#s-student .dashboard-shell > *:nth-child(4), .tr2-grid-niveles > *:nth-child(4) { animation-delay:.18s; }
+#s-student .dashboard-shell > *:nth-child(n+5), .tr2-grid-niveles > *:nth-child(n+5) { animation-delay:.24s; }
+@media (prefers-reduced-motion:reduce) {
+  #s-student .dashboard-shell > *, .tr2-shell > h1, .tr2-shell > .tr2-sub, .tr2-grid-niveles > *, .wrap > h1, .wrap > .sub, .wrap > .mando > *, .admin-head, .admin-card { animation:none; }
+  .btn-login::after, .tr2-btn-entrar::after, .tr2-btn-entregar::after, .btn-guardar::after { transition:none; }
+}
