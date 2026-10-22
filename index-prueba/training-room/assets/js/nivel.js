@@ -16,7 +16,7 @@ import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.j
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 import { instalarAudio, registrarLista, limpiarParaAudio, ciclarVelocidad, etiquetaVelocidad } from "./audio.js";
 import { instalarJuegos, marcador, renderOpcion, renderOrden, renderParejas } from "./juegos.js";
-import { instalarEntregas, cargarEntrega, pintarEstado } from "./entregas.js";
+import { instalarEntregas, cargarEntrega, aplicarEstadoEntrega } from "./entregas.js";
 import { ICONO_UNIDAD, PORTADAS, ICONOS_VOCAB, BANDERAS, NUMEROS, COLORES, REGLAS_ICONO, WARMUP, PRONOMBRES, TO_BE, TEMA_VISUAL } from "./visuales.js";
 import { PRACTICA_U1 } from "./ejercicios-u1.js";
 import { PRACTICA_U2, PRACTICA_U3, PRACTICA_U4, PRACTICA_U5, PRACTICA_U6, PRACTICA_U7 } from "./ejercicios-resto.js";
@@ -66,7 +66,7 @@ export async function cargarEstadosEntrega(vista) {
     const el = vista.querySelector(`#estado-${tipo}-${CTX.unidadId}`);
     if (!el) continue;
     const entrega = await cargarEntrega(CTX.alumnoId, CTX.nivelId, CTX.unidadId, tipo);
-    pintarEstado(el, entrega);
+    aplicarEstadoEntrega(el, entrega);
   }
 }
 

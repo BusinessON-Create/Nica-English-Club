@@ -41,6 +41,8 @@
   .tr2-estado-rev { display:inline-block; font:700 11.5px var(--fb); padding:3px 12px; border-radius:99px; }
   .tr2-estado-rev.aprobada { background:rgba(143,214,164,.14); color:var(--green); }
   .tr2-estado-rev.refuerzo { background:rgba(255,92,92,.14); color:var(--red); }
+  .tr2-btn-borrar { background:transparent; border:1px solid var(--border2); color:var(--muted); padding:6px 14px; border-radius:99px; font:600 12.5px var(--fb); cursor:pointer; }
+  .tr2-btn-borrar:hover { border-color:var(--red); color:var(--red); }
   .tr2-fb-rev { background:var(--card2); border-radius:var(--r-sm); padding:10px 14px; font-size:13.5px; margin-top:8px; white-space:pre-wrap; }
 </style>
 <link rel="stylesheet" href="../../identidad/identidad.css?v=1">
@@ -145,7 +147,7 @@
         ? esc(e.texto || '')
         : (AUDIO_OK.test(e.audioBase64 || '')
             ? `<audio controls style="width:100%;" src="${e.audioBase64}"></audio>`
-            : '<span class="tr2-muted">Audio no disponible.</span>');
+            : `<span class="tr2-muted">${e.audioBorrado ? 'Audio borrado para liberar espacio. La calificación se conserva.' : 'Audio no disponible.'}</span>`);
     }
 
     function cabeceraHTML(e) {
@@ -186,6 +188,9 @@
           <span class="tr2-estado-rev ${esc(e.estado)}">${esc(ETQ[e.estado] || e.estado)}</span>
           ${cuando ? `<span class="tr2-entrega-meta" style="margin-left:8px;">${esc(cuando)}</span>` : ''}
           ${e.feedbackCoach ? `<div class="tr2-fb-rev"><b>Tu feedback:</b> ${esc(e.feedbackCoach)}</div>` : ''}
+          ${(e.tipo === 'speaking' && AUDIO_OK.test(e.audioBase64 || ''))
+            ? `<div style="margin-top:10px;"><button class="tr2-btn-borrar" data-borrar-audio><i class="fa-solid fa-trash"></i> Borrar audio</button></div>`
+            : ''}
         </div>`;
     }
 
@@ -297,6 +302,32 @@
         const pedir = ev.target.closest('[data-pedir-ia]');
         const accion = ev.target.closest('[data-ia]');
         const veredicto = ev.target.closest('[data-veredicto]');
+        const borrar = ev.target.closest('[data-borrar-audio]');
+
+        if (borrar) {
+          const card = borrar.closest('.tr2-entrega-card');
+          const ok = window.confirm('¿Seguro que quieres borrar este audio?\n\nEsta acción no se puede deshacer. La calificación y tu feedback se conservan.');
+          if (!ok) return;
+          borrar.disabled = true;
+          try {
+            await updateDoc(doc(db, 'training_v2_entregas', card.dataset.id), {
+              audioBase64: null,
+              audioBorrado: true,
+              audioBorradoEn: serverTimestamp(),
+            });
+          } catch (err) {
+            console.error(err);
+            borrar.disabled = false;
+            mostrarAviso('No se pudo borrar el audio. Intenta de nuevo.');
+            return;
+          }
+          const item = revisadas.find((x) => x.id === card.dataset.id);
+          if (item) { item.audioBase64 = null; item.audioBorrado = true; }
+          card.querySelector('.tr2-entrega-body').innerHTML = cuerpoHTML({ tipo: 'speaking', audioBase64: null, audioBorrado: true });
+          borrar.parentElement.remove();
+          mostrarAviso('Audio borrado.');
+          return;
+        }
 
         if (pedir) {
           const card = pedir.closest('.tr2-entrega-card');

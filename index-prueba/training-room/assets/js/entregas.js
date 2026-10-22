@@ -1,8 +1,12 @@
 // entregas.js — Speaking y Writing llegan al coach (colección training_v2_entregas)
 //
 // Doc ID determinístico: {alumnoId}__{nivelId}-{unidadId}__{tipo}
-// Así reentregar sobreescribe la entrega anterior (no acumula basura) y
-// alcanza con un solo getDoc para saber si ya hay algo entregado.
+// Alcanza con un solo getDoc para saber si ya hay algo entregado.
+//
+// ENTREGA ÚNICA: el alumno entrega una vez por actividad. Después solo
+// practica. La única excepción es si el coach marcó "refuerzo": ahí se
+// permite entregar de nuevo (sobreescribe la anterior, no acumula basura).
+// El bloqueo real lo hacen las reglas de Firestore; esto es la parte visual.
 //
 // Grabación de audio: usa MediaRecorder del navegador y se guarda como
 // base64 directo en el documento (sin Firebase Storage, para no requerir
@@ -40,6 +44,7 @@ async function guardarEntrega(ctx, tipo, datos) {
     ...datos,
     fecha: serverTimestamp(),
     estado: 'pendiente',
+    audioBorrado: false,
     feedbackCoach: null,
     iaDecision: null,
     calificadoPor: null,
@@ -87,6 +92,47 @@ export function pintarEstado(el, entrega) {
     <span class="tr2-badge-estado ${CLASE[entrega.estado]}">${ETIQUETA[entrega.estado]}</span>
     ${entrega.estado !== 'pendiente' && entrega.feedbackCoach ? `<p class="tr2-feedback-coach">${esc(entrega.feedbackCoach)}</p>` : ''}
   `;
+}
+
+// ── Entrega única: ¿puede entregar? ───────────────────────────────────
+const AUDIO_OK = /^data:audio\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/;
+
+export function puedeEntregar(entrega) {
+  return !entrega || entrega.estado === 'refuerzo';
+}
+
+function bloquearEntrega(cont, entrega) {
+  cont.querySelectorAll('.tr2-textarea, .tr2-entrega-footer, .tr2-btn-grabar, .tr2-audio-preview, .tr2-btn-entregar-audio')
+    .forEach((el) => { el.style.display = 'none'; });
+  let caja = cont.querySelector('.tr2-entrega-cerrada');
+  if (!caja) {
+    caja = document.createElement('div');
+    caja.className = 'tr2-entrega-cerrada';
+    cont.insertBefore(caja, cont.querySelector('.tr2-entrega-estado'));
+  }
+  let tu = '';
+  if (entrega.tipo === 'writing') {
+    tu = `<div class="tr2-entrega-tu">${esc(entrega.texto || '')}</div>`;
+  } else if (AUDIO_OK.test(entrega.audioBase64 || '')) {
+    tu = `<audio controls style="width:100%;margin-top:8px;" src="${entrega.audioBase64}"></audio>`;
+  } else if (entrega.audioBorrado) {
+    tu = '<p class="tr2-nota">Tu audio ya se borró para liberar espacio. Tu calificación se conserva.</p>';
+  }
+  caja.innerHTML = `<p><i class="fa-solid fa-circle-check"></i> Ya entregaste esta actividad. Ahora puedes seguir practicando.</p>${tu}`;
+}
+
+// Pinta el estado y, según corresponda, cierra o reabre la entrega.
+export function aplicarEstadoEntrega(el, entrega) {
+  pintarEstado(el, entrega);
+  const cont = el.closest('.tr2-entrega');
+  if (!cont || !entrega) return;
+  if (puedeEntregar(entrega)) {
+    // refuerzo: puede volver a entregar
+    const b = cont.querySelector('.tr2-btn-entregar');
+    if (b) b.textContent = 'Entregar de nuevo';
+    return;
+  }
+  bloquearEntrega(cont, entrega);
 }
 
 // ── Grabación (MediaRecorder) ─────────────────────────────────────────
@@ -140,10 +186,21 @@ export function instalarEntregas() {
       if (!texto) return;
       btn.disabled = true; btn.textContent = 'Enviando…';
       const estadoEl = cont.querySelector('.tr2-entrega-estado');
-      await entregarTexto(ctx, texto);
-      const entrega = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'writing');
-      pintarEstado(estadoEl, entrega);
-      btn.disabled = false; btn.textContent = 'Volver a entregar';
+      try {
+        const previa = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'writing');
+        if (!puedeEntregar(previa)) {
+          aplicarEstadoEntrega(estadoEl, previa);
+          mostrarAviso('Esta actividad ya fue entregada.');
+          return;
+        }
+        await entregarTexto(ctx, texto);
+        const entrega = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'writing');
+        aplicarEstadoEntrega(estadoEl, entrega);
+      } catch (err) {
+        console.error(err);
+        mostrarAviso('No se pudo entregar. Intenta de nuevo.');
+        btn.disabled = false; btn.textContent = 'Entregar';
+      }
       return;
     }
 
@@ -178,13 +235,19 @@ export function instalarEntregas() {
       const audioBase64 = cont.dataset.audio;
       if (!audioBase64) return;
       btn.disabled = true; btn.textContent = 'Enviando…';
+      const estadoEl = cont.querySelector('.tr2-entrega-estado');
       try {
+        const previa = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'speaking');
+        if (!puedeEntregar(previa)) {
+          aplicarEstadoEntrega(estadoEl, previa);
+          mostrarAviso('Esta actividad ya fue entregada.');
+          return;
+        }
         await entregarAudio(ctx, audioBase64);
         const entrega = await cargarEntrega(ctx.alumnoId, ctx.nivelId, ctx.unidadId, 'speaking');
-        pintarEstado(cont.querySelector('.tr2-entrega-estado'), entrega);
-        btn.textContent = 'Entregado ✓';
+        aplicarEstadoEntrega(estadoEl, entrega);
       } catch (err) {
-        mostrarAviso(err.message);
+        mostrarAviso(err.message || 'No se pudo entregar. Intenta de nuevo.');
         btn.disabled = false; btn.textContent = 'Entregar';
       }
       return;
