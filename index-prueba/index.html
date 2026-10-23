@@ -1498,27 +1498,29 @@ details.zona-ejemplos .zona-cuerpo > button { margin-top:0 !important; font-size
 .banner-projection{ border:1px solid var(--border2); box-shadow:none; }
 .banner-projection-eyebrow{ color:var(--muted); }
 .banner-projection-eyebrow i{ color:var(--gold); }
-/* PC: dos columnas (contenido a la izquierda; a la derecha, perfil + menú fijos) */
+/* Panel de coach: mismo estilo que los demás botones de la barra (sin resaltar) */
+.btn-coach-panel{ background:rgba(255,255,255,.03); backdrop-filter:blur(8px); border:1px solid var(--border2); color:var(--muted); transition:color .2s, border-color .2s, background .2s; }
+.btn-coach-panel:hover{ background:rgba(255,255,255,.06); color:var(--text); }
+/* Logout "fantasma": discreto hasta que le pasas el mouse */
+.side-drawer-item.logout-item{ color:var(--muted-dim); }
+.side-drawer-item.logout-item i{ color:inherit; }
+.side-drawer-item.logout-item:hover{ color:var(--red); background:rgba(255,92,92,.06); }
+.side-drawer-item.logout-item:hover i{ color:var(--red); }
+/* PC: 3 columnas (menú a la izquierda | contenido | perfil a la derecha) */
 @media (min-width:1100px){
-  #s-student .stu-nav{ padding-left:max(20px, calc((100% - 1040px) / 2)); padding-right:max(20px, calc((100% - 1040px) / 2)); }
-  #s-student .dashboard-shell{ max-width:1040px; display:grid; grid-template-columns:minmax(0,1fr) 340px; column-gap:28px; align-items:start; padding-bottom:64px; }
-  #s-student .dashboard-shell > *{ grid-column:1; min-width:0; }
-  #s-student .dashboard-shell > .home-unified{ grid-column:2; grid-row:1 / span 8; position:sticky; top:84px; margin:18px 0 0; max-height:calc(100vh - 104px); overflow-y:auto; scrollbar-width:none; }
+  #s-student .stu-nav{ padding-left:max(20px, calc((100% - 1180px) / 2)); padding-right:max(20px, calc((100% - 1180px) / 2)); }
+  #s-student .dashboard-shell{ max-width:1180px; display:grid; grid-template-columns:200px minmax(0,1fr) 310px; column-gap:26px; align-items:start; padding-bottom:64px; }
+  #s-student .dashboard-shell > *{ grid-column:2; min-width:0; }
+  #s-student .dashboard-shell > .home-unified{ grid-column:3; grid-row:1 / span 8; position:sticky; top:84px; margin:18px 0 0; max-height:calc(100vh - 104px); overflow-y:auto; scrollbar-width:none; }
   #s-student .dashboard-shell > .home-unified::-webkit-scrollbar{ display:none; }
-  /* Columna derecha (la arma el JS): tarjeta de perfil + menú, juntos y fijos al hacer scroll */
-  #s-student .dashboard-shell > #side-col{ grid-column:2; grid-row:1 / span 8; position:sticky; top:84px; max-height:calc(100vh - 104px); overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; padding-bottom:4px; }
-  #side-col > .home-unified{ position:static; max-height:none; overflow:visible; margin:18px 0 0; }
-  #side-col > .side-drawer{ position:static; transform:none; transition:none; width:auto; max-width:none; height:auto; z-index:auto; margin-top:14px; border:1px solid var(--border2); border-radius:var(--r-lg); background:var(--card); }
-  #side-col .side-drawer-head{ display:none; }
-  #side-col .side-drawer-list{ padding:8px; overflow:visible; }
-  #side-col .side-drawer-item{ padding:11px 12px; }
+  #s-student .dashboard-shell > #side-drawer{ grid-column:1; grid-row:1 / span 8; position:sticky; top:84px; transform:none; transition:none; width:auto; max-width:none; height:auto; max-height:calc(100vh - 104px); z-index:auto; margin-top:18px; border:1px solid var(--border2); border-radius:var(--r-lg); background:var(--card); }
+  #s-student #side-drawer .side-drawer-head{ display:none; }
+  #s-student #side-drawer .side-drawer-list{ padding:8px; overflow-y:auto; }
+  #s-student #side-drawer .side-drawer-item{ padding:11px 12px; }
   #s-student #btn-hamburger{ display:none; }
-  /* Invitar amigos: apilado para que no se apriete en la columna angosta */
   #s-student .home-unified .mindset-invite{ flex-direction:column; align-items:flex-start; gap:8px; }
-  /* Flechas del carrusel: solo al pasar el mouse, para no tapar historias */
   .carousel-nav{ opacity:0; transition:opacity .2s; }
   :hover > .carousel-nav{ opacity:1; }
-  /* Caja de publicar más compacta */
   .neclub-composer textarea{ min-height:36px; }
   .neclub-composer-hint{ margin-top:0; margin-bottom:8px; }
 }
@@ -1606,7 +1608,7 @@ details.zona-ejemplos .zona-cuerpo > button { margin-top:0 !important; font-size
     <button class="side-drawer-item premium" id="drawer-item-videos" hidden onclick="toggleSideDrawer(false); abrirSalaDirecta('videos');"><i class="fa-solid fa-circle-play"></i> Videos <i class="fa-solid fa-star premium-star"></i></button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); toggleNotifDropdown();"><i class="fa-solid fa-list-check"></i> Actividades<span class="drawer-item-badge" id="notif-badge">0</span></button>
         <div id="drawer-eflinks-container"></div>
-        <button class="side-drawer-item logout-item" onclick="toggleSideDrawer(false); cerrarSesion();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+        <button class="side-drawer-item logout-item" onclick="toggleSideDrawer(false); confirmarSalir();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
       </div>
     </div>
 
@@ -7189,32 +7191,31 @@ window.toggleSideDrawer = function (forceState) {
   document.body.style.overflow = abrir ? 'hidden' : '';
 };
 
-// PC (1100px o más): el menú se acopla debajo de la tarjeta del perfil, en la columna derecha.
-// En pantallas más chicas todo vuelve a su lugar y el menú sigue siendo el cajón de la hamburguesa.
+// PC (1100px o más): el menú se acopla a la izquierda del contenido (primera columna).
+// En pantallas más chicas vuelve a su lugar y sigue siendo el cajón de la hamburguesa.
 (function acoplarMenuPC() {
   try {
     const mq = window.matchMedia('(min-width:1100px)');
     const acomodar = () => {
       const shell = document.querySelector('#s-student .dashboard-shell');
-      const card = shell && shell.querySelector('.home-unified');
       const drawer = document.getElementById('side-drawer');
       const overlay = document.getElementById('side-drawer-overlay');
-      if (!shell || !card || !drawer) return;
-      let col = document.getElementById('side-col');
+      if (!shell || !drawer) return;
       if (mq.matches) {
-        if (!col) { col = document.createElement('div'); col.id = 'side-col'; shell.insertBefore(col, card); }
-        col.appendChild(card); col.appendChild(drawer);
+        if (drawer.parentNode !== shell) shell.insertBefore(drawer, shell.firstChild);
         drawer.classList.remove('open'); if (overlay) overlay.classList.remove('open'); document.body.style.overflow = '';
-      } else if (col) {
-        shell.insertBefore(card, col);
+      } else if (drawer.parentNode === shell) {
         shell.parentNode.insertBefore(drawer, shell);
-        col.remove();
       }
     };
     if (mq.addEventListener) mq.addEventListener('change', acomodar); else mq.addListener(acomodar);
     acomodar();
   } catch (e) { console.error('No se pudo acoplar el menú en PC:', e); }
 })();
+
+window.confirmarSalir = async () => {
+  if (await confirmarAccion({ titulo: '¿Seguro que quieres salir?', mensaje: 'Tendrás que iniciar sesión otra vez para volver a entrar.', textoBoton: 'Salir' })) cerrarSesion();
+};
 
 // El ícono de hamburguesa se resalta si hay actividades sin ver, actividades sin completar, o mensajes sin leer.
 function updateHamburgerHighlight() {
