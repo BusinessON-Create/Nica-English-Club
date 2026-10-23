@@ -2493,6 +2493,7 @@ async function restaurarSesion(user) {
         getDoc(doc(db, 'alumnos', alumnoIdGuardado)).then(snap => {
           if (!snap.exists()) return;
           const fresco = { id: snap.id, ...snap.data() };
+          if (fresco.suspendido) { expulsarSuspendido(); return; }
           necGuardarCache('perfil', alumnoIdGuardado, fresco);
           if (sessionActiva && sessionActiva.id === fresco.id) { sessionActiva = fresco; renderUI(fresco); }
         }).catch(e => console.error('No se pudo refrescar el perfil del alumno:', e));
@@ -2501,8 +2502,14 @@ async function restaurarSesion(user) {
           const snap = await getDoc(doc(db, 'alumnos', alumnoIdGuardado));
           if (snap.exists()) {
             const fresco = { id: snap.id, ...snap.data() };
-            necGuardarCache('perfil', alumnoIdGuardado, fresco);
-            destino = { screen: 's-student', alumno: fresco };
+            if (fresco.suspendido) {
+              sessionStorage.setItem('nica_aviso_suspension', '1');
+              localStorage.removeItem('nica_sesion_activa'); localStorage.removeItem('nica_alumno_id');
+              try { await signOut(auth); } catch (e) {}
+            } else {
+              necGuardarCache('perfil', alumnoIdGuardado, fresco);
+              destino = { screen: 's-student', alumno: fresco };
+            }
           }
         } catch (e) { console.error('No se pudo restaurar la sesión del alumno:', e); }
       }
@@ -2511,6 +2518,10 @@ async function restaurarSesion(user) {
 
   await esperaMinima;
   document.getElementById('loading').style.display = 'none';
+  if (sessionStorage.getItem('nica_aviso_suspension')) {
+    sessionStorage.removeItem('nica_aviso_suspension');
+    showModal('Cuenta suspendida', 'Tu acceso está en pausa por ahora. Habla con tu coach o con la administración para reactivarlo.');
+  }
 
   if (destino && destino.screen === 's-admin') {
     await asegurarPanelAdminHTML();
@@ -2540,6 +2551,7 @@ async function restaurarSesion(user) {
     escucharChat();
     escucharPresenciaAlumnos();
     iniciarLatido(sessionActiva.id);
+    vigilarSuspension(sessionActiva.id);
     restaurarPantallaGuardada('s-student');
     abrirDestinoDesdeUrl(parametrosUrl.get('ir')); // viene de la barra del Training Room v2
   } else {
@@ -2644,6 +2656,7 @@ async function entrarComoAlumno(found) {
   escucharChat();
   escucharPresenciaAlumnos();
   iniciarLatido(found.id);
+  vigilarSuspension(found.id);
   if (inactivo24h) {
     const frase = MENSAJES_MOTIVACIONALES[Math.floor(Math.random()*MENSAJES_MOTIVACIONALES.length)];
     setTimeout(() => showModal('¡Bienvenido de nuevo!', frase, 'fa-hand'), 900);
@@ -7212,6 +7225,27 @@ window.toggleSideDrawer = function (forceState) {
     acomodar();
   } catch (e) { console.error('No se pudo acoplar el menú en PC:', e); }
 })();
+
+// Cuenta suspendida: se revisa al volver a la app y cada 5 minutos (1 lectura cada vez, no un listener constante).
+let vigiaSuspension = null, vigiaVisibilidad = false, expulsando = false;
+window.expulsarSuspendido = () => {
+  if (expulsando) return; expulsando = true;
+  clearInterval(vigiaSuspension);
+  sessionStorage.setItem('nica_aviso_suspension', '1');
+  cerrarSesion();
+};
+window.vigilarSuspension = (id) => {
+  clearInterval(vigiaSuspension);
+  const revisar = async () => {
+    try { const snap = await getDoc(doc(db, 'alumnos', id)); if (snap.exists() && snap.data().suspendido) expulsarSuspendido(); }
+    catch (e) { /* sin conexión: se vuelve a intentar en la próxima revisión */ }
+  };
+  vigiaSuspension = setInterval(revisar, 5 * 60 * 1000);
+  if (!vigiaVisibilidad) {
+    vigiaVisibilidad = true;
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && sessionActiva && sessionActiva.id === id) revisar(); });
+  }
+};
 
 window.confirmarSalir = async () => {
   if (await confirmarAccion({ titulo: '¿Seguro que quieres salir?', mensaje: 'Tendrás que iniciar sesión otra vez para volver a entrar.', textoBoton: 'Salir' })) cerrarSesion();
