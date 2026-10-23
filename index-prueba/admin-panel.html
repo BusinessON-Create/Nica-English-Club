@@ -98,7 +98,8 @@
           <button onclick="resetearAsistenciaSemanal()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">RESETEAR SEMANA MANUAL</button>
           </div></details>
           <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-users"></i> Alumnos registrados</p>
-          <div id="lista-alumnos-ui" style="margin-top:20px;"></div>
+          <div class="al-barra"><input type="search" id="al-buscar" class="admin-input" placeholder="Buscar por nombre, correo o ID…" oninput="filtrarAlumnosAdmin()"><select id="al-filtro" class="admin-input" onchange="filtrarAlumnosAdmin()"><option value="todos">Todos</option><option value="online">En línea</option><option value="coach">Coaches</option><option value="susp">Suspendidos</option></select></div>
+          <div id="lista-alumnos-ui" style="margin-top:14px;"></div>
         </div>
 
         <div id="tab-motivacion" class="tab-content" style="padding:20px; display:none;">
@@ -294,6 +295,16 @@
           <hr style="border-color:var(--border); margin:24px 0;">
           <p class="admin-label"><i class="fa-solid fa-chart-line"></i> Progreso de alumnos</p>
           <div style="overflow-x:auto;"><table class="tr-progress-table" id="tr-progreso-tabla"><thead><tr><th>Alumno</th><th>Etapa</th><th>Semana</th><th>Día</th><th>Racha</th><th>Retos enviados</th><th title="Desbloquea las 4 etapas en modo QA para pruebas">QA</th><th></th></tr></thead><tbody></tbody></table></div>
+
+          <hr style="border-color:var(--border); margin:24px 0;">
+          <p class="admin-label"><i class="fa-solid fa-microphone"></i> Audios de Speaking (Class Room)</p>
+          <p class="form-hint">Los audios que entregan los alumnos ocupan espacio. Aquí ves cuántos hay y los borras tú, cuando quieras. Al borrar un audio se conservan la calificación y el feedback. Nada se borra solo.</p>
+          <button class="btn-login btn-outline-gold" onclick="cargarAudiosEntregasAdmin()"><i class="fa-solid fa-magnifying-glass"></i> Ver audios guardados</button>
+          <p class="form-hint" id="tr-audios-resumen" style="margin-top:10px;"></p>
+          <div id="tr-audios-acciones" style="display:none; margin-bottom:10px;">
+            <button class="btn-login" onclick="borrarAudiosRevisadosAdmin()" style="background:#c0392b;"><i class="fa-solid fa-trash"></i> Borrar todos los ya revisados</button>
+          </div>
+          <div style="overflow-x:auto;"><table class="tr-progress-table" id="tr-audios-tabla"><thead><tr><th>Alumno</th><th>Unidad</th><th>Estado</th><th>Fecha</th><th>Tamaño</th><th></th></tr></thead><tbody></tbody></table></div>
         </div>
       </div>
     </div>
