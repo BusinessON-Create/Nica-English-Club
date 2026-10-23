@@ -1490,6 +1490,17 @@ details.zona-ejemplos .zona-cuerpo > button { margin-top:0 !important; font-size
 </style>
 <style id="admin-mejoras">
 /* ===== Panel admin: menú agrupado, Recursos, avisos y Mantenimiento ===== */
+.al-form-det{scroll-margin-top:84px;border:1px solid var(--border2);border-radius:16px;background:var(--card2);margin-bottom:16px}
+.al-form-det>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:0 16px;font-weight:700;font-size:13.5px;color:var(--gold);-webkit-tap-highlight-color:transparent}
+.al-form-det>summary::-webkit-details-marker{display:none}
+.al-form-det[open]>summary{border-bottom:1px solid var(--border2)}
+.al-form-det .chevron{transition:transform .2s}.al-form-det[open] .chevron{transform:rotate(180deg)}
+.al-form-cuerpo{padding:16px}
+.al-form-det .admin-guardar-barra{background:linear-gradient(180deg,transparent,var(--card2) 38%)}
+@media(max-width:699px){.al-acciones .ico-btn{width:44px;height:44px}}
+@media(min-width:1100px){.al-grid{display:grid;grid-template-columns:minmax(320px,400px) minmax(0,1fr);gap:28px;align-items:start}.al-form-det{margin-bottom:0}.al-col-lista .admin-lista-titulo{margin-top:0;padding-top:0;border-top:none}.al-col-lista .al-barra{margin-top:0}}
+select.admin-input{color-scheme:dark}
+select.admin-input option{background:#1d1912;color:#fff}
 .admin-menu-grupo{display:none}
 .admin-menu-card.admin-menu-card[id="btn-tab-mantenimiento"] i{color:var(--red)}
 .rec-grid{display:grid;gap:18px}
@@ -6724,6 +6735,7 @@ window.toast = (texto, opts = {}) => {
 };
 
 /* ===== ADMIN: banner (vista previa) y lista de enlaces ===== */
+window.alAbrirFormEnPC = () => { const d = document.getElementById('al-form-det'); if (d && window.matchMedia('(min-width:1100px)').matches) d.open = true; };
 window.previsualizarBanner = () => {
   const inp = document.getElementById('config-banner-url'); if (!inp) return;
   const box = document.getElementById('banner-preview'), img = document.getElementById('banner-preview-img'), txt = document.getElementById('banner-preview-txt');
@@ -6986,6 +6998,7 @@ window.prepararEdicionAlumno = (id) => {
   document.getElementById('alumno-correo').disabled = yaVinculado;
   document.getElementById('alumno-pass-hint').style.display = yaVinculado ? 'none' : 'block';
   document.getElementById('btn-reset-pass-alumno').style.display = (yaVinculado && a.email) ? 'block' : 'none';
+  { const det = document.getElementById('al-form-det'); if (det) { det.open = true; document.getElementById('al-form-titulo').innerHTML = '<i class="fa-solid fa-user-pen"></i> Editando: ' + escNeclub(a.nombre || ''); try { det.scrollIntoView({ behavior:'smooth', block:'start' }); } catch (e) {} } }
 };
 window.enviarResetPassAlumno = async () => {
   const id = document.getElementById('alumno-id-edicion').value;
@@ -7080,6 +7093,7 @@ window.registrarAlumno = async () => {
   document.getElementById('alumno-id-edicion').value = '';
   document.getElementById('alumno-identidad-edicion').value = '';
   document.getElementById('alumno-nombre').value = '';
+  { const det = document.getElementById('al-form-det'); if (det) { document.getElementById('al-form-titulo').innerHTML = '<i class="fa-solid fa-user-plus"></i> Nuevo alumno'; if (!window.matchMedia('(min-width:1100px)').matches) det.open = false; } }
   document.getElementById('alumno-correo').value = '';
   document.getElementById('alumno-correo').disabled = false;
   document.getElementById('alumno-foto').value = '';
@@ -7117,6 +7131,7 @@ window.switchTab = (n, b) => {
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
   b.classList.add('active'); document.getElementById('tab-'+n).style.display='block';
   if (n === 'mantenimiento') mantCargarUI();
+  if (n === 'alumnos') alAbrirFormEnPC();
   // Solo visual: centra el botón activo en la barra y lleva la vista al inicio de la pestaña elegida.
   try { b.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' }); document.getElementById('tab-'+n).scrollIntoView({ block:'start', behavior:'smooth' }); } catch (e) {}
 };
