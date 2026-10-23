@@ -218,6 +218,10 @@
               <select id="mant-neclub-dias" class="admin-input" onchange="mantGuardarAuto()"><option value="1">1 día</option><option value="3">3 días</option><option value="7">7 días</option><option value="14">14 días</option><option value="30">30 días</option></select>
             </label>
             <p class="mant-nota">Solo afecta a las publicaciones que se creen desde ahora. Las existentes conservan su fecha de vencimiento.</p>
+            <label class="mant-auto"><span>Comprimir los videos de los alumnos al subirlos</span>
+              <select id="mant-video-comp" class="admin-input" onchange="mantGuardarAuto()"><option value="1">Activado</option><option value="0">Desactivado</option></select>
+            </label>
+            <p class="mant-nota">Reduce el peso (máx. 720p) en el propio celular del alumno. Si su celular no puede, o algo falla, sube el original. Si algún celular da problemas con la compresión, desactívala aquí.</p>
           </div>
 
           <div class="mant-card">
@@ -237,7 +241,25 @@
 
           <div class="mant-card">
             <h4><i class="fa-solid fa-user-minus"></i> Alumnos</h4>
-            <p>Al borrar a un alumno desde la pestaña Alumnos, ahora también se limpian su foto, su seguimiento y su progreso de Training Room. Su cuenta de acceso no se elimina desde aquí: si solo quieres bloquear la entrada, usa Suspender.</p>
+            <p>Al borrar a un alumno desde la pestaña Alumnos, ahora también se limpian su foto, su seguimiento y su progreso de Training Room y Verb Lab. Su cuenta de acceso no se elimina desde aquí: si solo quieres bloquear la entrada, usa Suspender.</p>
+          </div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-folder-open"></i> Archivos guardados</h4>
+            <p>Revisa las fotos, videos y audios que hay en el almacenamiento y borra <b>solo los que elijas</b>. "Sin referencia conocida" significa que ningún alumno ni publicación de NECLUB que el panel conozca usa ese archivo; revísalo con su vista previa o con "Ver" antes de borrar.</p>
+            <button class="btn-login btn-outline-gold" id="mant-arch-btn" onclick="mantRevisarArchivos()">Revisar archivos</button>
+            <p class="mant-nota" id="mant-arch-resumen" style="display:none;"></p>
+            <div class="mant-chips" id="mant-arch-filtros" style="display:none;">
+              <button class="mant-chip active" data-f="todos" onclick="mantFiltroArchivos('todos')">Todos</button>
+              <button class="mant-chip" data-f="suelto" onclick="mantFiltroArchivos('suelto')">Sin referencia</button>
+              <button class="mant-chip" data-f="uso" onclick="mantFiltroArchivos('uso')">En uso</button>
+              <button class="mant-chip" onclick="mantMarcarSueltos()">Marcar los sueltos</button>
+              <button class="mant-chip" onclick="mantQuitarSeleccion()">Quitar selección</button>
+            </div>
+            <div id="mant-arch-lista"></div>
+            <div class="mant-arch-acciones mant-fila" id="mant-arch-acciones" style="display:none;">
+              <button class="mant-btn-peligro" style="flex:1;" onclick="mantBorrarArchivosSel()">Borrar seleccionados (<span id="mant-arch-sel">0</span>)</button>
+            </div>
           </div>
         </div>
         <div id="tab-chat" class="tab-content" style="padding:20px; display:none;">
@@ -313,7 +335,7 @@
             </div>
             <p id="neclub-historia-progreso-texto" style="font-size:11.5px; color:var(--muted-dim); margin-top:6px;">Subiendo... 0%</p>
           </div>
-          <p class="form-hint">Aparece en NECLUB marcada como <b>Nica English Club <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i> Verificado</b> y no se autoborra a los 7 días como los posts normales. Puedes subir una foto, un video (sin límite de 1 minuto) o un PDF.</p>
+          <p class="form-hint">Aparece en NECLUB marcada como <b>Nica English Club <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i> Verificado</b> y no se autoborra a los 7 días como los posts normales. Puedes subir una foto, un video (sin límite de 1 minuto) o un PDF. Las fotos y los videos se optimizan solos al publicar (el video se comprime y se le genera miniatura, igual que con los alumnos); mientras se comprime el video, mantén esta pestaña abierta y visible.</p>
           <hr style="border-color:var(--border); margin:20px 0;">
           <p class="form-hint">Moderación de NECLUB: aquí puedes borrar cualquier publicación de cualquier alumno. Las publicaciones se autoborran solas (por defecto a los 7 días; se cambia en Mantenimiento). Las historias en PDF no se autoborran.</p>
           <div id="lista-neclub-ui"></div>
