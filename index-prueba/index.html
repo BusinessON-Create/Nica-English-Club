@@ -1488,6 +1488,57 @@ details.zona-ejemplos .zona-cuerpo > button { margin-top:0 !important; font-size
 .admin-bloque{max-width:760px}
 }
 </style>
+<style id="admin-mejoras">
+/* ===== Panel admin: menú agrupado, Recursos, avisos y Mantenimiento ===== */
+.admin-menu-grupo{display:none}
+.admin-menu-card.admin-menu-card[id="btn-tab-mantenimiento"] i{color:var(--red)}
+.rec-grid{display:grid;gap:18px}
+.rec-col{min-width:0}
+.rec-form-fila{display:grid}
+.rec-contador{color:var(--muted-dim);font-weight:600;margin-left:4px}
+.banner-preview{position:relative;width:100%;margin:0 0 10px;border-radius:12px;overflow:hidden;border:1px solid var(--border2);aspect-ratio:16/9;max-height:190px;background:#000}
+.banner-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.banner-preview span{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.7);color:var(--gold);font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px}
+#lista-enlaces-ui{margin-top:6px}
+.enlace-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 2px;border-bottom:1px solid var(--border)}
+.enlace-info{min-width:0;flex:1}
+.enlace-titulo{display:block;color:#fff;font-size:13.5px;font-weight:600;overflow-wrap:anywhere}
+.enlace-url{display:block;color:var(--muted-dim);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.enlace-acciones{display:flex;gap:10px;flex:none}
+@media(max-width:699px){.enlace-acciones .ico-btn{width:44px;height:44px;font-size:15px}.enlace-acciones{gap:14px}}
+@media(min-width:700px) and (max-width:1099px){.rec-form-fila{grid-template-columns:1fr 1fr;gap:10px}}
+@media(min-width:700px){#btn-guardar-enlace{width:auto;min-width:220px;padding-left:34px;padding-right:34px}}
+@media(min-width:1100px){.rec-grid{grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:28px;align-items:start}.rec-col .admin-lista-titulo{margin-top:0;padding-top:0;border-top:none}}
+.rec-form{padding-bottom:6px;margin-bottom:0}
+@media(min-width:1000px){
+  .admin-menu-grupo{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-dim);font-weight:800;padding:14px 6px 4px}
+  .admin-menu-grupo:first-child{padding-top:2px}
+}
+/* avisos (toast) */
+#toast-wrap{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:100001;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:min(92vw,420px)}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:12px;width:100%;background:var(--card2);border:1px solid var(--gold2);color:#fff;padding:12px 14px;border-radius:14px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.55);animation:toastIn .25s ease}
+.toast i{color:var(--green)}
+.toast button{margin-left:auto;background:transparent;border:1px solid var(--gold2);color:var(--gold);border-radius:99px;padding:6px 14px;min-height:36px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* Mantenimiento */
+.mant-aviso{display:flex;gap:12px;padding:14px;border:1px dashed rgba(255,92,92,.4);background:rgba(255,92,92,.05);border-radius:14px;color:#ffd0d0;font-size:12.5px;line-height:1.5;margin-bottom:16px}
+.mant-aviso i{color:var(--red);margin-top:2px}
+.mant-card{background:var(--card2);border:1px solid var(--border2);border-radius:16px;padding:16px;margin-bottom:14px;max-width:760px}
+.mant-card h4{color:#fff;font-size:14px;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.mant-card h4 i{color:var(--gold)}
+.mant-card > p{color:var(--muted);font-size:12px;line-height:1.5;margin-bottom:12px}
+.mant-card .mant-nota{color:var(--muted-dim);font-size:11.5px;margin:10px 0 0}
+.mant-fila{display:flex;gap:8px;align-items:stretch}
+.mant-fila .admin-input{margin:0;flex:1;min-width:0}
+.mant-btn-peligro{flex:none;background:transparent;color:var(--red);border:1px solid rgba(255,92,92,.4);border-radius:12px;padding:0 18px;min-height:48px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
+.mant-btn-peligro:hover{background:rgba(255,92,92,.1)}
+@media(max-width:520px){.mant-fila-sel{flex-direction:column}.mant-fila-sel .mant-btn-peligro{width:100%}}
+.mant-auto{display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--border2)}
+.mant-auto > span{display:block;color:var(--muted);font-size:11px;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.mant-auto .admin-input{margin:0}
+.mant-check{margin-top:10px;border-bottom:none;padding-bottom:0}
+.mant-check span{color:#fff;font-size:12.5px}
+</style>
 <style id="pc-pro">
 /* Sin la luz dorada de fondo en pantallas grandes (en celular queda sutil) */
 @media (min-width:900px){ body::before{ display:none; } }
@@ -2188,7 +2239,7 @@ details.zona-ejemplos .zona-cuerpo > button { margin-top:0 !important; font-size
 <script type="module">
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, getDocs, query, orderBy, limit, setDoc, getDoc, Timestamp, increment, arrayUnion, arrayRemove, where, deleteField, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -4112,7 +4163,7 @@ window.publicarNeclub = async () => {
       likes: [],
       comentariosCount: 0,
       fecha: ahora,
-      expiraEn: Timestamp.fromMillis(ahora + NECLUB_DIAS_VIDA*24*60*60*1000)
+      expiraEn: Timestamp.fromMillis(ahora + (await mantDiasNeclub())*24*60*60*1000)
     });
     document.getElementById('neclub-texto').value = '';
     document.getElementById('neclub-texto').style.height = 'auto';
@@ -4362,7 +4413,7 @@ async function limpiarNeclubExpirados() {
   if (neclubModoVisitante) return; // el visitante público nunca borra ni escribe nada, solo el alumno hace esta limpieza
   try {
     const snap = await getDocs(query(collection(db,'neclub_posts'), where('expiraEn','<=', Timestamp.now()), limit(20)));
-    for (const d of snap.docs) await borrarPostNeclubCompleto(d.id, d.data().archivoPath);
+    for (const d of snap.docs) await borrarPostNeclubCompleto(d.id, d.data().archivoPath, d.data().coverPath);
   } catch (e) { /* limpieza oportunista: si falla, se reintenta en la próxima visita */ }
 }
 
@@ -4707,7 +4758,7 @@ function escucharRecursos() {
 
 let alumnosCacheAdmin = [];
 function cargarDatosAdmin() {
-  getDoc(doc(db, 'config', 'banner')).then(d => { if(d.exists()) document.getElementById('config-banner-url').value = d.data().url; });
+  getDoc(doc(db, 'config', 'banner')).then(d => { if(d.exists()) { document.getElementById('config-banner-url').value = d.data().url; previsualizarBanner(); } });
   getDoc(doc(db, 'config', 'mentalidad')).then(d => {
     if(d.exists()) {
       document.getElementById('config-mindset-titulo').value = d.data().titulo || '';
@@ -4715,11 +4766,8 @@ function cargarDatosAdmin() {
     }
   });
   onSnapshot(collection(db,'enlaces'), snap => {
-    const list = document.getElementById('lista-enlaces-ui'); list.innerHTML = '';
-    snap.forEach(d => {
-      const data = d.data();
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span style="color:#fff; font-size:13px;">${data.titulo}</span><div style="display:flex; gap:8px;"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" onclick="prepararEdicionEnlace('${d.id}','${data.titulo}','${data.url}')"><i class="fa-solid fa-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" onclick="borrarDoc('enlaces','${d.id}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
-    });
+    enlacesCacheAdmin = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    renderEnlacesAdmin();
   });
   onSnapshot(collection(db,'alumnos'), snap => {
     const list = document.getElementById('lista-alumnos-ui'); list.innerHTML = '';
@@ -4769,6 +4817,7 @@ function cargarDatosAdmin() {
   });
   escucharRetosAdmin();
   escucharReunionesAdmin();
+  mantChatAuto(); // solo corre en la sesión de admin: los alumnos nunca borran mensajes
   escucharSolicitudesBorradoAdmin();
   escucharEflinksAdmin();
   escucharNeclubAdmin();
@@ -6658,23 +6707,161 @@ window.borrarVideoDeCategoria = async (catId, videoId) => {
   const videos = (cat.videos||[]).filter(v => v.id !== videoId);
   await updateDoc(doc(db,'galeria_categorias',catId), { videos });
 };
-window.limpiarActividadesAnteriores = async () => {
-  if (!(await confirmarAccion({ titulo: '¿Borrar actividades de semanas anteriores?', mensaje: 'Las de esta semana se conservan. No se puede deshacer.', textoBoton: 'Borrar', peligro: true }))) return;
-  const semanaActual = getLocalDateStr(getMonday(managuaNow()));
-  const snap = await getDocs(collection(db,'actividades'));
-  const borrar = [];
-  snap.forEach(d => { if (d.data().semana !== semanaActual) borrar.push(d.id); });
-  for (const id of borrar) await deleteDoc(doc(db,'actividades',id));
-  showModal("Hecho", `${borrar.length} actividad(es) anterior(es) eliminada(s).`);
-};
 
 /* ===== ADMIN: LIMPIAR CHAT MANUALMENTE ===== */
-window.limpiarChatManual = async () => {
-  if (!(await confirmarAccion({ titulo: '¿Borrar todo el chat de alumnos?', mensaje: 'Se borran TODOS los mensajes. No se puede deshacer.', textoBoton: 'Borrar chat', peligro: true, escribir: 'BORRAR' }))) return;
-  const snap = await getDocs(collection(db,'chat_global'));
-  for (const d of snap.docs) await deleteDoc(doc(db,'chat_global',d.id));
-  showModal("Hecho", "Chat limpiado.");
+
+/* ===== AVISOS (toast) ===== */
+window.toast = (texto, opts = {}) => {
+  let wrap = document.getElementById('toast-wrap');
+  if (!wrap) { wrap = document.createElement('div'); wrap.id = 'toast-wrap'; document.body.appendChild(wrap); }
+  const t = document.createElement('div'); t.className = 'toast';
+  const ic = document.createElement('i'); ic.className = 'fa-solid ' + (opts.icono || 'fa-circle-check'); t.appendChild(ic);
+  const sp = document.createElement('span'); sp.textContent = texto; t.appendChild(sp);
+  const cerrar = () => t.remove();
+  if (opts.accion) { const b = document.createElement('button'); b.textContent = opts.accion.texto; b.onclick = async () => { cerrar(); await opts.accion.fn(); }; t.appendChild(b); }
+  wrap.appendChild(t);
+  setTimeout(cerrar, opts.ms || 3200);
 };
+
+/* ===== ADMIN: banner (vista previa) y lista de enlaces ===== */
+window.previsualizarBanner = () => {
+  const inp = document.getElementById('config-banner-url'); if (!inp) return;
+  const box = document.getElementById('banner-preview'), img = document.getElementById('banner-preview-img'), txt = document.getElementById('banner-preview-txt');
+  const v = inp.value.trim(); let thumb = '', etiqueta = '';
+  try {
+    const u = new URL(v); const host = u.hostname.replace(/^(www\.|m\.)/, ''); let id = '';
+    if (host === 'youtu.be') id = u.pathname.slice(1);
+    else if (host.endsWith('youtube.com')) id = u.searchParams.get('v') || ((u.pathname.match(/\/(?:shorts|embed|live)\/([\w-]{6,})/) || [])[1] || '');
+    if (/^[\w-]{6,}$/.test(id)) { thumb = 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg'; etiqueta = 'Video de YouTube'; }
+    else if (/\.(png|jpe?g|webp|gif)$/i.test(u.pathname)) { thumb = v; etiqueta = 'Imagen'; }
+  } catch (e) {}
+  if (!thumb) { box.style.display = 'none'; img.removeAttribute('src'); return; }
+  img.src = thumb; txt.textContent = etiqueta; box.style.display = 'block';
+};
+let enlacesCacheAdmin = [];
+window.renderEnlacesAdmin = () => {
+  const list = document.getElementById('lista-enlaces-ui'); if (!list) return;
+  const q = ((document.getElementById('enlaces-buscar') || {}).value || '').trim().toLowerCase();
+  const items = enlacesCacheAdmin.filter(x => !q || (x.titulo || '').toLowerCase().includes(q) || (x.url || '').toLowerCase().includes(q));
+  const cont = document.getElementById('enlaces-contador'); if (cont) cont.textContent = enlacesCacheAdmin.length ? '(' + enlacesCacheAdmin.length + ')' : '';
+  if (!items.length) { list.innerHTML = '<p class="form-hint">' + (enlacesCacheAdmin.length ? 'Ningún enlace coincide con la búsqueda.' : 'Aún no hay enlaces publicados.') + '</p>'; return; }
+  const e = escNeclub;
+  list.innerHTML = items.map(x => `<div class="enlace-fila"><div class="enlace-info"><span class="enlace-titulo">${e(x.titulo)}</span><span class="enlace-url">${e(x.url)}</span></div><div class="enlace-acciones"><button class="ico-btn" style="color:var(--blue); border-color:rgba(77,159,255,0.2)" title="Editar" data-id="${e(x.id)}" onclick="editarEnlaceAdmin(this.dataset.id)"><i class="fa-solid fa-pen"></i></button><button class="ico-btn" style="color:var(--red); border-color:rgba(255,92,92,0.2)" title="Borrar" data-id="${e(x.id)}" onclick="borrarEnlaceAdmin(this.dataset.id)"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
+};
+window.editarEnlaceAdmin = (id) => {
+  const x = enlacesCacheAdmin.find(z => z.id === id); if (!x) return;
+  prepararEdicionEnlace(id, x.titulo || '', x.url || '');
+  try { document.getElementById('link-titulo').scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (er) {}
+};
+window.borrarEnlaceAdmin = async (id) => {
+  const ref = doc(db, 'enlaces', id);
+  try {
+    const snap = await getDoc(ref); if (!snap.exists()) return;
+    const data = snap.data();
+    await deleteDoc(ref);
+    toast('Enlace borrado', { icono: 'fa-trash', ms: 7000, accion: { texto: 'Deshacer', fn: async () => {
+      try { await setDoc(ref, data); toast('Enlace restaurado'); } catch (er) { console.error(er); showModal('Error', 'No se pudo restaurar el enlace.'); }
+    } } });
+  } catch (er) { console.error(er); showModal('Error', 'No se pudo borrar. Intenta de nuevo.'); }
+};
+
+/* ===== ADMIN: MANTENIMIENTO (todo desde la app, sin servidor ni Cloud Functions) ===== */
+const MANT_DIA_MS = 24*60*60*1000;
+const MANT_TOPE = 400;        // docs por pasada (chat/actividades): mantiene lecturas y borrados bajos, dentro del plan gratuito
+const MANT_TOPE_POSTS = 60;   // posts por pasada (cada uno borra comentarios y archivos)
+async function mantBorrarLote(refs) {
+  for (let i = 0; i < refs.length; i += 400) { const b = writeBatch(db); refs.slice(i, i + 400).forEach(r => b.delete(r)); await b.commit(); }
+}
+let mantConfigPromesa = null;
+function mantConfigCargar(forzar) {
+  if (!mantConfigPromesa || forzar) mantConfigPromesa = getDoc(doc(db, 'config', 'mantenimiento')).then(s => (s.exists() ? s.data() : {})).catch(() => ({}));
+  return mantConfigPromesa;
+}
+window.mantDiasNeclub = async () => { const c = await mantConfigCargar(); const d = Number(c.neclubDias); return (d >= 1 && d <= 60) ? d : NECLUB_DIAS_VIDA; };
+window.mantCargarUI = async () => {
+  const c = await mantConfigCargar(true);
+  const n = document.getElementById('mant-neclub-dias'), ch = document.getElementById('mant-chat-auto');
+  if (n) n.value = String(Number(c.neclubDias) || NECLUB_DIAS_VIDA);
+  if (ch) ch.value = String(Number(c.chatAutoDias) || 0);
+};
+window.mantGuardarAuto = async () => {
+  const neclubDias = parseInt(document.getElementById('mant-neclub-dias').value, 10);
+  const chatAutoDias = parseInt(document.getElementById('mant-chat-auto').value, 10);
+  try { await setDoc(doc(db, 'config', 'mantenimiento'), { neclubDias, chatAutoDias }, { merge: true }); mantConfigCargar(true); toast('Preferencia guardada'); }
+  catch (e) { console.error(e); showModal('Error', 'No se pudo guardar. Intenta de nuevo.'); }
+};
+const mantEtqEdad = d => d === 7 ? '1 semana' : d === 30 ? '1 mes' : d + ' días';
+window.mantBorrarChat = async () => {
+  const dias = parseInt(document.getElementById('mant-chat-edad').value, 10), todo = dias === 0;
+  try {
+    const q = todo ? query(collection(db, 'chat_global'), limit(MANT_TOPE)) : query(collection(db, 'chat_global'), where('fecha', '<', Date.now() - dias * MANT_DIA_MS), limit(MANT_TOPE));
+    const snap = await getDocs(q);
+    if (snap.empty) { toast('No hay mensajes para borrar', { icono: 'fa-circle-info' }); return; }
+    const n = snap.size, hayMas = n >= MANT_TOPE;
+    const ok = await confirmarAccion({
+      titulo: `¿Borrar ${n}${hayMas ? '+' : ''} mensaje(s) del chat?`,
+      mensaje: (todo ? 'Se borra TODO el chat, incluidos los mensajes privados.' : `Se borran los mensajes de más de ${mantEtqEdad(dias)} (públicos y privados).`) + (hayMas ? ` Se borran ${MANT_TOPE} por pasada; si quedan más, vuelve a pulsar.` : '') + ' No se puede deshacer.',
+      textoBoton: 'Borrar', peligro: true, escribir: todo ? 'BORRAR' : null });
+    if (!ok) return;
+    await mantBorrarLote(snap.docs.map(d => d.ref));
+    toast(`${n} mensaje(s) borrado(s)` + (hayMas ? '. Quedan más: pulsa de nuevo.' : ''));
+  } catch (e) { console.error(e); showModal('Error', 'No se pudo completar el borrado. Intenta de nuevo.'); }
+};
+async function mantChatAuto() {
+  try {
+    const ultima = Number(localStorage.getItem('nec_chat_auto_ts') || 0);
+    if (Date.now() - ultima < 6 * 60 * 60 * 1000) return;
+    localStorage.setItem('nec_chat_auto_ts', String(Date.now()));
+    const c = await mantConfigCargar(); const dias = Number(c.chatAutoDias) || 0; if (!dias) return;
+    const snap = await getDocs(query(collection(db, 'chat_global'), where('fecha', '<', Date.now() - dias * MANT_DIA_MS), limit(100)));
+    if (!snap.empty) await mantBorrarLote(snap.docs.map(d => d.ref));
+  } catch (e) { /* oportunista: si las reglas no lo permiten, simplemente no borra */ }
+}
+window.mantBorrarNeclub = async () => {
+  const dias = parseInt(document.getElementById('mant-neclub-edad').value, 10), todo = dias === 0;
+  const oficial = document.getElementById('mant-neclub-oficial').checked;
+  try {
+    const q = todo ? query(collection(db, 'neclub_posts'), limit(300)) : query(collection(db, 'neclub_posts'), where('fecha', '<', Date.now() - dias * MANT_DIA_MS), limit(300));
+    const snap = await getDocs(q);
+    const cand = snap.docs.filter(d => oficial || !(d.data().verificado === true || d.data().autorId === 'admin'));
+    if (!cand.length) { toast('No hay publicaciones para borrar', { icono: 'fa-circle-info' }); return; }
+    const lote = cand.slice(0, MANT_TOPE_POSTS), hayMas = cand.length > lote.length;
+    const ok = await confirmarAccion({
+      titulo: `¿Borrar ${lote.length}${hayMas ? '+' : ''} publicación(es) de NECLUB?`,
+      mensaje: (todo ? 'Se borran todas las publicaciones' : `Se borran las publicaciones de más de ${mantEtqEdad(dias)}`) + (oficial ? ', incluidas las oficiales' : ', sin tocar las oficiales') + ', con sus comentarios y archivos.' + (hayMas ? ` Se borran ${MANT_TOPE_POSTS} por pasada; si quedan más, vuelve a pulsar.` : '') + ' No se puede deshacer.',
+      textoBoton: 'Borrar', peligro: true, escribir: todo ? 'BORRAR' : null });
+    if (!ok) return;
+    toast('Borrando…', { icono: 'fa-spinner', ms: 2500 });
+    for (const d of lote) { const x = d.data(); await borrarPostNeclubCompleto(d.id, x.archivoPath, x.coverPath); }
+    toast(`${lote.length} publicación(es) borrada(s)` + (hayMas ? '. Quedan más: pulsa de nuevo.' : ''));
+  } catch (e) { console.error(e); showModal('Error', 'No se pudo completar el borrado. Intenta de nuevo.'); }
+};
+window.mantBorrarActividades = async (todas) => {
+  try {
+    const semanaActual = getLocalDateStr(getMonday(managuaNow()));
+    const snap = await getDocs(collection(db, 'actividades'));
+    const refs = snap.docs.filter(d => todas || d.data().semana !== semanaActual).map(d => d.ref);
+    if (!refs.length) { toast('No hay actividades para borrar', { icono: 'fa-circle-info' }); return; }
+    const ok = await confirmarAccion({
+      titulo: `¿Borrar ${refs.length} actividad(es)?`,
+      mensaje: (todas ? 'Se borran TODAS, incluidas las de esta semana.' : 'Las de esta semana se conservan.') + ' No se puede deshacer.',
+      textoBoton: 'Borrar', peligro: true, escribir: todas ? 'BORRAR' : null });
+    if (!ok) return;
+    await mantBorrarLote(refs);
+    toast(`${refs.length} actividad(es) borrada(s)`);
+  } catch (e) { console.error(e); showModal('Error', 'No se pudo completar el borrado. Intenta de nuevo.'); }
+};
+async function mantLimpiarRastroAlumno(id) {
+  try {
+    const s = await getDoc(doc(db, 'alumnos', id)); const foto = s.exists() ? (s.data().foto || '') : '';
+    if (foto && String(foto).includes('firebasestorage')) {
+      const { storage, storageRef, deleteObject } = await cargarStorage();
+      try { await deleteObject(storageRef(storage, foto)); } catch (e) { /* ya no existía */ }
+    }
+  } catch (e) { console.error('No se pudo limpiar la foto del alumno:', e); }
+  try { const seg = await getDocs(collection(db, 'alumnos', id, 'seguimiento')); if (!seg.empty) await mantBorrarLote(seg.docs.map(d => d.ref)); } catch (e) { console.error('No se pudo limpiar el seguimiento:', e); }
+  try { await deleteDoc(doc(db, 'entrenamiento_progreso', id)); } catch (e) { console.error('No se pudo limpiar el progreso:', e); }
+}
 
 window.guardarBanner = async () => {
     const url = document.getElementById('config-banner-url').value.trim();
@@ -6707,10 +6894,10 @@ window.borrarDoc = async (coll, id) => {
   if (coll === 'alumnos') {
     const a = alumnosCacheAdmin.find(x => x.id === id);
     const nombre = a ? a.nombre : 'este alumno';
-    const ok = await confirmarAccion({ titulo: `¿Borrar a ${nombre}?`, mensaje: 'Se borra su ficha del portal. No se puede deshacer.', detalle: 'Su cuenta de acceso no se elimina desde aquí. Si solo quieres que no pueda entrar, usa "Suspender".', textoBoton: 'Borrar alumno', peligro: true, escribir: nombre });
+    const ok = await confirmarAccion({ titulo: `¿Borrar a ${nombre}?`, mensaje: 'Se borran su ficha, su foto, su seguimiento y su progreso de Training Room. No se puede deshacer.', detalle: 'Su cuenta de acceso no se elimina desde aquí. Si solo quieres que no pueda entrar, usa "Suspender".', textoBoton: 'Borrar alumno', peligro: true, escribir: nombre });
     if (!ok) return;
   } else if (!(await confirmarAccion({ titulo: `¿Borrar ${BORRAR_ETQ[coll] || 'este registro'}?`, mensaje: 'No se puede deshacer.', textoBoton: 'Borrar', peligro: true }))) return;
-  try { await deleteDoc(doc(db, coll, id)); } catch (e) { console.error(e); showModal('Error', 'No se pudo borrar. Intenta de nuevo.'); }
+  try { if (coll === 'alumnos') await mantLimpiarRastroAlumno(id); await deleteDoc(doc(db, coll, id)); } catch (e) { console.error(e); showModal('Error', 'No se pudo borrar. Intenta de nuevo.'); }
 };
 window.toggleSuspendidoAlumno = async (id) => {
   const a = alumnosCacheAdmin.find(x => x.id === id); if (!a) return;
@@ -6924,22 +7111,17 @@ window.guardarEnlace = async () => {
   else await addDoc(collection(db,'enlaces'), { titulo:t, url:u, fecha:Date.now() });
   location.reload();
 };
-window.resetearAsistenciaSemanal = async () => {
-  if (await confirmarAccion({ titulo: '¿Reiniciar la asistencia de TODOS los alumnos?', mensaje: 'Se ponen en cero los días y logins de la semana de todos.', textoBoton: 'Reiniciar', peligro: true, escribir: 'REINICIAR' })) {
-    const snap = await getDocs(collection(db,'alumnos'));
-    snap.forEach(async d => await updateDoc(doc(db,'alumnos',d.id), {logins:0, dias_semana:[]}));
-    showModal("Hecho", "Semana reiniciada.");
-  }
-};
 window.cerrarSesion = () => { if (latidoInterval) clearInterval(latidoInterval); if (unsubChat) unsubChat(); if (sessionActiva) necBorrarCacheAlumno(sessionActiva.id); localStorage.removeItem('nica_sesion_activa'); localStorage.removeItem('nica_alumno_id'); localStorage.removeItem('nica_ultima_pantalla'); signOut(auth).then(() => location.reload()); };
 window.switchTab = (n, b) => {
   document.querySelectorAll('.admin-menu-card').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.style.display='none');
   b.classList.add('active'); document.getElementById('tab-'+n).style.display='block';
+  if (n === 'mantenimiento') mantCargarUI();
   // Solo visual: centra el botón activo en la barra y lleva la vista al inicio de la pestaña elegida.
   try { b.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' }); document.getElementById('tab-'+n).scrollIntoView({ block:'start', behavior:'smooth' }); } catch (e) {}
 };
 window.showModal = (t, d, icono) => {
+  if (!icono && (t === 'Éxito' || t === 'Hecho') && d && String(d).length <= 90) { toast(d); return; }
   document.getElementById('modal-title').innerText=t;
   document.getElementById('modal-desc').innerText=d;
   const iconoEl = document.getElementById('modal-icon');
