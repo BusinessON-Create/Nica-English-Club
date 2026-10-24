@@ -33,11 +33,21 @@
         <input type="file" id="neclub-file-foto" accept="image/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'foto')">
         <input type="file" id="neclub-file-video" accept="video/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'video')">
         <input type="file" id="neclub-file-audio" accept="audio/*" style="display:none;" onchange="seleccionarArchivoNeclub(event,'audio')">
+        <!-- Cámara en el momento: abre la cámara nativa y entrega el archivo al mismo flujo (límite de duración, vista previa, compresión y subida) -->
+        <input type="file" id="neclub-cam-foto" accept="image/*" capture="environment" style="display:none;" onchange="seleccionarArchivoNeclub(event,'foto'); cerrarMenuCamNeclub()">
+        <input type="file" id="neclub-cam-video" accept="video/*" capture="environment" style="display:none;" onchange="seleccionarArchivoNeclub(event,'video'); cerrarMenuCamNeclub()">
         <div class="neclub-composer-actions">
           <div class="neclub-media-btns">
             <label class="neclub-media-btn foto" for="neclub-file-foto" title="Photo"><i class="fa-solid fa-image"></i></label>
             <label class="neclub-media-btn video" for="neclub-file-video" title="Video (max 1 min)"><i class="fa-solid fa-video"></i></label>
             <label class="neclub-media-btn audio" for="neclub-file-audio" title="Audio (max 2 min)"><i class="fa-solid fa-microphone"></i></label>
+            <div class="neclub-cam-wrap" id="neclub-cam-wrap">
+              <button type="button" class="neclub-media-btn camara" onclick="toggleMenuCamNeclub(event)" title="Camera" aria-haspopup="true"><i class="fa-solid fa-camera"></i></button>
+              <div class="neclub-cam-menu" id="neclub-cam-menu">
+                <label class="neclub-cam-opt foto" for="neclub-cam-foto"><i class="fa-solid fa-camera"></i> Take photo</label>
+                <label class="neclub-cam-opt video" for="neclub-cam-video"><i class="fa-solid fa-video"></i> Record video (max 1 min)</label>
+              </div>
+            </div>
           </div>
           <button class="neclub-publish-btn" id="neclub-publish-btn" disabled onclick="publicarNeclub()">Post</button>
         </div>
