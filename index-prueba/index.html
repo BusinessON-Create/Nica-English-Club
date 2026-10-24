@@ -640,7 +640,7 @@ a { color: inherit; }
 .neclub-expand-hint { position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; pointer-events:none; }
 
 /* Botón de silenciar/activar sonido en los videos del muro (empiezan mudos, como Instagram) */
-.neclub-mute-toggle { position:absolute; bottom:10px; left:10px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); border:none; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; z-index:2; }
+.neclub-mute-toggle { position:absolute; bottom:10px; right:10px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); border:none; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; z-index:2; }
 
 /* Visor de imagen/video en pantalla completa (bien ajustado en celular, sin exagerar tamaño) */
 .neclub-lightbox { position:fixed; inset:0; z-index:960; display:none; flex-direction:column; background:rgba(0,0,0,.94); }
@@ -684,7 +684,6 @@ a { color: inherit; }
 .neclub-vid-play { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:50%; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); color:#fff; display:none; align-items:center; justify-content:center; font-size:24px; padding-left:4px; box-sizing:border-box; pointer-events:none; z-index:2; }
 .neclub-vid.user-paused .neclub-vid-play { display:flex; }
 .neclub-vid .neclub-mute-toggle { bottom:18px; z-index:4; }
-.neclub-vid .neclub-expand-hint { z-index:4; top:auto; bottom:18px; right:10px; }
 .neclub-vid-bar { position:absolute; left:0; right:0; bottom:0; height:18px; z-index:4; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 .neclub-vid-bar::before { content:''; position:absolute; left:0; right:0; bottom:0; height:3px; background:rgba(255,255,255,.25); }
 .neclub-vid-bar i { position:absolute; left:0; bottom:0; height:3px; width:0; background:var(--gold); border-radius:0 2px 2px 0; pointer-events:none; }
@@ -1773,6 +1772,13 @@ select.admin-input option{background:#1d1912;color:#fff}
 #s-student .home-unified .hu-mind{ padding:12px 14px; border-top:0; border-radius:12px; box-shadow:inset 3px 0 0 var(--gold); background:linear-gradient(90deg, rgba(255,196,0,.14), rgba(255,196,0,.04) 70%, transparent); }
 #s-student .home-unified .hu-mind h3{ font-size:clamp(17px, 4.8vw, 19px); line-height:1.25; -webkit-line-clamp:3; overflow-wrap:break-word; }
 #s-student .home-unified .hu-mind p{ font-size:clamp(12.5px, 3.4vw, 13.5px); -webkit-line-clamp:3; overflow-wrap:break-word; }
+/* 11) Control de volumen del visor: solo en PC (dispositivos con mouse); en celular se usan los botones del telefono */
+.neclub-vol-pc{ display:none; }
+@media (hover:hover) and (pointer:fine){
+  .neclub-vol-pc{ position:absolute; top:calc(14px + env(safe-area-inset-top, 0px)); left:14px; z-index:5; display:flex; align-items:center; gap:10px; height:38px; padding:0 14px; border-radius:99px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; font-size:15px; }
+  .neclub-vol-pc[data-video="0"]{ display:none; }
+  .neclub-vol-pc input{ width:110px; accent-color:var(--gold); cursor:pointer; }
+}
 </style>
 </head>
 <body>
@@ -2430,11 +2436,11 @@ select.admin-input option{background:#1d1912;color:#fff}
 <!-- NECLUB: visor de videos en pantalla completa (scroll vertical tipo Reels) -->
 <div class="neclub-visor" id="neclub-visor">
   <button class="neclub-visor-close" onclick="cerrarVisorVideosNeclub()" title="Close"><i class="fa-solid fa-xmark"></i></button>
+  <div class="neclub-vol-pc" id="neclub-vol-pc" data-video="1"><i class="fa-solid fa-volume-high"></i><input type="range" id="neclub-vol-range" min="0" max="1" step="0.05" value="1" oninput="cambiarVolumenNeclub(this.value)" aria-label="Volume"></div>
   <div class="neclub-visor-scroll" id="neclub-visor-scroll"></div>
   <div class="neclub-visor-rail" id="neclub-visor-rail">
     <button class="neclub-rail-btn" id="neclub-rail-like" onclick="toggleLikeVisorNeclub()" title="Like"><span class="ic"><i class="fa-solid fa-heart"></i></span><span class="n">0</span></button>
     <button class="neclub-rail-btn" id="neclub-rail-com" onclick="abrirComentariosVisorNeclub()" title="Comments"><span class="ic"><i class="fa-solid fa-comment"></i></span><span class="n">0</span></button>
-    <button class="neclub-rail-btn" id="neclub-rail-sound" onclick="toggleSonidoNeclub()" title="Sound"><span class="ic"><i class="fa-solid fa-volume-xmark"></i></span></button>
     <button class="neclub-rail-btn" id="neclub-rail-dl" onclick="descargarMediaNeclub()" title="Download" style="display:none;"><span class="ic"><i class="fa-solid fa-download"></i></span></button>
     <div class="neclub-avatar neclub-rail-av" id="neclub-rail-av"></div>
   </div>
@@ -4243,13 +4249,24 @@ document.addEventListener('play', (ev) => {
    Empieza apagado. Si la persona lo activa, el video que esté centrado suena y al bajar al
    siguiente sigue con sonido. Solo suena un video a la vez (los demás están pausados). */
 let neclubSonido = false;
+let neclubSonidoPrevioVisor = null; // estado del sonido del muro antes de abrir el visor (para restaurarlo al salir)
+let neclubVolumen = 1; // volumen 0..1 (solo se cambia con el control de PC; en celular manda el volumen del teléfono)
 function aplicarSonidoNeclub() {
-  document.querySelectorAll('#neclub-feed .neclub-vid video, #neclub-visor video').forEach(v => { v.muted = !neclubSonido; });
-  document.querySelectorAll('.neclub-vid .neclub-mute-toggle i, #neclub-rail-sound i').forEach(i => {
+  document.querySelectorAll('#neclub-feed .neclub-vid video, #neclub-visor video').forEach(v => { v.muted = !neclubSonido; v.volume = neclubVolumen; });
+  document.querySelectorAll('.neclub-vid .neclub-mute-toggle i').forEach(i => {
     i.className = neclubSonido ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
   });
 }
 window.toggleSonidoNeclub = () => { neclubSonido = !neclubSonido; aplicarSonidoNeclub(); };
+// Control de volumen del visor (solo se muestra en PC)
+window.cambiarVolumenNeclub = (val) => {
+  const vol = Math.max(0, Math.min(1, parseFloat(val)));
+  if (isNaN(vol)) return;
+  neclubVolumen = vol;
+  document.querySelectorAll('#neclub-visor video').forEach(v => { v.volume = vol; });
+  const ic = document.querySelector('#neclub-vol-pc i');
+  if (ic) ic.className = vol === 0 ? 'fa-solid fa-volume-xmark' : (vol < 0.5 ? 'fa-solid fa-volume-low' : 'fa-solid fa-volume-high');
+};
 window.toggleMuteNeclubVideo = () => window.toggleSonidoNeclub(); // compatibilidad con HTML viejo en caché
 // Reproduce respetando el sonido global. Si el navegador bloquea el audio automático, vuelve a mudo (sin romper nada).
 function intentarPlayNeclub(v) {
@@ -4268,7 +4285,6 @@ function neclubVideoHTML(p, enVisor) {
     <div class="neclub-vid-hit" onclick="manejarTapVideo(event)"></div>
     <div class="neclub-vid-play"><i class="fa-solid fa-play"></i></div>
     <button class="neclub-mute-toggle" onclick="event.stopPropagation(); toggleSonidoNeclub()" title="Sound"><i class="fa-solid fa-volume-xmark"></i></button>
-    ${enVisor ? '' : `<div class="neclub-expand-hint" style="pointer-events:auto; cursor:pointer;" onclick="event.stopPropagation(); abrirVisorVideosNeclub('${id}')"><i class="fa-solid fa-expand"></i></div>`}
     <div class="neclub-vid-time"></div>
     <div class="neclub-vid-bar" onclick="event.stopPropagation()" onpointerdown="iniciarArrastreVideoNeclub(event)"><i></i></div>
     <div class="neclub-heart-pop"><i class="fa-solid fa-heart"></i></div>
@@ -4291,6 +4307,8 @@ window.manejarTapVideo = (ev) => {
     cont._ultTap = ahora;
     cont._tapTimer = setTimeout(() => {
       cont._ultTap = 0;
+      // En el muro, un toque abre el video en pantalla completa; dentro del visor pausa/reanuda.
+      if (!cont.classList.contains('en-visor')) { abrirVisorVideosNeclub(cont.dataset.post); return; }
       const v = cont.querySelector('video');
       if (!v) return;
       if (v.paused) { intentarPlayNeclub(v); }
@@ -4416,6 +4434,8 @@ window.abrirVisorVideosNeclub = (postId) => {
   const sc = document.getElementById('neclub-visor-scroll');
   sc.innerHTML = lista.map(p => `<section class="neclub-visor-slide">${p.tipo === 'video' ? neclubVideoHTML(p, true) : neclubFotoHTML(p)}<div class="neclub-visor-caption">${escNeclub(p.texto || '')}</div></section>`).join('');
   visor.classList.add('open');
+  neclubSonidoPrevioVisor = neclubSonido;
+  neclubSonido = true; // en pantalla completa ya no hay boton de sonido: se usan los botones del dispositivo
   aplicarSonidoNeclub();
   neclubVisorActual = postId;
   actualizarRielVisorNeclub();
@@ -4452,7 +4472,7 @@ function actualizarRielVisorNeclub() {
   like.classList.toggle('liked', !!(miId && (p.likes || []).includes(miId)));
   like.querySelector('.n').textContent = (p.likes || []).length;
   document.querySelector('#neclub-rail-com .n').textContent = p.comentariosCount || 0;
-  document.getElementById('neclub-rail-sound').style.display = p.tipo === 'video' ? '' : 'none';
+  const volPc = document.getElementById('neclub-vol-pc'); if (volPc) volPc.dataset.video = p.tipo === 'video' ? '1' : '0';
   document.getElementById('neclub-rail-dl').style.display = puedeDescargarNeclub(p) ? '' : 'none';
   const av = document.getElementById('neclub-rail-av');
   av.innerHTML = avatarPostNeclub(p);
@@ -4576,6 +4596,7 @@ window.cerrarVisorVideosNeclub = () => {
   // deja el muro en el último video/foto que se estaba viendo
   const nodo = neclubVisorActual ? document.getElementById('neclub-post-' + neclubVisorActual) : null;
   if (nodo) nodo.scrollIntoView({ block: 'center' });
+  if (neclubSonidoPrevioVisor !== null) { neclubSonido = neclubSonidoPrevioVisor; neclubSonidoPrevioVisor = null; }
   inicializarAutoplayVideosNeclub(); // reanuda el video del muro que esté centrado
 };
 // Pausa todos los videos del muro (al salir de NECLUB o al abrir el visor de pantalla completa)
