@@ -1734,6 +1734,24 @@ select.admin-input option{background:#1d1912;color:#fff}
   #s-student .stu-nav{ padding-left:12px; padding-right:12px; }
   #s-student .nav-actions{ gap:6px; }
 }
+@media (max-width:600px){
+  /* 6) Feed de la pantalla principal estilo app: cada post ocupa todo el ancho del celular.
+        -18px = relleno lateral de .dashboard-shell; -16px = relleno interno de .neclub-post.
+        Encabezado, texto y botones de like/comentario conservan su relleno. */
+  #home-neclub #neclub-feed .neclub-post{ margin-left:-18px; margin-right:-18px; border-left:0; border-right:0; border-radius:0; }
+  #home-neclub #neclub-feed .neclub-post > .neclub-media-tap{ width:auto; margin-left:-16px; margin-right:-16px; border-radius:0; }
+  #home-neclub #neclub-feed .neclub-post > .neclub-media-tap img,
+  #home-neclub #neclub-feed .neclub-post > .neclub-media-tap video{ border-radius:0; }
+  /* Portada de historias (PDF): mismo tratamiento para que se vea consistente */
+  #home-neclub #neclub-feed .neclub-post > .neclub-story-cover{ margin-left:-16px; margin-right:-16px; border-left:0; border-right:0; border-radius:0; }
+  /* Mismo efecto en NECLUB como pantalla aparte (modo visitante / ?home=clasico):
+     aqui el relleno lateral de .neclub-shell es 14px, por eso -14px en la tarjeta. */
+  #s-neclub #neclub-feed .neclub-post{ margin-left:-14px; margin-right:-14px; border-left:0; border-right:0; border-radius:0; }
+  #s-neclub #neclub-feed .neclub-post > .neclub-media-tap{ width:auto; margin-left:-16px; margin-right:-16px; border-radius:0; }
+  #s-neclub #neclub-feed .neclub-post > .neclub-media-tap img,
+  #s-neclub #neclub-feed .neclub-post > .neclub-media-tap video{ border-radius:0; }
+  #s-neclub #neclub-feed .neclub-post > .neclub-story-cover{ margin-left:-16px; margin-right:-16px; border-left:0; border-right:0; border-radius:0; }
+}
 </style>
 </head>
 <body>
