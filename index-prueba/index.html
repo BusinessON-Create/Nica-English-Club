@@ -1408,6 +1408,21 @@ body.tr-room-lock { overflow:hidden; }
 /* NECLUB dentro de la pantalla principal */
 .home-neclub-head { display:flex; align-items:center; gap:10px; margin:22px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--border2); scroll-margin-top:76px; }
 .home-neclub-head h2 { font-family:var(--fh); font-size:26px; line-height:1; letter-spacing:-.02em; color:var(--white); font-weight:800; text-transform:uppercase; margin:0; }
+/* Wordmark NECLUB: letras en ola, reclinadas a la derecha, con destello dorado */
+.home-neclub-head h2.neclub-wm { display:flex; align-items:baseline; white-space:nowrap; padding-right:6px; }
+.neclub-wm span { display:inline-block; transform-origin:50% 100%; padding-right:.04em; color:#fff;
+  background:linear-gradient(100deg,#fff 0%,#fff 38%,#ffe28a 46%,#d4a73a 50%,#ffe28a 54%,#fff 62%,#fff 100%);
+  background-size:300% 100%; background-position:100% 0;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  animation:neclubSweep 3.4s ease-in-out infinite; }
+.neclub-wm span:nth-child(1){ font-size:1.28em; transform:translateY(-.03em) skewX(-16deg); animation-delay:0s; }
+.neclub-wm span:nth-child(2){ font-size:.80em;  transform:translateY(.04em)  skewX(-14deg); animation-delay:.18s; }
+.neclub-wm span:nth-child(3){ font-size:.94em;  transform:translateY(.01em)  skewX(-17deg); animation-delay:.36s; }
+.neclub-wm span:nth-child(4){ font-size:1.22em; transform:translateY(-.04em) skewX(-15deg); animation-delay:.54s; }
+.neclub-wm span:nth-child(5){ font-size:.80em;  transform:translateY(.04em)  skewX(-14deg); animation-delay:.72s; }
+.neclub-wm span:nth-child(6){ font-size:1.05em; transform:translateY(-.01em) skewX(-17deg); animation-delay:.90s; }
+@keyframes neclubSweep { 0%{background-position:100% 0} 55%,100%{background-position:0% 0} }
+@media (prefers-reduced-motion:reduce){ .neclub-wm span { animation:none; background:none; -webkit-text-fill-color:#fff; } }
 .home-neclub-logo { height:30px; width:auto; flex:none; display:block; }
 .home-neclub-logo:not([src]) { display:none; }
 #home-neclub .neclub-shell { max-width:100%; padding:0 0 40px; }
@@ -1850,7 +1865,7 @@ select.admin-input option{background:#1d1912;color:#fff}
 
       <!-- NECLUB dentro de la pantalla principal (se llena por JS; oculto si se usa ?home=clasico) -->
       <div id="home-neclub" style="display:none;">
-        <div class="home-neclub-head" id="home-neclub-anchor"><img class="home-neclub-logo" id="home-neclub-logo" alt="" aria-hidden="true"><h2>NECLUB</h2></div>
+        <div class="home-neclub-head" id="home-neclub-anchor"><img class="home-neclub-logo" id="home-neclub-logo" alt="" aria-hidden="true"><h2 class="neclub-wm" aria-label="NECLUB"><span aria-hidden="true">N</span><span aria-hidden="true">E</span><span aria-hidden="true">C</span><span aria-hidden="true">L</span><span aria-hidden="true">U</span><span aria-hidden="true">B</span></h2></div>
         <div id="home-neclub-slot"></div>
       </div>
     </div>
@@ -5125,7 +5140,15 @@ function escucharReuniones() {
     reunionesCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
     renderMeetFloat();
     if (!primeraCargaReuniones) {
-      const hayNueva = reunionesCache.some(r => !anteriorIds.includes(r.id));
+      // Suena solo si la reunión nueva es para mí (o para todos) y no está vencida; mismo criterio que reunionActivaParaMi.
+      const miId = sessionActiva ? sessionActiva.id : null;
+      const ahoraMs = Date.now();
+      const hayNueva = reunionesCache.some(r => {
+        if (anteriorIds.includes(r.id)) return false;
+        const expiraMs = r.expiraEn && r.expiraEn.toMillis ? r.expiraEn.toMillis() : (r.expiraEn || 0);
+        if (expiraMs && expiraMs < ahoraMs) return false;
+        return !r.destinatarios || !r.destinatarios.length || (miId && r.destinatarios.includes(miId));
+      });
       if (hayNueva) reproducirDing();
     }
     primeraCargaReuniones = false;
