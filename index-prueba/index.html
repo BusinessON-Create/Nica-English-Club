@@ -1720,6 +1720,16 @@ select.admin-input option{background:#1d1912;color:#fff}
   #s-student .profile-row > div > div:not(.avatar-ring){ min-width:0; }
   #s-student .welcome-name{ min-width:0; overflow-wrap:anywhere; }
 }
+@media (max-width:400px){
+  /* 4) Fila "Invita a tus amigos": texto corrido arriba y boton Compartir debajo (igual que en PC) */
+  #s-student .home-unified .mindset-invite{ flex-direction:column; align-items:flex-start; gap:8px; }
+  #s-student .home-unified .mindset-invite p{ display:block; line-height:1.45; }
+  #s-student .home-unified .mindset-invite p i{ margin-right:6px; }
+  #s-student .home-unified .mindset-invite p i:last-child{ margin-right:0; margin-left:4px; }
+  /* 5) Encabezado NECLUB: logo un poco mas chico para que quepa mas del saludo "Hi Nombre" */
+  #s-student .neclub-brand{ --u:27px; }
+  #s-student .home-neclub-hi{ font-size:17px; }
+}
 @media (max-width:360px){
   #s-student .stu-nav{ padding-left:12px; padding-right:12px; }
   #s-student .nav-actions{ gap:6px; }
