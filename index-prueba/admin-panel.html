@@ -226,9 +226,11 @@
 
           <div class="mant-card">
             <h4><i class="fa-solid fa-bell"></i> Notificaciones</h4>
-            <p>Borra las notificaciones de NECLUB y Class Room de más de 30 días. Los alumnos ya no las ven; solo ocupan espacio. Se borran hasta 400 por pasada, y antes de borrar te dice cuántas son y cuántas lecturas y borrados cuesta.</p>
-            <div class="mant-fila">
-              <button class="mant-btn-peligro" style="flex:1;" onclick="mantBorrarNotifs()">Borrar las de más de 30 días</button>
+            <p>Borra las notificaciones viejas de NECLUB y Class Room. Los alumnos ya no ven las de más de 30 días; solo ocupan espacio. Borra por partes: primero las más viejas, o elige cuántas por pasada. Si hay muchas, sigue otro día. Antes de borrar te dice cuántas son y cuántas lecturas y borrados cuesta.</p>
+            <div class="mant-fila mant-fila-sel">
+              <select id="mant-notif-edad" class="admin-input"><option value="30">Más de 1 mes</option><option value="60">Más de 2 meses</option><option value="90">Más de 3 meses</option><option value="180">Más de 6 meses</option></select>
+              <select id="mant-notif-cant" class="admin-input"><option value="100">100 por pasada</option><option value="400" selected>400 por pasada</option><option value="1000">1000 por pasada</option></select>
+              <button class="mant-btn-peligro" onclick="mantBorrarNotifs()">Borrar</button>
             </div>
           </div>
 

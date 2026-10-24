@@ -7681,12 +7681,16 @@ window.mantBorrarNeclub = async () => {
   } catch (e) { console.error(e); showModal('Error', 'No se pudo completar el borrado. Intenta de nuevo.'); }
 };
 window.mantBorrarNotifs = async () => {
-  // Notificaciones de más de 30 días (NECLUB + Class Room). Cuenta primero, avisa el costo y pide confirmar.
+  // Notificaciones viejas (NECLUB + Class Room), de más de 1, 2, 3 o 6 meses. Cuenta primero, avisa el costo y pide confirmar.
+  // Nunca menos de 30 días: las más nuevas los alumnos todavía las ven.
   try {
-    const corte = Date.now() - NECLUB_NOTIF_DIAS_VIDA * MANT_DIA_MS;
-    const snapN = await getDocs(query(collection(db, 'neclub_notificaciones'), where('fecha', '<', corte), limit(MANT_TOPE)));
+    const dias = Math.max(NECLUB_NOTIF_DIAS_VIDA, parseInt(document.getElementById('mant-notif-edad').value, 10) || NECLUB_NOTIF_DIAS_VIDA);
+    const tope = [100, 400, 1000].includes(parseInt(document.getElementById('mant-notif-cant').value, 10)) ? parseInt(document.getElementById('mant-notif-cant').value, 10) : MANT_TOPE;
+    const etq = ({ 30: '1 mes', 60: '2 meses', 90: '3 meses', 180: '6 meses' })[dias] || (dias + ' días');
+    const corte = Date.now() - dias * MANT_DIA_MS;
+    const snapN = await getDocs(query(collection(db, 'neclub_notificaciones'), where('fecha', '<', corte), limit(tope)));
     let refsN = snapN.docs.map(d => d.ref), refsC = [];
-    const resto = MANT_TOPE - refsN.length;
+    const resto = tope - refsN.length;
     if (resto > 0) {
       // En Class Room la fecha puede ser número o fecha de Firestore: se buscan los dos tipos.
       const sNum = await getDocs(query(collection(db, 'training_v2_notificaciones'), where('fecha', '<', corte), limit(resto)));
@@ -7697,11 +7701,11 @@ window.mantBorrarNotifs = async () => {
         refsC = refsC.concat(sTs.docs.map(d => d.ref));
       }
     }
-    const refs = refsN.concat(refsC), n = refs.length, hayMas = n >= MANT_TOPE;
-    if (!n) { toast('No hay notificaciones de más de 30 días', { icono: 'fa-circle-info' }); return; }
+    const refs = refsN.concat(refsC), n = refs.length, hayMas = n >= tope;
+    if (!n) { toast(`No hay notificaciones de más de ${etq}`, { icono: 'fa-circle-info' }); return; }
     const ok = await confirmarAccion({
       titulo: `¿Borrar ${n}${hayMas ? '+' : ''} notificación(es)?`,
-      mensaje: `NECLUB: ${refsN.length}. Class Room: ${refsC.length}. Todas tienen más de 30 días y los alumnos ya no las ven. Costo de esta pasada: ${n} lecturas y ${n} borrados (el plan gratis permite 50.000 lecturas y 20.000 borrados al día).` + (hayMas ? ` Se borran ${MANT_TOPE} por pasada; si quedan más, vuelve a pulsar.` : '') + ' No se puede deshacer.',
+      mensaje: `NECLUB: ${refsN.length}. Class Room: ${refsC.length}. Todas tienen más de ${etq} y los alumnos ya no las ven. Costo de esta pasada: ${n} lecturas y ${n} borrados (el plan gratis permite 50.000 lecturas y 20.000 borrados al día).` + (hayMas ? ` Se borran ${tope} por pasada; si quedan más, vuelve a pulsar, hoy o mañana.` : '') + ' No se puede deshacer.',
       textoBoton: 'Borrar', peligro: true });
     if (!ok) return;
     await mantBorrarLote(refs);
