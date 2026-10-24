@@ -434,8 +434,8 @@ a { color: inherit; }
 .nec-coach-float-btn { position:fixed; bottom:84px; right:22px; z-index:401; width:52px; height:52px; border-radius:50%; background:none; border:none; box-shadow:none; color:#fff; font-size:25px; padding:0; align-items:center; justify-content:center; cursor:pointer; transition: transform .2s var(--ease); display:none; filter:drop-shadow(0 2px 6px rgba(0,0,0,.65)); -webkit-tap-highlight-color:transparent; }
 .nec-coach-float-btn.visible { display:flex; }
 .nec-coach-float-btn:hover { transform: translateY(-2px) scale(1.1); }
-.nec-coach-float-btn i { pointer-events:none; }
-.nec-coach-float-btn::after { content:''; position:absolute; top:7px; right:9px; width:9px; height:9px; border-radius:50%; background:#34a853; border:1.5px solid #0a0908; animation: meetDotPulse 2s ease infinite; }
+.nec-coach-float-btn svg { width:30px; height:30px; display:block; pointer-events:none; }
+.nec-coach-float-btn::after { content:''; position:absolute; top:9px; right:6px; width:9px; height:9px; border-radius:50%; background:#34a853; border:1.5px solid #0a0908; animation: meetDotPulse 2s ease infinite; }
 @media (max-width:480px) { .nec-coach-float-btn { bottom:78px; right:16px; } }
 
 .nec-coach-panel { position:fixed; bottom:22px; right:22px; z-index:500; width:360px; max-width:92vw; height:min(600px, 78vh); background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow: var(--shadow-card); display:none; flex-direction:column; overflow:hidden; }
@@ -2210,7 +2210,23 @@ select.admin-input option{background:#1d1912;color:#fff}
 
 <!-- NEC COACH: botón flotante (arriba del botón de WhatsApp) -->
 <button class="nec-coach-float-btn" id="btn-nec-coach-float" onclick="necCoachOpen()" title="Habla con NEC Coach" aria-label="Habla con NEC Coach">
-  <i class="fa-solid fa-wand-magic-sparkles"></i>
+  <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+    <defs>
+      <mask id="nec-coach-robot-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+        <rect width="48" height="48" fill="#000"/>
+        <circle cx="24" cy="4.5" r="2.6" fill="#fff"/>
+        <rect x="23" y="6" width="2" height="6" fill="#fff"/>
+        <rect x="6" y="11" width="36" height="30" rx="12" fill="#fff"/>
+        <rect x="2" y="21" width="4" height="10" rx="2" fill="#fff"/>
+        <rect x="42" y="21" width="4" height="10" rx="2" fill="#fff"/>
+        <rect x="11" y="17.5" width="26" height="13" rx="6.5" fill="#000"/>
+        <path d="M20 35.2 Q24 38.4 28 35.2" stroke="#000" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="18.5" cy="24" r="3.4" fill="#fff"/>
+        <circle cx="29.5" cy="24" r="3.4" fill="#fff"/>
+      </mask>
+    </defs>
+    <rect width="48" height="48" fill="currentColor" mask="url(#nec-coach-robot-mask)"/>
+  </svg>
 </button>
 
 <!-- NEC COACH: panel de chat -->
