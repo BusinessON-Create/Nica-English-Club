@@ -360,6 +360,18 @@ a { color: inherit; }
 .streak-day-circle.done { background:linear-gradient(135deg, var(--gold3), var(--gold2)); border-color:transparent; color:#1a1400; box-shadow: 0 0 14px var(--gold-glow); }
 .streak-day-label { font-size:9.5px; color:var(--muted); font-weight:700; }
 .streak-day-label.active { color:var(--gold); }
+/* Rayas que unen los días + pulso suave en el día actual */
+.streak-days-row, #s-student .week-card .streak-days-row, #s-student .home-unified .week-card .streak-days-row { gap:0 !important; }
+.streak-day-node { position:relative; align-self:stretch; display:flex; justify-content:center; align-items:center; }
+.streak-day-node .streak-day-circle { position:relative; z-index:1; }
+.streak-link { position:absolute; z-index:0; left:50%; width:100%; top:50%; height:3px; margin-top:-1.5px; border-radius:2px; background:var(--border2); overflow:hidden; }
+.streak-link::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg, var(--gold3), var(--gold2)); transform:scaleX(0); transform-origin:left; transition:transform .6s var(--ease); }
+.streak-link.on::after { transform:scaleX(1); box-shadow:0 0 8px var(--gold-glow); }
+.streak-day-circle.today { animation: streakTodayPulse 2s ease-in-out infinite; }
+.streak-day-circle.today:not(.done) { border-color:var(--gold2); }
+.streak-day-label.today { color:var(--gold); }
+@keyframes streakTodayPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(255,196,0,.55); } 50%{ box-shadow:0 0 0 6px rgba(255,196,0,0); } }
+@media (prefers-reduced-motion: reduce) { .streak-day-circle.today { animation:none; } .streak-link::after { transition:none; } }
 @media (max-width:480px){
   .streak-days-row{ gap:5px; }
   .streak-day-circle{ width:25px; height:25px; font-size:9.5px; }
@@ -1768,8 +1780,8 @@ select.admin-input option{background:#1d1912;color:#fff}
 #s-student .home-unified .week-card{ order:3; }
 #s-student .home-unified .hu-mind{ order:4; }
 #s-student .home-unified .mindset-invite{ order:5; }
-/* 10) Mentalidad NEC destacada: panel con tinte dorado y barra a la izquierda; tamanos que se adaptan al ancho */
-#s-student .home-unified .hu-mind{ padding:12px 14px; border-top:0; border-radius:12px; box-shadow:inset 3px 0 0 var(--gold); background:linear-gradient(90deg, rgba(255,196,0,.14), rgba(255,196,0,.04) 70%, transparent); }
+/* 10) Mentalidad NEC destacada: panel con tinte dorado y barra a ambos lados; tamanos que se adaptan al ancho */
+#s-student .home-unified .hu-mind{ padding:12px 14px; border-top:0; border-radius:12px; box-shadow:inset 3px 0 0 var(--gold), inset -3px 0 0 var(--gold); background:linear-gradient(90deg, rgba(255,196,0,.14), rgba(255,196,0,.04) 30%, rgba(255,196,0,.04) 70%, rgba(255,196,0,.14)); }
 #s-student .home-unified .hu-mind h3{ font-size:clamp(17px, 4.8vw, 19px); line-height:1.25; -webkit-line-clamp:3; overflow-wrap:break-word; }
 #s-student .home-unified .hu-mind p{ font-size:clamp(12.5px, 3.4vw, 13.5px); -webkit-line-clamp:3; overflow-wrap:break-word; }
 /* 11) Control de volumen del visor: solo en PC (dispositivos con mouse); en celular se usan los botones del telefono */
@@ -1902,7 +1914,7 @@ select.admin-input option{background:#1d1912;color:#fff}
       </div>
 
         <div class="mindset-invite">
-          <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos a <b>NicaEnglishClub</b> <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
+          <p><i class="fa-solid fa-people-group"></i> Invita a tus amigos <i class="fa-solid fa-language" style="color:var(--gold2);"></i></p>
           <button class="btn-share" onclick="compartirWeb()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
         </div>
       </div>
@@ -3348,9 +3360,13 @@ function renderGraph(diasSemana) {
     const dStr = getLocalDateStr(d);
     const isActive = diasSemana.includes(dStr) && dStr <= hoyStr;
     if (isActive) activosCount++;
+    const sigD = new Date(lunes); sigD.setDate(lunes.getDate() + i + 1);
+    const sigActivo = i < 6 && diasSemana.includes(getLocalDateStr(sigD)) && getLocalDateStr(sigD) <= hoyStr;
+    const esHoy = dStr === hoyStr;
+    const link = i < 6 ? `<span class="streak-link ${isActive && sigActivo ? 'on' : ''}"></span>` : '';
     dayItems += `<div class="streak-day">
-        <div class="streak-day-circle ${isActive ? 'done' : ''}">${isActive ? '<i class="fa-solid fa-check"></i>' : ''}</div>
-        <span class="streak-day-label ${isActive ? 'active' : ''}">${dias[i]}</span>
+        <div class="streak-day-node">${link}<div class="streak-day-circle ${isActive ? 'done' : ''} ${esHoy ? 'today' : ''}">${isActive ? '<i class="fa-solid fa-check"></i>' : ''}</div></div>
+        <span class="streak-day-label ${isActive ? 'active' : ''} ${esHoy ? 'today' : ''}">${dias[i]}</span>
       </div>`;
   }
   const pct = Math.min(activosCount / 7, 1);
