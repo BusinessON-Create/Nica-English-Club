@@ -628,6 +628,16 @@ a { color: inherit; }
 .neclub-media-btn.foto:hover { color:#4d9fff; border-color:#4d9fff; }
 .neclub-media-btn.video:hover { color:#ff5c5c; border-color:#ff5c5c; }
 .neclub-media-btn.audio:hover { color:#8fd6a4; border-color:#8fd6a4; }
+button.neclub-media-btn { padding:0; font-family:inherit; }
+.neclub-media-btn.camara:hover, .neclub-cam-wrap.open .neclub-media-btn.camara { color:var(--gold); border-color:var(--gold2); }
+.neclub-cam-wrap { position:relative; display:flex; }
+.neclub-cam-menu { display:none; position:absolute; left:0; bottom:calc(100% + 8px); z-index:30; min-width:200px; padding:5px; background:var(--card2); border:1px solid var(--border2); border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.5); }
+.neclub-cam-wrap.open .neclub-cam-menu { display:flex; flex-direction:column; gap:2px; animation: fadeUp .18s var(--ease) both; }
+.neclub-cam-opt { display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px; color:#fff; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.neclub-cam-opt:hover, .neclub-cam-opt:active { background:var(--gold-dim); }
+.neclub-cam-opt.foto i { color:#4d9fff; }
+.neclub-cam-opt.video i { color:#ff5c5c; }
+.neclub-composer.cam-open { overflow:visible; }
 .neclub-publish-btn { background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:700; font-size:12.5px; border:none; padding:9px 18px; border-radius:99px; cursor:pointer; font-family:inherit; transition: transform .15s var(--ease), opacity .15s var(--ease); }
 .neclub-publish-btn:disabled { opacity:.4; cursor:default; }
 .neclub-empty { text-align:center; padding:50px 20px; color:var(--muted); }
@@ -1791,6 +1801,31 @@ select.admin-input option{background:#1d1912;color:#fff}
   .neclub-vol-pc[data-video="0"]{ display:none; }
   .neclub-vol-pc input{ width:110px; accent-color:var(--gold); cursor:pointer; }
 }
+
+/* ===== NECLUB + Coach NEC: sin cuadrito de toque en celular =====
+   Quita el resaltado de toque del navegador y el recuadro de foco al tocar.
+   El foco por teclado (:focus-visible) se conserva por accesibilidad. */
+[class*="neclub-"],
+[class*="neclub-"] *,
+[class*="home-neclub"],
+[class*="home-neclub"] *,
+[id^="neclub"],
+[id^="neclub"] *,
+[id*="-neclub"],
+[id*="-neclub"] *,
+[class^="nec-"],
+[class*=" nec-"],
+[class^="nec-"] *,
+[class*=" nec-"] *,
+[id^="nec-"],
+[id^="nec-"] * { -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; }
+[class*="neclub-"]:focus:not(:focus-visible),
+[class*="home-neclub"]:focus:not(:focus-visible),
+[id^="neclub"]:focus:not(:focus-visible),
+[id*="-neclub"]:focus:not(:focus-visible),
+[class^="nec-"]:focus:not(:focus-visible),
+[class*=" nec-"]:focus:not(:focus-visible),
+[id^="nec-"]:focus:not(:focus-visible) { outline:none; }
 </style>
 </head>
 <body>
@@ -4769,6 +4804,25 @@ window.seleccionarArchivoNeclub = (ev, tipo) => {
     finalizarSeleccion();
   }
 };
+/* Menú del botón de cámara (foto / video en el momento) */
+window.cerrarMenuCamNeclub = () => {
+  const w = document.getElementById('neclub-cam-wrap');
+  if (!w) return;
+  w.classList.remove('open');
+  const c = w.closest('.neclub-composer'); if (c) c.classList.remove('cam-open');
+};
+window.toggleMenuCamNeclub = (ev) => {
+  if (ev) ev.stopPropagation();
+  const w = document.getElementById('neclub-cam-wrap');
+  if (!w) return;
+  const abrir = !w.classList.contains('open');
+  w.classList.toggle('open', abrir);
+  const c = w.closest('.neclub-composer'); if (c) c.classList.toggle('cam-open', abrir);
+};
+document.addEventListener('click', (e) => {
+  const w = document.getElementById('neclub-cam-wrap');
+  if (w && w.classList.contains('open') && !w.contains(e.target)) cerrarMenuCamNeclub();
+});
 window.quitarArchivoNeclub = () => {
   if (neclubArchivoSeleccionado && neclubArchivoSeleccionado.objectUrl) URL.revokeObjectURL(neclubArchivoSeleccionado.objectUrl);
   neclubArchivoSeleccionado = null;
