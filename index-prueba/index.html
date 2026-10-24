@@ -1739,7 +1739,7 @@ select.admin-input option{background:#1d1912;color:#fff}
         -18px = relleno lateral de .dashboard-shell; -16px = relleno interno de .neclub-post.
         Encabezado, texto y botones de like/comentario conservan su relleno. */
   #home-neclub #neclub-feed .neclub-post{ margin-left:-18px; margin-right:-18px; border-left:0; border-right:0; border-radius:0; }
-  #home-neclub #neclub-feed .neclub-post > .neclub-media-tap{ width:auto; margin-left:-16px; margin-right:-16px; border-radius:0; }
+  #home-neclub #neclub-feed .neclub-post > .neclub-media-tap{ width:calc(100% + 32px); max-width:none; margin-left:-16px; margin-right:-16px; border-radius:0; }
   #home-neclub #neclub-feed .neclub-post > .neclub-media-tap img,
   #home-neclub #neclub-feed .neclub-post > .neclub-media-tap video{ border-radius:0; }
   /* Portada de historias (PDF): mismo tratamiento para que se vea consistente */
@@ -1747,10 +1747,21 @@ select.admin-input option{background:#1d1912;color:#fff}
   /* Mismo efecto en NECLUB como pantalla aparte (modo visitante / ?home=clasico):
      aqui el relleno lateral de .neclub-shell es 14px, por eso -14px en la tarjeta. */
   #s-neclub #neclub-feed .neclub-post{ margin-left:-14px; margin-right:-14px; border-left:0; border-right:0; border-radius:0; }
-  #s-neclub #neclub-feed .neclub-post > .neclub-media-tap{ width:auto; margin-left:-16px; margin-right:-16px; border-radius:0; }
+  #s-neclub #neclub-feed .neclub-post > .neclub-media-tap{ width:calc(100% + 32px); max-width:none; margin-left:-16px; margin-right:-16px; border-radius:0; }
   #s-neclub #neclub-feed .neclub-post > .neclub-media-tap img,
   #s-neclub #neclub-feed .neclub-post > .neclub-media-tap video{ border-radius:0; }
   #s-neclub #neclub-feed .neclub-post > .neclub-story-cover{ margin-left:-16px; margin-right:-16px; border-left:0; border-right:0; border-radius:0; }
+}
+@media (max-width:600px){
+  /* 6b) Separacion entre posts mas delgada (antes 14px) */
+  #home-neclub #neclub-feed .neclub-post,
+  #s-neclub #neclub-feed .neclub-post{ margin-bottom:8px; }
+  /* 7) Visor de videos en pantalla completa: mas aire abajo para poder arrastrar la barra
+        (env() suele valer 0 en el navegador, por eso se usan px fijos mas el env como respaldo) */
+  #neclub-visor .neclub-visor-slide .neclub-vid-bar{ bottom:calc(18px + env(safe-area-inset-bottom, 0px)); height:36px; }
+  #neclub-visor .neclub-vid-time{ bottom:calc(70px + env(safe-area-inset-bottom, 0px)); }
+  #neclub-visor .neclub-visor-caption{ padding-bottom:calc(60px + env(safe-area-inset-bottom, 0px)); }
+  #neclub-visor .neclub-visor-rail{ bottom:calc(100px + env(safe-area-inset-bottom, 0px)); }
 }
 </style>
 </head>
