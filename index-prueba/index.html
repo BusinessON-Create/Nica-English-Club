@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- PWA: instalable -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0908">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nica English">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <!-- Google tag (gtag.js) - App Portal -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6VCQK2ZNPX"></script>
 <script>
@@ -1511,6 +1519,21 @@ body.tr-room-lock { overflow:hidden; }
 .side-drawer-item.premium:hover { background:linear-gradient(90deg, rgba(255,196,0,.14), transparent 85%); }
 .side-drawer-item .premium-star { margin-left:auto; width:auto; font-size:11px; color:var(--gold3); filter:drop-shadow(0 0 4px rgba(255,196,0,.44)); }
 .side-drawer-item[hidden] { display:none; }
+/* ===== Instalar App (PWA) ===== */
+.pwa-modal { position:fixed; inset:0; z-index:9000; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72); backdrop-filter:blur(4px); }
+.pwa-modal.open { display:flex; animation: fadeUp .25s var(--ease) both; }
+.pwa-modal-card { position:relative; width:100%; max-width:380px; background:var(--card); border:1px solid var(--border2); border-radius:var(--r-xl); padding:28px 22px 22px; text-align:center; box-shadow:var(--shadow-card); }
+.pwa-modal-ico { width:58px; height:58px; margin:0 auto 14px; border-radius:50%; background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:22px; }
+.pwa-modal-card h3 { font-family:var(--fh); color:#fff; font-size:18px; margin-bottom:8px; }
+.pwa-modal-card p { color:var(--muted); font-size:13.5px; line-height:1.5; margin-bottom:14px; }
+.pwa-modal-card p b { color:#fff; }
+.pwa-steps { list-style:none; text-align:left; margin:0 0 16px; padding:0; display:flex; flex-direction:column; gap:10px; }
+.pwa-steps li { display:flex; align-items:center; gap:12px; color:var(--text); font-size:13.5px; background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:12px; padding:10px 12px; }
+.pwa-steps li > i { color:var(--gold); width:18px; text-align:center; }
+.pwa-link-box { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.05); border:1px solid var(--border2); border-radius:12px; padding:10px 12px; margin-bottom:12px; color:var(--gold3); font-weight:700; font-size:13.5px; justify-content:center; word-break:break-all; }
+.pwa-btn { width:100%; padding:13px; border-radius:var(--r-sm); border:1px solid var(--gold2); background:linear-gradient(135deg, var(--gold3), var(--gold2)); color:#000; font-weight:700; font-size:13.5px; font-family:inherit; cursor:pointer; }
+.pwa-btn.ghost { background:transparent; color:var(--muted); border-color:var(--border2); margin-top:8px; font-weight:600; }
+.pwa-btn.ok { background:rgba(143,214,164,.14); border-color:var(--green); color:var(--green); }
 
 /* ═══════════ LOTE 4: panel admin más amable (celular primero) ═══════════ */
 .admin-wrap { padding:20px 16px calc(40px + env(safe-area-inset-bottom)); }
@@ -1910,6 +1933,7 @@ select.admin-input option{background:#1d1912;color:#fff}
     <button class="side-drawer-item premium" id="drawer-item-videos" hidden onclick="toggleSideDrawer(false); abrirSalaDirecta('videos');"><i class="fa-solid fa-circle-play"></i> Videos <i class="fa-solid fa-star premium-star"></i></button>
         <button class="side-drawer-item" onclick="toggleSideDrawer(false); toggleNotifDropdown();"><i class="fa-solid fa-list-check"></i> Actividades<span class="drawer-item-badge" id="notif-badge">0</span></button>
         <div id="drawer-eflinks-container"></div>
+        <button class="side-drawer-item" id="drawer-item-install" onclick="toggleSideDrawer(false); instalarAppPwa();"><i class="fa-solid fa-download"></i> Instalar App</button>
         <button class="side-drawer-item logout-item" onclick="toggleSideDrawer(false); confirmarSalir();"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
       </div>
     </div>
@@ -9348,6 +9372,115 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     btn.innerHTML = '<i class="fa-solid ' + (show ? 'fa-eye-slash' : 'fa-eye') + '"></i>';
     input.focus();
   });
+})();
+</script>
+<!-- ===== PWA: registro del Service Worker + botón "Instalar App" ===== -->
+<script>
+(function () {
+  var APP_URL = 'https://app.nicaenglishclub.com';
+  var deferredPrompt = null;
+  var ua = navigator.userAgent || '';
+  var esStandalone = function () {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  };
+  var esIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  // Navegadores dentro de apps (WhatsApp, Facebook, Instagram, TikTok, etc.) y WebViews de Android
+  var esInApp = /FBAN|FBAV|FB_IAB|Instagram|WhatsApp|Messenger|MicroMessenger|Line\/|Snapchat|TikTok|musical_ly|BytedanceWebview|Twitter|LinkedInApp|Pinterest|GSA\/|; wv\)/i.test(ua);
+
+  function ocultarItem() { var it = document.getElementById('drawer-item-install'); if (it) it.hidden = true; }
+  if (esStandalone()) { document.addEventListener('DOMContentLoaded', ocultarItem); ocultarItem(); }
+
+  // Service Worker (solo en https o localhost)
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function (e) { console.warn('SW no registrado:', e); });
+    });
+  }
+
+  // Navegadores con soporte: capturamos el evento para instalar con un clic
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredPrompt = e; });
+  window.addEventListener('appinstalled', function () {
+    deferredPrompt = null; ocultarItem();
+    if (window.showModal) window.showModal('¡App instalada!', 'Ya puedes abrir Nica English Club desde tu pantalla de inicio.');
+  });
+
+  // ---- Modal amigable (se crea una sola vez) ----
+  var modal = null;
+  function asegurarModal() {
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.className = 'pwa-modal';
+    modal.innerHTML = '<div class="pwa-modal-card" role="dialog" aria-modal="true">' +
+      '<div class="pwa-modal-ico" id="pwa-modal-ico"></div><h3 id="pwa-modal-title"></h3>' +
+      '<div id="pwa-modal-body"></div></div>';
+    modal.addEventListener('click', function (e) { if (e.target === modal) cerrar(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+    document.body.appendChild(modal);
+    return modal;
+  }
+  function cerrar() { if (modal) modal.classList.remove('open'); }
+  function abrirModal(icono, titulo, cuerpoHTML) {
+    asegurarModal();
+    document.getElementById('pwa-modal-ico').innerHTML = '<i class="' + icono + '"></i>';
+    document.getElementById('pwa-modal-title').textContent = titulo;
+    document.getElementById('pwa-modal-body').innerHTML = cuerpoHTML;
+    modal.classList.add('open');
+  }
+  window.cerrarModalPwa = cerrar;
+
+  function copiarTexto(txt) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt);
+    return new Promise(function (ok, fail) {
+      try {
+        var ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); var r = document.execCommand('copy'); document.body.removeChild(ta);
+        r ? ok() : fail();
+      } catch (e) { fail(e); }
+    });
+  }
+  window.copiarEnlaceAppPwa = function (btn) {
+    copiarTexto(APP_URL).then(function () {
+      btn.classList.add('ok'); btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Enlace copiado!';
+      setTimeout(function () { btn.classList.remove('ok'); btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar enlace'; }, 2200);
+    }).catch(function () { btn.innerHTML = 'Copia el enlace manualmente'; });
+  };
+
+  function modalAbrirEnNavegador(nombreNavegador) {
+    abrirModal('fa-solid fa-mobile-screen-button', 'Instala la app',
+      '<p>Para instalar la aplicación en tu celular, por favor abre este enlace directamente en <b>' + nombreNavegador + '</b>.</p>' +
+      '<div class="pwa-link-box"><i class="fa-solid fa-link"></i> app.nicaenglishclub.com</div>' +
+      '<button class="pwa-btn" onclick="copiarEnlaceAppPwa(this)"><i class="fa-solid fa-copy"></i> Copiar enlace</button>' +
+      '<button class="pwa-btn ghost" onclick="cerrarModalPwa()">Entendido</button>');
+  }
+  function modalIOS() {
+    abrirModal('fa-brands fa-apple', 'Instalar en tu iPhone',
+      '<p>Para instalar en tu iPhone:</p>' +
+      '<ol class="pwa-steps">' +
+        '<li><i class="fa-solid fa-arrow-up-from-bracket"></i><span>Toca el botón <b>Compartir</b> en Safari</span></li>' +
+        '<li><i class="fa-regular fa-square-plus"></i><span>Selecciona <b>"Agregar a la pantalla de inicio"</b></span></li>' +
+      '</ol>' +
+      '<button class="pwa-btn" onclick="cerrarModalPwa()">Entendido</button>');
+  }
+
+  window.instalarAppPwa = async function () {
+    if (esStandalone()) { ocultarItem(); return; }
+    // 1) Navegador con soporte: instalación con un solo clic
+    if (deferredPrompt) {
+      var ev = deferredPrompt; deferredPrompt = null;
+      try {
+        ev.prompt();
+        var r = await ev.userChoice;
+        if (r && r.outcome === 'accepted') ocultarItem();
+      } catch (e) { modalAbrirEnNavegador('Google Chrome'); }
+      return;
+    }
+    // 2) Navegador dentro de otra app (WhatsApp, Facebook, Instagram...)
+    if (esInApp) { modalAbrirEnNavegador(esIOS ? 'Safari' : 'Google Chrome'); return; }
+    // 3) iPhone / iPad con Safari: guía corta
+    if (esIOS) { modalIOS(); return; }
+    // 4) Navegador sin soporte de PWA
+    modalAbrirEnNavegador('Google Chrome');
+  };
 })();
 </script>
 </body>
