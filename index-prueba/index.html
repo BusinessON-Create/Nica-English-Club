@@ -443,7 +443,7 @@ a { color: inherit; }
 @media (max-width:480px) { .nec-coach-panel { bottom:0; right:0; width:100%; max-width:100%; height:100%; border-radius:0; } }
 
 .nec-coach-header { display:flex; align-items:center; gap:10px; padding:14px; background:linear-gradient(135deg, rgba(255,196,0,.11), rgba(217,164,0,.08)); border-bottom:1px solid var(--border2); flex-shrink:0; }
-.nec-coach-header img { width:38px; height:38px; border-radius:50%; object-fit:cover; border:1.5px solid var(--gold2); flex-shrink:0; }
+.nec-coach-header-icon { width:38px; height:38px; padding:2px; color:#fff; flex-shrink:0; }
 .nec-coach-header .nec-info { flex:1; min-width:0; }
 .nec-coach-header .nec-name { font-weight:800; font-size:14px; color:var(--text); }
 .nec-coach-header .nec-status { font-size:10.5px; color:var(--green); display:flex; align-items:center; gap:5px; }
@@ -460,8 +460,8 @@ a { color: inherit; }
 }
 .nec-msg-row { display:flex; align-items:flex-end; gap:7px; max-width:100%; }
 .nec-msg-row.mine { flex-direction:row-reverse; }
-.nec-msg-avatar { width:24px; height:24px; border-radius:50%; overflow:hidden; flex-shrink:0; }
-.nec-msg-avatar img { width:100%; height:100%; object-fit:cover; }
+.nec-msg-avatar { width:24px; height:24px; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.nec-msg-avatar svg { width:22px; height:22px; display:block; }
 .nec-msg { position:relative; max-width:78%; padding:8px 10px; border-radius:9px; font-size:13.5px; line-height:1.4; box-shadow:0 1px 1px rgba(0,0,0,.3); white-space:pre-wrap; word-wrap:break-word; }
 .nec-msg-row.mine .nec-msg { background:#005c4b; color:#e9edef; border-bottom-right-radius:2px; }
 .nec-msg-row.other .nec-msg { background:#202c33; color:#e9edef; border-bottom-left-radius:2px; }
@@ -1124,6 +1124,9 @@ body.neclub-visitante .neclub-composer { display:none; }
 .notif-item p { color:var(--muted); font-size:11.5px; line-height:1.4; }
 .notif-item .notif-check-row { display:flex; align-items:center; gap:8px; margin-top:8px; }
 .notif-empty { text-align:center; padding:24px 10px; color:var(--muted); font-size:12px; }
+.notif-clear-row { display:flex; justify-content:flex-end; padding:0 4px 6px; }
+.notif-clear-btn { background:none; border:none; color:var(--muted); font-family:inherit; font-size:11.5px; font-weight:600; cursor:pointer; padding:4px 2px; -webkit-tap-highlight-color:transparent; }
+.notif-clear-btn:hover { color:var(--gold); }
 
 /* ===== EN LÍNEA ===== */
 .online-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(143,214,164,.1); border:1px solid rgba(143,214,164,.35); color:var(--green); font-size:10.5px; font-weight:700; padding:6px 12px; border-radius:99px; letter-spacing:.3px; }
@@ -2208,23 +2211,27 @@ select.admin-input option{background:#1d1912;color:#fff}
   <i class="fa-brands fa-whatsapp"></i>
 </button>
 
+<!-- NEC COACH: ícono de robot compartido (botón flotante, encabezado y mensajes) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <mask id="nec-coach-robot-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+      <rect width="48" height="48" fill="#000"/>
+      <circle cx="24" cy="4.5" r="2.6" fill="#fff"/>
+      <rect x="23" y="6" width="2" height="6" fill="#fff"/>
+      <rect x="6" y="11" width="36" height="30" rx="12" fill="#fff"/>
+      <rect x="2" y="21" width="4" height="10" rx="2" fill="#fff"/>
+      <rect x="42" y="21" width="4" height="10" rx="2" fill="#fff"/>
+      <rect x="11" y="17.5" width="26" height="13" rx="6.5" fill="#000"/>
+      <path d="M20 35.2 Q24 38.4 28 35.2" stroke="#000" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="18.5" cy="24" r="3.4" fill="#fff"/>
+      <circle cx="29.5" cy="24" r="3.4" fill="#fff"/>
+    </mask>
+  </defs>
+</svg>
+
 <!-- NEC COACH: botón flotante (arriba del botón de WhatsApp) -->
 <button class="nec-coach-float-btn" id="btn-nec-coach-float" onclick="necCoachOpen()" title="Habla con NEC Coach" aria-label="Habla con NEC Coach">
   <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-    <defs>
-      <mask id="nec-coach-robot-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
-        <rect width="48" height="48" fill="#000"/>
-        <circle cx="24" cy="4.5" r="2.6" fill="#fff"/>
-        <rect x="23" y="6" width="2" height="6" fill="#fff"/>
-        <rect x="6" y="11" width="36" height="30" rx="12" fill="#fff"/>
-        <rect x="2" y="21" width="4" height="10" rx="2" fill="#fff"/>
-        <rect x="42" y="21" width="4" height="10" rx="2" fill="#fff"/>
-        <rect x="11" y="17.5" width="26" height="13" rx="6.5" fill="#000"/>
-        <path d="M20 35.2 Q24 38.4 28 35.2" stroke="#000" stroke-width="2" stroke-linecap="round" fill="none"/>
-        <circle cx="18.5" cy="24" r="3.4" fill="#fff"/>
-        <circle cx="29.5" cy="24" r="3.4" fill="#fff"/>
-      </mask>
-    </defs>
     <rect width="48" height="48" fill="currentColor" mask="url(#nec-coach-robot-mask)"/>
   </svg>
 </button>
@@ -2232,7 +2239,7 @@ select.admin-input option{background:#1d1912;color:#fff}
 <!-- NEC COACH: panel de chat -->
 <div class="nec-coach-panel" id="nec-coach-panel">
   <div class="nec-coach-header">
-    <img src="avatar-nec-coach.jpg" alt="NEC Coach">
+    <svg class="nec-coach-header-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect width="48" height="48" fill="currentColor" mask="url(#nec-coach-robot-mask)"/></svg>
     <div class="nec-info">
       <div class="nec-name">NEC Coach</div>
       <div class="nec-status">En línea</div>
@@ -2295,6 +2302,9 @@ select.admin-input option{background:#1d1912;color:#fff}
     <div class="notif-dropdown-head">
       <h4><i class="fa-solid fa-bell"></i> NECLUB</h4>
       <button class="notif-close-x" onclick="toggleNeclubNotifDropdown(true)"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="notif-clear-row" id="neclub-notif-clear-row" style="display:none;">
+      <button type="button" class="notif-clear-btn" id="neclub-notif-clear-btn" onclick="limpiarNotifNeclub()">Clear notifications</button>
     </div>
     <div id="neclub-notif-list"></div>
   </div>
@@ -2706,7 +2716,7 @@ async function restaurarSesion(user) {
           const fresco = { id: snap.id, ...snap.data() };
           if (fresco.suspendido) { expulsarSuspendido(); return; }
           necGuardarCache('perfil', alumnoIdGuardado, fresco);
-          if (sessionActiva && sessionActiva.id === fresco.id) { sessionActiva = fresco; renderUI(fresco); }
+          if (sessionActiva && sessionActiva.id === fresco.id) { sessionActiva = fresco; renderUI(fresco); renderNeclubNotifBadge(); }
         }).catch(e => console.error('No se pudo refrescar el perfil del alumno:', e));
       } else {
         try {
@@ -2985,7 +2995,7 @@ function montarNeclubEnHome(html) {
   if (acciones && !document.getElementById('neclub-notif-badge')) {
     const campana = document.createElement('div');
     campana.className = 'notif-wrap';
-    campana.innerHTML = '<button class="notif-bell-btn" onclick="toggleNeclubNotifDropdown()" title="Notificaciones de NECLUB"><i class="fa-solid fa-bell"></i><span class="notif-badge" id="neclub-notif-badge">0</span></button>';
+    campana.innerHTML = '<button class="notif-bell-btn" onclick="toggleNeclubNotifDropdown()" title="NECLUB notifications"><i class="fa-solid fa-bell"></i><span class="notif-badge" id="neclub-notif-badge">0</span></button>';
     acciones.insertBefore(campana, acciones.querySelector('button[onclick^="abrirChatFlotante"]') || acciones.firstChild);
     renderNeclubNotifBadge();
   }
@@ -4934,13 +4944,16 @@ window.toggleLikeComentarioNeclub = async (postId, comentarioId) => {
 /* ===== NECLUB: notificaciones de likes/comentarios, dirigidas por ID de alumno ===== */
 let neclubNotifsCache = [];
 let trv2NotifsCache = []; // avisos del Class Room (entrega nueva / entrega revisada); los crea el servidor
+const NECLUB_NOTIF_DIAS_VIDA = 30; // las notificaciones vencen a los 30 días: se ocultan en pantalla y el admin las borra desde Mantenimiento (mantBorrarNotifs)
 async function crearNotifNeclub(destinatarioId, tipo, postId) {
   if (!destinatarioId || !sessionActiva || destinatarioId === sessionActiva.id) return;
   try {
+    const ahora = Date.now();
     await addDoc(collection(db,'neclub_notificaciones'), {
       destinatarioId, tipo, postId,
       autorId: sessionActiva.id, autorNombre: sessionActiva.nombre, autorFoto: sessionActiva.foto || '',
-      fecha: Date.now(), leido: false
+      fecha: ahora, leido: false,
+      expiraEn: Timestamp.fromMillis(ahora + NECLUB_NOTIF_DIAS_VIDA * 24 * 60 * 60 * 1000)
     });
   } catch (e) { console.error('No se pudo crear notificación de NECLUB:', e); }
 }
@@ -4970,10 +4983,18 @@ function escucharTrv2Notifs() {
     console.warn('No se pudieron escuchar los avisos del Class Room (¿reglas sin publicar?):', err);
   });
 }
+// Una notificación se muestra solo si es posterior a la última vez que ESTE alumno pulsó
+// "Limpiar notificaciones" (campo propio en su documento) y si no pasaron 30 días.
+// Nada se borra: la limpieza solo oculta para este alumno.
+function neclubNotifVisible(n) {
+  const t = fechaMsNotif(n);
+  const corte = (sessionActiva && Number(sessionActiva.neclub_notif_limpiado)) || 0;
+  return t > corte && t > Date.now() - NECLUB_NOTIF_DIAS_VIDA * 24 * 60 * 60 * 1000;
+}
 function renderNeclubNotifBadge() {
   const badge = document.getElementById('neclub-notif-badge');
   if (!badge) return;
-  const pendientes = neclubNotifsCache.filter(n => !n.leido).length + trv2NotifsCache.filter(n => !n.leido).length;
+  const pendientes = neclubNotifsCache.filter(n => !n.leido && neclubNotifVisible(n)).length + trv2NotifsCache.filter(n => !n.leido && neclubNotifVisible(n)).length;
   badge.innerText = pendientes > 9 ? '9+' : pendientes;
   badge.classList.toggle('show', pendientes > 0);
 }
@@ -4995,9 +5016,9 @@ function htmlNotifTrv2(n) {
   const que = n.entregaTipo === 'speaking' ? 'Speaking' : 'Writing';
   const donde = escNeclub(String(n.nivelId || '').toUpperCase()) + (n.unidadNombre ? ' · ' + escNeclub(n.unidadNombre) : '');
   let icono = 'fa-inbox', color = 'var(--gold)', texto;
-  if (n.tipo === 'entrega_nueva') texto = `${escNeclub(n.alumnoNombre || 'Un alumno')} entregó un ${que}`;
-  else if (n.estado === 'aprobada') { icono = 'fa-circle-check'; color = 'var(--green)'; texto = `${escNeclub(n.coachNombre || 'Tu coach')} aprobó tu ${que}`; }
-  else { icono = 'fa-rotate-left'; color = 'var(--red)'; texto = `${escNeclub(n.coachNombre || 'Tu coach')} te pidió reforzar tu ${que}`; }
+  if (n.tipo === 'entrega_nueva') texto = `${escNeclub(n.alumnoNombre || 'A student')} submitted a ${que}`;
+  else if (n.estado === 'aprobada') { icono = 'fa-circle-check'; color = 'var(--green)'; texto = `${escNeclub(n.coachNombre || 'Your coach')} approved your ${que}`; }
+  else { icono = 'fa-rotate-left'; color = 'var(--red)'; texto = `${escNeclub(n.coachNombre || 'Your coach')} asked you to resubmit your ${que}`; }
   const idSeguro = String(n.id).replace(/[^A-Za-z0-9_-]/g, '');
   return `<div class="notif-item" style="cursor:pointer;" onclick="irAClassRoomDesdeNotif('${idSeguro}')"><i class="fa-solid ${icono}" style="color:${color}; margin-right:8px;"></i>${texto}<small style="color:var(--muted); display:block; margin-top:2px;">${donde} · ${tiempoRelativoNeclub(fechaMsNotif(n))}</small></div>`;
 }
@@ -5006,9 +5027,11 @@ function renderNeclubNotifList() {
   if (!list) return;
   // Una sola lista: avisos de NECLUB + del Class Room, lo más nuevo primero.
   const todos = [
-    ...neclubNotifsCache.map(n => ({ n, t: fechaMsNotif(n), classroom: false })),
-    ...trv2NotifsCache.map(n => ({ n, t: fechaMsNotif(n), classroom: true })),
+    ...neclubNotifsCache.filter(neclubNotifVisible).map(n => ({ n, t: fechaMsNotif(n), classroom: false })),
+    ...trv2NotifsCache.filter(neclubNotifVisible).map(n => ({ n, t: fechaMsNotif(n), classroom: true })),
   ].sort((x, y) => y.t - x.t).slice(0, 30);
+  const filaLimpiar = document.getElementById('neclub-notif-clear-row');
+  if (filaLimpiar) filaLimpiar.style.display = todos.length ? '' : 'none';
   list.innerHTML = todos.length
     ? todos.map(x => x.classroom ? htmlNotifTrv2(x.n) : htmlNotifNeclub(x.n)).join('')
     : `<div class="notif-empty">No notifications yet.</div>`;
@@ -5021,6 +5044,20 @@ window.irAClassRoomDesdeNotif = (id) => {
   location.href = n.tipo === 'entrega_nueva'
     ? './training-room/coach/entregas.html'
     : './training-room/niveles/nivel.html?nivel=' + encodeURIComponent(n.nivelId || 'a1');
+};
+// "Limpiar notificaciones": solo guarda una fecha de corte en el documento de ESTE alumno.
+// No borra ninguna notificación; las de más de 30 días las borra el admin desde Mantenimiento.
+window.limpiarNotifNeclub = async () => {
+  if (!sessionActiva) return;
+  const masNueva = Math.max(0, ...neclubNotifsCache.map(fechaMsNotif), ...trv2NotifsCache.map(fechaMsNotif));
+  const corte = Math.max(Date.now(), masNueva);
+  sessionActiva.neclub_notif_limpiado = corte;
+  const perfilCache = necLeerCache('perfil', sessionActiva.id);
+  if (perfilCache) { perfilCache.neclub_notif_limpiado = corte; necGuardarCache('perfil', sessionActiva.id, perfilCache); }
+  renderNeclubNotifBadge();
+  renderNeclubNotifList();
+  try { await updateDoc(doc(db,'alumnos',sessionActiva.id), { neclub_notif_limpiado: corte }); }
+  catch (e) { console.error('No se pudo guardar la limpieza de notificaciones de NECLUB:', e); }
 };
 window.toggleNeclubNotifDropdown = (forceClose) => {
   document.activeElement?.blur(); // suelta el "highlight" del botón en móvil
@@ -7643,6 +7680,34 @@ window.mantBorrarNeclub = async () => {
     toast(`${lote.length} publicación(es) borrada(s)` + (hayMas ? '. Quedan más: pulsa de nuevo.' : ''));
   } catch (e) { console.error(e); showModal('Error', 'No se pudo completar el borrado. Intenta de nuevo.'); }
 };
+window.mantBorrarNotifs = async () => {
+  // Notificaciones de más de 30 días (NECLUB + Class Room). Cuenta primero, avisa el costo y pide confirmar.
+  try {
+    const corte = Date.now() - NECLUB_NOTIF_DIAS_VIDA * MANT_DIA_MS;
+    const snapN = await getDocs(query(collection(db, 'neclub_notificaciones'), where('fecha', '<', corte), limit(MANT_TOPE)));
+    let refsN = snapN.docs.map(d => d.ref), refsC = [];
+    const resto = MANT_TOPE - refsN.length;
+    if (resto > 0) {
+      // En Class Room la fecha puede ser número o fecha de Firestore: se buscan los dos tipos.
+      const sNum = await getDocs(query(collection(db, 'training_v2_notificaciones'), where('fecha', '<', corte), limit(resto)));
+      refsC = sNum.docs.map(d => d.ref);
+      const resto2 = resto - refsC.length;
+      if (resto2 > 0) {
+        const sTs = await getDocs(query(collection(db, 'training_v2_notificaciones'), where('fecha', '<', Timestamp.fromMillis(corte)), limit(resto2)));
+        refsC = refsC.concat(sTs.docs.map(d => d.ref));
+      }
+    }
+    const refs = refsN.concat(refsC), n = refs.length, hayMas = n >= MANT_TOPE;
+    if (!n) { toast('No hay notificaciones de más de 30 días', { icono: 'fa-circle-info' }); return; }
+    const ok = await confirmarAccion({
+      titulo: `¿Borrar ${n}${hayMas ? '+' : ''} notificación(es)?`,
+      mensaje: `NECLUB: ${refsN.length}. Class Room: ${refsC.length}. Todas tienen más de 30 días y los alumnos ya no las ven. Costo de esta pasada: ${n} lecturas y ${n} borrados (el plan gratis permite 50.000 lecturas y 20.000 borrados al día).` + (hayMas ? ` Se borran ${MANT_TOPE} por pasada; si quedan más, vuelve a pulsar.` : '') + ' No se puede deshacer.',
+      textoBoton: 'Borrar', peligro: true });
+    if (!ok) return;
+    await mantBorrarLote(refs);
+    toast(`${n} notificación(es) borrada(s)` + (hayMas ? '. Quedan más: pulsa de nuevo.' : ''));
+  } catch (e) { console.error(e); showModal('Error', 'No se pudo completar el borrado. Intenta de nuevo.'); }
+};
 window.mantBorrarActividades = async (todas) => {
   try {
     const semanaActual = getLocalDateStr(getMonday(managuaNow()));
@@ -8680,7 +8745,7 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     '❓ Tengo una duda de gramática/pronunciación'
   ];
 
-  const AVATAR_SRC = 'avatar-nec-coach.jpg';
+  const AVATAR_HTML = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect width="48" height="48" fill="currentColor" mask="url(#nec-coach-robot-mask)"/></svg>';
 
   const LEVEL_OPTIONS = [
     { label: '🌱 Principiante', value: 'Beginner', spoken: 'Soy principiante' },
@@ -8754,7 +8819,7 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     row.className = 'nec-msg-row ' + (role === 'user' ? 'mine' : 'other');
     let avatarHtml = '';
     if (role !== 'user') {
-      avatarHtml = `<div class="nec-msg-avatar"><img src="${AVATAR_SRC}" alt="NEC Coach"></div>`;
+      avatarHtml = `<div class="nec-msg-avatar">${AVATAR_HTML}</div>`;
     }
     const bubble = document.createElement('div');
     bubble.className = 'nec-msg';
@@ -8773,7 +8838,7 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
     const row = document.createElement('div');
     row.className = 'nec-typing-row';
     row.id = 'nec-typing-row';
-    row.innerHTML = `<div class="nec-msg-avatar"><img src="${AVATAR_SRC}" alt="NEC Coach"></div>
+    row.innerHTML = `<div class="nec-msg-avatar">${AVATAR_HTML}</div>
       <div class="nec-typing"><span></span><span></span><span></span></div>`;
     $msgs().appendChild(row);
     necScrollBottom();
