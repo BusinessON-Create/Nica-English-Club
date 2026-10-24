@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- PWA: instalable -->
-<link rel="manifest" href="/manifest.json">
+<script>window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwaPrompt=e;});</script>
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0908">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Nica English">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <!-- Google tag (gtag.js) - App Portal -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6VCQK2ZNPX"></script>
 <script>
@@ -9393,14 +9394,20 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
   // Service Worker (solo en https o localhost)
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function (e) { console.warn('SW no registrado:', e); });
+      navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('[PWA] SW no registrado. ¿Está sw.js junto al index.html?', e); });
     });
   }
 
-  // Navegadores con soporte: capturamos el evento para instalar con un clic
-  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredPrompt = e; });
+  // Diagnóstico en consola: avisa si el manifest no se sirve bien
+  window.addEventListener('load', function () {
+    var l = document.querySelector('link[rel="manifest"]'); if (!l) return;
+    fetch(l.href).then(function (r) {
+      if (!r.ok) console.warn('[PWA] manifest.json devuelve ' + r.status + ': súbelo junto al index.html.');
+      else return r.json().then(function () { console.info('[PWA] manifest OK'); }).catch(function () { console.warn('[PWA] manifest.json no es JSON válido (¿el hosting devuelve el index.html?).'); });
+    }).catch(function () {});
+  });
   window.addEventListener('appinstalled', function () {
-    deferredPrompt = null; ocultarItem();
+    deferredPrompt = null; window.__pwaPrompt = null; ocultarItem();
     if (window.showModal) window.showModal('¡App instalada!', 'Ya puedes abrir Nica English Club desde tu pantalla de inicio.');
   });
 
@@ -9452,6 +9459,19 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
       '<button class="pwa-btn" onclick="copiarEnlaceAppPwa(this)"><i class="fa-solid fa-copy"></i> Copiar enlace</button>' +
       '<button class="pwa-btn ghost" onclick="cerrarModalPwa()">Entendido</button>');
   }
+  function modalMenuManual() {
+    var android = /Android/i.test(ua);
+    var pasos = android
+      ? '<li><i class="fa-solid fa-ellipsis-vertical"></i><span>Toca el menú <b>⋮</b> del navegador</span></li>' +
+        '<li><i class="fa-regular fa-square-plus"></i><span>Elige <b>"Instalar aplicación"</b> o <b>"Agregar a la pantalla de inicio"</b></span></li>'
+      : '<li><i class="fa-solid fa-download"></i><span>Busca el icono de <b>instalar</b> en la barra de direcciones</span></li>' +
+        '<li><i class="fa-solid fa-ellipsis-vertical"></i><span>O abre el menú <b>⋮</b> y elige <b>"Instalar Nica English Club"</b></span></li>';
+    abrirModal('fa-solid fa-mobile-screen-button', 'Instalar la app',
+      '<p>Tu navegador no mostró la instalación automática. Puedes hacerlo desde su menú:</p>' +
+      '<ol class="pwa-steps">' + pasos + '</ol>' +
+      '<p style="font-size:12px;">Si ya la instalaste, búscala en tu pantalla de inicio o en tus aplicaciones.</p>' +
+      '<button class="pwa-btn" onclick="cerrarModalPwa()">Entendido</button>');
+  }
   function modalIOS() {
     abrirModal('fa-brands fa-apple', 'Instalar en tu iPhone',
       '<p>Para instalar en tu iPhone:</p>' +
@@ -9465,21 +9485,21 @@ Keep responses SHORT: max 2 short paragraphs, roughly 60-90 words total. If you'
   window.instalarAppPwa = async function () {
     if (esStandalone()) { ocultarItem(); return; }
     // 1) Navegador con soporte: instalación con un solo clic
-    if (deferredPrompt) {
-      var ev = deferredPrompt; deferredPrompt = null;
+    if (window.__pwaPrompt) {
+      var ev = window.__pwaPrompt; window.__pwaPrompt = null;
       try {
         ev.prompt();
         var r = await ev.userChoice;
         if (r && r.outcome === 'accepted') ocultarItem();
-      } catch (e) { modalAbrirEnNavegador('Google Chrome'); }
+      } catch (e) { modalMenuManual(); }
       return;
     }
     // 2) Navegador dentro de otra app (WhatsApp, Facebook, Instagram...)
     if (esInApp) { modalAbrirEnNavegador(esIOS ? 'Safari' : 'Google Chrome'); return; }
     // 3) iPhone / iPad con Safari: guía corta
     if (esIOS) { modalIOS(); return; }
-    // 4) Navegador sin soporte de PWA
-    modalAbrirEnNavegador('Google Chrome');
+    // 4) Navegador real sin permiso automático: guía del menú del propio navegador
+    modalMenuManual();
   };
 })();
 </script>
