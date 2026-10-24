@@ -1705,6 +1705,26 @@ select.admin-input option{background:#1d1912;color:#fff}
   .neclub-composer-hint{ margin-top:0; margin-bottom:8px; }
 }
 </style>
+<style id="s-student-movil">
+/* Ajuste responsive SOLO de la pantalla principal (#s-student) en celulares chicos.
+   Solo CSS; no afecta PC (todo va dentro de media queries de max-width). */
+@media (max-width:440px){
+  /* 1) Barra superior: el boton "Panel de coach" solo icono para que no se amontonen los botones */
+  #s-student .btn-coach-panel .cp-txt{ display:none; }
+  #s-student .btn-coach-panel{ padding:0 12px; }
+  /* 2) Insignias de plan/horario: el puntito no se aplasta y la insignia no pasa del ancho */
+  #s-student .info-pill{ max-width:100%; min-width:0; line-height:1.3; }
+  #s-student .info-pill .dot{ flex-shrink:0; }
+  /* 3) Nombre y estado "En linea": el bloque puede encogerse y el nombre largo se parte */
+  #s-student .profile-row > div,
+  #s-student .profile-row > div > div:not(.avatar-ring){ min-width:0; }
+  #s-student .welcome-name{ min-width:0; overflow-wrap:anywhere; }
+}
+@media (max-width:360px){
+  #s-student .stu-nav{ padding-left:12px; padding-right:12px; }
+  #s-student .nav-actions{ gap:6px; }
+}
+</style>
 </head>
 <body>
 
