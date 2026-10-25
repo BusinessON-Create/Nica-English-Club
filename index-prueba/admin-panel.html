@@ -21,7 +21,7 @@
           <button class="admin-menu-card" id="btn-tab-chat" onclick="switchTab('chat',this)"><i class="fa-solid fa-comments"></i><span>Chat</span></button>
           <span class="admin-menu-grupo">Herramientas</span>
           <button class="admin-menu-card" id="btn-tab-meet" onclick="switchTab('meet',this)"><i class="fa-solid fa-video"></i><span>Reunión Meet</span></button>
-          <button class="admin-menu-card" id="btn-tab-internaltools" onclick="switchTab('internaltools',this)"><i class="fa-solid fa-toolbox"></i><span>Internal tools</span></button>
+          <button class="admin-menu-card" id="btn-tab-menu" onclick="switchTab('menu',this)"><i class="fa-solid fa-bars-staggered"></i><span>Menú</span></button>
           <button class="admin-menu-card" id="btn-tab-neclub" onclick="switchTab('neclub',this)"><i class="fa-solid fa-hashtag"></i><span>NECLUB</span></button>
           <button class="admin-menu-card" id="btn-tab-training" onclick="switchTab('training',this)"><i class="fa-solid fa-brain"></i><span>Training Room</span></button>
           <span class="admin-menu-grupo">Limpieza</span>
@@ -125,6 +125,17 @@
         </div>
 
         <div id="tab-motivacion" class="tab-content" style="padding:20px; display:none;">
+          <div class="admin-section">
+            <p class="admin-label"><i class="fa-solid fa-image"></i> Portada de la tarjeta del alumno</p>
+            <p class="form-hint">Es el fondo de la tarjeta "WELCOME BACK" que ven al entrar. La imagen se comprime sola antes de subirse (máx. 1600 px). Funciona mejor una foto horizontal y oscura.</p>
+            <div id="portada-preview" style="display:none; height:130px; border-radius:14px; background-size:cover; background-position:center; border:1px solid var(--border2); margin-bottom:10px;"></div>
+            <p class="form-hint" id="portada-estado">Usando la portada original (atardecer).</p>
+            <input type="file" id="portada-file" accept="image/*" style="display:none;" onchange="subirPortada(event)">
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-login" id="btn-portada-subir" onclick="document.getElementById('portada-file').click()" style="flex:1;"><i class="fa-solid fa-upload"></i> Subir nueva portada</button>
+              <button class="btn-login btn-outline-gold" id="btn-portada-reset" onclick="restaurarPortada()" style="display:none; flex:1;"><i class="fa-solid fa-rotate-left"></i> Volver a la original</button>
+            </div>
+          </div>
           <div class="admin-section">
             <p class="admin-label"><i class="fa-solid fa-crown"></i> Mentalidad NEC (frase de la semana)</p>
             <input type="text" id="config-mindset-titulo" class="admin-input" placeholder="Título (ej: Entrena tu mente, domina tu inglés.)">
@@ -291,8 +302,29 @@
           <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-video"></i> Reuniones activas</p>
           <div id="lista-reuniones-ui" style="margin-top:20px;"></div>
         </div>
-        <div id="tab-internaltools" class="tab-content" style="padding:20px; display:none;">
-          <p class="form-hint">Botones fijos y reusables que aparecen en el menú lateral del alumno (junto a Actividades, Perfil, etc.). Cada uno abre su URL en una ventana completa dentro de la app. No expiran — vos los enciendes/apagas con el switch cuando quieras. Podés crear los que necesites, sin límite.</p>
+        <div id="tab-menu" class="tab-content" style="padding:20px; display:none;">
+          <p class="form-hint">Así se ve el menú hamburguesa del alumno. Usa las flechas para cambiar el orden, ⭐ para destacar, el interruptor para mostrar u ocultar, y el lápiz para editar. Las categorías vacías no se muestran a los alumnos. Instalar App y Logout siempre quedan al final.</p>
+          <div class="admin-section">
+            <p class="admin-label"><i class="fa-solid fa-bars-staggered"></i> Estructura del menú</p>
+            <div id="menu-estructura-ui"><p class="form-hint">Cargando menú…</p></div>
+            <button class="btn-login btn-outline-gold" onclick="menuRestaurarDefault()" style="margin-top:6px;"><i class="fa-solid fa-rotate-left"></i> Restaurar menú por defecto</button>
+          </div>
+          <div class="admin-section">
+            <p class="admin-label" id="menucat-form-titulo"><i class="fa-solid fa-folder-plus"></i> Nueva categoría</p>
+            <input type="text" id="menucat-nombre" class="admin-input" placeholder="Ej: Tools, Práctica, Classroom...">
+            <select id="menucat-icono-select" class="admin-input"></select>
+            <label class="dest-all-row"><input type="checkbox" id="menucat-abierta" checked> <span style="color:#fff; font-weight:700;">Abierta al entrar (si no, el alumno la toca para desplegarla)</span></label>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-login" id="btn-guardar-menucat" onclick="guardarMenuCat()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar categoría</button>
+              <button class="btn-login btn-outline-gold" id="btn-cancelar-menucat" onclick="cancelarEdicionMenuCat()" style="display:none; flex:0 0 auto; padding-left:18px; padding-right:18px;">Cancelar</button>
+            </div>
+          </div>
+          <div class="admin-section" style="border-bottom:none;">
+          <p class="admin-label" id="eflink-form-titulo" style="margin-top:6px;"><i class="fa-solid fa-circle-plus"></i> Nuevo botón</p>
+          <p class="admin-label"><i class="fa-solid fa-location-arrow"></i> ¿Qué hace al tocarlo?</p>
+          <select id="eflink-destino" class="admin-input" onchange="toggleEflinkDestino()"></select>
+          <p class="admin-label"><i class="fa-solid fa-folder-open"></i> Categoría</p>
+          <select id="eflink-categoria" class="admin-input"></select>
           <p class="admin-label"><i class="fa-solid fa-pen"></i> Nombre</p>
           <input type="text" id="eflink-nombre" class="admin-input" placeholder="Ej: Pizarra, Zoom de tarea, Formulario...">
           <p class="admin-label"><i class="fa-solid fa-icons"></i> Ícono</p>
@@ -310,6 +342,7 @@
             <option value="custom">⚙️ Otro (avanzado — escribir clase de FontAwesome)</option>
           </select>
           <input type="text" id="eflink-icono-custom" class="admin-input" placeholder="Ej: fa-solid fa-chalkboard" style="display:none;">
+          <div id="eflink-url-wrap">
           <p class="admin-label"><i class="fa-solid fa-link"></i> URL</p>
           <input type="url" id="eflink-url" class="admin-input" placeholder="https://...">
           <label class="dest-all-row" style="margin-top:4px;">
@@ -317,6 +350,8 @@
             <span style="color:#fff; font-weight:700;">Abrir en pestaña nueva (en vez de ventana dentro de la app)</span>
           </label>
           <p class="form-hint" style="margin-top:-4px;">Recomendado para herramientas colaborativas en vivo (ej. Excalidraw) que no funcionan bien dentro de un iframe. Para el resto, déjalo sin marcar.</p>
+          </div>
+          <label class="dest-all-row"><input type="checkbox" id="eflink-destacado"> <span style="color:#fff; font-weight:700;">⭐ Destacar en el menú (borde dorado y estrella)</span></label>
           <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
           <div class="dest-picker">
             <label class="dest-all-row"><input type="radio" name="eflink-dest-modo" id="eflink-dest-todos" value="todos" checked onchange="toggleEflinkDestModo()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
@@ -326,11 +361,10 @@
             <div id="eflink-dest-lista-alumnos" style="display:none;"></div>
           </div>
           <div style="display:flex; gap:10px;">
-            <button class="btn-login" id="btn-guardar-eflink" onclick="guardarEflink()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar herramienta</button>
+            <button class="btn-login" id="btn-guardar-eflink" onclick="guardarEflink()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar botón</button>
             <button class="btn-login btn-outline-gold" id="btn-cancelar-eflink" onclick="cancelarEdicionEflink()" style="display:none; flex:0 0 auto; padding-left:18px; padding-right:18px;">Cancelar</button>
           </div>
-          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-toolbox"></i> Herramientas actuales</p>
-          <div id="lista-eflinks-ui" style="margin-top:20px;"></div>
+          </div>
         </div>
         <div id="tab-neclub" class="tab-content" style="padding:20px; display:none;">
           <p class="admin-label"><i class="fa-solid fa-bullhorn"></i> Publicar en NECLUB como cuenta oficial (foto, video o PDF)</p>
