@@ -1455,6 +1455,8 @@ body.tr-room-lock { overflow:hidden; }
 .neclub-wm span:nth-child(5){ font-size:.80em;  transform:translateY(.04em)  skewX(-14deg); animation-delay:.72s; }
 .neclub-wm span:nth-child(6){ font-size:1.05em; transform:translateY(-.01em) skewX(-17deg); animation-delay:.90s; }
 @keyframes neclubSweep { 0%{background-position:100% 0} 55%,100%{background-position:0% 0} }
+/* PC / pantallas normales: sin el filtro de suavizado (a 1x se ve dentado); celulares y retina lo conservan */
+@media (max-resolution: 1.5dppx) { .home-neclub-head h2.neclub-wm { filter:none; -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; } }
 .neclub-crown { position:absolute; left:0; top:0; height:calc(var(--u)*.72); aspect-ratio:172/135; pointer-events:none; overflow:visible; }
 @media (prefers-reduced-motion:reduce){ .neclub-wm span { animation:none; background:none; -webkit-text-fill-color:#FAB823; } }
 #home-neclub .neclub-shell { max-width:100%; padding:0 0 40px; }
