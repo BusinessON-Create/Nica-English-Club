@@ -5452,15 +5452,29 @@ const menuCatsCfg = {};   // último valor de "abierta" aplicado por categoría 
 function escucharMenu() {
   if (menuEscuchando) return;
   menuEscuchando = true;
-  setTimeout(() => { if (!(menuCatsListo && menuBtnsListo)) { menuTiempoVencido = true; renderMenuDrawer(); } }, 4000);
+  // 1) Último menú REAL guardado en este celular: se pinta al instante, así nunca se ve el menú por defecto al abrir.
+  try {
+    const c = JSON.parse(localStorage.getItem('nec_menu_cache') || 'null');
+    if (c && Array.isArray(c.cats) && Array.isArray(c.btns) && (c.cats.length || c.btns.length)) {
+      menuCatsCache = c.cats; menuBtnsCache = c.btns; menuCatsListo = menuBtnsListo = true; renderMenuDrawer();
+    }
+  } catch (e) {}
+  // 2) Respaldo solo si Firestore no responde en 10 s (sin conexión) y no hay nada guardado.
+  setTimeout(() => { if (!(menuCatsListo && menuBtnsListo)) { menuTiempoVencido = true; renderMenuDrawer(); } }, 10000);
+  const guardar = () => { try { localStorage.setItem('nec_menu_cache', JSON.stringify({ cats: menuCatsCache, btns: menuBtnsCache })); } catch (e) {} };
+  // Un snapshot VACÍO que viene solo de la caché no es la respuesta real del servidor: se ignora hasta que llegue la verdadera.
   onSnapshot(collection(db,'menu_categorias'), snap => {
+    if (snap.empty && snap.metadata.fromCache) return;
     menuCatsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
     menuCatsListo = true;
+    if (!snap.metadata.fromCache) guardar();
     renderMenuDrawer();
   }, err => { console.error('No se pudo leer menu_categorias (revisa las reglas de Firestore):', err); menuCatsListo = true; renderMenuDrawer(); });
   onSnapshot(collection(db,'menu_botones'), snap => {
+    if (snap.empty && snap.metadata.fromCache) return;
     menuBtnsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
     menuBtnsListo = true;
+    if (!snap.metadata.fromCache) guardar();
     renderMenuDrawer();
   }, err => { console.error('No se pudo leer menu_botones (revisa las reglas de Firestore):', err); menuBtnsListo = true; renderMenuDrawer(); });
 }
