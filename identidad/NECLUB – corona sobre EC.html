@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NECLUB – corona sobre EC</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#0b0b0b;--card:#141414;--line:#2a2a2a;--text:#f2f2f2;--muted:#9a9a9a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:20px 16px 40px;max-width:760px;margin-inline:auto}
+h1{font-size:18px;margin:0 0 4px}
+p.sub{color:var(--muted);font-size:13px;margin:0 0 20px;line-height:1.45}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;overflow:hidden}
+.tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.brand{position:relative;display:inline-block;--u:34px;padding-top:calc(var(--u)*.6)}
+.brand.hero{--u:64px}
+.hdr{padding-bottom:10px;border-bottom:1px solid var(--line)}
+.wm{font-family:"Bricolage Grotesque",Georgia,serif;font-weight:800;text-transform:uppercase;letter-spacing:-.02em;line-height:1;font-size:var(--u);
+  display:flex;align-items:baseline;white-space:nowrap;padding:.14em .2em .14em 0;filter:url(#soft)}
+.wm span{display:inline-block;transform-origin:50% 100%;padding-right:.04em;color:#FAB823;
+  background:linear-gradient(100deg,#FAB823 0%,#FAB823 38%,#FFE39A 46%,#FFF3CC 50%,#FFE39A 54%,#FAB823 62%,#FAB823 100%);
+  background-size:300% 100%;background-position:100% 0;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sweep 3.4s ease-in-out infinite}
+.crown{position:absolute;height:calc(var(--u)*.72);aspect-ratio:170/133;left:0;top:0;pointer-events:none}
+.crown img{width:100%;height:100%;display:block}
+.crown i{position:absolute;inset:0;background:linear-gradient(100deg,transparent 38%,rgba(255,255,255,.9) 50%,transparent 62%);
+  background-size:300% 100%;background-position:100% 0;
+  -webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;animation:sweep 3.4s ease-in-out infinite;animation-delay:.3s}
+@keyframes sweep{0%{background-position:100% 0}55%,100%{background-position:0% 0}}
+@media (prefers-reduced-motion:reduce){.wm span{animation:none;background:none;-webkit-text-fill-color:#FAB823}.crown i{display:none}}
+.note{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.45}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-10%" y="-25%" width="120%" height="150%" color-interpolation-filters="sRGB">
+    <feMorphology in="SourceGraphic" operator="dilate" radius="0.9" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="1.4" result="b"/>
+    <feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/>
+  </filter></defs></svg>
+<h1>NECLUB · corona sobre la E y la C</h1>
+<p class="sub">Sin el logo EC: solo NECLUB con tu tipografía en ola, y la corona dorada centrada arriba de la E y la C. Todo en el dorado de la corona (#FAB823); un destello más claro pasa por las letras y por la corona.</p>
+<div id="out"></div>
+<script>
+const CROWN="data:image/png;base64,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";
+const L=[
+ {c:'N',s:1.28,y:-.03,k:16},{c:'E',s:.80,y:.04,k:14},{c:'C',s:.94,y:.01,k:17},
+ {c:'L',s:1.22,y:-.04,k:15},{c:'U',s:.80,y:.04,k:14},{c:'B',s:1.05,y:-.01,k:17}];
+function brand(cls){
+  return '<div class="brand '+cls+'"><div class="wm" aria-label="NECLUB">'+L.map((p,i)=>
+   '<span aria-hidden="true" style="font-size:'+p.s+'em;transform:translateY('+p.y+'em) skewX(-'+p.k+'deg);animation-delay:'+(i*.18)+'s">'+p.c+'</span>').join('')+
+   '</div><div class="crown" aria-hidden="true"><img src="'+CROWN+'" alt=""><i style="--m:url('+CROWN+')"></i></div></div>';
+}
+document.getElementById('out').innerHTML=
+ '<div class="card"><div class="tag">Grande</div>'+brand('hero')+'</div>'+
+ '<div class="card"><div class="tag">Encabezado de la app</div><div class="hdr">'+brand('')+'</div></div>';
+// centra la corona sobre la E y la C
+function place(){
+  document.querySelectorAll('.brand').forEach(b=>{
+    const s=b.querySelectorAll('.wm span'),cr=b.querySelector('.crown'),br=b.getBoundingClientRect();
+    const e=s[1].getBoundingClientRect(),c=s[2].getBoundingClientRect();
+    const cx=(e.left+c.right)/2-br.left+parseFloat(getComputedStyle(b).getPropertyValue('--u'))*.06;
+    const top=Math.min(e.top,c.top)-br.top;
+    const u=parseFloat(getComputedStyle(b).getPropertyValue('--u'));
+    cr.style.left=(cx-cr.offsetWidth/2)+'px';
+    cr.style.top=(top-cr.offsetHeight+u*.1)+'px';
+  });
+}
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(place);
+addEventListener('resize',place);setTimeout(place,400);
+</script>
+</body>
+</html>

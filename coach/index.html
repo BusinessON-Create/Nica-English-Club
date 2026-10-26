@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notas de Coach · NicaEnglish Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* Mismas variables de color que el portal principal (index.html), copiadas a mano
+   porque esta página vive aparte para no engordar el index. Si algún día cambian
+   la paleta allá, hay que replicarla aquí también — son ~10 líneas. */
+:root{
+  --fh:"Bricolage Grotesque",Georgia,serif; --fb:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --bg:#0a0908; --card:#16130f; --card2:#1d1912; --border:#231f18; --border2:#2a251e;
+  --gold:#ffc400; --gold2:#d9a400; --gold3:#ffe27a; --gold-dim:rgba(255,196,0,.08);
+  --red:#ff5c5c; --green:#8fd6a4; --blue:#4d9fff; --muted:#a39b8f; --muted-dim:#6b645a;
+  --text:#f3efe8; --r:18px; --r-lg:22px; --ease:cubic-bezier(.22,1,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+a{color:inherit;}
+.wrap{max-width:820px;margin:0 auto;padding:18px 18px 80px;}
+nav.top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,9,8,.9);backdrop-filter:blur(10px);z-index:10;}
+nav.top .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:#fff;font-size:14.5px;}
+nav.top .brand i{color:var(--gold);}
+nav.top .actions{display:flex;align-items:center;gap:8px;}
+.coach-avatar{width:34px;height:34px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold3);font-size:13px;overflow:hidden;border:1px solid var(--border2);flex-shrink:0;}
+.coach-avatar img{width:100%;height:100%;object-fit:cover;}
+a.coach-avatar{text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+a.coach-avatar:hover{border-color:var(--gold2);}
+.ico-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:.2s var(--ease);}
+.ico-btn:hover{color:#fff;border-color:var(--gold2);}
+h1{font-family:var(--fh);font-size:22px;color:#fff;margin:20px 0 4px;display:flex;align-items:center;gap:12px;}
+.sub{color:var(--muted);font-size:13px;margin-bottom:22px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;}
+.label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--gold3);margin-bottom:10px;display:flex;align-items:center;gap:7px;justify-content:space-between;}
+.grupo-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.grupo-tab{padding:9px 14px;border-radius:99px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:.2s var(--ease);white-space:nowrap;}
+.grupo-tab.active{background:var(--gold-dim);border-color:rgba(255,196,0,.32);color:var(--gold3);}
+.vista-tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:4px;}
+.vista-tab{flex:1;text-align:center;padding:9px 10px;border-radius:99px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s var(--ease);}
+.vista-tab.active{background:linear-gradient(135deg,var(--gold3),var(--gold2));color:#000;}
+input[type=text].campo-simple, input[type=url]{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:11px 14px;font-family:inherit;font-size:13px;outline:none;margin-bottom:10px;}
+input[type=text].campo-simple:focus, input[type=url]:focus{border-color:var(--gold2);}
+.item-lista{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:13px 0;border-bottom:1px solid var(--border);}
+.item-lista:last-child{border-bottom:none;}
+.item-lista .item-titulo{font-size:13px;font-weight:700;color:#fff;}
+.item-lista .item-sub{font-size:11px;color:var(--muted-dim);margin-top:3px;}
+.item-lista .item-acciones{display:flex;gap:6px;flex-shrink:0;}
+.item-mini-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;}
+.item-mini-btn.borrar{color:var(--red);border-color:rgba(255,92,92,.25);}
+.item-mini-btn.editar{color:var(--blue);border-color:rgba(77,159,255,.25);}
+input[type=date]{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:12px;color:var(--text);padding:10px 14px;font-family:inherit;font-size:13px;outline:none;}
+textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:14px;color:var(--text);padding:14px;font-family:inherit;font-size:13.5px;outline:none;resize:vertical;min-height:80px;}
+textarea:focus,input:focus{border-color:var(--gold2);}
+.compartir-toggle{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap;}
+.compartir-toggle input{accent-color:var(--gold2);width:14px;height:14px;cursor:pointer;}
+.compartir-toggle.on{color:var(--gold3);font-weight:700;}
+.roster-item{display:flex;flex-direction:column;gap:8px;padding:14px 0;border-bottom:1px solid var(--border);}
+.roster-item:last-child{border-bottom:none;}
+.roster-head{display:flex;align-items:center;gap:10px;justify-content:space-between;}
+.roster-head-left{display:flex;align-items:center;gap:10px;}
+.avatar-mini{width:34px;height:34px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold3);font-size:13px;flex-shrink:0;overflow:hidden;}
+.avatar-mini img{width:100%;height:100%;object-fit:cover;}
+.roster-nombre{font-size:13.5px;font-weight:700;color:#fff;}
+.etiquetas{display:flex;gap:6px;flex-wrap:wrap;margin-left:44px;}
+.etq-chip{padding:5px 11px;border-radius:99px;font-size:10.5px;font-weight:700;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--muted);cursor:pointer;transition:.15s var(--ease);}
+.etq-chip.sel{color:#000;}
+.etq-chip[data-etq="Excelente"].sel{background:var(--green);border-color:var(--green);}
+.etq-chip[data-etq="Buen progreso"].sel{background:var(--blue);border-color:var(--blue);color:#fff;}
+.etq-chip[data-etq="Necesita repaso"].sel{background:var(--gold3);border-color:var(--gold3);}
+.etq-chip[data-etq="Ausente"].sel{background:var(--red);border-color:var(--red);color:#fff;}
+.nota-mini{margin-left:44px;width:calc(100% - 44px);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:8px 11px;font-family:inherit;font-size:12px;outline:none;}
+.nota-mini:focus{border-color:var(--gold2);}
+.btn-guardar{width:100%;padding:14px;border-radius:99px;border:none;background:linear-gradient(135deg,var(--gold3),var(--gold2));color:#000;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;letter-spacing:.3px;}
+.btn-guardar:disabled{opacity:.5;cursor:default;}
+.btn-borrado{width:100%;padding:12px;border-radius:99px;border:1px solid var(--border2);background:transparent;color:var(--red);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;margin-top:10px;}
+.btn-borrado:disabled{opacity:.4;cursor:default;border-color:var(--border);color:var(--muted);}
+.form-hint{font-size:11.5px;color:var(--muted-dim);margin-top:8px;}
+.solicitud-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--red);background:rgba(255,92,92,.1);border:1px solid rgba(255,92,92,.3);padding:5px 11px;border-radius:99px;margin-top:10px;}
+.historial-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted);cursor:pointer;gap:8px;}
+.historial-item:last-child{border-bottom:none;}
+.historial-item:hover{color:var(--gold3);}
+.historial-item .tag-pendiente{font-size:9.5px;font-weight:800;color:var(--red);border:1px solid rgba(255,92,92,.35);padding:2px 7px;border-radius:99px;}
+.estado-msg{text-align:center;padding:80px 20px;color:var(--muted);}
+.estado-msg i{font-size:32px;color:var(--gold-dim);display:block;margin-bottom:14px;}
+.estado-msg a{color:var(--gold3);font-weight:700;text-decoration:underline;}
+.spinner{width:26px;height:26px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin:60px auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--gold2);color:#fff;padding:12px 20px;border-radius:99px;font-size:12.5px;font-weight:700;opacity:0;pointer-events:none;transition:.3s var(--ease);z-index:50;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+[hidden]{display:none !important;}
+
+/* ═══════════ LOTE 3: panel del coach más amable (celular primero) ═══════════ */
+.wrap { padding-bottom:calc(90px + env(safe-area-inset-bottom)); }
+nav.top .brand { font-size:15px; }
+.ico-btn, a.coach-avatar, .grupo-tab, .vista-tab, .etq-chip, .item-mini-btn, .btn-guardar, .btn-borrado, .mando-btn, .roster-todos { -webkit-tap-highlight-color:transparent; }
+a.coach-avatar { width:38px; height:38px; }
+
+/* Centro de mando */
+.mando { display:grid; grid-template-columns:1fr; gap:10px; margin:0 0 18px; }
+@media (min-width:520px) { .mando { grid-template-columns:1fr 1fr; } }
+.mando-btn { position:relative; display:flex; align-items:center; gap:14px; min-height:68px; padding:14px 16px; border-radius:var(--r-lg); background:var(--card); border:1px solid var(--border2); text-decoration:none; color:#fff; transition:transform .2s var(--ease), border-color .2s var(--ease); }
+.mando-btn.principal { background:linear-gradient(135deg, rgba(255,196,0,.13), rgba(255,196,0,.04)); border-color:rgba(255,196,0,.32); }
+.mando-btn > i { flex:none; width:42px; height:42px; border-radius:14px; display:grid; place-items:center; font-size:17px; color:var(--gold3); background:var(--gold-dim); border:1px solid rgba(255,196,0,.24); }
+.mando-txt { display:flex; flex-direction:column; min-width:0; flex:1; }
+.mando-txt b { font-size:14px; }
+.mando-txt small { font-size:11.5px; color:var(--muted); margin-top:2px; }
+.mando-badge { flex:none; min-width:24px; height:24px; padding:0 7px; border-radius:99px; background:var(--red); color:#fff; font:800 12px var(--fb); display:grid; place-items:center; }
+.mando-btn:active { transform:scale(.985); }
+
+/* Grupos: botones de dos líneas que se deslizan de lado */
+.grupo-tabs { flex-wrap:nowrap; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; padding-bottom:2px; }
+.grupo-tabs::-webkit-scrollbar { display:none; }
+.grupo-tab { flex:none; scroll-snap-align:start; min-height:52px; padding:8px 18px; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+.grupo-tab b { font-size:12.5px; }
+.grupo-tab small { font-size:11px; font-weight:600; opacity:.8; }
+
+/* Pestañas Notas / Actividades / Reuniones: fijas debajo del encabezado */
+.vista-tabs { position:sticky; top:67px; z-index:9; background:rgba(22,19,15,.94); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+.vista-tab { min-height:42px; font-size:12.5px; }
+
+/* Lista de alumnos plegable */
+.roster-todos { background:transparent; border:1px solid var(--border2); color:var(--muted); font:700 11px var(--fb); padding:6px 12px; border-radius:99px; cursor:pointer; text-transform:none; letter-spacing:0; }
+details.roster-item { display:block; padding:0; border-bottom:1px solid var(--border); }
+details.roster-item:last-child { border-bottom:none; }
+summary.roster-head { list-style:none; cursor:pointer; padding:12px 0; min-height:56px; -webkit-tap-highlight-color:transparent; }
+summary.roster-head::-webkit-details-marker { display:none; }
+.roster-head-left { min-width:0; flex:1; }
+.roster-nombre { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.roster-resumen { display:flex; align-items:center; gap:8px; flex:none; }
+.resumen-nota, .resumen-compartido { font-size:12px; color:var(--gold3); }
+.resumen-compartido { color:var(--green); }
+.etq-resumen { font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:99px; border:1px solid var(--border2); background:rgba(255,255,255,.03); color:var(--muted); white-space:nowrap; }
+.etq-resumen.vacio { color:var(--muted-dim); }
+.etq-resumen[data-etq="Excelente"] { background:rgba(143,214,164,.14); border-color:var(--green); color:var(--green); }
+.etq-resumen[data-etq="Buen progreso"] { background:rgba(77,159,255,.14); border-color:var(--blue); color:var(--blue); }
+.etq-resumen[data-etq="Necesita repaso"] { background:rgba(255,226,122,.14); border-color:var(--gold3); color:var(--gold3); }
+.etq-resumen[data-etq="Ausente"] { background:rgba(255,92,92,.14); border-color:var(--red); color:var(--red); }
+.roster-resumen .chevron { color:var(--muted-dim); font-size:11px; transition:transform .2s var(--ease); }
+details.roster-item[open] .roster-resumen .chevron { transform:rotate(180deg); }
+.roster-body { display:flex; flex-direction:column; gap:10px; padding:0 0 14px 44px; }
+.roster-body .etiquetas { margin-left:0; }
+.roster-body .nota-mini { margin-left:0; width:100%; }
+.etq-chip { min-height:36px; padding:8px 14px; font-size:12px; }
+.roster-body .compartir-toggle { padding:6px 0; font-size:12.5px; }
+.compartir-toggle input { width:18px; height:18px; }
+
+/* Guardar siempre al alcance; borrar, discreto y lejos del botón principal */
+#btn-guardar { position:sticky; bottom:calc(12px + env(safe-area-inset-bottom)); z-index:20; min-height:48px; box-shadow:0 10px 28px rgba(0,0,0,.55); }
+.btn-borrado { width:auto; display:block; margin:22px auto 4px; padding:10px 18px; font-size:12px; background:transparent; }
+
+/* Comodidad al escribir y tocar */
+input[type=text].campo-simple, input[type=url], input[type=date], textarea, .nota-mini { font-size:16px; }   /* 16px: el iPhone no hace zoom al escribir */
+.item-mini-btn { width:38px; height:38px; font-size:13px; }
+.historial-item { min-height:46px; }
+@media (hover:none) { .mando-btn:hover, .grupo-tab:hover, .historial-item:hover { transform:none; } .historial-item:hover { color:var(--muted); } }
+</style>
+<link rel="stylesheet" href="../identidad/identidad.css?v=1">
+</head>
+<body>
+
+<nav class="top">
+  <a class="brand" href="../"><i class="fa-solid fa-chalkboard-user"></i> Panel de coach</a>
+  <div class="actions">
+    <button class="ico-btn" onclick="location.href='../'" title="Volver al portal"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="ico-btn" onclick="location.href='../training-room/coach/entregas.html'" title="Entregas pendientes (Speaking/Writing)"><i class="fa-solid fa-inbox"></i></button>
+    <a class="coach-avatar" id="coach-avatar" href="../?ir=perfil" title="Mi perfil" aria-label="Mi perfil"></a>
+    <button class="ico-btn" onclick="cerrarSesionCoach()" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="cargando" class="spinner"></div>
+
+  <div id="sin-acceso" class="estado-msg" hidden>
+    <i class="fa-solid fa-lock"></i>
+    <p id="sin-acceso-texto">No tenés acceso a esta sección.</p>
+    <p style="margin-top:10px;"><a href="../">Volver al portal</a></p>
+  </div>
+
+  <div id="contenido" hidden>
+    <h1>Hola, <span id="coach-nombre"></span></h1>
+    <p class="sub">Dejá la nota de la sesión, asigná actividades o mandá el enlace de la clase — todo desde acá.</p>
+
+    <!-- CENTRO DE MANDO: lo más importante, a un toque -->
+    <div class="mando">
+      <a class="mando-btn principal" href="../training-room/coach/entregas.html" id="mando-entregas">
+        <i class="fa-solid fa-inbox"></i>
+        <span class="mando-txt"><b>Entregas por revisar</b><small id="mando-entregas-sub">Speaking y Writing de tus alumnos</small></span>
+        <span class="mando-badge" id="mando-entregas-badge" hidden>0</span>
+      </a>
+      <a class="mando-btn" href="../training-room/index.html" id="mando-classroom">
+        <i class="fa-solid fa-chalkboard-user"></i>
+        <span class="mando-txt"><b>Class Room</b><small>Niveles y unidades</small></span>
+      </a>
+    </div>
+
+    <div class="card">
+      <p class="label"><i class="fa-solid fa-people-group"></i> Grupo</p>
+      <div class="grupo-tabs" id="grupo-tabs"></div>
+    </div>
+
+    <div class="vista-tabs">
+      <button class="vista-tab active" data-vista="notas" onclick="cambiarVista('notas')"><i class="fa-solid fa-note-sticky"></i> Notas</button>
+      <button class="vista-tab" data-vista="actividades" onclick="cambiarVista('actividades')"><i class="fa-solid fa-list-check"></i> Actividades</button>
+      <button class="vista-tab" data-vista="reuniones" onclick="cambiarVista('reuniones')"><i class="fa-solid fa-video"></i> Reuniones</button>
+    </div>
+
+    <div id="vista-notas">
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-calendar-day"></i> Fecha de la sesión</p>
+        <input type="date" id="fecha-sesion">
+      </div>
+
+      <div class="card">
+        <p class="label">
+          <span><i class="fa-solid fa-pen"></i> Nota general de la sesión</span>
+          <label class="compartir-toggle" id="toggle-compartir-general"><input type="checkbox" id="nota-general-compartida"> Compartir con el grupo</label>
+        </p>
+        <textarea id="nota-general" placeholder="¿Qué se vio hoy? ¿Cómo estuvo el grupo en general?"></textarea>
+        <p class="form-hint">Si la marcás como compartida, cada alumno la va a ver en "Mi seguimiento" dentro de su perfil.</p>
+      </div>
+
+      <div class="card">
+        <p class="label"><span><i class="fa-solid fa-user-graduate"></i> Alumnos de este grupo</span><button type="button" class="roster-todos" id="btn-roster-todos" onclick="toggleRosterTodos()">Abrir todos</button></p>
+        <div id="roster"></div>
+        <p class="form-hint" id="roster-vacio" hidden>No hay alumnos asignados a este grupo todavía.</p>
+      </div>
+
+      <button class="btn-guardar" id="btn-guardar" onclick="guardarNota()">Guardar nota de esta sesión</button>
+      <button class="btn-borrado" id="btn-solicitar-borrado" onclick="solicitarBorrado()"><i class="fa-solid fa-trash-can"></i> Solicitar borrado de esta sesión</button>
+      <p id="solicitud-estado" hidden></p>
+
+      <div class="card" style="margin-top:22px;">
+        <p class="label"><i class="fa-solid fa-clock-rotate-left"></i> Notas recientes de este grupo</p>
+        <div id="historial"></div>
+        <p class="form-hint" id="historial-vacio" hidden>Todavía no hay notas guardadas para este grupo.</p>
+      </div>
+    </div>
+
+    <div id="vista-actividades" hidden>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-plus"></i> Nueva actividad para este grupo</p>
+        <input type="text" class="campo-simple" id="act-titulo" placeholder="Título de la actividad" maxlength="120">
+        <textarea id="act-descripcion" placeholder="Instrucciones para el alumno" style="min-height:60px;"></textarea>
+        <input type="url" id="act-enlace" placeholder="Enlace (opcional) — ej: un video o documento" style="margin-top:10px;">
+        <button class="btn-guardar" id="btn-guardar-actividad" onclick="guardarActividadCoach()" style="margin-top:12px;">Publicar actividad</button>
+      </div>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-list-check"></i> Actividades de este grupo</p>
+        <div id="lista-actividades-coach"></div>
+        <p class="form-hint" id="actividades-vacio" hidden>Todavía no hay actividades para este grupo.</p>
+      </div>
+    </div>
+
+    <div id="vista-reuniones" hidden>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-video"></i> Enviar enlace de reunión (Google Meet)</p>
+        <input type="url" id="meet-url-coach" placeholder="https://meet.google.com/...">
+        <p class="form-hint">Le va a aparecer como botón flotante "Unirse a la clase" solo a este grupo, y se borra solo a las 3 horas.</p>
+        <button class="btn-guardar" id="btn-guardar-meet" onclick="enviarMeetCoach()" style="margin-top:12px;">Enviar a este grupo</button>
+      </div>
+      <div class="card">
+        <p class="label"><i class="fa-solid fa-video"></i> Reuniones activas de este grupo</p>
+        <div id="lista-reuniones-coach"></div>
+        <p class="form-hint" id="reuniones-vacio" hidden>No hay reuniones activas para este grupo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, query, where, limit, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc, updateDoc, Timestamp, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { firebaseConfig } from "../firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+// Mismas etiquetas fijas para todos los coaches — así no hay que escribir, solo tocar.
+const ETIQUETAS = ["Excelente", "Buen progreso", "Necesita repaso", "Ausente"];
+
+let coach = null;          // doc del alumno-coach logueado
+let grupoActivo = null;    // { dias, franja }
+let rosterActual = [];     // alumnos del grupo activo
+let estadoAlumnos = {};    // { [alumnoId]: { etiqueta, nota, compartido } } — lo que se está editando
+let solicitudActual = null; // solicitudBorrado de la sesión cargada ahora mismo (o null)
+
+function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+// Igual que en el portal: un enlace de Google Drive se convierte en imagen directa. Solo se aceptan
+// URLs http(s): la foto de un alumno la escribe él mismo, así que nunca se pega sin validar.
+function resolverUrlDrive(url) {
+  if (!url) return url;
+  if (url.includes('drive.google.com')) {
+    const m = url.match(/\/d\/(.+?)\/|id=(.+?)(&|$)/);
+    const id = m ? (m[1] || m[2]) : null;
+    if (id) return `https://lh3.googleusercontent.com/d/${id}`;
+  }
+  return url;
+}
+function urlFotoSegura(url) { const u = resolverUrlDrive(url || ''); return /^https?:\/\//i.test(u) ? u : ''; }
+function slug(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
+function idSesion(dias, franja, fecha) { return `${slug(dias)}__${slug(franja)}__${fecha}`; }
+function docIdNota(coachId, dias, franja, fecha) { return `${coachId}__${idSesion(dias, franja, fecha)}`; }
+function hoyStr() {
+  const ahora = new Date();
+  const utcMs = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+  const managua = new Date(utcMs - (6 * 60 * 60000)); // Managua es UTC-6 fijo, igual que en index.html
+  return managua.getFullYear() + "-" + String(managua.getMonth() + 1).padStart(2, '0') + "-" + String(managua.getDate()).padStart(2, '0');
+}
+function lunesDeEstaSemanaStr() {
+  const ahora = new Date();
+  const utcMs = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+  const t = new Date(utcMs - (6 * 60 * 60000));
+  const day = t.getDay(), diff = t.getDate() - day + (day === 0 ? -6 : 1);
+  t.setDate(diff);
+  return t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, '0') + "-" + String(t.getDate()).padStart(2, '0');
+}
+function normalizarUrl(u) {
+  const limpio = (u || '').trim();
+  if (!limpio) return '';
+  if (/^https?:\/\//i.test(limpio)) return limpio;
+  return 'https://' + limpio;
+}
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function mostrarSinAcceso(texto) {
+  document.getElementById('cargando').hidden = true;
+  document.getElementById('contenido').hidden = true;
+  document.getElementById('sin-acceso').hidden = false;
+  document.getElementById('sin-acceso-texto').innerText = texto;
+}
+
+window.cerrarSesionCoach = async () => {
+  await signOut(auth);
+  location.href = '../';
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { mostrarSinAcceso('Necesitás iniciar sesión en el portal primero.'); return; }
+  try {
+    const snap = await getDocs(query(collection(db, 'alumnos'), where('uid', '==', user.uid), limit(1)));
+    if (snap.empty) { mostrarSinAcceso('No encontramos tu perfil de alumno.'); return; }
+    const d = snap.docs[0];
+    coach = { id: d.id, ...d.data() };
+    if (!coach.esCoach) { mostrarSinAcceso('Esta sección es solo para coaches.'); return; }
+
+    document.getElementById('cargando').hidden = true;
+    document.getElementById('contenido').hidden = false;
+    document.getElementById('coach-nombre').innerText = coach.nombre || '';
+    const inicial = (coach.nombre || '?').charAt(0).toUpperCase();
+    {
+      const av = document.getElementById('coach-avatar');
+      const u = urlFotoSegura(coach.foto);
+      if (u) {
+        const img = new Image();
+        img.alt = '';
+        img.onerror = () => { av.textContent = inicial; };
+        img.src = u;
+        av.textContent = '';
+        av.appendChild(img);
+      } else {
+        av.textContent = inicial;
+      }
+    }
+    document.getElementById('fecha-sesion').value = hoyStr();
+    document.getElementById('fecha-sesion').addEventListener('change', () => cargarSesion());
+    document.getElementById('nota-general-compartida').addEventListener('change', pintarToggleGeneral);
+
+    const grupos = coach.horariosCoach || [];
+    if (!grupos.length) {
+      document.getElementById('grupo-tabs').innerHTML = '<p class="form-hint">Todavía no tenés grupos asignados. Pedile al admin que te los asigne desde el panel.</p>';
+      return;
+    }
+    pintarTabsGrupos(grupos);
+    seleccionarGrupo(grupos[0]);
+    cargarMando(grupos);
+  } catch (e) {
+    console.error(e);
+    mostrarSinAcceso('No se pudo cargar tu información. Intentá de nuevo más tarde.');
+  }
+});
+
+function pintarTabsGrupos(grupos) {
+  const cont = document.getElementById('grupo-tabs');
+  cont.innerHTML = grupos.map((g, i) => `<button class="grupo-tab" data-i="${i}"><b>${escHtml(g.dias)}</b><small>${escHtml(g.franja)}</small></button>`).join('');
+  cont.querySelectorAll('.grupo-tab').forEach((btn, i) => btn.addEventListener('click', () => seleccionarGrupo(grupos[i])));
+}
+
+async function seleccionarGrupo(g) {
+  grupoActivo = g;
+  const posicion = String((coach.horariosCoach || []).indexOf(g));
+  document.querySelectorAll('.grupo-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.i === posicion));
+  await cargarRoster();
+  await cargarSesion();
+  await cargarHistorial();
+  await cargarActividadesCoach();
+  await cargarReunionesCoach();
+}
+
+window.cambiarVista = (v) => {
+  document.querySelectorAll('.vista-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.vista === v));
+  document.getElementById('vista-notas').hidden = v !== 'notas';
+  document.getElementById('vista-actividades').hidden = v !== 'actividades';
+  document.getElementById('vista-reuniones').hidden = v !== 'reuniones';
+};
+
+async function cargarRoster() {
+  const cont = document.getElementById('roster');
+  cont.innerHTML = '<p class="form-hint">Cargando alumnos…</p>';
+  const snap = await getDocs(query(collection(db, 'alumnos'),
+    where('horario.dias', '==', grupoActivo.dias),
+    where('horario.franja', '==', grupoActivo.franja)));
+  rosterActual = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  document.getElementById('roster-vacio').hidden = rosterActual.length > 0;
+  cont.innerHTML = '';
+  document.getElementById('btn-roster-todos').textContent = 'Abrir todos';
+  if (!rosterActual.length) return;
+  cont.innerHTML = rosterActual.map(a => {
+    const inicial = (a.nombre || '?').charAt(0).toUpperCase();
+    const urlFoto = urlFotoSegura(a.foto);
+    const foto = urlFoto
+      ? `<img src="${escHtml(urlFoto)}" data-i="${escHtml(inicial)}" onerror="this.parentElement.textContent=this.dataset.i">`
+      : escHtml(inicial);
+    return `<details class="roster-item" data-alumno="${a.id}">
+      <summary class="roster-head">
+        <div class="roster-head-left"><div class="avatar-mini">${foto}</div><span class="roster-nombre">${escHtml(a.nombre)}</span></div>
+        <div class="roster-resumen">
+          <i class="fa-solid fa-comment-dots resumen-nota" title="Tiene nota" hidden></i>
+          <i class="fa-solid fa-share-nodes resumen-compartido" title="Compartido con el alumno" hidden></i>
+          <span class="etq-resumen vacio">Sin etiquetar</span>
+          <i class="fa-solid fa-chevron-down chevron"></i>
+        </div>
+      </summary>
+      <div class="roster-body">
+        <div class="etiquetas">${ETIQUETAS.map(e => `<button type="button" class="etq-chip" data-etq="${e}" data-alumno="${a.id}">${e}</button>`).join('')}</div>
+        <input type="text" class="nota-mini" data-alumno="${a.id}" placeholder="Nota corta (opcional)" maxlength="140">
+        <label class="compartir-toggle" data-alumno-toggle="${a.id}"><input type="checkbox" class="compartir-alumno-check" data-alumno="${a.id}"> Compartir con este alumno</label>
+      </div>
+    </details>`;
+  }).join('');
+  cont.querySelectorAll('.etq-chip').forEach(chip => chip.addEventListener('click', () => {
+    const id = chip.dataset.alumno, etq = chip.dataset.etq;
+    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '', compartido: false };
+    estadoAlumnos[id].etiqueta = (estadoAlumnos[id].etiqueta === etq) ? '' : etq; // toca de nuevo para des-marcar
+    pintarEstadoRoster();
+  }));
+  cont.querySelectorAll('.nota-mini').forEach(inp => inp.addEventListener('input', () => {
+    const id = inp.dataset.alumno;
+    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '', compartido: false };
+    estadoAlumnos[id].nota = inp.value;
+  }));
+  cont.querySelectorAll('.compartir-alumno-check').forEach(chk => chk.addEventListener('change', () => {
+    const id = chk.dataset.alumno;
+    if (!estadoAlumnos[id]) estadoAlumnos[id] = { etiqueta: '', nota: '', compartido: false };
+    estadoAlumnos[id].compartido = chk.checked;
+    pintarEstadoRoster();
+  }));
+}
+
+function pintarEstadoRoster() {
+  document.querySelectorAll('.etq-chip').forEach(chip => {
+    const est = estadoAlumnos[chip.dataset.alumno];
+    chip.classList.toggle('sel', !!est && est.etiqueta === chip.dataset.etq);
+  });
+  document.querySelectorAll('.nota-mini').forEach(inp => {
+    const est = estadoAlumnos[inp.dataset.alumno];
+    inp.value = (est && est.nota) || '';
+  });
+  document.querySelectorAll('.compartir-alumno-check').forEach(chk => {
+    const est = estadoAlumnos[chk.dataset.alumno];
+    const compartido = !!est && !!est.compartido;
+    chk.checked = compartido;
+    chk.closest('[data-alumno-toggle]').classList.toggle('on', compartido);
+  });
+  // Resumen a la vista en la fila plegada: etiqueta elegida, si tiene nota y si se comparte.
+  document.querySelectorAll('.roster-item').forEach(item => {
+    const est = estadoAlumnos[item.dataset.alumno] || {};
+    const r = item.querySelector('.etq-resumen');
+    if (r) { r.textContent = est.etiqueta || 'Sin etiquetar'; r.dataset.etq = est.etiqueta || ''; r.classList.toggle('vacio', !est.etiqueta); }
+    const nt = item.querySelector('.resumen-nota'); if (nt) nt.hidden = !(est.nota && String(est.nota).trim());
+    const sh = item.querySelector('.resumen-compartido'); if (sh) sh.hidden = !est.compartido;
+  });
+}
+
+// "Abrir todos / Cerrar todos" las filas de alumnos (solo cambia lo que se ve; no toca ningún dato).
+window.toggleRosterTodos = () => {
+  const filas = [...document.querySelectorAll('#roster details.roster-item')];
+  if (!filas.length) return;
+  const abrir = filas.some(d => !d.open);
+  filas.forEach(d => { d.open = abrir; });
+  document.getElementById('btn-roster-todos').textContent = abrir ? 'Cerrar todos' : 'Abrir todos';
+};
+
+// Centro de mando: cuántas entregas esperan al coach (de TODOS sus grupos). Es la misma consulta que
+// hace el botón "Panel de coach" del portal. Si falla, el botón igual funciona; solo no muestra el número.
+async function cargarMando(grupos) {
+  const badge = document.getElementById('mando-entregas-badge');
+  const sub = document.getElementById('mando-entregas-sub');
+  try {
+    const ids = new Set();
+    for (const g of grupos) {
+      const s = await getDocs(query(collection(db, 'alumnos'), where('horario.dias', '==', g.dias), where('horario.franja', '==', g.franja)));
+      s.docs.forEach(d => ids.add(d.id));
+    }
+    const p = await getDocs(query(collection(db, 'training_v2_entregas'), where('estado', '==', 'pendiente')));
+    const n = p.docs.filter(d => ids.has(d.data().alumnoId)).length;
+    badge.textContent = n > 99 ? '99+' : String(n);
+    badge.hidden = !n;
+    sub.textContent = n ? (n === 1 ? '1 entrega esperando tu revisión' : `${n} entregas esperando tu revisión`) : 'Todo al día';
+  } catch (e) {
+    console.warn('No se pudo contar las entregas pendientes:', e);
+  }
+}
+
+function pintarToggleGeneral() {
+  const chk = document.getElementById('nota-general-compartida');
+  document.getElementById('toggle-compartir-general').classList.toggle('on', chk.checked);
+}
+
+function pintarSolicitudEstado() {
+  const btn = document.getElementById('btn-solicitar-borrado');
+  const txt = document.getElementById('solicitud-estado');
+  if (solicitudActual) {
+    btn.disabled = true;
+    txt.hidden = false;
+    txt.innerHTML = `<span class="solicitud-badge"><i class="fa-solid fa-clock"></i> Borrado pendiente de aprobación</span>`;
+  } else {
+    btn.disabled = false;
+    txt.hidden = true;
+  }
+}
+
+// Carga (o limpia) la nota guardada para la fecha + grupo seleccionados actualmente.
+async function cargarSesion() {
+  if (!grupoActivo) return;
+  const fecha = document.getElementById('fecha-sesion').value || hoyStr();
+  const id = docIdNota(coach.id, grupoActivo.dias, grupoActivo.franja, fecha);
+  document.getElementById('nota-general').value = '';
+  document.getElementById('nota-general-compartida').checked = false;
+  estadoAlumnos = {};
+  solicitudActual = null;
+  try {
+    const snap = await getDoc(doc(db, 'coach_notas', id));
+    if (snap.exists()) {
+      const data = snap.data();
+      document.getElementById('nota-general').value = data.notaGeneral || '';
+      document.getElementById('nota-general-compartida').checked = !!data.notaGeneralCompartida;
+      estadoAlumnos = data.alumnos || {};
+      solicitudActual = data.solicitudBorrado || null;
+    }
+  } catch (e) { console.error('No se pudo cargar la nota de esta sesión:', e); }
+  pintarEstadoRoster();
+  pintarToggleGeneral();
+  pintarSolicitudEstado();
+}
+
+async function cargarHistorial() {
+  const cont = document.getElementById('historial');
+  cont.innerHTML = '';
+  try {
+    const snap = await getDocs(query(collection(db, 'coach_notas'),
+      where('coachId', '==', coach.id),
+      where('dias', '==', grupoActivo.dias),
+      where('franja', '==', grupoActivo.franja),
+      orderBy('fecha', 'desc'),
+      limit(10)));
+    document.getElementById('historial-vacio').hidden = !snap.empty;
+    snap.forEach(d => {
+      const data = d.data();
+      const nAlumnos = Object.keys(data.alumnos || {}).length;
+      const item = document.createElement('div');
+      item.className = 'historial-item';
+      const pendienteHtml = data.solicitudBorrado ? '<span class="tag-pendiente">Pendiente de borrado</span>' : '';
+      item.innerHTML = `<span>${escHtml(data.fecha)}</span><span style="display:flex; align-items:center; gap:8px;">${pendienteHtml}${nAlumnos} alumno(s) con nota <i class="fa-solid fa-chevron-right"></i></span>`;
+      item.addEventListener('click', () => { document.getElementById('fecha-sesion').value = data.fecha; cargarSesion(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      cont.appendChild(item);
+    });
+  } catch (e) {
+    // Si falta un índice compuesto, Firestore lo dice en la consola con un link directo
+    // para crearlo en un clic — no hace falta tocar código.
+    console.error('No se pudo cargar el historial:', e);
+  }
+}
+
+// Sincroniza la copia "pública" que el alumno puede leer (alumnos/{id}/seguimiento/{sesionId}).
+// Se actualiza o se borra según lo que el coach haya marcado como compartido en esta sesión.
+async function sincronizarSeguimientoAlumno(alumnoId, fecha, notaGeneral, notaGeneralCompartida, est) {
+  const segId = idSesion(grupoActivo.dias, grupoActivo.franja, fecha);
+  const compartirIndividual = !!(est && est.compartido && (est.etiqueta || est.nota));
+  const compartirGeneral = !!(notaGeneralCompartida && notaGeneral);
+  const ref = doc(db, 'alumnos', alumnoId, 'seguimiento', segId);
+  if (!compartirIndividual && !compartirGeneral) {
+    try { await deleteDoc(ref); } catch (e) { /* no existía, no pasa nada */ }
+    return;
+  }
+  await setDoc(ref, {
+    coachId: coach.id,
+    coachNombre: coach.nombre || '',
+    dias: grupoActivo.dias,
+    franja: grupoActivo.franja,
+    fecha,
+    notaGeneral: compartirGeneral ? notaGeneral : '',
+    etiqueta: compartirIndividual ? (est.etiqueta || '') : '',
+    nota: compartirIndividual ? (est.nota || '') : '',
+    actualizadoEn: serverTimestamp(),
+  }, { merge: false });
+}
+
+window.guardarNota = async () => {
+  if (!grupoActivo) return;
+  const btn = document.getElementById('btn-guardar');
+  const fecha = document.getElementById('fecha-sesion').value || hoyStr();
+  const id = docIdNota(coach.id, grupoActivo.dias, grupoActivo.franja, fecha);
+  const notaGeneral = document.getElementById('nota-general').value.trim();
+  const notaGeneralCompartida = document.getElementById('nota-general-compartida').checked;
+  btn.disabled = true; btn.innerText = 'Guardando…';
+  try {
+    await setDoc(doc(db, 'coach_notas', id), {
+      coachId: coach.id,
+      coachNombre: coach.nombre || '',
+      dias: grupoActivo.dias,
+      franja: grupoActivo.franja,
+      fecha,
+      notaGeneral,
+      notaGeneralCompartida,
+      alumnos: estadoAlumnos,
+      actualizadoEn: serverTimestamp(),
+    }, { merge: true });
+    // Sincroniza lo compartido hacia cada alumno del grupo, uno por uno.
+    await Promise.all(rosterActual.map(a =>
+      sincronizarSeguimientoAlumno(a.id, fecha, notaGeneral, notaGeneralCompartida, estadoAlumnos[a.id])
+    ));
+    mostrarToast('Nota guardada ✓');
+    cargarHistorial();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo guardar. Intentá de nuevo.');
+  }
+  btn.disabled = false; btn.innerText = 'Guardar nota de esta sesión';
+};
+
+window.solicitarBorrado = async () => {
+  if (!grupoActivo) return;
+  const fecha = document.getElementById('fecha-sesion').value || hoyStr();
+  const id = docIdNota(coach.id, grupoActivo.dias, grupoActivo.franja, fecha);
+  try {
+    await setDoc(doc(db, 'coach_notas', id), {
+      coachId: coach.id,
+      dias: grupoActivo.dias,
+      franja: grupoActivo.franja,
+      fecha,
+      solicitudBorrado: { solicitadoEn: serverTimestamp(), coachNombre: coach.nombre || '' },
+    }, { merge: true });
+    solicitudActual = { coachNombre: coach.nombre || '' };
+    pintarSolicitudEstado();
+    mostrarToast('Solicitud enviada al admin ✓');
+    cargarHistorial();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo enviar la solicitud. Intentá de nuevo.');
+  }
+};
+
+/* ===== ACTIVIDADES (por grupo, solo lo que el coach mismo creó lo puede editar/borrar) ===== */
+window.prepararEdicionActividadCoach = (id, titulo, descripcion, enlace) => {
+  document.getElementById('act-id-edicion') && document.getElementById('act-id-edicion').remove();
+  const hidden = document.createElement('input');
+  hidden.type = 'hidden'; hidden.id = 'act-id-edicion'; hidden.value = id;
+  document.getElementById('act-titulo').before(hidden);
+  document.getElementById('act-titulo').value = titulo || '';
+  document.getElementById('act-descripcion').value = descripcion || '';
+  document.getElementById('act-enlace').value = enlace || '';
+  document.getElementById('btn-guardar-actividad').innerText = 'Actualizar actividad';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.guardarActividadCoach = async () => {
+  if (!grupoActivo || !rosterActual) return;
+  const titulo = document.getElementById('act-titulo').value.trim();
+  const descripcion = document.getElementById('act-descripcion').value.trim();
+  const enlace = normalizarUrl(document.getElementById('act-enlace').value);
+  const idEdicion = document.getElementById('act-id-edicion');
+  if (!titulo) { mostrarToast('Escribí un título para la actividad.'); return; }
+  const destinatarios = rosterActual.map(a => a.id);
+  const btn = document.getElementById('btn-guardar-actividad');
+  btn.disabled = true;
+  try {
+    if (idEdicion && idEdicion.value) {
+      await updateDoc(doc(db, 'actividades', idEdicion.value), { titulo, descripcion, enlace, destinatarios });
+      idEdicion.remove();
+    } else {
+      await addDoc(collection(db, 'actividades'), {
+        titulo, descripcion, enlace, destinatarios,
+        semana: lunesDeEstaSemanaStr(),
+        fecha: Date.now(),
+        creadoPor: coach.id,
+      });
+    }
+    document.getElementById('act-titulo').value = '';
+    document.getElementById('act-descripcion').value = '';
+    document.getElementById('act-enlace').value = '';
+    btn.innerText = 'Publicar actividad';
+    mostrarToast('Actividad guardada ✓');
+    cargarActividadesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo guardar la actividad.');
+  }
+  btn.disabled = false;
+};
+
+window.borrarActividadCoach = async (id) => {
+  if (!confirm('¿Borrar esta actividad?')) return;
+  try {
+    await deleteDoc(doc(db, 'actividades', id));
+    mostrarToast('Actividad borrada ✓');
+    cargarActividadesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo borrar (¿es tuya esta actividad?).');
+  }
+};
+
+async function cargarActividadesCoach() {
+  if (!grupoActivo) return;
+  const cont = document.getElementById('lista-actividades-coach');
+  const vacio = document.getElementById('actividades-vacio');
+  cont.innerHTML = '<p class="form-hint">Cargando…</p>';
+  try {
+    const idsGrupo = new Set(rosterActual.map(a => a.id));
+    const snap = await getDocs(query(collection(db, 'actividades'), orderBy('fecha', 'desc'), limit(50)));
+    const items = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(a => Array.isArray(a.destinatarios) && a.destinatarios.length && a.destinatarios.some(id => idsGrupo.has(id)));
+    vacio.hidden = items.length > 0;
+    cont.innerHTML = items.map(a => `<div class="item-lista">
+      <div><p class="item-titulo">${escHtml(a.titulo)}</p><p class="item-sub">${escHtml(a.descripcion || '')}</p></div>
+      ${a.creadoPor === coach.id ? `<div class="item-acciones">
+        <button class="item-mini-btn editar" onclick='prepararEdicionActividadCoach(${JSON.stringify(a.id)}, ${JSON.stringify(a.titulo || '')}, ${JSON.stringify(a.descripcion || '')}, ${JSON.stringify(a.enlace || '')})'><i class="fa-solid fa-pen"></i></button>
+        <button class="item-mini-btn borrar" onclick="borrarActividadCoach('${a.id}')"><i class="fa-solid fa-trash"></i></button>
+      </div>` : `<span class="form-hint" style="margin:0;">del admin</span>`}
+    </div>`).join('');
+  } catch (e) {
+    console.error('No se pudo cargar actividades:', e);
+    cont.innerHTML = '<p class="form-hint">No se pudieron cargar las actividades.</p>';
+  }
+}
+
+/* ===== REUNIONES (Google Meet, por grupo, expira sola a las 3h) ===== */
+window.enviarMeetCoach = async () => {
+  if (!grupoActivo || !rosterActual) return;
+  const url = document.getElementById('meet-url-coach').value.trim();
+  if (!url || !/^https?:\/\//i.test(url)) { mostrarToast('Escribí un enlace válido (https://...).'); return; }
+  const destinatarios = rosterActual.map(a => a.id);
+  if (!destinatarios.length) { mostrarToast('Este grupo no tiene alumnos todavía.'); return; }
+  const expiraEn = Timestamp.fromMillis(Date.now() + 3 * 60 * 60 * 1000);
+  const btn = document.getElementById('btn-guardar-meet');
+  btn.disabled = true;
+  try {
+    await addDoc(collection(db, 'reuniones'), { url, destinatarios, creadoEn: Date.now(), expiraEn, creadoPor: coach.id });
+    document.getElementById('meet-url-coach').value = '';
+    mostrarToast('Enlace enviado al grupo ✓');
+    cargarReunionesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo enviar el enlace.');
+  }
+  btn.disabled = false;
+};
+
+window.borrarReunionCoach = async (id) => {
+  try {
+    await deleteDoc(doc(db, 'reuniones', id));
+    mostrarToast('Reunión borrada ✓');
+    cargarReunionesCoach();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo borrar (¿es tuya esta reunión?).');
+  }
+};
+
+async function cargarReunionesCoach() {
+  if (!grupoActivo) return;
+  const cont = document.getElementById('lista-reuniones-coach');
+  const vacio = document.getElementById('reuniones-vacio');
+  cont.innerHTML = '<p class="form-hint">Cargando…</p>';
+  try {
+    const idsGrupo = new Set(rosterActual.map(a => a.id));
+    const snap = await getDocs(collection(db, 'reuniones'));
+    const ahora = Date.now();
+    const items = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(r => Array.isArray(r.destinatarios) && r.destinatarios.length && r.destinatarios.some(id => idsGrupo.has(id)));
+    vacio.hidden = items.length > 0;
+    cont.innerHTML = items.map(r => {
+      const expiraMs = r.expiraEn && r.expiraEn.toMillis ? r.expiraEn.toMillis() : (r.expiraEn || 0);
+      const minsRestantes = Math.max(0, Math.round((expiraMs - ahora) / 60000));
+      return `<div class="item-lista">
+        <div><p class="item-titulo"><i class="fa-solid fa-video" style="color:#34a853;"></i> Meet</p><p class="item-sub">expira en ${minsRestantes} min</p></div>
+        ${r.creadoPor === coach.id ? `<div class="item-acciones"><button class="item-mini-btn borrar" onclick="borrarReunionCoach('${r.id}')"><i class="fa-solid fa-trash"></i></button></div>` : `<span class="form-hint" style="margin:0;">del admin</span>`}
+      </div>`;
+    }).join('');
+  } catch (e) {
+    console.error('No se pudo cargar reuniones:', e);
+    cont.innerHTML = '<p class="form-hint">No se pudieron cargar las reuniones.</p>';
+  }
+}
+</script>
+</body>
+</html>

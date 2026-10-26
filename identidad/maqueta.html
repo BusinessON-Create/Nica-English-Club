@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0908">
+<title>Maqueta de identidad — Nica English Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700;900&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/regular.min.css">
+<style>
+/* ───────── Identidades: la misma maqueta con dos juegos de variables ───────── */
+:root { --ease:cubic-bezier(.22,1,.36,1); }
+body[data-id="nueva"] {   /* la identidad de tu página de test / sitio web */
+  --bg:#0a0908; --card:#16130f; --card2:#1d1912; --line:#2a251e; --tx:#f3efe8; --mu:#a39b8f;
+  --ac:#ffc400; --ac2:#ffe27a; --acd:rgba(255,196,0,.08); --acg:rgba(255,196,0,.13); --ink:#1a1300;
+  --ok:#8fd6a4; --bad:#ff8a7a; --r:16px;
+  --fh:"Bricolage Grotesque",Georgia,serif; --fb:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+body[data-id="actual"] {  /* la plataforma tal como está hoy */
+  --bg:#08080a; --card:#121214; --card2:#16161a; --line:#2c2c34; --tx:#e8e8f2; --mu:#8a8a97;
+  --ac:#f0b429; --ac2:#ffd966; --acd:rgba(240,180,41,.10); --acg:rgba(240,180,41,.16); --ink:#000;
+  --ok:#00d68f; --bad:#ff5c5c; --r:18px;
+  --fh:"Playfair Display",Georgia,serif; --fb:"DM Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 var(--fb);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .4s}
+h1,h2,h3{font-family:var(--fh);letter-spacing:-.02em;line-height:1.12;margin:0}
+p{margin:0}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.amb{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(560px circle at var(--mx,75%) var(--my,8%),var(--acg),transparent 62%)}
+main{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:0 18px calc(60px + env(safe-area-inset-bottom))}
+
+/* ───────── Encabezado y selector de identidad ───────── */
+.top{position:sticky;top:0;z-index:20;padding:calc(10px + env(safe-area-inset-top)) 0 12px;background:linear-gradient(var(--bg) 72%,transparent)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:10px;font:800 15px var(--fh);color:var(--tx)}
+.brand img{height:30px;width:auto}
+.brand small{font:500 12px var(--fb);color:var(--mu);border-left:1px solid var(--line);padding-left:10px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--card);border:1px solid var(--line);border-radius:999px}
+.seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--mu);font:700 13px var(--fb);cursor:pointer;white-space:nowrap;transition:background .25s var(--ease),color .25s;-webkit-tap-highlight-color:transparent}
+.seg button.on{background:var(--acd);color:var(--ac2);box-shadow:inset 0 0 0 1px var(--acg)}
+.lead{color:var(--mu);font-size:14px;margin:6px 0 26px}
+.sec{margin-bottom:34px}
+.sec>h2{font-size:21px;margin-bottom:4px}
+.sec>.sub{color:var(--mu);font-size:13px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* ───────── Entrada animada (escalonada) ───────── */
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.rev{animation:up .55s var(--ease) both;animation-delay:calc(var(--i,0)*70ms)}
+
+/* ───────── Botones ───────── */
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 24px;border:0;cursor:pointer;font:700 15px var(--fb);text-decoration:none;-webkit-tap-highlight-color:transparent;transition:transform .18s var(--ease),box-shadow .25s var(--ease),filter .2s,background .2s,border-color .2s,opacity .2s}
+.btn.sm{min-height:38px;padding:0 16px;font-size:13px}
+.btn.w{width:100%}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.38;cursor:not-allowed;transform:none}
+.btn .sp{display:none;width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+.btn.load{pointer-events:none}.btn.load .sp{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+body[data-id="nueva"] .btn{border-radius:999px}
+body[data-id="nueva"] .btn.p{background:linear-gradient(135deg,var(--ac2),var(--ac));color:var(--ink);box-shadow:0 6px 20px var(--acg),inset 0 1px 0 rgba(255,255,255,.35)}
+body[data-id="nueva"] .btn.p::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,.55) 50%,transparent 68%);transform:translateX(-130%);transition:transform .7s var(--ease);pointer-events:none}
+body[data-id="actual"] .btn{border-radius:14px}
+body[data-id="actual"] .btn.p{background:linear-gradient(135deg,var(--ac2),#c8891a);color:#000;box-shadow:0 4px 0 #8a5c10,0 8px 20px rgba(0,0,0,.22)}
+body[data-id="actual"] .btn.p:active{transform:translateY(4px);box-shadow:0 0 0 #8a5c10,0 2px 6px rgba(0,0,0,.2)}
+.btn.s{background:transparent;color:var(--tx);border:1px solid var(--line)}
+.btn.d{background:rgba(255,92,92,.08);color:var(--bad);border:1px solid rgba(255,92,92,.35)}
+.btn.ic{width:46px;padding:0;border-radius:50%;background:rgba(255,255,255,.04);color:var(--mu);border:1px solid var(--line)}
+@media (hover:hover){
+  body[data-id="nueva"] .btn.p:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,196,0,.26),inset 0 1px 0 rgba(255,255,255,.38)}
+  body[data-id="nueva"] .btn.p:hover::after{transform:translateX(130%)}
+  body[data-id="actual"] .btn.p:hover{transform:translateY(-1px);filter:brightness(1.04)}
+  .btn.s:hover{border-color:var(--ac);background:var(--acd)}
+  .btn.d:hover{background:rgba(255,92,92,.16)}
+  .btn.ic:hover{color:var(--ac);border-color:var(--ac);background:var(--acd)}
+}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--mu);white-space:nowrap}
+.chip.gold{color:var(--ac2);background:var(--acd);border-color:var(--acg)}
+.chip.ok{color:var(--ok);background:rgba(143,214,164,.10);border-color:transparent}
+.chip.ok i{font-size:6px}
+.chip.bad{color:var(--bad);background:rgba(255,100,100,.10);border-color:transparent}
+
+/* ───────── Tarjetas ───────── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;transition:border-color .25s,transform .3s var(--ease),box-shadow .3s}
+@media (hover:hover){.card.hv:hover{border-color:var(--acg);transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.45)}}
+
+/* Tarjeta de inicio (perfil + Mentalidad NEC + racha + invitar) */
+.hero{background:radial-gradient(120% 90% at 100% 0%,var(--acg),transparent 58%),var(--card);padding:16px}
+.hrow{display:flex;align-items:center;gap:12px}
+.av{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font:800 20px var(--fh);color:var(--ink);background:linear-gradient(135deg,var(--ac2),var(--ac));box-shadow:0 0 0 3px var(--card),0 0 0 4px var(--acg)}
+.nm{font:800 19px var(--fh);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.onl{font:700 10.5px var(--fb);color:var(--ok);display:inline-flex;align-items:center;gap:5px}
+.onl i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(143,214,164,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 7px rgba(143,214,164,0)}100%{box-shadow:0 0 0 0 rgba(143,214,164,0)}}
+.idb{color:var(--mu);font-size:12px;margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.mind{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.tag{display:inline-flex;align-items:center;gap:6px;font:800 10px var(--fb);letter-spacing:1.6px;color:var(--ac);margin-bottom:6px}
+.mind h3{font-size:17px;margin-bottom:4px}
+.mind p{color:var(--mu);font-size:13px}
+.streak{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.srow{display:flex;justify-content:space-between;align-items:center}
+.srow small{font:800 9px var(--fb);letter-spacing:1.4px;color:var(--mu)}
+.fire{display:inline-flex;align-items:center;gap:6px;font:800 13px var(--fb);color:var(--ac2);background:var(--acd);padding:3px 10px;border-radius:999px}
+.days{display:flex;justify-content:space-between;margin-top:8px}
+.days div{display:flex;flex-direction:column-reverse;align-items:center;gap:3px}
+.days small{font:700 9px var(--fb);color:var(--mu)}
+.days i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:9px;color:transparent;transition:transform .3s var(--ease)}
+.days .on i{background:var(--ac);border-color:var(--ac);color:var(--ink);box-shadow:0 0 12px var(--acg)}
+.inv{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.inv p{font-size:12px;color:var(--mu)}.inv b{color:var(--tx)}
+
+/* Class Room: niveles y unidades */
+.lvs,.uns{display:grid;gap:10px}
+.lv,.un{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lb{flex:none;width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font:800 21px var(--fh);color:var(--ac);background:var(--acd);border:1px solid var(--acg)}
+.li{flex:1;min-width:0}.li b{display:block;font:800 18px var(--fh)}.li small{color:var(--ok);font-size:12px;font-weight:700}
+.way{display:flex;gap:4px;margin-top:9px}.way i{flex:1;max-width:26px;height:4px;border-radius:99px;background:var(--line)}.way i.on{background:var(--ac)}
+.ar{color:var(--ac);flex:none}
+.lv.lock,.un.lock{opacity:.6}.lv.lock .lb{color:var(--mu);background:var(--card2);border-color:var(--line)}.lv.lock small{color:var(--mu)}.lv.lock .ar,.un.lock .ar{color:var(--mu)}.lv.lock .way i.on{background:var(--mu)}
+.ui{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:var(--ac);background:var(--acd)}
+.ut{flex:1;min-width:0}.ut small{display:block;color:var(--mu);font-size:11px;font-weight:700;letter-spacing:.3px}.ut b{display:block;font:800 16px var(--fh);margin:1px 0 6px}
+@media (hover:hover){.lv:not(.lock):hover,.un:not(.lock):hover{border-color:var(--acg);transform:translateY(-2px)}}
+.lv:active:not(.lock),.un:active:not(.lock){transform:scale(.985)}
+
+/* Pestañas, vocabulario y práctica */
+.tabs{margin-bottom:14px}
+.panel{display:none}.panel.on{display:block;animation:up .4s var(--ease) both}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px}
+.v b{font:800 16px var(--fh)}.v small{display:block;color:var(--mu);font-size:12px}
+.sp2{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--acg);background:var(--acd);color:var(--ac2);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}.sp2:active{transform:scale(.9)}
+.q{font:700 18px var(--fh);margin-bottom:12px}
+.opt{display:block;width:100%;text-align:left;min-height:48px;padding:12px 16px;margin-bottom:10px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:12px;font:500 15px var(--fb);cursor:pointer;transition:transform .2s var(--ease),border-color .15s,background .15s;-webkit-tap-highlight-color:transparent}
+.opt:active{transform:scale(.98)}
+.opt.on{border-color:var(--ac);background:var(--acd);transform:translateX(6px)}
+@media (hover:hover){.opt:hover{border-color:var(--mu)}}
+
+/* Panel del coach y menú */
+.mando{display:grid;gap:10px}
+.mb{position:relative;display:flex;align-items:center;gap:14px;min-height:68px;padding:14px 16px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);color:var(--tx);text-decoration:none;cursor:pointer;transition:transform .2s var(--ease),border-color .2s}
+.mb.main{background:linear-gradient(135deg,var(--acg),var(--acd));border-color:var(--acg)}
+.mb>i{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:17px;color:var(--ac2);background:var(--acd);border:1px solid var(--acg)}
+.mb span{flex:1;display:flex;flex-direction:column;min-width:0}.mb b{font-size:14px}.mb small{font-size:11.5px;color:var(--mu);margin-top:2px}
+.mb em{font:800 12px var(--fb);font-style:normal;min-width:24px;height:24px;padding:0 7px;border-radius:99px;display:grid;place-items:center;background:var(--bad);color:#fff;animation:pop 2.4s var(--ease) infinite}
+@keyframes pop{0%,86%,100%{transform:scale(1)}92%{transform:scale(1.18)}}
+.mb:active{transform:scale(.985)}
+.menu{padding:8px}
+.mi{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 12px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s}
+.mi>i:first-child{width:20px;text-align:center;color:var(--mu)}
+.mi.prem{margin:2px 0;border:1px solid var(--acg);background:linear-gradient(90deg,var(--acd),transparent 75%)}
+.mi.prem>i:first-child{color:var(--ac2)}
+.mi .st{margin-left:auto;font-size:11px;color:var(--ac2);filter:drop-shadow(0 0 5px var(--acg));animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{transform:scale(1.25) rotate(14deg)}}
+@media (hover:hover){.mi:hover{background:rgba(255,255,255,.05)}}
+
+/* Progreso y logros */
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--mu);margin-bottom:8px}.meta b{color:var(--tx)}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--ac),var(--ac2));box-shadow:0 0 12px var(--acg);transition:width 1.1s var(--ease)}
+.foot{text-align:center;color:var(--mu);font-size:12px;padding-top:6px}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:60}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:min(92vw,420px);background:var(--card2);color:var(--tx);border:1px solid var(--acg);border-radius:14px;padding:12px 16px;font:600 13.5px/1.4 var(--fb);box-shadow:0 14px 40px rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:70}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-id="nueva">
+<div class="amb" aria-hidden="true"></div>
+<main>
+  <header class="top">
+    <div class="brand"><img src="../../logo.png" alt="" onerror="this.remove()">Nica English Club <small>Maqueta de identidad</small></div>
+    <div class="seg" id="selId" role="group" aria-label="Elegir identidad">
+      <button data-id="actual">Actual</button>
+      <button data-id="nueva" class="on"><i class="fa-solid fa-wand-magic-sparkles"></i> Nueva (tu sitio)</button>
+    </div>
+  </header>
+  <p class="lead">Toca <b>Actual</b> y <b>Nueva</b> arriba para comparar. Prueba los botones, las pestañas y el logro. Es solo una maqueta: <b>no cambia nada de tu plataforma</b>.</p>
+
+  <section class="sec"><h2 class="rev" style="--i:0">Botones</h2><p class="sub rev" style="--i:1">Principal, secundario, peligro, ícono, cargando y deshabilitado.</p>
+    <div class="row rev" style="--i:2">
+      <button class="btn p">Crear alumno</button>
+      <button class="btn s">Cancelar</button>
+      <button class="btn d"><i class="fa-solid fa-trash"></i> Eliminar</button>
+      <button class="btn ic" aria-label="Chat"><i class="fa-solid fa-comments"></i></button>
+      <button class="btn ic" aria-label="Notificaciones"><i class="fa-solid fa-bell"></i></button>
+    </div>
+    <div class="row rev" style="--i:3;margin-top:12px">
+      <button class="btn p" id="btnLoad"><span class="sp"></span><span class="tx">Guardar nota</span></button>
+      <button class="btn p" disabled>Deshabilitado</button>
+      <button class="btn p sm">Compartir</button>
+    </div>
+    <div class="row rev" style="--i:4;margin-top:12px">
+      <span class="chip ok"><i class="fa-solid fa-circle"></i> Abierta</span>
+      <span class="chip"><i class="fa-solid fa-lock"></i> Tu coach la abrirá pronto</span>
+      <span class="chip gold">Premium</span>
+      <span class="chip ok">Excelente</span>
+      <span class="chip bad">Ausente</span>
+    </div>
+    <button class="btn p w rev" style="--i:5;margin-top:14px">Entrar a la unidad</button>
+  </section>
+
+  <section class="sec"><h2 class="rev" style="--i:0">Pantalla de inicio</h2><p class="sub rev" style="--i:1">Perfil, Mentalidad NEC, racha e invitar, todo en una tarjeta.</p>
+    <div class="card hero rev" style="--i:2">
+      <div class="hrow">
+        <div class="av">A</div>
+        <div><div class="nm">Ana Pérez <span class="onl"><i></i>En línea</span></div><div class="idb">ID: NEC-001</div></div>
+      </div>
+      <div class="chips"><span class="chip gold">Premium</span><span class="chip"><i class="fa-regular fa-clock"></i> Lun–Mié · 6:00 PM</span></div>
+      <div class="mind"><span class="tag"><i class="fa-solid fa-crown"></i> MENTALIDAD NEC</span><h3>Entrena tu mente, domina tu inglés.</h3><p>Disciplina hoy, libertad mañana.</p></div>
+      <div class="streak"><div class="srow"><small>YOUR TRAINING STREAK</small><span class="fire"><i class="fa-solid fa-fire"></i> 3</span></div>
+        <div class="days"><div class="on"><small>L</small><i class="fa-solid fa-check"></i></div><div class="on"><small>M</small><i class="fa-solid fa-check"></i></div><div class="on"><small>M</small><i class="fa-solid fa-check"></i></div><div><small>J</small><i></i></div><div><small>V</small><i></i></div><div><small>S</small><i></i></div><div><small>D</small><i></i></div></div></div>
+      <div class="inv"><p>Invita a tus amigos a <b>NicaEnglishClub</b></p><button class="btn p sm"><i class="fa-solid fa-share-nodes"></i> Compartir</button></div>
+    </div>
+  </section>
+
+  <section class="sec"><h2 class="rev" style="--i:0">Class Room · niveles</h2><p class="sub rev" style="--i:1">Tarjetas claras, con "tu camino" y estados.</p>
+    <div class="lvs">
+      <div class="card hv lv rev" style="--i:2"><div class="lb">A1</div><div class="li"><b>Primeros pasos</b><small>Disponible</small><div class="way"><i class="on"></i><i></i><i></i><i></i><i></i></div></div><i class="fa-solid fa-chevron-right ar"></i></div>
+      <div class="card hv lv rev" style="--i:3"><div class="lb">A2</div><div class="li"><b>Básico</b><small>Disponible</small><div class="way"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div></div><i class="fa-solid fa-chevron-right ar"></i></div>
+      <div class="card lv lock rev" style="--i:4"><div class="lb">B1</div><div class="li"><b>Intermedio</b><small>Tu coach lo desbloqueará pronto</small><div class="way"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div></div><i class="fa-solid fa-lock ar"></i></div>
+    </div>
+  </section>
+
+  <section class="sec"><h2 class="rev" style="--i:0">Class Room · unidades</h2><p class="sub rev" style="--i:1">Primeros pasos · 7 unidades · 2 abiertas por tu coach</p>
+    <div class="uns">
+      <div class="card hv un rev" style="--i:2"><div class="ui"><i class="fa-solid fa-hand"></i></div><div class="ut"><small>Unidad 1 · Semana 1</small><b>Saludos y presentaciones</b><span class="chip ok"><i class="fa-solid fa-circle"></i> Abierta</span></div><i class="fa-solid fa-chevron-right ar"></i></div>
+      <div class="card hv un rev" style="--i:3"><div class="ui"><i class="fa-solid fa-utensils"></i></div><div class="ut"><small>Unidad 2 · Semana 2</small><b>Comida y bebidas</b><span class="chip ok"><i class="fa-solid fa-circle"></i> Abierta</span></div><i class="fa-solid fa-chevron-right ar"></i></div>
+      <div class="card un lock rev" style="--i:4"><div class="ui"><i class="fa-solid fa-people-roof"></i></div><div class="ut"><small>Unidad 3 · Semana 3</small><b>La familia</b><span class="chip"><i class="fa-solid fa-lock"></i> Tu coach la abrirá pronto</span></div><i class="fa-solid fa-lock ar"></i></div>
+    </div>
+  </section>
+
+  <section class="sec"><h2 class="rev" style="--i:0">Dentro de una unidad</h2><p class="sub rev" style="--i:1">Pestañas, vocabulario con audio y práctica.</p>
+    <div class="seg tabs rev" style="--i:2" id="tabs"><button class="on" data-t="t1"><i class="fa-solid fa-book-open"></i> Tema</button><button data-t="t2"><i class="fa-solid fa-language"></i> Vocabulario</button><button data-t="t3"><i class="fa-solid fa-pen"></i> Práctica</button></div>
+    <div class="panel on" id="t1"><div class="card"><h3 style="font-size:18px;margin-bottom:6px">Saludos y presentaciones</h3><p style="color:var(--mu);font-size:14px">Aprende a saludar, decir tu nombre y preguntar cómo está alguien, con ejemplos de la vida diaria.</p></div></div>
+    <div class="panel" id="t2"><div class="vgrid"><div class="card v"><div><b>Hello</b><small>Hola</small></div><button class="sp2" aria-label="Escuchar"><i class="fa-solid fa-volume-high"></i></button></div><div class="card v"><div><b>Goodbye</b><small>Adiós</small></div><button class="sp2" aria-label="Escuchar"><i class="fa-solid fa-volume-high"></i></button></div><div class="card v"><div><b>Thanks</b><small>Gracias</small></div><button class="sp2" aria-label="Escuchar"><i class="fa-solid fa-volume-high"></i></button></div><div class="card v"><div><b>Please</b><small>Por favor</small></div><button class="sp2" aria-label="Escuchar"><i class="fa-solid fa-volume-high"></i></button></div></div></div>
+    <div class="panel" id="t3"><p class="q">¿Cuál es la forma correcta?</p><button class="opt">She go to work every day.</button><button class="opt" data-ok="1">She goes to work every day.</button><button class="opt">She going to work every day.</button></div>
+  </section>
+
+  <section class="sec"><h2 class="rev" style="--i:0">Panel del coach y menú</h2><p class="sub rev" style="--i:1">Centro de mando y menú con estrellita en lo especial.</p>
+    <div class="mando rev" style="--i:2">
+      <a class="mb main"><i class="fa-solid fa-inbox"></i><span><b>Entregas por revisar</b><small>3 entregas esperando tu revisión</small></span><em>3</em></a>
+      <a class="mb"><i class="fa-solid fa-chalkboard-user"></i><span><b>Class Room</b><small>Niveles y unidades</small></span></a>
+    </div>
+    <div class="card menu rev" style="--i:3;margin-top:14px">
+      <div class="mi"><i class="fa-solid fa-user"></i> Perfil</div>
+      <div class="mi"><i class="fa-solid fa-hashtag"></i> NECLUB</div>
+      <div class="mi"><i class="fa-solid fa-chalkboard-user"></i> Class Room</div>
+      <div class="mi prem"><i class="fa-solid fa-book-open-reader"></i> Recursos <i class="fa-solid fa-star st"></i></div>
+      <div class="mi prem"><i class="fa-solid fa-circle-play"></i> Videos <i class="fa-solid fa-star st"></i></div>
+    </div>
+  </section>
+
+  <section class="sec"><h2 class="rev" style="--i:0">Progreso y logros</h2><p class="sub rev" style="--i:1">Barra animada y un pequeño festejo.</p>
+    <div class="card rev" style="--i:2"><div class="meta"><span>Unidades completadas</span><b>7 de 10</b></div><div class="bar"><i id="bar"></i></div>
+      <button class="btn p w" id="btnLogro"><i class="fa-solid fa-trophy"></i> Probar logro</button></div>
+    <div class="row" style="margin-top:16px;justify-content:center"><button class="btn s sm" id="btnReplay"><i class="fa-solid fa-rotate-right"></i> Repetir animaciones</button></div>
+  </section>
+  <p class="foot">Esta página es una maqueta de diseño. Nada de lo que tocas aquí guarda datos.</p>
+</main>
+<canvas id="cf" aria-hidden="true"></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var B = document.body, reducido = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var tt = null;
+  function aviso(txt) { var t = $('toast'); t.textContent = txt; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(function () { t.classList.remove('show'); }, 2600); }
+
+  // Identidad: Actual / Nueva
+  [].forEach.call(document.querySelectorAll('#selId button'), function (b) {
+    b.addEventListener('click', function () {
+      B.dataset.id = b.dataset.id;
+      [].forEach.call(document.querySelectorAll('#selId button'), function (x) { x.classList.toggle('on', x === b); });
+      aviso(b.dataset.id === 'nueva' ? 'Identidad nueva: la de tu sitio web' : 'Identidad actual de la plataforma');
+    });
+  });
+
+  // Brillo ambiental que sigue el puntero (solo en pantallas con ratón)
+  if (window.matchMedia && matchMedia('(hover:hover)').matches) {
+    var raf = 0;
+    addEventListener('pointermove', function (e) {
+      if (raf) return;
+      raf = requestAnimationFrame(function () { raf = 0; B.style.setProperty('--mx', e.clientX + 'px'); B.style.setProperty('--my', e.clientY + 'px'); });
+    });
+  }
+
+  // Pestañas
+  [].forEach.call(document.querySelectorAll('#tabs button'), function (b) {
+    b.addEventListener('click', function () {
+      [].forEach.call(document.querySelectorAll('#tabs button'), function (x) { x.classList.toggle('on', x === b); });
+      [].forEach.call(document.querySelectorAll('.panel'), function (p) { p.classList.toggle('on', p.id === b.dataset.t); });
+    });
+  });
+
+  // Opciones de práctica (la correcta festeja)
+  [].forEach.call(document.querySelectorAll('.opt'), function (o) {
+    o.addEventListener('click', function () {
+      [].forEach.call(document.querySelectorAll('.opt'), function (x) { x.classList.toggle('on', x === o); });
+      if (o.dataset.ok) { aviso('¡Muy bien!'); confeti(); } else { aviso('Casi. Intenta otra vez.'); }
+    });
+  });
+
+  // Botón "cargando"
+  $('btnLoad').addEventListener('click', function () {
+    var b = this, tx = b.querySelector('.tx'); b.classList.add('load'); tx.textContent = 'Guardando…';
+    setTimeout(function () { b.classList.remove('load'); tx.textContent = 'Guardar nota'; aviso('Nota guardada'); }, 1400);
+  });
+
+  // Barra de progreso: se llena al aparecer en pantalla
+  var bar = $('bar');
+  function llenar() { bar.style.width = '70%'; }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { llenar(); io.disconnect(); } }); }, { threshold: .4 });
+    io.observe(bar);
+  } else { llenar(); }
+
+  // Confeti ligero (se apaga si el aparato pide menos movimiento)
+  function confeti() {
+    if (reducido) return;
+    var c = $('cf'), x = c.getContext && c.getContext('2d'); if (!x) return;
+    c.width = innerWidth; c.height = innerHeight;
+    var cs = getComputedStyle(B), cols = [cs.getPropertyValue('--ac'), cs.getPropertyValue('--ac2'), cs.getPropertyValue('--tx')], P = [], i;
+    for (i = 0; i < 90; i++) P.push({ x: innerWidth / 2, y: innerHeight * .62, vx: (Math.random() - .5) * 11, vy: -Math.random() * 12 - 3, s: 4 + Math.random() * 5, r: Math.random() * 6, c: cols[i % 3] });
+    var t0 = performance.now();
+    (function paso(t) {
+      var k = t - t0; x.clearRect(0, 0, c.width, c.height);
+      P.forEach(function (p) { p.vy += .32; p.x += p.vx; p.y += p.vy; p.r += .2; x.save(); x.globalAlpha = Math.max(0, 1 - k / 1500); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * .6); x.restore(); });
+      if (k < 1500) requestAnimationFrame(paso); else x.clearRect(0, 0, c.width, c.height);
+    })(t0);
+  }
+  $('btnLogro').addEventListener('click', function () { aviso('¡Logro desbloqueado! Racha de 3 días'); confeti(); });
+
+  // Repetir las animaciones de entrada
+  $('btnReplay').addEventListener('click', function () {
+    [].forEach.call(document.querySelectorAll('.rev'), function (el) { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
+    bar.style.transition = 'none'; bar.style.width = '0'; void bar.offsetWidth; bar.style.transition = ''; setTimeout(llenar, 50);
+    scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>

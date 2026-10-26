@@ -1,0 +1,577 @@
+// nivel.js — pantalla de alumno para navegar un nivel
+//
+// Lista las unidades de /training_v2_niveles/{nivelId}/unidades (ordenadas)
+// y, al elegir una, muestra su página real: Portada -> Tema/Vocabulario/Práctica,
+// con audio 🔊 en todo texto en inglés y apoyo visual (íconos/banderas) donde
+// ya está definido en visuales.js (por ahora, Unidad 1 como piloto).
+//
+// CANDADO DE TECHO GRUPAL: el contenido de cada unidad NO se lee directo de
+// Firestore; lo entrega la Cloud Function trv2GetPagina solo si el servidor
+// confirma que el coach abrió esa unidad para el grupo del alumno.
+// El coach abre/cierra con trv2SetApertura (los clientes no escriben en
+// training_v2_apertura_grupo).
+
+import { collection, getDocs, query, orderBy, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+import { instalarAudio, registrarLista, limpiarParaAudio, ciclarVelocidad, etiquetaVelocidad } from "./audio.js";
+import { instalarJuegos, marcador, renderOpcion, renderOrden, renderParejas } from "./juegos.js";
+import { instalarEntregas, cargarEntrega, aplicarEstadoEntrega } from "./entregas.js";
+import { ICONO_UNIDAD, PORTADAS, ICONOS_VOCAB, BANDERAS, NUMEROS, COLORES, REGLAS_ICONO, WARMUP, PRONOMBRES, TO_BE, TEMA_VISUAL } from "./visuales.js";
+import { PRACTICA_U1 } from "./ejercicios-u1.js";
+import { PRACTICA_U2, PRACTICA_U3, PRACTICA_U4, PRACTICA_U5, PRACTICA_U6, PRACTICA_U7 } from "./ejercicios-resto.js";
+import { PRACTICA_A2_U1, PRACTICA_A2_U2, PRACTICA_A2_U3, PRACTICA_A2_U4, PRACTICA_A2_U5, PRACTICA_A2_U6, PRACTICA_A2_U7, PRACTICA_A2_U8, PRACTICA_A2_U9 } from "./ejercicios-a2.js";
+import { PRACTICA_B1_U1, PRACTICA_B1_U2, PRACTICA_B1_U3, PRACTICA_B1_U4, PRACTICA_B1_U5, PRACTICA_B1_U6, PRACTICA_B1_U7, PRACTICA_B1_U8, PRACTICA_B1_U9, PRACTICA_B1_U10, PRACTICA_B1_U11 } from "./ejercicios-b1.js";
+import { PRACTICA_C1_U1, PRACTICA_C1_U2, PRACTICA_C1_U3, PRACTICA_C1_U4, PRACTICA_C1_U5, PRACTICA_C1_U6, PRACTICA_C1_U7, PRACTICA_C1_U8, PRACTICA_C1_U9, PRACTICA_C1_U10, PRACTICA_C1_U11, PRACTICA_C1_U12 } from "./ejercicios-c1.js";
+import { PRACTICA_B2_U1, PRACTICA_B2_U2, PRACTICA_B2_U3, PRACTICA_B2_U4, PRACTICA_B2_U5, PRACTICA_B2_U6, PRACTICA_B2_U7, PRACTICA_B2_U8, PRACTICA_B2_U9, PRACTICA_B2_U10, PRACTICA_B2_U11, PRACTICA_B2_U12, PRACTICA_B2_U13 } from "./ejercicios-b2.js";
+
+instalarAudio();
+instalarJuegos();
+instalarEntregas();
+
+// Ejercicios curados por nivel+unidad (respuestas completadas a mano donde el
+// JSON original no las traía). Clave = "{nivelId}-{unidadId}" — el mismo "u1"
+// se repite en cada nivel, así que hay que diferenciarlos.
+const EJERCICIOS = {
+  'a1-u1': PRACTICA_U1, 'a1-u2': PRACTICA_U2, 'a1-u3': PRACTICA_U3, 'a1-u4': PRACTICA_U4,
+  'a1-u5': PRACTICA_U5, 'a1-u6': PRACTICA_U6, 'a1-u7': PRACTICA_U7,
+  'a2-u1': PRACTICA_A2_U1, 'a2-u2': PRACTICA_A2_U2, 'a2-u3': PRACTICA_A2_U3,
+  'a2-u4': PRACTICA_A2_U4, 'a2-u5': PRACTICA_A2_U5, 'a2-u6': PRACTICA_A2_U6,
+  'a2-u7': PRACTICA_A2_U7, 'a2-u8': PRACTICA_A2_U8, 'a2-u9': PRACTICA_A2_U9,
+  'b1-u1': PRACTICA_B1_U1, 'b1-u2': PRACTICA_B1_U2, 'b1-u3': PRACTICA_B1_U3,
+  'b1-u4': PRACTICA_B1_U4, 'b1-u5': PRACTICA_B1_U5, 'b1-u6': PRACTICA_B1_U6,
+  'b1-u7': PRACTICA_B1_U7, 'b1-u8': PRACTICA_B1_U8, 'b1-u9': PRACTICA_B1_U9,
+  'b1-u10': PRACTICA_B1_U10, 'b1-u11': PRACTICA_B1_U11,
+  'b2-u1': PRACTICA_B2_U1, 'b2-u2': PRACTICA_B2_U2, 'b2-u3': PRACTICA_B2_U3,
+  'b2-u4': PRACTICA_B2_U4, 'b2-u5': PRACTICA_B2_U5, 'b2-u6': PRACTICA_B2_U6,
+  'b2-u7': PRACTICA_B2_U7, 'b2-u8': PRACTICA_B2_U8, 'b2-u9': PRACTICA_B2_U9,
+  'b2-u10': PRACTICA_B2_U10, 'b2-u11': PRACTICA_B2_U11, 'b2-u12': PRACTICA_B2_U12,
+  'b2-u13': PRACTICA_B2_U13,
+  'c1-u1': PRACTICA_C1_U1, 'c1-u2': PRACTICA_C1_U2, 'c1-u3': PRACTICA_C1_U3,
+  'c1-u4': PRACTICA_C1_U4, 'c1-u5': PRACTICA_C1_U5, 'c1-u6': PRACTICA_C1_U6,
+  'c1-u7': PRACTICA_C1_U7, 'c1-u8': PRACTICA_C1_U8, 'c1-u9': PRACTICA_C1_U9,
+  'c1-u10': PRACTICA_C1_U10, 'c1-u11': PRACTICA_C1_U11, 'c1-u12': PRACTICA_C1_U12,
+};
+
+// Contexto del alumno actual + unidad abierta (lo fija nivel.html). Se usa
+// solo para saber a nombre de quién se guarda una entrega de Speaking/Writing.
+let CTX = null;
+export function setContexto(ctx) { CTX = ctx; }
+export function setUnidadActual(unidadId, unidadNombre) {
+  if (CTX) { CTX.unidadId = unidadId; CTX.unidadNombre = unidadNombre; }
+}
+export async function cargarEstadosEntrega(vista) {
+  if (!CTX || CTX.esCoach) return;
+  for (const tipo of ['writing', 'speaking']) {
+    const el = vista.querySelector(`#estado-${tipo}-${CTX.unidadId}`);
+    if (!el) continue;
+    const entrega = await cargarEntrega(CTX.alumnoId, CTX.nivelId, CTX.unidadId, tipo);
+    aplicarEstadoEntrega(el, entrega);
+  }
+}
+
+const ICONOS_BLOQUE = {
+  warm_up: 'fa-globe', vocabulary: 'fa-book-open', vocabulary_practice: 'fa-puzzle-piece',
+  grammar: 'fa-graduation-cap', dialogue: 'fa-comments', grammar_practice: 'fa-pen-to-square',
+  listening: 'fa-headphones', pronunciation: 'fa-microphone-lines', speaking: 'fa-microphone',
+  writing: 'fa-pen-nib',
+  // Bloques de las unidades TOEFL (C1 u13-u15)
+  strategy: 'fa-chess', vocabulary_or_language_bank: 'fa-book-open', vocabulary_review: 'fa-book-open',
+  grammar_review: 'fa-list-check', sample_task: 'fa-file-lines', practice_task: 'fa-pencil',
+  common_mistakes: 'fa-triangle-exclamation', self_assessment_checklist: 'fa-clipboard-check',
+  timed_practice: 'fa-stopwatch', review_tips: 'fa-lightbulb', extra_practice: 'fa-dumbbell',
+  evaluation: 'fa-flag-checkered',
+};
+const NOMBRES_BLOQUE = {
+  warm_up: 'Para empezar', vocabulary: 'Vocabulario', vocabulary_practice: 'Repaso de vocabulario',
+  grammar: 'Gramática', dialogue: 'Diálogo', grammar_practice: 'Ejercicio', listening: 'Listening',
+  pronunciation: 'Pronunciación', speaking: 'Speaking', writing: 'Writing',
+  strategy: 'Estrategia', vocabulary_or_language_bank: 'Banco de lenguaje', vocabulary_review: 'Repaso de vocabulario',
+  grammar_review: 'Repaso de gramática', sample_task: 'Ejemplo', practice_task: 'Práctica',
+  common_mistakes: 'Errores comunes', self_assessment_checklist: 'Autoevaluación',
+  timed_practice: 'Práctica cronometrada', review_tips: 'Cómo revisar', extra_practice: 'Práctica extra',
+  evaluation: 'Evaluación',
+};
+
+// Clave compuesta para los mapas de visuales.js y EJERCICIOS: el ID de unidad
+// ("u1") se repite en cada nivel, así que todo se busca como "{nivel}-{u1}".
+function claveNU(unidadId) {
+  return `${CTX?.nivelId || 'a1'}-${unidadId}`;
+}
+
+// ── Datos ──────────────────────────────────────────────────────────────
+export async function cargarUnidades(nivelId) {
+  const db = window.trv2_db;
+  const q = query(collection(db, 'training_v2_niveles', nivelId, 'unidades'), orderBy('orden'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+// El contenido lo entrega el SERVIDOR (trv2GetPagina). Si la unidad está cerrada
+// para el grupo, la función lanza permission-denied con un mensaje en español.
+export async function cargarPagina(nivelId, unidadId) {
+  const pedir = httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2GetPagina');
+  try {
+    const r = await pedir({ nivelId, unidadId });
+    return r.data && r.data.pagina ? r.data.pagina : null;
+  } catch (e) {
+    if (e && e.code === 'functions/not-found') return null;
+    throw e;
+  }
+}
+
+// ── Techo grupal ───────────────────────────────────────────────────────
+// Mismo slug que usa coach/index.html y el servidor, para que los IDs coincidan.
+export function slugGrupo(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+// Unidades abiertas para un grupo → Set de claves "{nivelId}-{unidadId}".
+// Si algo falla, devuelve vacío (todo queda cerrado: falla del lado seguro).
+export async function cargarAperturaGrupo(dias, franja) {
+  const d = slugGrupo(dias), f = slugGrupo(franja);
+  if (!d || !f) return new Set();
+  try {
+    const snap = await getDoc(doc(window.trv2_db, 'training_v2_apertura_grupo', `${d}__${f}`));
+    const lista = snap.exists() && Array.isArray(snap.data().unidades) ? snap.data().unidades : [];
+    return new Set(lista);
+  } catch (e) {
+    console.error('No se pudo leer la apertura del grupo:', e);
+    return new Set();
+  }
+}
+
+// Unidades abiertas SOLO para un alumno (training_v2_apertura_alumno) → Set de claves.
+// Si algo falla, devuelve vacío (todo queda cerrado: falla del lado seguro).
+export async function cargarAperturaAlumno(alumnoId) {
+  if (!alumnoId) return new Set();
+  try {
+    const snap = await getDoc(doc(window.trv2_db, 'training_v2_apertura_alumno', alumnoId));
+    const lista = snap.exists() && Array.isArray(snap.data().unidades) ? snap.data().unidades : [];
+    return new Set(lista);
+  } catch (e) {
+    console.error('No se pudo leer la apertura del alumno:', e);
+    return new Set();
+  }
+}
+
+// Alumnos de un grupo (para el selector del coach). Excluye a los coaches.
+export async function cargarAlumnosGrupo(dias, franja) {
+  try {
+    const snap = await getDocs(query(collection(window.trv2_db, 'alumnos'),
+      where('horario.dias', '==', dias), where('horario.franja', '==', franja)));
+    return snap.docs
+      .map((d) => ({ id: d.id, nombre: String(d.data().nombre || 'Sin nombre'), esCoach: d.data().esCoach === true }))
+      .filter((a) => !a.esCoach)
+      .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  } catch (e) {
+    console.error('No se pudo leer los alumnos del grupo:', e);
+    return [];
+  }
+}
+
+// Solo coach/admin: el servidor verifica que el grupo (o el alumno) sea realmente suyo.
+// Sin alumnoId abre/cierra para todo el grupo; con alumnoId, solo para ese alumno.
+export async function setApertura(dias, franja, unidadKey, abierta, alumnoId) {
+  const fn = httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2SetApertura');
+  await fn(alumnoId ? { alumnoId, unidadKey, abierta } : { dias, franja, unidadKey, abierta });
+}
+
+// ── Helpers de audio (devuelven el HTML del botón 🔊) ────────────────────
+function btnSay(texto, extra = '') {
+  const limpio = limpiarParaAudio(texto).replace(/"/g, '&quot;');
+  return `<button class="tr2-speak ${extra}" data-say="${limpio}" title="Escuchar"><i class="fa-solid fa-volume-high"></i></button>`;
+}
+function btnPlayLista(lineas, etiqueta = 'Escuchar todo') {
+  const limpias = lineas.map(limpiarParaAudio);
+  const id = registrarLista(limpias);
+  return `<button class="tr2-play" data-say-list="${id}"><i class="fa-solid fa-play"></i> ${etiqueta}</button>`;
+}
+
+// ── Lista de unidades ─────────────────────────────────────────────────
+// abiertas: Set de claves abiertas para el grupo. El coach ve TODAS las unidades
+// (puede entrar a cualquiera) y, si tiene grupo, un interruptor para abrir/cerrar.
+// abiertasGrupo (opcional): solo cuando el coach elige a UN alumno. Las unidades que ya
+// abrió el grupo se muestran como "Abierta por el grupo" (sin interruptor) y "abiertas"
+// pasa a ser lo abierto solo para ese alumno.
+export function renderListaUnidades(unidades, abiertas, { esCoach = false, puedeAbrir = false, abiertasGrupo = null } = {}) {
+  return unidades.map((u) => {
+    const key = claveNU(u.id);
+    const delGrupo = abiertas.has(key);
+    const porGrupo = !!(abiertasGrupo && abiertasGrupo.has(key));
+    const accesible = esCoach || delGrupo || porGrupo;
+    const derecha = (puedeAbrir && porGrupo)
+      ? '<span class="tr2-uni-chip abierta" style="white-space:nowrap;"><i class="fa-solid fa-users"></i> Abierta por el grupo</span>'
+      : puedeAbrir
+      ? `<label class="tr2-switch"><input type="checkbox" data-toggle="${key}" ${delGrupo ? 'checked' : ''}><span>${delGrupo ? 'Abierta' : 'Cerrada'}</span></label>`
+      : (accesible ? '<i class="fa-solid fa-chevron-right tr2-uni-flecha"></i>' : '<i class="fa-solid fa-lock tr2-uni-flecha"></i>');
+    // Estado a la vista (el coach ya lo ve en su interruptor): abierta, o "tu coach la abrirá pronto".
+    const estado = esCoach ? ''
+      : (accesible
+          ? '<span class="tr2-uni-chip abierta"><i class="fa-solid fa-circle"></i> Abierta</span>'
+          : '<span class="tr2-uni-lock tr2-uni-chip cerrada"><i class="fa-solid fa-lock"></i> Tu coach la abrirá pronto</span>');
+    // Qué vas a aprender (mismo texto de la portada; si la unidad no lo tiene, no se muestra)
+    const por = PORTADAS[key];
+    const resumen = por && por.aprenderas ? `<div class="tr2-uni-resumen">Vas a aprender ${por.aprenderas}</div>` : '';
+    return `
+    <div class="tr2-card-unidad ${accesible ? '' : 'locked'}" data-unidad="${u.id}">
+      <div class="tr2-uni-icono"><i class="fa-solid ${ICONO_UNIDAD[key] || 'fa-book'}"></i><span class="tr2-uni-num">${u.orden}</span></div>
+      <div class="tr2-uni-txt">
+        <div class="tr2-uni-kicker">Unidad ${u.orden} · Semana ${u.semana}</div>
+        <div class="tr2-uni-nombre">${u.nombre}</div>
+        ${resumen}
+        ${estado}
+      </div>
+      ${derecha}
+    </div>`;
+  }).join('');
+}
+
+export function renderPortada(unidad, unidadId) {
+  const p = PORTADAS[claveNU(unidadId)] || {
+    aprenderas: `a usar lo esencial de "${unidad.nombre}" en una conversación real.`,
+    vidaReal: 'lo vas a practicar hoy en clase y usarlo esta misma semana.',
+  };
+  return `
+    <button class="tr2-volver" id="btn-volver-lista"><i class="fa-solid fa-arrow-left"></i> Unidades</button>
+    <div class="tr2-portada">
+      <div class="tr2-portada-icono"><i class="fa-solid ${ICONO_UNIDAD[claveNU(unidadId)] || 'fa-book'}"></i></div>
+      <div class="tr2-portada-kicker">Unidad ${unidad.orden} · Semana ${unidad.semana}</div>
+      <h1 class="tr2-portada-titulo">${unidad.nombre}</h1>
+      <div class="tr2-portada-linea"><i class="fa-solid fa-bullseye"></i><span><b>Vas a aprender</b> ${p.aprenderas}</span></div>
+      <div class="tr2-portada-linea"><i class="fa-solid fa-comments"></i><span><b>En la vida real:</b> ${p.vidaReal}</span></div>
+      <div class="tr2-portada-pasos" aria-label="Qué hay en la clase">
+        <span class="tr2-portada-paso"><b>1</b>Tema</span>
+        <span class="tr2-portada-paso"><b>2</b>Vocabulario</span>
+        <span class="tr2-portada-paso"><b>3</b>Práctica</span>
+      </div>
+      <button class="tr2-btn-entrar" id="btn-entrar-clase">Entrar a la clase <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+// ── Bloques de TEMA ────────────────────────────────────────────────────
+function renderWarmup(b, unidadId) {
+  const w = WARMUP[claveNU(unidadId)];
+  if (!w) return `<p>${b.content}</p>`;
+  return `
+    <p class="tr2-nota" style="margin-bottom:12px;">${w.titulo}</p>
+    <div class="tr2-mundo">
+      ${w.items.map((it) => `
+        <div class="tr2-mundo-item">
+          <img src="https://flagcdn.com/w80/${it.flag}.png" alt="${it.pais}" loading="lazy">
+          <div class="tr2-mundo-saludo">${it.texto}${it.audio ? btnSay(it.texto) : ''}</div>
+          ${it.romaji ? `<div class="tr2-mundo-romaji">${it.romaji}</div>` : ''}
+          <div class="tr2-mundo-pais">${it.pais}</div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function renderPronombres() {
+  return `<div class="tr2-pgrid">${PRONOMBRES.map((p) => `
+    <div class="tr2-pfig">
+      <i class="fa-solid ${p.icon}"></i>
+      <div class="tr2-pen">${p.en}${btnSay(p.en)}</div>
+      <div class="tr2-pes">${p.es}</div>
+    </div>`).join('')}</div>`;
+}
+
+function renderToBe() {
+  return `<div class="tr2-tobe">${TO_BE.map((col) => `
+    <div class="tr2-tobe-col">
+      <div class="tr2-tobe-verbo">${col.verbo}</div>
+      <div class="tr2-tobe-chips">${col.pronombres.map((pr) => {
+        const frase = `${pr} ${col.verbo}`;
+        return `<span class="tr2-frase">${frase}${btnSay(frase)}</span>`;
+      }).join('')}</div>
+    </div>`).join('')}</div>`;
+}
+
+function renderSVO(topicData) {
+  const leyenda = `
+    <div class="tr2-svo-leyenda">
+      <span class="tr2-parte S">Sujeto</span><span class="tr2-parte V">Verbo</span><span class="tr2-parte O">Complemento</span>
+    </div>`;
+  const filas = topicData.ejemplos.map((partes) => `
+    <div class="tr2-oracion">
+      ${partes.map(([txt, tipo]) => `<span class="tr2-parte ${tipo}">${txt}</span>`).join('')}
+      ${btnSay(partes.map((p) => p[0]).join(' '))}
+    </div>`).join('');
+  return leyenda + filas;
+}
+
+function renderGrammar(b) {
+  const especial = TEMA_VISUAL[(b.topic || '').toLowerCase()];
+  const visual =
+    especial?.tipo === 'pronombres' ? renderPronombres()
+    : especial?.tipo === 'tobe' ? renderToBe()
+    : especial?.tipo === 'svo' ? renderSVO(especial)
+    : '';
+  const ejemplos = !especial ? `<ul class="tr2-ejemplos">${(b.examples || []).map((e) => `<li>${e}${btnSay(e)}</li>`).join('')}</ul>` : '';
+  return `<div class="tr2-expl">${b.explanation}</div>${visual}${ejemplos}`;
+}
+
+function renderDialogue(b) {
+  const lineas = b.script || b.script_with_gaps || [];
+  const play = btnPlayLista(lineas, 'Escuchar diálogo');
+  const burbujas = lineas.map((linea, i) => {
+    const m = linea.match(/^([A-Za-z]+):\s*(.*)$/);
+    const quien = m ? m[1] : (i % 2 === 0 ? 'A' : 'B');
+    let texto = m ? m[2] : linea;
+    texto = texto.replace(/_{2,}/g, '<span class="tr2-hueco"></span>');
+    const lado = quien.toUpperCase().startsWith('B') || quien.toLowerCase() === 'customer' ? 'der' : '';
+    return `
+      <div class="tr2-burbuja ${lado}">
+        <div class="tr2-avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="tr2-globo"><span class="tr2-quien">${quien}</span><p>${texto}${btnSay(linea)}</p></div>
+      </div>`;
+  }).join('');
+  const resp = b.answers ? `<details class="tr2-resp"><summary>Ver respuestas</summary><p>${b.answers.join(', ')}</p></details>` : '';
+  return play + `<div class="tr2-chat">${burbujas}</div>` + resp;
+}
+
+// ── Bloques de VOCABULARIO ─────────────────────────────────────────────
+function iconoPalabra(topicLower, en) {
+  const enLower = en.toLowerCase();
+  if (ICONOS_VOCAB[enLower]) return { tipo: 'icono', valor: ICONOS_VOCAB[enLower] };
+  if (topicLower.includes('countries') || topicLower.includes('nationalit')) {
+    const bandera = BANDERAS[enLower];
+    if (bandera) return { tipo: 'bandera', valor: bandera };
+  }
+  if (topicLower.includes('numbers')) {
+    const n = NUMEROS[enLower];
+    if (n !== undefined) return { tipo: 'numero', valor: n };
+  }
+  if (topicLower.includes('colors')) {
+    const color = COLORES[enLower];
+    if (color) return { tipo: 'color', valor: color };
+  }
+  for (const [regla, icono] of REGLAS_ICONO) {
+    if (regla.test(enLower)) return { tipo: 'icono', valor: icono };
+  }
+  return { tipo: 'generico' };
+}
+
+function renderVocabulary(b) {
+  const topicLower = (b.topic || '').toLowerCase();
+  return `
+    <p class="tr2-nota" style="margin-bottom:12px;">${b.topic}</p>
+    <div class="tr2-vgrid">
+      ${b.words.map((w) => {
+        const ico = iconoPalabra(topicLower, w.en);
+        let img = `<div class="tr2-vimg"><i class="fa-solid fa-language"></i></div>`;
+        if (ico.tipo === 'icono') img = `<div class="tr2-vimg"><i class="fa-solid ${ico.valor}"></i></div>`;
+        if (ico.tipo === 'bandera') img = `<div class="tr2-vimg tr2-vflag"><img src="https://flagcdn.com/w160/${ico.valor}.png" alt="${w.en}" loading="lazy"></div>`;
+        if (ico.tipo === 'numero') img = `<div class="tr2-vimg tr2-vnum"><span>${ico.valor}</span><div class="tr2-dots">${'<i></i>'.repeat(Math.min(ico.valor, 10))}</div></div>`;
+        if (ico.tipo === 'color') img = `<div class="tr2-vimg"><div class="tr2-swatch" style="background:${ico.valor};"></div></div>`;
+        return `
+          <div class="tr2-vcard">
+            ${img}
+            <div class="tr2-vtxt">
+              <div class="tr2-ven">${w.en}${btnSay(w.en)}</div>
+              <div class="tr2-ves">${w.es}</div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderVocabPractice(b, unidadId) {
+  const curado = EJERCICIOS[claveNU(unidadId)]?.vocabularyPractice?.find((v) => v.topic === b.topic);
+  if (curado) return renderParejas(curado.pares);
+  return `<p class="tr2-instr">${b.instructions}</p><ul class="tr2-items">${b.items.map((i) => `<li class="tr2-par"><i class="fa-solid fa-arrow-right-long"></i> ${i}</li>`).join('')}</ul>`;
+}
+
+// ── Bloques de PRÁCTICA ─────────────────────────────────────────────────
+function renderGrammarPractice(b, unidadId) {
+  const curado = EJERCICIOS[claveNU(unidadId)]?.grammarPractice?.find((g) => g.topic === b.topic);
+  if (curado) {
+    return curado.preguntas.map((p) =>
+      curado.tipo === 'orden' ? renderOrden(p.piezas, p.correcta) : renderOpcion(p.pregunta, p.opciones, p.correcta)
+    ).join('');
+  }
+  return `<p class="tr2-instr">${b.instructions}</p><ul class="tr2-items">${b.items.map((i) => `<li>${i}</li>`).join('')}</ul>`;
+}
+function renderListening(b, unidadId) {
+  if (b.audio_script) return `<div class="tr2-listen">${btnPlayLista(b.audio_script)}${b.audio_script.map((l) => `<p>${l}</p>`).join('')}</div>`;
+  if (b.questions) {
+    const curado = EJERCICIOS[claveNU(unidadId)]?.listening;
+    if (curado) return curado.preguntas.map((p) => renderOpcion(p.pregunta, p.opciones, p.correcta)).join('');
+    return `<ol class="tr2-preguntas">${b.questions.map((q) => `<li>${q}</li>`).join('')}</ol>`;
+  }
+  return '';
+}
+function renderPronunciation(b) {
+  return `
+    <div class="tr2-sonidos">${(b.focus_sounds || []).map((s) => `<span class="tr2-chip-sonido">${s}</span>`).join('')}</div>
+    <div class="tr2-drill">${(b.drill_words || []).map((w) => `<span class="tr2-palabra">${w}${btnSay(w)}</span>`).join('')}</div>`;
+}
+function renderTarea(b, icono, etiqueta, tipo) {
+  const base = `
+    <div class="tr2-tarea">
+      <div class="tr2-tarea-icono"><i class="fa-solid ${icono}"></i></div>
+      <div><div class="tr2-tarea-tag">${etiqueta}</div><p>${b.task}${b.target_length ? ` <span class="tr2-nota">(${b.target_length})</span>` : ''}</p></div>
+    </div>`;
+
+  if (!CTX) return base;
+  if (CTX.esCoach) return base + `<p class="tr2-nota" style="margin-top:8px;">Vista previa — como coach no entregas, solo revisas.</p>`;
+
+  const ctxJson = JSON.stringify({
+    alumnoId: CTX.alumnoId, alumnoNombre: CTX.alumnoNombre, alumnoEmail: CTX.alumnoEmail,
+    nivelId: CTX.nivelId, unidadId: CTX.unidadId, unidadNombre: CTX.unidadNombre,
+  }).replace(/"/g, '&quot;');
+
+  if (tipo === 'writing') {
+    return base + `
+      <div class="tr2-entrega" data-ctx="${ctxJson}">
+        <textarea class="tr2-textarea" rows="4" placeholder="Escribe tu respuesta aquí..."></textarea>
+        <div class="tr2-entrega-footer">
+          <span class="tr2-contador">0 palabras</span>
+          <button class="tr2-btn-entregar" data-accion="entregar-texto">Entregar</button>
+        </div>
+        <div class="tr2-entrega-estado" id="estado-writing-${CTX.unidadId}"></div>
+      </div>`;
+  }
+  return base + `
+    <div class="tr2-entrega" data-ctx="${ctxJson}">
+      <button class="tr2-btn-grabar" data-accion="grabar"><i class="fa-solid fa-microphone"></i> Grabar</button>
+      <audio class="tr2-audio-preview" controls style="display:none;"></audio>
+      <button class="tr2-btn-entregar tr2-btn-entregar-audio" data-accion="entregar-audio" style="display:none;">Entregar</button>
+      <div class="tr2-entrega-estado" id="estado-speaking-${CTX.unidadId}"></div>
+    </div>`;
+}
+
+// ── Router de bloque → HTML ──────────────────────────────────────────────
+// ── Bloques TOEFL (C1 u13-u15) ────────────────────────────────────────────
+function listaHTML(items, icono) {
+  return `<ul class="tr2-items">${items.map((i) => `<li class="tr2-par"><i class="fa-solid ${icono}"></i> ${i}</li>`).join('')}</ul>`;
+}
+function renderStrategy(b) {
+  return `
+    <div class="tr2-expl">${b.explanation}</div>
+    ${b.tip ? `<div class="tr2-tip"><i class="fa-solid fa-lightbulb"></i> ${b.tip}</div>` : ''}`;
+}
+function renderSampleTask(b) {
+  return `
+    <div class="tr2-expl">${b.passage_summary}</div>
+    <p class="tr2-instr" style="margin-top:12px;">Preguntas de ejemplo:</p>
+    ${listaHTML(b.sample_questions || [], 'fa-circle-question')}`;
+}
+function renderInstruccion(b, icono, etiqueta) {
+  return `
+    <div class="tr2-tarea">
+      <div class="tr2-tarea-icono"><i class="fa-solid ${icono}"></i></div>
+      <div><div class="tr2-tarea-tag">${etiqueta}</div><p>${b.instructions}</p></div>
+    </div>`;
+}
+
+function contenidoBloque(b, unidadId) {
+  switch (b.type) {
+    // TOEFL
+    case 'strategy': return renderStrategy(b);
+    case 'vocabulary_or_language_bank': return renderVocabulary(b);
+    case 'vocabulary_review': return renderVocabulary(b);
+    case 'grammar_review': return listaHTML(b.checklist || [], 'fa-square-check');
+    case 'self_assessment_checklist': return listaHTML(b.checklist || [], 'fa-square-check');
+    case 'sample_task': return renderSampleTask(b);
+    case 'practice_task': return renderInstruccion(b, 'fa-pencil', 'Haz esta práctica');
+    case 'timed_practice': return renderInstruccion(b, 'fa-stopwatch', 'Con tiempo límite');
+    case 'extra_practice': return renderInstruccion(b, 'fa-dumbbell', 'Práctica extra');
+    case 'evaluation': return renderInstruccion(b, 'fa-flag-checkered', 'Evaluación');
+    case 'common_mistakes': return listaHTML(b.mistakes || [], 'fa-triangle-exclamation');
+    case 'review_tips': return listaHTML(b.tips || [], 'fa-lightbulb');
+    // Estándar
+    case 'warm_up': return renderWarmup(b, unidadId);
+    case 'grammar': return renderGrammar(b);
+    case 'dialogue': return renderDialogue(b);
+    case 'vocabulary': return renderVocabulary(b);
+    case 'vocabulary_practice': return renderVocabPractice(b, unidadId);
+    case 'grammar_practice': return renderGrammarPractice(b, unidadId);
+    case 'listening': return renderListening(b, unidadId);
+    case 'pronunciation': return renderPronunciation(b);
+    case 'speaking': return renderTarea(b, 'fa-microphone', 'Grábate hablando', 'speaking');
+    case 'writing': return renderTarea(b, 'fa-pen-nib', 'Escribe', 'writing');
+    default: return `<pre>${JSON.stringify(b, null, 2)}</pre>`;
+  }
+}
+
+function tituloBloque(b) {
+  if (b.topic) return b.topic;
+  if (b.title) return b.title;
+  return NOMBRES_BLOQUE[b.type] || b.type;
+}
+
+function renderSeccion(bloques, unidadId) {
+  return bloques.map((b, i) => `
+    <div class="tr2-bloque">
+      <div class="tr2-bloque-titulo"><span class="tr2-bloque-num">${i + 1}</span><i class="fa-solid ${ICONOS_BLOQUE[b.type] || 'fa-circle'}"></i> ${tituloBloque(b)}</div>
+      ${contenidoBloque(b, unidadId)}
+    </div>`).join('');
+}
+
+// Botón grande al final de una pestaña: lleva a la siguiente (sin buscarla arriba).
+function btnSiguiente(tab, etiqueta, icono) {
+  return `<div class="tr2-siguiente-wrap"><button type="button" class="tr2-siguiente" data-ir-tab="${tab}">Siguiente: ${etiqueta} <i class="fa-solid ${icono}"></i></button></div>`;
+}
+
+// Un solo listener para todos los botones "Siguiente": hace clic en la pestaña de arriba
+// (así se usa la misma lógica de cambio de pestaña que ya existe).
+function instalarSiguiente() {
+  if (typeof document === 'undefined' || window.__tr2SiguienteListo) return;
+  window.__tr2SiguienteListo = true;
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ir-tab]');
+    if (!b) return;
+    const tab = document.querySelector(`.tr2-tab[data-tab="${b.dataset.irTab}"]`);
+    if (tab) tab.click();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+instalarSiguiente();
+
+// Pone "Ejercicio N de M" a cada juego de la pestaña Práctica (el texto lo dibuja el CSS).
+function numerarEjercicios(html) {
+  const marca = '<div class="tr2-juego" ';
+  const total = html.split(marca).length - 1;
+  let k = 0;
+  return html.split(marca).join('\u0000').replace(/\u0000/g, () => `${marca}data-num="${++k}" data-total="${total}" `);
+}
+
+// ── Cabecera de unidad + pestañas + velocidad de audio ───────────────────
+export function renderContenido(pagina, unidad, unidadId) {
+  // "Hoy aprenderás": los temas de gramática de la unidad (si no hay, no se muestra)
+  const temas = (pagina.tema || []).filter((b) => b.type === 'grammar').map(tituloBloque).slice(0, 4);
+  const resumen = temas.length
+    ? `<div class="tr2-unit-resumen"><i class="fa-solid fa-bullseye"></i><div>Hoy aprenderás: <span>${temas.join(' · ')}</span></div></div>`
+    : '';
+  return `
+    <button class="tr2-volver" id="btn-volver-portada"><i class="fa-solid fa-arrow-left"></i> Portada</button>
+    <div class="tr2-unit-head">
+      <div class="tr2-uni-kicker">Unidad ${unidad.orden} · Semana ${unidad.semana}</div>
+      <h2>${unidad.nombre}</h2>
+      ${resumen}
+    </div>
+    <div class="tr2-tabs" id="tr2-tabs">
+      <button class="tr2-tab active" data-tab="tema"><i class="fa-solid fa-book-open"></i>Tema</button>
+      <button class="tr2-tab" data-tab="vocabulario"><i class="fa-solid fa-language"></i>Vocabulario</button>
+      <button class="tr2-tab" data-tab="practica"><i class="fa-solid fa-dumbbell"></i>Práctica</button>
+      <button class="tr2-tab" id="btn-velocidad" type="button" style="margin-left:6px;" title="Velocidad de audio">
+        <i class="fa-solid fa-gauge"></i>${etiquetaVelocidad()}
+      </button>
+    </div>
+    <div id="tr2-tab-tema" class="tr2-tab-panel">${renderSeccion(pagina.tema, unidadId)}${btnSiguiente('vocabulario', 'Vocabulario', 'fa-arrow-right')}</div>
+    <div id="tr2-tab-vocabulario" class="tr2-tab-panel" style="display:none;">${renderSeccion(pagina.vocabulario, unidadId)}${btnSiguiente('practica', 'Práctica', 'fa-arrow-right')}</div>
+    <div id="tr2-tab-practica" class="tr2-tab-panel" style="display:none;">${marcador()}${numerarEjercicios(renderSeccion(pagina.practica, unidadId))}</div>
+  `;
+}
+
+export function activarVelocidad(vista) {
+  const btn = vista.querySelector('#btn-velocidad');
+  if (!btn) return;
+  btn.onclick = () => {
+    ciclarVelocidad();
+    btn.innerHTML = `<i class="fa-solid fa-gauge"></i>${etiquetaVelocidad()}`;
+  };
+}

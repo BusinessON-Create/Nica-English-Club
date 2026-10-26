@@ -1,46 +1,81 @@
   <!-- ADMIN SCREEN -->
   <div id="s-admin" class="screen">
     <div class="admin-wrap">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="font-family:'Playfair Display'; color:#fff; font-size:28px;">Panel Control</h2>
-        <button onclick="cerrarSesion()" style="color:var(--red); background:transparent; border:none; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit;">SALIR</button>
+      <div class="admin-head">
+        <div class="admin-head-txt">
+          <h2>Panel Control</h2>
+          <p>Administración de Nica English Club</p>
+        </div>
+        <button class="admin-salir" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
       </div>
       <div class="admin-card">
         <div class="admin-menu-grid" id="admin-menu-grid">
+          <span class="admin-menu-grupo">Contenido</span>
           <button class="admin-menu-card active" id="btn-tab-enlaces" onclick="switchTab('enlaces',this)"><i class="fa-solid fa-link"></i><span>Recursos</span></button>
-          <button class="admin-menu-card" id="btn-tab-alumnos" onclick="switchTab('alumnos',this)"><i class="fa-solid fa-user-graduate"></i><span>Alumnos</span></button>
-          <button class="admin-menu-card" id="btn-tab-motivacion" onclick="switchTab('motivacion',this)"><i class="fa-solid fa-crown"></i><span>Motivación</span></button>
-          <button class="admin-menu-card" id="btn-tab-actividades" onclick="switchTab('actividades',this)"><i class="fa-solid fa-list-check"></i><span>Actividades</span></button>
           <button class="admin-menu-card" id="btn-tab-videos" onclick="switchTab('videos',this)"><i class="fa-solid fa-clapperboard"></i><span>Videos</span></button>
+          <button class="admin-menu-card" id="btn-tab-actividades" onclick="switchTab('actividades',this)"><i class="fa-solid fa-list-check"></i><span>Actividades</span></button>
+          <button class="admin-menu-card" id="btn-tab-motivacion" onclick="switchTab('motivacion',this)"><i class="fa-solid fa-crown"></i><span>Motivación</span></button>
+          <span class="admin-menu-grupo">Personas</span>
+          <button class="admin-menu-card" id="btn-tab-alumnos" onclick="switchTab('alumnos',this)"><i class="fa-solid fa-user-graduate"></i><span>Alumnos</span></button>
+          <button class="admin-menu-card" id="btn-tab-coachsolicitudes" onclick="switchTab('coachsolicitudes',this)"><i class="fa-solid fa-inbox"></i><span>Solicitudes<span class="menu-card-badge" id="badge-solicitudes-borrado" style="display:none;">0</span></span></button>
           <button class="admin-menu-card" id="btn-tab-chat" onclick="switchTab('chat',this)"><i class="fa-solid fa-comments"></i><span>Chat</span></button>
+          <span class="admin-menu-grupo">Herramientas</span>
           <button class="admin-menu-card" id="btn-tab-meet" onclick="switchTab('meet',this)"><i class="fa-solid fa-video"></i><span>Reunión Meet</span></button>
-          <button class="admin-menu-card" id="btn-tab-internaltools" onclick="switchTab('internaltools',this)"><i class="fa-solid fa-toolbox"></i><span>Internal tools</span></button>
+          <button class="admin-menu-card" id="btn-tab-menu" onclick="switchTab('menu',this)"><i class="fa-solid fa-bars-staggered"></i><span>Menú</span></button>
           <button class="admin-menu-card" id="btn-tab-neclub" onclick="switchTab('neclub',this)"><i class="fa-solid fa-hashtag"></i><span>NECLUB</span></button>
           <button class="admin-menu-card" id="btn-tab-training" onclick="switchTab('training',this)"><i class="fa-solid fa-brain"></i><span>Training Room</span></button>
+          <span class="admin-menu-grupo">Limpieza</span>
+          <button class="admin-menu-card" id="btn-tab-mantenimiento" onclick="switchTab('mantenimiento',this)"><i class="fa-solid fa-broom"></i><span>Mantenimiento</span></button>
         </div>
         <div id="tab-enlaces" class="tab-content active" style="padding:20px;">
-          <!-- BANNER CONFIG -->
-          <div class="admin-section">
-            <p class="admin-label"><i class="fa-solid fa-panorama"></i> Configuración del Banner</p>
-            <input type="url" id="config-banner-url" class="admin-input" placeholder="URL Imagen (Drive) o Video (YouTube)">
-            <button class="btn-login btn-outline-gold" onclick="guardarBanner()">Actualizar Banner</button>
+          <div class="rec-grid">
+            <div class="rec-col">
+              <!-- BANNER CONFIG -->
+              <div class="admin-section">
+                <p class="admin-label"><i class="fa-solid fa-panorama"></i> Configuración del Banner</p>
+                <input type="url" id="config-banner-url" class="admin-input" placeholder="URL Imagen (Drive) o Video (YouTube)" oninput="previsualizarBanner()">
+                <div id="banner-preview" class="banner-preview" style="display:none;"><img id="banner-preview-img" alt="Vista previa del banner"><span id="banner-preview-txt"></span></div>
+                <button class="btn-login btn-outline-gold" onclick="guardarBanner()">Actualizar Banner</button>
+              </div>
+              <div class="admin-section rec-form">
+                <p class="admin-label"><i class="fa-solid fa-plus"></i> Publicar enlace</p>
+                <input type="hidden" id="enlace-id-edicion">
+                <div class="rec-form-fila">
+                  <input type="text" id="link-titulo" class="admin-input" placeholder="Título de la clase">
+                  <input type="url" id="link-url" class="admin-input" placeholder="https://url-clase.com">
+                </div>
+                <button class="btn-login" id="btn-guardar-enlace" onclick="guardarEnlace()">Publicar Enlace</button>
+              </div>
+            </div>
+            <div class="rec-col">
+              <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-link"></i> Enlaces publicados <span id="enlaces-contador" class="rec-contador"></span></p>
+              <input type="search" id="enlaces-buscar" class="admin-input" placeholder="Buscar enlace…" oninput="renderEnlacesAdmin()">
+              <div id="lista-enlaces-ui"></div>
+            </div>
           </div>
-
-          <input type="hidden" id="enlace-id-edicion">
-          <input type="text" id="link-titulo" class="admin-input" placeholder="Título de la clase">
-          <input type="url" id="link-url" class="admin-input" placeholder="https://url-clase.com">
-          <button class="btn-login" id="btn-guardar-enlace" onclick="guardarEnlace()">Publicar Enlace</button>
-          <div id="lista-enlaces-ui" style="margin-top:20px;"></div>
+        </div>
+        <div id="tab-coachsolicitudes" class="tab-content" style="padding:20px; display:none;">
+          <p class="admin-label"><i class="fa-solid fa-inbox"></i> Solicitudes de borrado de notas de coach</p>
+          <p class="form-hint" style="margin-bottom:16px;">Los coaches no pueden borrar sus notas directamente — solo piden que las borres vos. Acá aparece cada solicitud pendiente; "Aprobar y borrar" elimina la nota completa (y lo que se le compartió al alumno). "Rechazar" solo quita la solicitud y deja la nota como estaba.</p>
+          <div id="lista-solicitudes-borrado-ui"></div>
+          <p class="form-hint" id="solicitudes-borrado-vacio" style="display:none;">No hay solicitudes de borrado pendientes.</p>
         </div>
         <div id="tab-alumnos" class="tab-content" style="padding:20px; display:none;">
+          <div class="al-grid">
+<div class="al-col-form">
+<details class="al-form-det" id="al-form-det"><summary><span id="al-form-titulo"><i class="fa-solid fa-user-plus"></i> Nuevo alumno</span><i class="fa-solid fa-chevron-down chevron"></i></summary><div class="al-form-cuerpo">
           <input type="hidden" id="alumno-id-edicion">
           <input type="hidden" id="alumno-identidad-edicion">
+          <div class="admin-bloque">
+          <p class="admin-label"><i class="fa-solid fa-id-card"></i> Datos del alumno</p>
           <input type="text" id="alumno-nombre" class="admin-input" placeholder="Nombre completo del alumno">
           <div id="alumno-cuenta-vinculada-aviso" style="display:none; font-size:12px; color:var(--gold3); margin:-2px 0 10px;"><i class="fa-solid fa-circle-check"></i> Cuenta ya vinculada — para cambiar su acceso usa "Enviar restablecimiento de contraseña".</div>
           <input type="email" id="alumno-correo" class="admin-input" placeholder="Correo del alumno (para su acceso)" autocomplete="off">
           <p class="form-hint" id="alumno-pass-hint" style="margin-top:-6px; margin-bottom:10px;">No necesitas crear una contraseña: al guardar, se le enviará automáticamente un correo a este alumno para que configure su propia contraseña.</p>
           <button type="button" class="btn-login btn-outline-gold" id="btn-reset-pass-alumno" style="display:none; margin-bottom:10px;" onclick="enviarResetPassAlumno()"><i class="fa-solid fa-envelope"></i> Enviar restablecimiento de contraseña</button>
           <input type="url" id="alumno-foto" class="admin-input" placeholder="URL Foto Perfil">
+          </div>
+          <div class="admin-bloque">
           <p class="admin-label"><i class="fa-solid fa-gem"></i> Plan de suscripción</p>
           <select id="alumno-plan" class="admin-input">
             <option value="">-- Sin plan asignado --</option>
@@ -62,12 +97,45 @@
             <option value="3:15 - 4:45 PM">3:15 - 4:45 PM</option>
             <option value="6:15 - 7:15 PM">6:15 - 7:15 PM</option>
           </select>
+          </div>
+          <div class="admin-bloque">
+          <p class="admin-label"><i class="fa-solid fa-chalkboard-user"></i> Rol de Coach</p>
+          <label style="display:flex; align-items:center; gap:8px; margin-bottom:10px; cursor:pointer; font-size:13px; color:var(--text);">
+            <input type="checkbox" id="alumno-es-coach" onchange="toggleCoachHorariosVisibilidad()"> Este alumno es Coach (puede dejar notas de seguimiento)
+          </label>
+          <div id="alumno-coach-horarios-wrap" style="display:none; margin-bottom:14px; padding:12px; background:rgba(255,255,255,.03); border:1px solid var(--border2); border-radius:12px;">
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:12px; cursor:pointer; font-size:13px; color:var(--text);">
+              <input type="checkbox" id="alumno-ia-coach"> Puede revisar entregas con IA (borrador de ayuda; el alumno solo ve lo que el coach aprueba)
+            </label>
+            <p class="form-hint" style="margin-bottom:8px;">Grupos que este coach enseña (puede marcar varios):</p>
+            <div id="alumno-coach-horarios-lista"></div>
+          </div>
+          </div>
+          <div class="admin-guardar-barra">
           <button class="btn-login" id="btn-guardar-alumno" onclick="registrarAlumno()">Crear Alumno</button>
-          <button onclick="resetearAsistenciaSemanal()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">RESETEAR SEMANA MANUAL</button>
-          <div id="lista-alumnos-ui" style="margin-top:20px;"></div>
+          </div>
+</div></details>
+</div>
+<div class="al-col-lista">
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-users"></i> Alumnos registrados</p>
+          <div class="al-barra"><input type="search" id="al-buscar" class="admin-input" placeholder="Buscar alumno…" oninput="filtrarAlumnosAdmin()"><select id="al-filtro" class="admin-input" onchange="filtrarAlumnosAdmin()"><option value="todos">Todos</option><option value="online">En línea</option><option value="coach">Coaches</option><option value="susp">Suspendidos</option></select></div>
+          <div id="lista-alumnos-ui" style="margin-top:14px;"></div>
+</div>
+          </div>
         </div>
 
         <div id="tab-motivacion" class="tab-content" style="padding:20px; display:none;">
+          <div class="admin-section">
+            <p class="admin-label"><i class="fa-solid fa-image"></i> Portada de la tarjeta del alumno</p>
+            <p class="form-hint">Es el fondo de la tarjeta "WELCOME BACK" que ven al entrar. La imagen se comprime sola antes de subirse (máx. 1600 px). Funciona mejor una foto horizontal y oscura.</p>
+            <div id="portada-preview" style="display:none; height:130px; border-radius:14px; background-size:cover; background-position:center; border:1px solid var(--border2); margin-bottom:10px;"></div>
+            <p class="form-hint" id="portada-estado">Usando la portada original (atardecer).</p>
+            <input type="file" id="portada-file" accept="image/*" style="display:none;" onchange="subirPortada(event)">
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-login" id="btn-portada-subir" onclick="document.getElementById('portada-file').click()" style="flex:1;"><i class="fa-solid fa-upload"></i> Subir nueva portada</button>
+              <button class="btn-login btn-outline-gold" id="btn-portada-reset" onclick="restaurarPortada()" style="display:none; flex:1;"><i class="fa-solid fa-rotate-left"></i> Volver a la original</button>
+            </div>
+          </div>
           <div class="admin-section">
             <p class="admin-label"><i class="fa-solid fa-crown"></i> Mentalidad NEC (frase de la semana)</p>
             <input type="text" id="config-mindset-titulo" class="admin-input" placeholder="Título (ej: Entrena tu mente, domina tu inglés.)">
@@ -96,7 +164,7 @@
             <div id="dest-lista-alumnos" style="display:none;"></div>
           </div>
           <button class="btn-login" id="btn-guardar-actividad" onclick="guardarActividad()">Publicar actividad</button>
-          <button onclick="limpiarActividadesAnteriores()" style="width:100%; margin-top:15px; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:12px; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">LIMPIAR ACTIVIDADES DE SEMANAS ANTERIORES</button>
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-list-check"></i> Actividades publicadas</p>
           <div id="lista-actividades-ui" style="margin-top:20px;"></div>
 
           <div class="admin-section" style="border-top:1px solid var(--border2); margin-top:28px; padding-top:22px; border-bottom:none;">
@@ -133,9 +201,91 @@
           </div>
           <div id="lista-categorias-videos-ui"></div>
         </div>
+        <div id="tab-mantenimiento" class="tab-content" style="padding:20px; display:none;">
+          <div class="mant-aviso"><i class="fa-solid fa-triangle-exclamation"></i><div><b>Zona de limpieza.</b> Lo que se borra aquí no se puede recuperar. Antes de borrar, el panel te dice cuántos elementos se eliminarán y te pide confirmar.</div></div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-comments"></i> Chat de alumnos</h4>
+            <p>Borra mensajes públicos y privados. Se borran hasta 400 por pasada; si quedan más, vuelve a pulsar.</p>
+            <div class="mant-fila mant-fila-sel">
+              <select id="mant-chat-edad" class="admin-input"><option value="7">Más de 1 semana</option><option value="30">Más de 1 mes</option><option value="0">Todo el chat</option></select>
+              <button class="mant-btn-peligro" onclick="mantBorrarChat()">Borrar</button>
+            </div>
+            <label class="mant-auto"><span>Borrado automático</span>
+              <select id="mant-chat-auto" class="admin-input" onchange="mantGuardarAuto()"><option value="0">Desactivado</option><option value="7">Mensajes de más de 1 semana</option><option value="14">Mensajes de más de 2 semanas</option><option value="30">Mensajes de más de 1 mes</option></select>
+            </label>
+            <p class="mant-nota">Se ejecuta sin servidor y solo cuando tú entras al panel de admin: borra hasta 100 mensajes vencidos (máx. una vez cada 6 horas). Los alumnos nunca borran mensajes. No genera costo extra.</p>
+          </div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-hashtag"></i> Publicaciones de NECLUB</h4>
+            <p>Borra publicaciones con sus comentarios, fotos y videos. Se borran hasta 60 por pasada.</p>
+            <div class="mant-fila mant-fila-sel">
+              <select id="mant-neclub-edad" class="admin-input"><option value="7">Más de 1 semana</option><option value="30">Más de 1 mes</option><option value="0">Todas</option></select>
+              <button class="mant-btn-peligro" onclick="mantBorrarNeclub()">Borrar</button>
+            </div>
+            <label class="dest-all-row mant-check"><input type="checkbox" id="mant-neclub-oficial"> <span>Incluir publicaciones oficiales (historias en PDF)</span></label>
+            <label class="mant-auto"><span>Duración de las publicaciones nuevas</span>
+              <select id="mant-neclub-dias" class="admin-input" onchange="mantGuardarAuto()"><option value="1">1 día</option><option value="3">3 días</option><option value="7">7 días</option><option value="14">14 días</option><option value="30">30 días</option></select>
+            </label>
+            <p class="mant-nota">Solo afecta a las publicaciones que se creen desde ahora. Las existentes conservan su fecha de vencimiento.</p>
+            <label class="mant-auto"><span>Comprimir los videos de los alumnos al subirlos</span>
+              <select id="mant-video-comp" class="admin-input" onchange="mantGuardarAuto()"><option value="1">Activado</option><option value="0">Desactivado</option></select>
+            </label>
+            <p class="mant-nota">Reduce el peso (máx. 720p) en el propio celular del alumno. Si su celular no puede, o algo falla, sube el original. Si algún celular da problemas con la compresión, desactívala aquí.</p>
+          </div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-bell"></i> Notificaciones</h4>
+            <p>Borra las notificaciones viejas de NECLUB y Class Room. Los alumnos ya no ven las de más de 30 días; solo ocupan espacio. Borra por partes: primero las más viejas, o elige cuántas por pasada. Si hay muchas, sigue otro día. Antes de borrar te dice cuántas son y cuántas lecturas y borrados cuesta.</p>
+            <div class="mant-fila mant-fila-sel">
+              <select id="mant-notif-edad" class="admin-input"><option value="30">Más de 1 mes</option><option value="60">Más de 2 meses</option><option value="90">Más de 3 meses</option><option value="180">Más de 6 meses</option></select>
+              <select id="mant-notif-cant" class="admin-input"><option value="100">100 por pasada</option><option value="400" selected>400 por pasada</option><option value="1000">1000 por pasada</option></select>
+              <button class="mant-btn-peligro" onclick="mantBorrarNotifs()">Borrar</button>
+            </div>
+          </div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-list-check"></i> Actividades</h4>
+            <p>Las actividades de semanas pasadas ya no se muestran a los alumnos, pero siguen ocupando espacio.</p>
+            <div class="mant-fila">
+              <button class="mant-btn-peligro" style="flex:1;" onclick="mantBorrarActividades(false)">Borrar las anteriores</button>
+              <button class="mant-btn-peligro" style="flex:1;" onclick="mantBorrarActividades(true)">Borrar todas</button>
+            </div>
+          </div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-microphone"></i> Audios de Training Room</h4>
+            <p>Los audios de los alumnos son los que más espacio ocupan. Se borran desde la pestaña Training Room (uno por uno o todos los ya revisados); las calificaciones se conservan.</p>
+            <button class="btn-login btn-outline-gold" onclick="switchTab('training', document.getElementById('btn-tab-training'))">Ir a Training Room</button>
+          </div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-user-minus"></i> Alumnos</h4>
+            <p>Al borrar a un alumno desde la pestaña Alumnos, ahora también se limpian su foto, su seguimiento y su progreso de Training Room y Verb Lab. Su cuenta de acceso no se elimina desde aquí: si solo quieres bloquear la entrada, usa Suspender.</p>
+          </div>
+
+          <div class="mant-card">
+            <h4><i class="fa-solid fa-folder-open"></i> Archivos guardados</h4>
+            <p>Revisa las fotos, videos y audios que hay en el almacenamiento y borra <b>solo los que elijas</b>. "Sin referencia conocida" significa que ningún alumno ni publicación de NECLUB que el panel conozca usa ese archivo; revísalo con su vista previa o con "Ver" antes de borrar.</p>
+            <button class="btn-login btn-outline-gold" id="mant-arch-btn" onclick="mantRevisarArchivos()">Revisar archivos</button>
+            <p class="mant-nota" id="mant-arch-resumen" style="display:none;"></p>
+            <div class="mant-chips" id="mant-arch-filtros" style="display:none;">
+              <button class="mant-chip active" data-f="todos" onclick="mantFiltroArchivos('todos')">Todos</button>
+              <button class="mant-chip" data-f="suelto" onclick="mantFiltroArchivos('suelto')">Sin referencia</button>
+              <button class="mant-chip" data-f="uso" onclick="mantFiltroArchivos('uso')">En uso</button>
+              <button class="mant-chip" onclick="mantMarcarSueltos()">Marcar los sueltos</button>
+              <button class="mant-chip" onclick="mantQuitarSeleccion()">Quitar selección</button>
+            </div>
+            <div id="mant-arch-lista"></div>
+            <div class="mant-arch-acciones mant-fila" id="mant-arch-acciones" style="display:none;">
+              <button class="mant-btn-peligro" style="flex:1;" onclick="mantBorrarArchivosSel()">Borrar seleccionados (<span id="mant-arch-sel">0</span>)</button>
+            </div>
+          </div>
+        </div>
         <div id="tab-chat" class="tab-content" style="padding:20px; display:none;">
-          <p class="form-hint">El chat se borra automáticamente cada 12 horas para no acumular información. También puedes limpiarlo manualmente aquí en cualquier momento.</p>
-          <button onclick="limpiarChatManual()" style="width:100%; background:transparent; color:var(--red); border:1px solid rgba(255,92,92,0.3); padding:14px; border-radius:12px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-broom"></i> LIMPIAR CHAT AHORA</button>
+          <p class="form-hint">El chat <b>no se borra solo</b> a menos que actives el borrado automático. Para borrar mensajes por antigüedad (1 semana, 1 mes o todo) o activar el borrado automático, entra a Mantenimiento.</p>
+          <button class="btn-login btn-outline-gold" onclick="switchTab('mantenimiento', document.getElementById('btn-tab-mantenimiento'))"><i class="fa-solid fa-broom"></i> Ir a Mantenimiento</button>
         </div>
         <div id="tab-meet" class="tab-content" style="padding:20px; display:none;">
           <p class="form-hint">El enlace de Google Meet aparece como botón flotante para los alumnos elegidos y se elimina solo pasadas 3 horas (o al instante si lo borras aquí manualmente).</p>
@@ -149,10 +299,32 @@
             <div id="meet-dest-lista-alumnos" style="display:none;"></div>
           </div>
           <button class="btn-login" id="btn-enviar-meet" onclick="enviarMeet()"><i class="fa-solid fa-video"></i> Enviar enlace de Meet</button>
+          <p class="admin-label admin-lista-titulo"><i class="fa-solid fa-video"></i> Reuniones activas</p>
           <div id="lista-reuniones-ui" style="margin-top:20px;"></div>
         </div>
-        <div id="tab-internaltools" class="tab-content" style="padding:20px; display:none;">
-          <p class="form-hint">Botones fijos y reusables que aparecen en el menú lateral del alumno (junto a Actividades, Perfil, etc.). Cada uno abre su URL en una ventana completa dentro de la app. No expiran — vos los enciendes/apagas con el switch cuando quieras. Podés crear los que necesites, sin límite.</p>
+        <div id="tab-menu" class="tab-content" style="padding:20px; display:none;">
+          <p class="form-hint">Así se ve el menú hamburguesa del alumno. Usa las flechas para cambiar el orden, ⭐ para destacar, el interruptor para mostrar u ocultar, y el lápiz para editar. Las categorías vacías no se muestran a los alumnos. Instalar App y Logout siempre quedan al final.</p>
+          <div class="admin-section">
+            <p class="admin-label"><i class="fa-solid fa-bars-staggered"></i> Estructura del menú</p>
+            <div id="menu-estructura-ui"><p class="form-hint">Cargando menú…</p></div>
+            <button class="btn-login btn-outline-gold" onclick="menuRestaurarDefault()" style="margin-top:6px;"><i class="fa-solid fa-rotate-left"></i> Restaurar menú por defecto</button>
+          </div>
+          <div class="admin-section">
+            <p class="admin-label" id="menucat-form-titulo"><i class="fa-solid fa-folder-plus"></i> Nueva categoría</p>
+            <input type="text" id="menucat-nombre" class="admin-input" placeholder="Ej: Tools, Práctica, Classroom...">
+            <select id="menucat-icono-select" class="admin-input"></select>
+            <label class="dest-all-row"><input type="checkbox" id="menucat-abierta" checked> <span style="color:#fff; font-weight:700;">Abierta al entrar (si no, el alumno la toca para desplegarla)</span></label>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-login" id="btn-guardar-menucat" onclick="guardarMenuCat()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar categoría</button>
+              <button class="btn-login btn-outline-gold" id="btn-cancelar-menucat" onclick="cancelarEdicionMenuCat()" style="display:none; flex:0 0 auto; padding-left:18px; padding-right:18px;">Cancelar</button>
+            </div>
+          </div>
+          <div class="admin-section" style="border-bottom:none;">
+          <p class="admin-label" id="eflink-form-titulo" style="margin-top:6px;"><i class="fa-solid fa-circle-plus"></i> Nuevo botón</p>
+          <p class="admin-label"><i class="fa-solid fa-location-arrow"></i> ¿Qué hace al tocarlo?</p>
+          <select id="eflink-destino" class="admin-input" onchange="toggleEflinkDestino()"></select>
+          <p class="admin-label"><i class="fa-solid fa-folder-open"></i> Categoría</p>
+          <select id="eflink-categoria" class="admin-input"></select>
           <p class="admin-label"><i class="fa-solid fa-pen"></i> Nombre</p>
           <input type="text" id="eflink-nombre" class="admin-input" placeholder="Ej: Pizarra, Zoom de tarea, Formulario...">
           <p class="admin-label"><i class="fa-solid fa-icons"></i> Ícono</p>
@@ -170,6 +342,7 @@
             <option value="custom">⚙️ Otro (avanzado — escribir clase de FontAwesome)</option>
           </select>
           <input type="text" id="eflink-icono-custom" class="admin-input" placeholder="Ej: fa-solid fa-chalkboard" style="display:none;">
+          <div id="eflink-url-wrap">
           <p class="admin-label"><i class="fa-solid fa-link"></i> URL</p>
           <input type="url" id="eflink-url" class="admin-input" placeholder="https://...">
           <label class="dest-all-row" style="margin-top:4px;">
@@ -177,6 +350,8 @@
             <span style="color:#fff; font-weight:700;">Abrir en pestaña nueva (en vez de ventana dentro de la app)</span>
           </label>
           <p class="form-hint" style="margin-top:-4px;">Recomendado para herramientas colaborativas en vivo (ej. Excalidraw) que no funcionan bien dentro de un iframe. Para el resto, déjalo sin marcar.</p>
+          </div>
+          <label class="dest-all-row"><input type="checkbox" id="eflink-destacado"> <span style="color:#fff; font-weight:700;">⭐ Destacar en el menú (borde dorado y estrella)</span></label>
           <p class="admin-label"><i class="fa-solid fa-paper-plane"></i> Enviar a</p>
           <div class="dest-picker">
             <label class="dest-all-row"><input type="radio" name="eflink-dest-modo" id="eflink-dest-todos" value="todos" checked onchange="toggleEflinkDestModo()"> <span style="color:#fff; font-weight:700;">Todos los alumnos</span></label>
@@ -186,10 +361,10 @@
             <div id="eflink-dest-lista-alumnos" style="display:none;"></div>
           </div>
           <div style="display:flex; gap:10px;">
-            <button class="btn-login" id="btn-guardar-eflink" onclick="guardarEflink()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar herramienta</button>
+            <button class="btn-login" id="btn-guardar-eflink" onclick="guardarEflink()" style="flex:1;"><i class="fa-solid fa-plus"></i> Agregar botón</button>
             <button class="btn-login btn-outline-gold" id="btn-cancelar-eflink" onclick="cancelarEdicionEflink()" style="display:none; flex:0 0 auto; padding-left:18px; padding-right:18px;">Cancelar</button>
           </div>
-          <div id="lista-eflinks-ui" style="margin-top:20px;"></div>
+          </div>
         </div>
         <div id="tab-neclub" class="tab-content" style="padding:20px; display:none;">
           <p class="admin-label"><i class="fa-solid fa-bullhorn"></i> Publicar en NECLUB como cuenta oficial (foto, video o PDF)</p>
@@ -204,15 +379,16 @@
             </div>
             <p id="neclub-historia-progreso-texto" style="font-size:11.5px; color:var(--muted-dim); margin-top:6px;">Subiendo... 0%</p>
           </div>
-          <p class="form-hint">Aparece en NECLUB marcada como <b>Nica English Club <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i> Verificado</b> y no se autoborra a los 7 días como los posts normales. Puedes subir una foto, un video (sin límite de 1 minuto) o un PDF.</p>
+          <p class="form-hint">Aparece en NECLUB marcada como <b>Nica English Club <i class="fa-solid fa-circle-check" style="color:var(--gold2);"></i> Verificado</b> y no se autoborra a los 7 días como los posts normales. Puedes subir una foto, un video (sin límite de 1 minuto) o un PDF. Las fotos y los videos se optimizan solos al publicar (el video se comprime y se le genera miniatura, igual que con los alumnos); mientras se comprime el video, mantén esta pestaña abierta y visible.</p>
           <hr style="border-color:var(--border); margin:20px 0;">
-          <p class="form-hint">Moderación de NECLUB: aquí puedes borrar cualquier publicación de cualquier alumno. Las publicaciones se autoborran solas a los 7 días de creadas (las historias en PDF no).</p>
+          <p class="form-hint">Moderación de NECLUB: aquí puedes borrar cualquier publicación de cualquier alumno. Las publicaciones se autoborran solas (por defecto a los 7 días; se cambia en Mantenimiento). Las historias en PDF no se autoborran.</p>
           <div id="lista-neclub-ui"></div>
         </div>
         <div id="tab-training" class="tab-content" style="padding:20px; display:none;">
           <p class="admin-label"><i class="fa-solid fa-book-open-reader"></i> Biblioteca de semanas</p>
           <p class="form-hint">Crea el contenido de cada semana (Foundations, Everyday English, Confidence, Fluency Mode). Los alumnos avanzan solos por la biblioteca según su propio ritmo — tú solo la mantienes llena.</p>
           <button class="btn-login btn-outline-gold" onclick="abrirEditorSemanaTraining()"><i class="fa-solid fa-plus"></i> Nueva semana</button>
+          <details class="zona-ejemplos"><summary><span><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar semanas de ejemplo (13)</span><i class="fa-solid fa-chevron-down chevron"></i></summary><div class="zona-cuerpo">
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemanaTraining()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 1 — Who Are You?)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana2Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 2 — My Day, My Words)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana3Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 3 — Where Is It?)</button>
@@ -226,6 +402,7 @@
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana11Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 11 — Bigger, Better, Best)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana12Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 12 — What Should I Do?)</button>
           <button class="btn-login btn-outline-gold" onclick="cargarEjemploSemana13Training()" style="margin-top:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Cargar ejemplo (Semana 13 — This Is My Life)</button>
+          </div></details>
 
           <div id="tr-editor-wrap" style="display:none; margin-top:18px; border-top:1px solid var(--border); padding-top:18px;">
             <input type="hidden" id="tr-semana-id-edicion">
@@ -253,6 +430,16 @@
           <hr style="border-color:var(--border); margin:24px 0;">
           <p class="admin-label"><i class="fa-solid fa-chart-line"></i> Progreso de alumnos</p>
           <div style="overflow-x:auto;"><table class="tr-progress-table" id="tr-progreso-tabla"><thead><tr><th>Alumno</th><th>Etapa</th><th>Semana</th><th>Día</th><th>Racha</th><th>Retos enviados</th><th title="Desbloquea las 4 etapas en modo QA para pruebas">QA</th><th></th></tr></thead><tbody></tbody></table></div>
+
+          <hr style="border-color:var(--border); margin:24px 0;">
+          <p class="admin-label"><i class="fa-solid fa-microphone"></i> Audios de Speaking (Class Room)</p>
+          <p class="form-hint">Los audios que entregan los alumnos ocupan espacio. Aquí ves cuántos hay y los borras tú, cuando quieras. Al borrar un audio se conservan la calificación y el feedback. Nada se borra solo.</p>
+          <button class="btn-login btn-outline-gold" onclick="cargarAudiosEntregasAdmin()"><i class="fa-solid fa-magnifying-glass"></i> Ver audios guardados</button>
+          <p class="form-hint" id="tr-audios-resumen" style="margin-top:10px;"></p>
+          <div id="tr-audios-acciones" style="display:none; margin-bottom:10px;">
+            <button class="btn-login" onclick="borrarAudiosRevisadosAdmin()" style="background:#c0392b;"><i class="fa-solid fa-trash"></i> Borrar todos los ya revisados</button>
+          </div>
+          <div style="overflow-x:auto;"><table class="tr-progress-table" id="tr-audios-tabla"><thead><tr><th>Alumno</th><th>Unidad</th><th>Estado</th><th>Fecha</th><th>Tamaño</th><th></th></tr></thead><tbody></tbody></table></div>
         </div>
       </div>
     </div>

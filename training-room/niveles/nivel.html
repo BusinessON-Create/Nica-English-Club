@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nivel — Class Room</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+  .tr2-card-unidad.locked{opacity:.45;cursor:not-allowed;filter:grayscale(.6);}
+  .tr2-card-unidad.locked:hover{transform:none;}
+  .tr2-uni-lock{font-size:12px;opacity:.85;margin-top:2px;}
+  .tr2-switch{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .tr2-switch input{width:18px;height:18px;cursor:pointer;}
+  #tr2-selector-grupo{margin:0 0 16px;display:none;}
+  #tr2-selector-grupo select{font:inherit;padding:8px 10px;border-radius:8px;max-width:100%;}
+  #tr2-selector-grupo .tr2-muted{display:block;margin-top:6px;}
+</style>
+<link rel="stylesheet" href="../../identidad/identidad.css?v=1">
+</head>
+<body>
+
+  <nav class="tr2-nav" id="tr2-nav"></nav>
+
+  <div class="tr2-shell" id="tr2-vista-lista">
+    <h1 class="tr2-h1" id="tr2-nivel-titulo">Cargando…</h1>
+    <p class="tr2-sub" id="tr2-nivel-sub"></p>
+    <div id="tr2-selector-grupo"></div>
+    <div class="tr2-lista-unidades" id="tr2-lista-unidades"></div>
+  </div>
+
+  <div class="tr2-shell" id="tr2-vista-unidad" style="display:none;"></div>
+
+  <script type="module">
+    import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
+    import { montarBarra, pintarAvatar, pintarNotifBadge } from "../assets/js/barra-red.js";
+    import { mostrarAviso, NIVEL_INFO } from "../assets/js/ui.js";
+    import { cargarUnidades, cargarPagina, cargarAperturaGrupo, cargarAperturaAlumno, cargarAlumnosGrupo, setApertura, renderListaUnidades, renderPortada, renderContenido, activarVelocidad, setContexto, setUnidadActual, cargarEstadosEntrega } from "../assets/js/nivel.js";
+
+    montarBarra({ portal: '../../', volver: { href: '../index.html', title: 'Niveles' } });
+
+    const params = new URLSearchParams(location.search);
+    const nivelId = params.get('nivel') || 'a1';
+    let unidadesCache = [];
+    let abiertas = new Set();
+    let grupoActivo = null;   // { dias, franja }: el del alumno, o el que elige el coach
+    let esCoach = false;
+    let alumnoSesionId = null;   // id del alumno que tiene la sesión (para sumar sus unidades abiertas solo para él)
+    let alumnosGrupo = [];       // coach: alumnos del grupo elegido
+    let alumnoElegido = null;    // coach: null = todo el grupo; si no, { id, nombre }
+    let selAlumno = null;
+    let notaApertura = null;
+    let abiertasGrupo = new Set();
+
+    (async function init() {
+      const resultado = await esperarSesionYAlumno();
+      if (!resultado) return; // auth-init.js ya redirige si no hay sesión/perfil
+      const { alumno } = resultado;
+      alumnoSesionId = alumno.id;
+      pintarAvatar(alumno);
+      pintarNotifBadge(alumno);
+
+      setContexto({
+        alumnoId: alumno.id,
+        alumnoNombre: alumno.nombre || '',
+        alumnoEmail: alumno.email || '',
+        nivelId,
+        esCoach: !!alumno.esCoach,
+      });
+
+      document.getElementById('tr2-nivel-titulo').textContent = `Nivel ${nivelId.toUpperCase()}`;
+
+      esCoach = !!alumno.esCoach;
+      unidadesCache = await cargarUnidades(nivelId);
+      actualizarSub();
+      const lista = document.getElementById('tr2-lista-unidades');
+
+      if (!unidadesCache.length) {
+        lista.innerHTML = `<p class="tr2-muted">Todavía no hay unidades cargadas para este nivel.</p>`;
+        return;
+      }
+
+      if (esCoach) {
+        const grupos = Array.isArray(alumno.horariosCoach) ? alumno.horariosCoach : [];
+        const cont = document.getElementById('tr2-selector-grupo');
+        cont.style.display = 'block';
+        if (grupos.length) {
+          const sel = document.createElement('select');
+          grupos.forEach((g, i) => {
+            const o = document.createElement('option');
+            o.value = i;
+            o.textContent = `${g.dias} · ${g.franja}`;
+            sel.appendChild(o);
+          });
+          const nota = document.createElement('span');
+          nota.className = 'tr2-muted';
+          nota.textContent = 'Abres o cierras unidades para TODO este grupo.';
+          notaApertura = nota;
+          const etiquetaAl = document.createElement('span');
+          etiquetaAl.className = 'tr2-muted';
+          etiquetaAl.textContent = 'Abrir unidades para:';
+          selAlumno = document.createElement('select');
+          selAlumno.style.marginTop = '4px';
+          selAlumno.onchange = () => {
+            alumnoElegido = selAlumno.value ? (alumnosGrupo.find((a) => a.id === selAlumno.value) || null) : null;
+            pintarLista();
+          };
+          sel.onchange = async () => {
+            grupoActivo = grupos[Number(sel.value)];
+            await recargarAlumnos();
+            pintarLista();
+          };
+          cont.append(sel, nota, etiquetaAl, selAlumno);
+          grupoActivo = grupos[0];
+          await recargarAlumnos();
+        } else {
+          cont.textContent = 'Aún no tienes grupos asignados: ves todo, pero no puedes abrir unidades.';
+        }
+      } else {
+        grupoActivo = alumno.horario && alumno.horario.dias && alumno.horario.franja ? alumno.horario : null;
+        if (!grupoActivo) {
+          lista.insertAdjacentHTML('beforebegin', `<p class="tr2-muted">Aún no tienes un grupo asignado. Tu coach te lo asignará pronto.</p>`);
+        }
+      }
+      await pintarLista();
+    })();
+
+    // Coach: llena el selector con "Todo el grupo" + los alumnos del grupo elegido.
+    async function recargarAlumnos() {
+      if (!selAlumno || !grupoActivo) return;
+      alumnosGrupo = await cargarAlumnosGrupo(grupoActivo.dias, grupoActivo.franja);
+      alumnoElegido = null;
+      selAlumno.innerHTML = '';
+      const todo = document.createElement('option');
+      todo.value = '';
+      todo.textContent = 'Todo el grupo';
+      selAlumno.appendChild(todo);
+      alumnosGrupo.forEach((a) => {
+        const o = document.createElement('option');
+        o.value = a.id;
+        o.textContent = a.nombre;
+        selAlumno.appendChild(o);
+      });
+    }
+
+    async function pintarLista() {
+      const lista = document.getElementById('tr2-lista-unidades');
+      const modoAlumno = esCoach && !!alumnoElegido;
+      abiertasGrupo = grupoActivo ? await cargarAperturaGrupo(grupoActivo.dias, grupoActivo.franja) : new Set();
+      if (modoAlumno) {
+        // Coach con un alumno elegido: "abiertas" = lo abierto solo para ese alumno.
+        abiertas = await cargarAperturaAlumno(alumnoElegido.id);
+      } else if (!esCoach) {
+        // Alumno: lo que abrió su coach para el grupo + lo que abrió solo para él.
+        const propias = await cargarAperturaAlumno(alumnoSesionId);
+        abiertas = new Set([...abiertasGrupo, ...propias]);
+      } else {
+        abiertas = abiertasGrupo;
+      }
+      if (notaApertura) {
+        notaApertura.textContent = modoAlumno
+          ? `Abres o cierras unidades SOLO para ${alumnoElegido.nombre}. Lo que abriste para todo el grupo se ve como "Abierta por el grupo".`
+          : 'Abres o cierras unidades para TODO este grupo.';
+      }
+      lista.innerHTML = renderListaUnidades(unidadesCache, abiertas, {
+        esCoach,
+        puedeAbrir: esCoach && !!grupoActivo,
+        abiertasGrupo: modoAlumno ? abiertasGrupo : null,
+      });
+      actualizarSub();
+
+      lista.querySelectorAll('.tr2-card-unidad').forEach((card) => {
+        card.onclick = (ev) => {
+          if (ev.target.closest('.tr2-switch')) return; // el interruptor no abre la unidad
+          if (card.classList.contains('locked')) {
+            mostrarAviso('Tu coach todavía no ha abierto esta unidad.');
+            return;
+          }
+          abrirUnidad(card.dataset.unidad);
+        };
+      });
+
+      lista.querySelectorAll('input[data-toggle]').forEach((inp) => {
+        inp.onchange = async () => {
+          const quiere = inp.checked;
+          const key = inp.dataset.toggle;
+          inp.disabled = true;
+          try {
+            await setApertura(grupoActivo.dias, grupoActivo.franja, key, quiere, modoAlumno ? alumnoElegido.id : undefined);
+            if (quiere) abiertas.add(key); else abiertas.delete(key);
+            inp.nextElementSibling.textContent = quiere ? 'Abierta' : 'Cerrada';
+            actualizarSub(); // el resumen de arriba ("N abiertas para este grupo") se mantiene al día
+          } catch (e) {
+            inp.checked = !quiere;
+            mostrarAviso((e && e.message) || 'No se pudo guardar. Intenta de nuevo.');
+          }
+          inp.disabled = false;
+        };
+      });
+    }
+
+    // "Primeros pasos · 7 unidades · 3 abiertas por tu coach": un resumen a la vista (solo muestra datos que ya se cargaron).
+    function actualizarSub() {
+      const el = document.getElementById('tr2-nivel-sub');
+      if (!el) return;
+      const info = NIVEL_INFO[nivelId] || {};
+      const n = unidadesCache.length;
+      const partes = [info.nombre, `${n} ${n === 1 ? 'unidad' : 'unidades'}`];
+      if (grupoActivo || abiertas.size) {
+        const modoAlumno = esCoach && !!alumnoElegido;
+        const ab = unidadesCache.filter((u) => {
+          const k = `${nivelId}-${u.id}`;
+          return abiertas.has(k) || (modoAlumno && abiertasGrupo.has(k));
+        }).length;
+        const para = esCoach ? (modoAlumno ? `para ${alumnoElegido.nombre}` : 'para este grupo') : 'por tu coach';
+        partes.push(`${ab} ${ab === 1 ? 'abierta' : 'abiertas'} ${para}`);
+      }
+      el.textContent = partes.filter(Boolean).join(' · ');
+    }
+
+    async function abrirUnidad(unidadId) {
+      const unidad = unidadesCache.find((u) => u.id === unidadId);
+      let pagina;
+      try {
+        pagina = await cargarPagina(nivelId, unidadId);
+      } catch (e) {
+        mostrarAviso((e && e.message) || 'No se pudo abrir la unidad. Intenta de nuevo.');
+        return;
+      }
+      if (!pagina || !unidad) {
+        mostrarAviso('Esta unidad todavía no tiene contenido cargado.');
+        return;
+      }
+
+      document.getElementById('tr2-vista-lista').style.display = 'none';
+      const vista = document.getElementById('tr2-vista-unidad');
+      vista.style.display = 'block';
+      vista.innerHTML = renderPortada(unidad, unidadId);
+      setUnidadActual(unidadId, unidad.nombre);
+
+      document.getElementById('btn-volver-lista').onclick = mostrarLista;
+
+      document.getElementById('btn-entrar-clase').onclick = () => {
+        vista.innerHTML = renderContenido(pagina, unidad, unidadId);
+        activarVelocidad(vista);
+        cargarEstadosEntrega(vista);
+
+        document.getElementById('btn-volver-portada').onclick = () => abrirUnidad(unidadId);
+
+        vista.querySelectorAll('.tr2-tab[data-tab]').forEach((tab) => {
+          tab.onclick = () => {
+            vista.querySelectorAll('.tr2-tab[data-tab]').forEach((t) => t.classList.remove('active'));
+            vista.querySelectorAll('.tr2-tab-panel').forEach((p) => (p.style.display = 'none'));
+            tab.classList.add('active');
+            document.getElementById(`tr2-tab-${tab.dataset.tab}`).style.display = 'block';
+          };
+        });
+      };
+    }
+
+    function mostrarLista() {
+      document.getElementById('tr2-vista-unidad').style.display = 'none';
+      document.getElementById('tr2-vista-lista').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>

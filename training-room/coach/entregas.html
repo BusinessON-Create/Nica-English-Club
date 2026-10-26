@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entregas — Class Room</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+  .tr2-entrega-card { background:var(--card); border:1px solid var(--border2); border-radius:var(--r); padding:18px; margin-bottom:14px; }
+  .tr2-entrega-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .tr2-entrega-alumno { font-family:var(--fh); font-size:17px; color:#fff; }
+  .tr2-entrega-meta { font-size:12px; color:var(--muted); }
+  .tr2-entrega-tipo { display:inline-flex; align-items:center; gap:6px; background:var(--gold-dim); color:var(--gold3); font:700 11.5px var(--fb); padding:4px 12px; border-radius:99px; }
+  .tr2-entrega-body { background:var(--card2); border-radius:var(--r-sm); padding:12px 14px; font-size:14px; margin:12px 0; white-space:pre-wrap; }
+  .tr2-entrega-acciones { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }
+  .tr2-btn-aprobar { background:rgba(143,214,164,.14); border:1px solid var(--green); color:var(--green); padding:8px 16px; border-radius:99px; font:700 13px var(--fb); cursor:pointer; }
+  .tr2-btn-refuerzo { background:rgba(255,92,92,.14); border:1px solid var(--red); color:var(--red); padding:8px 16px; border-radius:99px; font:700 13px var(--fb); cursor:pointer; }
+  .tr2-feedback-input { flex:1; min-width:200px; background:var(--card); border:1px solid var(--border2); color:var(--text); padding:9px 12px; border-radius:99px; font:400 13px var(--fb); }
+  .tr2-ia-botones { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .tr2-btn-ia { background:var(--card2); border:1px solid var(--gold2); color:var(--gold3); padding:7px 14px; border-radius:99px; font:700 12.5px var(--fb); cursor:pointer; }
+  .tr2-btn-ia.tr2-btn-ia-suave { border-color:var(--border2); color:var(--muted); }
+
+  .tr2-barra { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:18px; }
+  .tr2-seg { display:inline-flex; background:var(--card2); border:1px solid var(--border2); border-radius:99px; padding:3px; }
+  .tr2-seg button { background:transparent; border:0; color:var(--muted); font:700 12.5px var(--fb); padding:7px 16px; border-radius:99px; cursor:pointer; }
+  .tr2-seg button.on { background:var(--gold-dim); color:var(--gold3); }
+  #sel-grupo { font:inherit; font-size:13px; padding:8px 12px; border-radius:99px; background:var(--card); color:var(--text); border:1px solid var(--border2); max-width:100%; }
+  .tr2-seccion { margin-top:22px; }
+  .tr2-seccion-head { display:flex; align-items:baseline; gap:10px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border2); }
+  .tr2-seccion-head span { font-family:var(--fh); font-size:18px; color:#fff; }
+  .tr2-seccion-head small { color:var(--muted); font-size:12px; }
+  .tr2-seccion-head b { margin-left:auto; background:var(--gold-dim); color:var(--gold3); font:700 12px var(--fb); padding:2px 10px; border-radius:99px; }
+  .tr2-estado-rev { display:inline-block; font:700 11.5px var(--fb); padding:3px 12px; border-radius:99px; }
+  .tr2-estado-rev.aprobada { background:rgba(143,214,164,.14); color:var(--green); }
+  .tr2-estado-rev.refuerzo { background:rgba(255,92,92,.14); color:var(--red); }
+  .tr2-btn-borrar { background:transparent; border:1px solid var(--border2); color:var(--muted); padding:6px 14px; border-radius:99px; font:600 12.5px var(--fb); cursor:pointer; }
+  .tr2-btn-borrar:hover { border-color:var(--red); color:var(--red); }
+  .tr2-fb-rev { background:var(--card2); border-radius:var(--r-sm); padding:10px 14px; font-size:13.5px; margin-top:8px; white-space:pre-wrap; }
+</style>
+<link rel="stylesheet" href="../../identidad/identidad.css?v=1">
+</head>
+<body>
+
+  <nav class="tr2-nav" id="tr2-nav"></nav>
+
+  <div class="tr2-shell">
+    <h1 class="tr2-h1" id="tr2-titulo">Cargando…</h1>
+    <p class="tr2-sub">Speaking y Writing de los alumnos de tus grupos. El alumno no ve nada hasta que tú apruebes. Si tu cuenta tiene la IA activada, en Writing puedes pedir un borrador y decidir si lo usas, lo editas o lo descartas; si no, revisa de forma manual. La evaluación final siempre es tuya.</p>
+    <div class="tr2-barra" id="tr2-barra" style="display:none;">
+      <div class="tr2-seg" id="seg-tab">
+        <button data-tab="pendientes" class="on">Pendientes</button>
+        <button data-tab="revisadas">Revisadas</button>
+      </div>
+      <div class="tr2-seg" id="seg-vista">
+        <button data-vista="grupo" class="on">Por grupo</button>
+        <button data-vista="alumno">Por alumno</button>
+      </div>
+      <select id="sel-grupo" style="display:none;"></select>
+    </div>
+    <div id="tr2-lista" style="margin-top:6px;"></div>
+  </div>
+
+  <script type="module">
+    import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
+    import { montarBarra, pintarAvatar, pintarNotifBadge } from "../assets/js/barra-red.js";
+    import { collection, query, where, orderBy, limit, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+    import { mostrarAviso } from "../assets/js/ui.js";
+
+    // Todo lo que escribió un alumno (o la IA) se escapa antes de pintarlo.
+    const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    // Solo se reproduce un audio si es realmente un data URI de audio.
+    const AUDIO_OK = /^data:audio\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/;
+
+    // Mismo slug que coach/index.html y el servidor.
+    const slugG = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const claveGrupo = (g) => `${slugG(g.dias)}__${slugG(g.franja)}`;
+    const ms = (ts) => (ts && ts.toMillis ? ts.toMillis() : 0);
+    const fechaTxt = (ts) => (ts && ts.toDate ? ts.toDate().toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' }) : '');
+    const ETQ = { aprobada: 'Aprobada', refuerzo: 'Necesita refuerzo' };
+
+    function panelIA(ia) {
+      const errores = (ia.errores || []).map((e) =>
+        `<li><span class="tr2-ia-mal">${esc(e.original)}</span> → <span class="tr2-ia-bien">${esc(e.correccion)}</span><small>${esc(e.explicacion)}</small></li>`
+      ).join('');
+      return `
+        <div class="tr2-ia" data-panel-ia>
+          <div class="tr2-ia-head">
+            <span><i class="fa-solid fa-wand-magic-sparkles"></i> Borrador de la IA</span>
+            <span class="tr2-ia-nota">${esc(ia.notaEstimada)}/100 estimada</span>
+          </div>
+          ${ia.comentario ? `<p>${esc(ia.comentario)}</p>` : ''}
+          ${ia.correccion ? `<div class="tr2-ia-corr"><b>Texto corregido:</b><p>${esc(ia.correccion)}</p></div>` : ''}
+          ${errores ? `<ul class="tr2-ia-errores">${errores}</ul>` : ''}
+          <div class="tr2-ia-botones">
+            <button class="tr2-btn-ia" data-ia="usar"><i class="fa-solid fa-check"></i> Usar como feedback</button>
+            <button class="tr2-btn-ia tr2-btn-ia-suave" data-ia="descartar"><i class="fa-solid fa-xmark"></i> Descartar borrador</button>
+          </div>
+        </div>`;
+    }
+
+    // Texto de feedback que se arma a partir del borrador (el coach lo puede editar).
+    function feedbackDesdeIA(ia) {
+      const partes = [];
+      if (ia.comentario) partes.push(ia.comentario);
+      const top = (ia.errores || []).slice(0, 3).map((e) => `"${e.original}" → "${e.correccion}"`);
+      if (top.length) partes.push('Corrige: ' + top.join('; ') + '.');
+      return partes.join(' ');
+    }
+
+    // ── Agrupar (por grupo o por alumno). Solo entran alumnos de los grupos del coach. ──
+    function agrupar(lista, modo, roster, grupos, claveFecha) {
+      const porFecha = (a, b) => claveFecha(b) - claveFecha(a);
+      if (modo === 'grupo') {
+        const mapa = new Map(grupos.map((g) => [claveGrupo(g), { titulo: `${g.dias} · ${g.franja}`, sub: '', items: [] }]));
+        for (const e of lista) {
+          const r = roster.get(e.alumnoId);
+          if (r && mapa.has(r.grupoKey)) mapa.get(r.grupoKey).items.push(e);
+        }
+        return [...mapa.values()].filter((s) => s.items.length).map((s) => ({ ...s, items: s.items.sort(porFecha) }));
+      }
+      const mapa = new Map();
+      for (const e of lista) {
+        const r = roster.get(e.alumnoId);
+        if (!r) continue;
+        if (!mapa.has(e.alumnoId)) mapa.set(e.alumnoId, { titulo: r.nombre, sub: r.grupoTxt, items: [] });
+        mapa.get(e.alumnoId).items.push(e);
+      }
+      return [...mapa.values()].map((s) => ({ ...s, items: s.items.sort(porFecha) }))
+        .sort((a, b) => a.titulo.localeCompare(b.titulo, 'es'));
+    }
+
+    function cuerpoHTML(e) {
+      return e.tipo === 'writing'
+        ? esc(e.texto || '')
+        : (AUDIO_OK.test(e.audioBase64 || '')
+            ? `<audio controls style="width:100%;" src="${e.audioBase64}"></audio>`
+            : `<span class="tr2-muted">${e.audioBorrado ? 'Audio borrado para liberar espacio. La calificación se conserva.' : 'Audio no disponible.'}</span>`);
+    }
+
+    function cabeceraHTML(e) {
+      const esWriting = e.tipo === 'writing';
+      return `
+          <div class="tr2-entrega-head">
+            <div>
+              <div class="tr2-entrega-alumno">${esc(e.alumnoNombre || e.alumnoEmail || 'Alumno')}</div>
+              <div class="tr2-entrega-meta">${esc(String(e.nivelId || '').toUpperCase())} · ${esc(e.unidadNombre || e.unidadId)}</div>
+            </div>
+            <span class="tr2-entrega-tipo"><i class="fa-solid ${esWriting ? 'fa-pen-nib' : 'fa-microphone'}"></i> ${esWriting ? 'Writing' : 'Speaking'}</span>
+          </div>`;
+    }
+
+    function tarjetaPendiente(e, puedeIA) {
+      const zonaIA = (e.tipo === 'writing' && puedeIA)
+        ? `<div class="tr2-ia-zona" data-zona-ia><button class="tr2-btn-ia" data-pedir-ia><i class="fa-solid fa-wand-magic-sparkles"></i> Revisar con IA</button></div>`
+        : '';
+      return `
+        <div class="tr2-entrega-card" data-id="${esc(e.id)}">
+          ${cabeceraHTML(e)}
+          <div class="tr2-entrega-body">${cuerpoHTML(e)}</div>
+          ${zonaIA}
+          <div class="tr2-entrega-acciones">
+            <input type="text" class="tr2-feedback-input" placeholder="Feedback para el alumno (opcional)">
+            <button class="tr2-btn-aprobar" data-veredicto="aprobada"><i class="fa-solid fa-check"></i> Aprobar</button>
+            <button class="tr2-btn-refuerzo" data-veredicto="refuerzo"><i class="fa-solid fa-rotate-left"></i> Necesita refuerzo</button>
+          </div>
+        </div>`;
+    }
+
+    function tarjetaRevisada(e) {
+      const cuando = fechaTxt(e.calificadoEn);
+      return `
+        <div class="tr2-entrega-card" data-id="${esc(e.id)}">
+          ${cabeceraHTML(e)}
+          <div class="tr2-entrega-body">${cuerpoHTML(e)}</div>
+          <span class="tr2-estado-rev ${esc(e.estado)}">${esc(ETQ[e.estado] || e.estado)}</span>
+          ${cuando ? `<span class="tr2-entrega-meta" style="margin-left:8px;">${esc(cuando)}</span>` : ''}
+          ${e.feedbackCoach ? `<div class="tr2-fb-rev"><b>Tu feedback:</b> ${esc(e.feedbackCoach)}</div>` : ''}
+          ${(e.tipo === 'speaking' && AUDIO_OK.test(e.audioBase64 || ''))
+            ? `<div style="margin-top:10px;"><button class="tr2-btn-borrar" data-borrar-audio><i class="fa-solid fa-trash"></i> Borrar audio</button></div>`
+            : ''}
+        </div>`;
+    }
+
+    montarBarra({ portal: '../../', volver: { href: '../index.html', title: 'Class Room' }, titulo: 'Entregas', icono: 'fa-inbox' });
+
+    (async function init() {
+      const resultado = await esperarSesionYAlumno();
+      if (!resultado) return;
+      const { alumno } = resultado;
+      pintarAvatar(alumno);
+      pintarNotifBadge(alumno);
+      const titulo = document.getElementById('tr2-titulo');
+
+      if (!alumno.esCoach) {
+        titulo.textContent = 'Solo coaches pueden ver esta página.';
+        return;
+      }
+
+      const puedeIA = alumno.iaCoach === true; // lo activa el admin desde su panel
+      const grupos = Array.isArray(alumno.horariosCoach) ? alumno.horariosCoach : [];
+      const db = window.trv2_db;
+      const lista = document.getElementById('tr2-lista');
+
+      if (!grupos.length) {
+        titulo.textContent = 'Aún no tienes grupos asignados.';
+        lista.innerHTML = '<p class="tr2-muted">Cuando el admin te asigne grupos, aquí verás las entregas de sus alumnos.</p>';
+        return;
+      }
+
+      // Alumnos de cada grupo del coach (alumnoId -> nombre y grupo).
+      const roster = new Map();
+      for (const g of grupos) {
+        const snap = await getDocs(query(collection(db, 'alumnos'),
+          where('horario.dias', '==', g.dias), where('horario.franja', '==', g.franja)));
+        snap.docs.forEach((d) => {
+          const a = d.data();
+          roster.set(d.id, { nombre: a.nombre || a.email || 'Alumno', grupoKey: claveGrupo(g), grupoTxt: `${g.dias} · ${g.franja}` });
+        });
+      }
+
+      let tab = 'pendientes', vista = 'grupo', filtro = 'todos';
+      let pendientes = [], revisadas = [];
+      const procesadas = new Set();
+      const borradores = new Map();
+
+      const snapP = await getDocs(query(collection(db, 'training_v2_entregas'), where('estado', '==', 'pendiente')));
+      pendientes = snapP.docs.map((d) => ({ id: d.id, ...d.data() })).filter((e) => roster.has(e.alumnoId));
+
+      async function cargarRevisadas() {
+        const snap = await getDocs(query(collection(db, 'training_v2_entregas'), orderBy('calificadoEn', 'desc'), limit(100)));
+        revisadas = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          .filter((e) => e.estado && e.estado !== 'pendiente' && roster.has(e.alumnoId));
+      }
+
+      function base() {
+        let b = tab === 'pendientes' ? pendientes.filter((e) => !procesadas.has(e.id)) : revisadas;
+        if (filtro !== 'todos') b = b.filter((e) => (roster.get(e.alumnoId) || {}).grupoKey === filtro);
+        return b;
+      }
+
+      function render() {
+        const b = base();
+        const clave = tab === 'pendientes' ? (e) => ms(e.fecha) : (e) => ms(e.calificadoEn);
+        const secciones = agrupar(b, vista, roster, grupos, clave);
+        titulo.textContent = tab === 'pendientes'
+          ? `${b.length} pendiente${b.length === 1 ? '' : 's'}`
+          : `${b.length} revisada${b.length === 1 ? '' : 's'} (las más recientes)`;
+        if (!secciones.length) {
+          lista.innerHTML = `<p class="tr2-muted" style="margin-top:20px;">${tab === 'pendientes' ? 'No hay entregas pendientes por ahora.' : 'Todavía no hay entregas revisadas.'}</p>`;
+          return;
+        }
+        lista.innerHTML = secciones.map((s) => `
+          <div class="tr2-seccion">
+            <div class="tr2-seccion-head"><span>${esc(s.titulo)}</span>${s.sub ? `<small>${esc(s.sub)}</small>` : ''}<b>${s.items.length}</b></div>
+            ${s.items.map((e) => (tab === 'pendientes' ? tarjetaPendiente(e, puedeIA) : tarjetaRevisada(e))).join('')}
+          </div>`).join('');
+      }
+
+      // Controles
+      document.getElementById('tr2-barra').style.display = 'flex';
+      const sel = document.getElementById('sel-grupo');
+      if (grupos.length > 1) {
+        sel.style.display = '';
+        sel.innerHTML = '<option value="todos">Todos mis grupos</option>' +
+          grupos.map((g) => `<option value="${esc(claveGrupo(g))}">${esc(g.dias)} · ${esc(g.franja)}</option>`).join('');
+        sel.onchange = () => { filtro = sel.value; render(); };
+      }
+      document.querySelectorAll('#seg-tab button').forEach((btn) => {
+        btn.onclick = async () => {
+          tab = btn.dataset.tab;
+          document.querySelectorAll('#seg-tab button').forEach((x) => x.classList.toggle('on', x === btn));
+          if (tab === 'revisadas') {
+            lista.innerHTML = '<p class="tr2-muted" style="margin-top:20px;">Cargando…</p>';
+            try { await cargarRevisadas(); } catch (err) { console.error(err); lista.innerHTML = '<p class="tr2-muted">No se pudieron cargar las revisadas.</p>'; return; }
+          }
+          render();
+        };
+      });
+      document.querySelectorAll('#seg-vista button').forEach((btn) => {
+        btn.onclick = () => {
+          vista = btn.dataset.vista;
+          document.querySelectorAll('#seg-vista button').forEach((x) => x.classList.toggle('on', x === btn));
+          render();
+        };
+      });
+
+      // Acciones sobre las tarjetas (delegación: sobreviven a re-pintar la lista)
+      lista.addEventListener('click', async (ev) => {
+        const pedir = ev.target.closest('[data-pedir-ia]');
+        const accion = ev.target.closest('[data-ia]');
+        const veredicto = ev.target.closest('[data-veredicto]');
+        const borrar = ev.target.closest('[data-borrar-audio]');
+
+        if (borrar) {
+          const card = borrar.closest('.tr2-entrega-card');
+          const ok = window.confirm('¿Seguro que quieres borrar este audio?\n\nEsta acción no se puede deshacer. La calificación y tu feedback se conservan.');
+          if (!ok) return;
+          borrar.disabled = true;
+          try {
+            await updateDoc(doc(db, 'training_v2_entregas', card.dataset.id), {
+              audioBase64: null,
+              audioBorrado: true,
+              audioBorradoEn: serverTimestamp(),
+              borradoPor: alumno.id,
+            });
+          } catch (err) {
+            console.error(err);
+            borrar.disabled = false;
+            mostrarAviso('No se pudo borrar el audio. Intenta de nuevo.');
+            return;
+          }
+          const item = revisadas.find((x) => x.id === card.dataset.id);
+          if (item) { item.audioBase64 = null; item.audioBorrado = true; }
+          card.querySelector('.tr2-entrega-body').innerHTML = cuerpoHTML({ tipo: 'speaking', audioBase64: null, audioBorrado: true });
+          borrar.parentElement.remove();
+          mostrarAviso('Audio borrado.');
+          return;
+        }
+
+        if (pedir) {
+          const card = pedir.closest('.tr2-entrega-card');
+          const zona = card.querySelector('[data-zona-ia]');
+          pedir.disabled = true;
+          pedir.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Generando borrador…';
+          try {
+            const revisar = httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2WritingFeedback');
+            const r = await revisar({ entregaId: card.dataset.id });
+            borradores.set(card.dataset.id, r.data.feedback);
+            zona.innerHTML = panelIA(r.data.feedback);
+          } catch (err) {
+            console.warn('Borrador de IA no disponible:', err);
+            zona.innerHTML = `<p class="tr2-nota" style="margin-bottom:8px;">${esc((err && err.message) || 'No se pudo generar el borrador.')} Puedes revisar de forma manual.</p>`;
+          }
+          return;
+        }
+
+        if (accion) {
+          const card = accion.closest('.tr2-entrega-card');
+          const input = card.querySelector('.tr2-feedback-input');
+          const ia = borradores.get(card.dataset.id);
+          if (accion.dataset.ia === 'usar' && ia) {
+            input.value = feedbackDesdeIA(ia);
+            card.dataset.iaDecision = 'aceptado';
+          } else if (accion.dataset.ia === 'descartar') {
+            card.querySelector('[data-panel-ia]').style.display = 'none';
+            card.dataset.iaDecision = 'descartado';
+          }
+          return;
+        }
+
+        if (veredicto) {
+          const card = veredicto.closest('.tr2-entrega-card');
+          const feedback = card.querySelector('.tr2-feedback-input').value.trim();
+          veredicto.disabled = true;
+          try {
+            await updateDoc(doc(db, 'training_v2_entregas', card.dataset.id), {
+              estado: veredicto.dataset.veredicto,
+              feedbackCoach: feedback || null,
+              iaDecision: card.dataset.iaDecision || null,
+              calificadoPor: alumno.id,
+              calificadoEn: serverTimestamp(),
+            });
+          } catch (err) {
+            console.error(err);
+            veredicto.disabled = false;
+            mostrarAviso('No se pudo guardar. Intenta de nuevo.');
+            return;
+          }
+          procesadas.add(card.dataset.id);
+          // Avisa al alumno que ya le revisaron (si falla, la revisión ya quedó guardada; no pasa nada).
+          try {
+            httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2Notificar')({ entregaId: card.dataset.id, evento: 'revisada' })
+              .catch((err) => console.warn('No se pudo avisar al alumno:', err));
+          } catch (err) { console.warn('No se pudo avisar al alumno:', err); }
+          card.style.opacity = '.4';
+          card.querySelectorAll('button,input').forEach((el) => (el.disabled = true));
+          const quedan = pendientes.filter((e) => !procesadas.has(e.id)).length;
+          titulo.textContent = `${quedan} pendiente${quedan === 1 ? '' : 's'}`;
+        }
+      });
+      lista.addEventListener('input', (ev) => {
+        const input = ev.target.closest('.tr2-feedback-input');
+        if (!input) return;
+        const card = input.closest('.tr2-entrega-card');
+        if (card.dataset.iaDecision === 'aceptado') card.dataset.iaDecision = 'editado';
+      });
+
+      render();
+    })();
+  </script>
+
+</body>
+</html>
