@@ -60,12 +60,17 @@ export async function pintarNiveles(alumno) {
     const pos = NIVELES.indexOf(nivel);
     // "Tu camino": 5 rayitas, encendidas hasta la posición de este nivel (A1 = 1 ... C1 = 5)
     const camino = NIVELES.map((_, i) => `<i class="${i <= pos ? "on" : ""}"></i>`).join("");
+    const unidadesTxt = info.unidades ? `${info.unidades} ${info.unidades === 1 ? "unidad" : "unidades"}` : "";
     card.innerHTML = `
       <div class="tr2-nivel-badge">${nivel.nombre}</div>
       <div class="tr2-nivel-info">
         <div class="tr2-nivel-nombre">${info.nombre || nivel.nombre}</div>
-        <div class="tr2-nivel-estado ${desbloqueado ? "unlocked" : ""}">
-          ${desbloqueado ? "Disponible" : "Tu coach lo desbloqueará pronto"}
+        ${info.frase ? `<div class="tr2-nivel-frase">${info.frase}</div>` : ""}
+        <div class="tr2-nivel-meta">
+          <span class="tr2-nivel-estado ${desbloqueado ? "unlocked" : ""}">
+            ${desbloqueado ? "Disponible" : "Tu coach lo desbloqueará pronto"}
+          </span>
+          ${unidadesTxt ? `<span class="tr2-nivel-unidades">${unidadesTxt}</span>` : ""}
         </div>
         <div class="tr2-nivel-camino" aria-hidden="true">${camino}</div>
       </div>

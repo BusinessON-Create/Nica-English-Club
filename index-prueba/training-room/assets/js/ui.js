@@ -1,12 +1,14 @@
 // ui.js — piezas visuales compartidas del Class Room (avisos suaves y nombres de nivel).
 
-// Nombre amable de cada nivel (el estándar CEFR). Se puede editar aquí sin tocar nada más.
+// Nombre amable de cada nivel (el estándar CEFR), una frase corta de lo que se logra
+// y cuántas unidades tiene. Todo se puede editar aquí sin tocar nada más.
+// Si agregas o quitas unidades en un nivel, cambia también su número en "unidades".
 export const NIVEL_INFO = {
-  a1: { nombre: 'Primeros pasos' },
-  a2: { nombre: 'Básico' },
-  b1: { nombre: 'Intermedio' },
-  b2: { nombre: 'Intermedio alto' },
-  c1: { nombre: 'Avanzado' },
+  a1: { nombre: 'Primeros pasos',   frase: 'Aprende a presentarte y a hablar de ti',          unidades: 7 },
+  a2: { nombre: 'Básico',           frase: 'Cuenta tu día a día y lo que ya pasó',            unidades: 9 },
+  b1: { nombre: 'Intermedio',       frase: 'Habla de experiencias, planes y opiniones',       unidades: 11 },
+  b2: { nombre: 'Intermedio alto',  frase: 'Conversa con fluidez sobre temas variados',       unidades: 13 },
+  c1: { nombre: 'Avanzado',         frase: 'Expresa ideas complejas con precisión',           unidades: 12 },
 };
 
 // Aviso flotante que se oculta solo. Reemplaza al alert() del navegador, que es brusco y tapa todo.
