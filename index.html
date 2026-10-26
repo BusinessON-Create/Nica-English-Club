@@ -1143,6 +1143,44 @@ body.neclub-visitante .neclub-composer { display:none; }
 .notif-badge { position:absolute; top:-3px; right:-3px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:var(--red); color:#fff; font-size:9px; font-weight:800; display:none; align-items:center; justify-content:center; border:2px solid var(--bg); }
 .notif-badge.show { display:flex; }
 .notif-bell-btn.tiene-pendientes { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); color: var(--gold); }
+/* ===== MI PANEL (alumno) ===== */
+.panel-shell{max-width:760px;margin:0 auto;padding:18px 16px 90px;display:flex;flex-direction:column;gap:16px}
+.panel-hero{display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--r-xl);background:linear-gradient(135deg,var(--card2),var(--card));border:1px solid var(--border2);box-shadow:var(--shadow-card)}
+.panel-ava{width:84px;height:84px;border-radius:50%;padding:3px;background:conic-gradient(var(--gold),var(--gold3),var(--gold2),var(--gold));flex:none}
+.panel-ava>div{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--card);display:flex;align-items:center;justify-content:center;font:800 32px var(--fh);color:var(--gold)}
+.panel-ava img{width:100%;height:100%;object-fit:cover}
+.panel-hero h2{font-family:var(--fh);font-size:22px;color:#fff;line-height:1.15}
+.panel-hero small{color:var(--muted);font-size:12.5px;display:block;margin-top:3px}
+.panel-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.panel-pill{padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;background:var(--gold-dim);color:var(--gold3);border:1px solid var(--border2)}
+.panel-card{padding:18px;border-radius:var(--r-lg);background:var(--card);border:1px solid var(--border)}
+.panel-card h3{font-family:var(--fh);font-size:16px;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel-card h3 i{color:var(--gold)}
+.panel-card h3 .panel-count{margin-left:auto;font:700 11px var(--fb);color:var(--muted)}
+.panel-note{padding:14px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border2);margin-bottom:10px}
+.panel-note.nueva{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+.panel-note .meta{font-size:11px;color:var(--muted-dim);margin-bottom:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.panel-note p{font-size:13.5px;line-height:1.5;color:var(--text);margin-top:5px}
+.panel-tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:10.5px;font-weight:800;color:#000}
+.panel-new{background:var(--gold);color:#000;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
+.panel-more{background:none;border:0;color:var(--gold);font:700 12.5px var(--fb);cursor:pointer;padding:6px 0}
+.panel-empty{color:var(--muted);font-size:13px;line-height:1.5}
+.panel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.panel-stat{text-align:center;padding:14px 6px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border)}
+.panel-stat b{display:block;font:800 24px var(--fh);color:var(--gold)}
+.panel-stat span{font-size:11px;color:var(--muted)}
+.panel-bar{height:8px;border-radius:99px;background:var(--border2);overflow:hidden;margin-bottom:12px}
+.panel-bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold3));border-radius:99px;transition:width .6s var(--ease)}
+.panel-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.panel-chip{padding:5px 11px;border-radius:99px;font-size:12px;background:var(--card2);border:1px solid var(--border2);color:var(--text)}
+.panel-chip em{font-style:normal;color:var(--red);font-weight:800;margin-left:4px}
+.panel-links{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.panel-link{display:flex;align-items:center;gap:10px;padding:14px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border2);color:#fff;font:700 13px var(--fb);cursor:pointer;text-align:left}
+.panel-link i{color:var(--gold);font-size:16px}
+@media(min-width:720px){.panel-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
+.panel-cols{display:flex;flex-direction:column;gap:16px}
+@media(min-width:720px){.panel-cols{display:grid}}
+
 .notif-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); z-index:590; display:none; align-items:center; justify-content:center; padding:20px; animation: fadeIn .2s var(--ease) both; }
 .notif-backdrop.open { display:flex; }
 .notif-dropdown { position:relative; width:340px; max-width:100%; max-height:100%; overflow-y:auto; background:var(--card); border:1px solid var(--border2); border-radius:var(--r-lg); box-shadow:var(--shadow-card); padding:14px; animation: fadeUp .25s var(--ease) both; }
@@ -2048,6 +2086,17 @@ select.admin-input option{background:#1d1912;color:#fff}
 
   <!-- NECLUB SCREEN — mini red social interna (feed, estilo Instagram/Facebook) -->
 
+  <!-- MI PANEL — panel personal del alumno (notas del coach, progreso, actividades, verbos, medallas) -->
+  <div id="s-panel" class="screen">
+    <nav class="stu-nav">
+      <div class="tr-nav-left">
+        <button class="btn-salir" onclick="showScreen('s-student')" title="Volver"><i class="fa-solid fa-arrow-left"></i></button>
+        <span class="tr-nav-title"><i class="fa-solid fa-chart-line" style="color:var(--gold); margin-right:6px;"></i>Mi panel</span>
+      </div>
+    </nav>
+    <div class="panel-shell" id="panel-content"></div>
+  </div>
+
   <!-- TRAINING ROOM SCREEN — programa de 5 días por semana, progreso individual -->
   <div id="s-training" class="screen">
     <nav class="stu-nav">
@@ -2297,23 +2346,6 @@ select.admin-input option{background:#1d1912;color:#fff}
           <div class="info-badges-row" id="perfil-info-badges"></div>
         </div>
       </div>
-
-      <details class="perfil-acc" open>
-        <summary><span><i class="fa-solid fa-chart-line"></i>Tu progreso</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
-        <div class="perfil-acc-body">
-          <div class="perfil-stats-row" id="perfil-stats-row"></div>
-          <div class="tr-badges-row" id="perfil-badges-row" style="margin-top:10px;"></div>
-        </div>
-      </details>
-
-      <details class="perfil-acc" open>
-        <summary><span><i class="fa-solid fa-clipboard-list"></i>Mi seguimiento</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
-        <div class="perfil-acc-body">
-          <p class="form-hint" style="margin-bottom:10px;">Notas que tu coach decidió compartir contigo.</p>
-          <div id="perfil-seguimiento-lista"></div>
-          <p class="form-hint" id="perfil-seguimiento-vacio" style="display:none;">Todavía no tenés notas de seguimiento compartidas.</p>
-        </div>
-      </details>
 
       <details class="perfil-acc">
         <summary><span><i class="fa-brands fa-whatsapp"></i>Contacto</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
@@ -3188,6 +3220,7 @@ function montarNeclubEnHome(html) {
     campana.innerHTML = '<button class="notif-bell-btn" onclick="toggleNeclubNotifDropdown()" title="NECLUB notifications"><i class="fa-solid fa-bell"></i><span class="notif-badge" id="neclub-notif-badge">0</span></button>';
     acciones.insertBefore(campana, acciones.querySelector('button[onclick^="abrirChatFlotante"]') || acciones.firstChild);
     renderNeclubNotifBadge();
+    if (window.panelMontarBoton) window.panelMontarBoton();
   }
 }
 // Lleva al alumno al inicio del feed de NECLUB, dentro de la pantalla principal.
@@ -3814,6 +3847,7 @@ function renderActividadesPendientesIndicator() {
   const btn = document.getElementById('btn-actividades-bell');
   if (btn) btn.classList.toggle('tiene-pendientes', hayPendientes);
   updateHamburgerHighlight();
+  try { if (window.panelRefrescar) window.panelRefrescar(); } catch (e) {}
 }
 
 /* ===== SONIDO "DING" DE NOTIFICACIÓN (generado con WebAudio, no depende de archivos) ===== */
@@ -5525,7 +5559,7 @@ window.menuIr = (id) => {
     case 'classroom':   window.location.href = './training-room/index.html'; break;
     case 'recursos':
     case 'videos':      abrirSalaDirecta(b.destino); break;
-    case 'actividades': toggleNotifDropdown(); break;
+    case 'actividades': abrirMiPanel(); break;
     default:            abrirEnlaceMenu(b);          // 'link' (o botones viejos sin destino)
   }
 };
@@ -8735,34 +8769,156 @@ window.abrirPerfil = () => {
     perfilBadgesEl.innerHTML = chips.length ? chips.join('') : `<span class="tr-badge-chip" style="opacity:.55;"><i class="fa-solid fa-lock"></i> No badges yet — keep training!</span>`;
   }
   document.getElementById('modal-perfil-bg').classList.add('open');
-  cargarSeguimientoPerfil();
 };
 const ETQ_COACH_COLOR = { 'Excelente': 'var(--green)', 'Buen progreso': 'var(--blue)', 'Necesita repaso': 'var(--gold3)', 'Ausente': 'var(--red)' };
-async function cargarSeguimientoPerfil() {
-  const lista = document.getElementById('perfil-seguimiento-lista');
-  const vacio = document.getElementById('perfil-seguimiento-vacio');
-  if (!lista || !sessionActiva) return;
-  lista.innerHTML = '<p class="form-hint">Cargando…</p>';
-  vacio.style.display = 'none';
+/* ===== MI PANEL ===== */
+let panelNotas = [], panelNotasUnsub = null, panelNotasId = null, panelVerbosCache = null, panelMostrarTodas = false;
+const panelVistoKey = () => 'nec_panel_visto_' + (sessionActiva ? sessionActiva.id : '');
+function panelVisto() {
+  let v = Number(sessionActiva && sessionActiva.panel_visto) || 0;
+  try { v = Math.max(v, Number(localStorage.getItem(panelVistoKey())) || 0); } catch (e) {}
+  return v;
+}
+function panelMs(n) { const t = n.actualizadoEn; return t && t.toMillis ? t.toMillis() : (Number(t) || 0); }
+function panelNotasNuevas() {
+  const v = panelVisto() || (Date.now() - 14 * 864e5);   // alumno nuevo: solo cuenta lo de las últimas 2 semanas
+  return panelNotas.filter(n => panelMs(n) > v).length;
+}
+function panelPendientes() {
+  const checks = (sessionActiva && sessionActiva.checks_actividades) || {};
+  return (ultimasActividades || []).filter(a => !checks[a.id]).length;
+}
+window.panelActualizarBadge = function () {
+  const b = document.getElementById('panel-notif-badge');
+  if (!b || !sessionActiva) return;
+  const n = panelNotasNuevas() + panelPendientes();
+  b.innerText = n > 9 ? '9+' : n;
+  b.classList.toggle('show', n > 0);
+  const btn = b.closest('button'); if (btn) btn.classList.toggle('tiene-pendientes', n > 0);
+};
+window.panelRefrescar = function () {
+  window.panelActualizarBadge();
+  const sc = document.getElementById('s-panel');
+  if (sc && sc.classList.contains('active')) renderMiPanel(false);
+};
+// Botón "Mi panel" junto a la campanita + escucha en vivo de las notas del coach (se llama al mostrar el home)
+window.panelMontarBoton = function () {
+  if (!sessionActiva) return;
+  const acciones = document.querySelector('#s-student .nav-actions');
+  if (acciones && !document.getElementById('panel-notif-badge')) {
+    const w = document.createElement('div');
+    w.className = 'notif-wrap';
+    w.innerHTML = '<button class="notif-bell-btn" onclick="abrirMiPanel()" title="Mi panel"><i class="fa-solid fa-chart-line"></i><span class="notif-badge" id="panel-notif-badge">0</span></button>';
+    const campana = document.getElementById('neclub-notif-badge');
+    const ref = (campana && campana.closest('.notif-wrap')) || acciones.querySelector('button[onclick^="abrirChatFlotante"]') || acciones.firstChild;
+    acciones.insertBefore(w, ref);
+  }
+  if (panelNotasId !== sessionActiva.id) {
+    if (panelNotasUnsub) { try { panelNotasUnsub(); } catch (e) {} }
+    panelNotasId = sessionActiva.id; panelNotas = [];
+    panelNotasUnsub = onSnapshot(query(collection(db, 'alumnos', sessionActiva.id, 'seguimiento'), orderBy('fecha', 'desc'), limit(20)), snap => {
+      panelNotas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      window.panelRefrescar();
+    }, err => console.warn('No se pudo leer el seguimiento del coach:', err));
+  }
+  window.panelActualizarBadge();
+};
+window.abrirMiPanel = function () { panelMostrarTodas = false; showScreen('s-panel'); };
+window.panelToggleHistorial = function () { panelMostrarTodas = !panelMostrarTodas; renderMiPanel(false); };
+
+function panelNotaHTML(n, visto) {
+  const col = ETQ_COACH_COLOR[n.etiqueta] || 'var(--card2)';
+  const nueva = panelMs(n) > visto;
+  return `<div class="panel-note ${nueva ? 'nueva' : ''}">
+    <div class="meta">${nueva ? '<span class="panel-new">NUEVA</span>' : ''}<span>${escHtml(n.fecha || '')} · ${escHtml(n.dias || '')} · ${escHtml(n.franja || '')}</span><span>— ${escHtml(n.coachNombre || 'Coach')}</span></div>
+    ${n.etiqueta ? `<span class="panel-tag" style="background:${col}">${escHtml(n.etiqueta)}</span>` : ''}
+    ${n.notaGeneral ? `<p>${escHtml(n.notaGeneral)}</p>` : ''}
+    ${n.nota ? `<p style="color:var(--muted)">${escHtml(n.nota)}</p>` : ''}
+  </div>`;
+}
+async function panelCargarVerbos() {
+  const el = document.getElementById('panel-verbos-body');
+  if (!el || !sessionActiva) return;
   try {
-    const snap = await getDocs(query(collection(db, 'alumnos', sessionActiva.id, 'seguimiento'), orderBy('fecha', 'desc'), limit(20)));
-    if (snap.empty) { lista.innerHTML = ''; vacio.style.display = 'block'; return; }
-    lista.innerHTML = snap.docs.map(d => {
-      const s = d.data();
-      const etqColor = ETQ_COACH_COLOR[s.etiqueta] || 'var(--card2)';
-      const etqHtml = s.etiqueta ? `<span style="display:inline-block; padding:3px 10px; border-radius:99px; font-size:10.5px; font-weight:800; background:${etqColor}; color:#000; margin-bottom:6px;">${escHtml(s.etiqueta)}</span>` : '';
-      return `<div style="padding:12px 0; border-bottom:1px solid var(--border);">
-        <p style="font-size:11px; color:var(--muted-dim); margin-bottom:5px;">${escHtml(s.fecha)} · ${escHtml(s.dias)} · ${escHtml(s.franja)} — ${escHtml(s.coachNombre || 'Coach')}</p>
-        ${etqHtml}
-        ${s.notaGeneral ? `<p style="font-size:12.5px; color:var(--text); margin-top:4px;">${escHtml(s.notaGeneral)}</p>` : ''}
-        ${s.nota ? `<p style="font-size:12px; color:var(--muted); margin-top:4px;">${escHtml(s.nota)}</p>` : ''}
-      </div>`;
-    }).join('');
+    if (!panelVerbosCache || panelVerbosCache.id !== sessionActiva.id) {
+      const snap = await getDoc(doc(db, 'verblab', sessionActiva.id));
+      panelVerbosCache = { id: sessionActiva.id, d: snap.exists() ? snap.data() : {} };
+    }
+    const d = panelVerbosCache.d, favs = d.favs || {}, misses = d.misses || {};
+    const c = { new: 0, learning: 0, done: 0 };
+    Object.values(favs).forEach(f => { if (c[f.s] !== undefined) c[f.s]++; });
+    const total = c.new + c.learning + c.done;
+    const top = Object.entries(misses).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    if (!total && !top.length) { el.innerHTML = '<p class="panel-empty">Todavía no has guardado verbos. Entrá a Verb Lab y marcá los que quieras aprender. 💪</p>'; return; }
+    el.innerHTML = `<div class="panel-grid">
+        <div class="panel-stat"><b>${c.new}</b><span>🌱 Nuevos</span></div>
+        <div class="panel-stat"><b>${c.learning}</b><span>🏋️ Aprendiendo</span></div>
+        <div class="panel-stat"><b>${c.done}</b><span>✅ Listos</span></div></div>
+      ${top.length ? `<p class="panel-empty" style="margin-top:14px">Los que más te cuestan:</p><div class="panel-chips">${top.map(([k, n]) => `<span class="panel-chip">${escHtml(k.replace(/^pv:/, ''))}<em>×${n}</em></span>`).join('')}</div>` : ''}
+      ${d.best ? `<p class="panel-empty" style="margin-top:12px">🔥 Tu mejor racha en trivia: <b style="color:var(--gold)">${Number(d.best)}</b></p>` : ''}`;
   } catch (e) {
-    console.error('No se pudo cargar el seguimiento del coach:', e);
-    lista.innerHTML = '<p class="form-hint">No se pudo cargar el seguimiento ahora mismo.</p>';
+    console.warn('Panel: no se pudo leer Verb Lab', e);
+    el.innerHTML = '<p class="panel-empty">No se pudieron cargar tus verbos ahora mismo.</p>';
   }
 }
+window.renderMiPanel = function (marcarVisto = true) {
+  const cont = document.getElementById('panel-content');
+  if (!cont) return;
+  if (!sessionActiva) { cont.innerHTML = ''; return; }
+  window.panelMontarBoton();
+  const visto = panelVisto() || (Date.now() - 14 * 864e5);
+  const foto = resolverUrlDrive(sessionActiva.foto || '');
+  const avatar = foto ? `<img src="${foto}" alt="">` : escHtml(sessionActiva.nombre.charAt(0).toUpperCase());
+  const racha = (document.getElementById('racha-badge-num') || {}).innerText || '0';
+  let pills = '';
+  if (sessionActiva.plan) pills += `<span class="panel-pill"><i class="fa-solid fa-gem"></i> ${escHtml(sessionActiva.plan)}</span>`;
+  if (sessionActiva.horario && sessionActiva.horario.dias) pills += `<span class="panel-pill"><i class="fa-regular fa-clock"></i> ${escHtml(sessionActiva.horario.dias)} · ${escHtml(sessionActiva.horario.franja)}</span>`;
+  pills += `<span class="panel-pill">🔥 ${escHtml(racha)} días de racha</span>`;
+
+  const verTodas = panelMostrarTodas ? panelNotas : panelNotas.slice(0, 1);
+  const notasHtml = panelNotas.length
+    ? verTodas.map(n => panelNotaHTML(n, visto)).join('') + (panelNotas.length > 1 ? `<button class="panel-more" onclick="panelToggleHistorial()">${panelMostrarTodas ? 'Ver solo la última' : `Ver historial (${panelNotas.length})`}</button>` : '')
+    : '<p class="panel-empty">Todavía no tenés notas de tu coach. Cuando te deje una, la vas a ver aquí. 💬</p>';
+
+  const p = (window.getTrProgresoActual && window.getTrProgresoActual()) || {};
+  const acts = ultimasActividades || [], checks = sessionActiva.checks_actividades || {};
+  const hechas = acts.filter(a => checks[a.id]).length, pct = acts.length ? Math.round(hechas * 100 / acts.length) : 0;
+  const ganadas = p.medallas || [];
+  const medallas = TR_MEDALLAS.map(m => `<span class="tr-badge-chip" style="${ganadas.includes(m.id) ? '' : 'opacity:.4'}"><i class="fa-solid ${ganadas.includes(m.id) ? m.icono : 'fa-lock'}"></i> ${m.nombre}</span>`).join('');
+
+  cont.innerHTML = `
+    <div class="panel-hero">
+      <div class="panel-ava"><div>${avatar}</div></div>
+      <div><h2>¡Hola, ${escHtml(sessionActiva.nombre.split(' ')[0])}! 👋</h2><small>Este es tu espacio. Aquí ves cómo vas.</small><div class="panel-pills">${pills}</div></div>
+    </div>
+    <div class="panel-card"><h3><i class="fa-solid fa-clipboard-list"></i>Mensajes de mi coach</h3>${notasHtml}</div>
+    <div class="panel-card"><h3><i class="fa-solid fa-chart-line"></i>Mi progreso</h3>
+      <div class="panel-grid">
+        <div class="panel-stat"><b>${p.rachaSemanas || 0}</b><span>Semanas seguidas 🔥</span></div>
+        <div class="panel-stat"><b>${p.semanasCompletadas || 0}</b><span>Semanas completas</span></div>
+        <div class="panel-stat"><b>${p.palabrasPracticadas || 0}</b><span>Frases practicadas</span></div>
+      </div></div>
+    <div class="panel-cols">
+      <div class="panel-card"><h3><i class="fa-solid fa-list-check"></i>Mis actividades<span class="panel-count">${hechas} de ${acts.length}</span></h3>
+        ${acts.length ? `<div class="panel-bar"><i style="width:${pct}%"></i></div>${acts.map(a => itemActividadHTML(a, true)).join('')}` : '<p class="panel-empty">No hay actividades esta semana. ¡Buen momento para repasar! 🎉</p>'}</div>
+      <div class="panel-card"><h3><i class="fa-solid fa-spell-check"></i>Mis verbos</h3><div id="panel-verbos-body"><p class="panel-empty">Cargando…</p></div></div>
+    </div>
+    <div class="panel-card"><h3><i class="fa-solid fa-medal"></i>Mis medallas</h3><div class="tr-badges-row" style="display:flex;flex-wrap:wrap;gap:6px">${medallas}</div></div>
+    <div class="panel-links">
+      <button class="panel-link" onclick="showScreen('s-training')"><i class="fa-solid fa-brain"></i>Training Room</button>
+      <button class="panel-link" onclick="window.location.href='./Verbos/index.html'"><i class="fa-solid fa-spell-check"></i>Verb Lab</button>
+      <button class="panel-link" onclick="window.location.href='./training-room/index.html'"><i class="fa-solid fa-chalkboard-user"></i>Class Room</button>
+      <button class="panel-link" onclick="abrirChatFlotante()"><i class="fa-solid fa-comments"></i>Chat con mi coach</button>
+    </div>`;
+  panelCargarVerbos();
+  if (marcarVisto) {
+    const ahora = Date.now();
+    sessionActiva.panel_visto = ahora;
+    try { localStorage.setItem(panelVistoKey(), String(ahora)); } catch (e) {}
+    updateDoc(doc(db, 'alumnos', sessionActiva.id), { panel_visto: ahora }).catch(() => {});
+    window.panelActualizarBadge();
+  }
+};
 window.perfilTogglePass = function () {
   const fields = document.getElementById('perfil-pass-fields');
   const btn = document.getElementById('perfil-pass-toggle');
@@ -9303,6 +9459,8 @@ function showScreen(id, opciones = {}) {
   if (btnSoporte) btnSoporte.classList.toggle('visible', id === 's-student');
   if (typeof window.necUpdateFloatVisibility === 'function') window.necUpdateFloatVisibility(id === 's-student');
   renderMeetFloat();
+  if (id === 's-student' && window.panelMontarBoton) window.panelMontarBoton();
+  if (id === 's-panel' && window.renderMiPanel) window.renderMiPanel();
 
   if (!opciones.noHistory) {
     try {
