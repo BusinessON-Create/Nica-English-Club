@@ -365,3 +365,40 @@ h1,h2,h3,p { margin:0; }
 .tr2-card-nivel[data-nivel="b2"] { animation-delay:.18s; }
 .tr2-card-nivel[data-nivel="c1"] { animation-delay:.24s; }
 @media (prefers-reduced-motion:reduce) { .tr2-card-nivel { animation:none; } }
+
+/* ═══ Pantalla de clase: secciones, pestañas, botón Siguiente (agregado al final) ═══ */
+.tr2-unit-resumen { display:flex; gap:10px; align-items:flex-start; margin-top:10px; font-size:13.5px; line-height:1.5; color:var(--muted); }
+.tr2-unit-resumen i { color:var(--gold); margin-top:3px; }
+.tr2-unit-resumen span { color:var(--gold3); font-weight:600; }
+
+/* pestañas más claras y con aire; la velocidad queda separada, como ajuste */
+.tr2-tabs { gap:6px; padding:5px; max-width:100%; }
+.tr2-tab { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 20px; font-size:13.5px; transition:background .2s var(--ease), color .2s var(--ease); }
+.tr2-tab i { font-size:15px; margin-right:0; }
+.tr2-tab:not(.active):hover { color:var(--text); background:rgba(255,255,255,.04); }
+.tr2-tab.active { box-shadow:inset 0 0 0 1px var(--gold2); }
+#btn-velocidad { margin-left:8px !important; padding:11px 16px 11px 18px; border-radius:0 99px 99px 0; border-left:1px solid var(--border2); font-size:12px; color:var(--muted-dim); }
+#btn-velocidad:hover { color:var(--gold); background:none; }
+
+/* secciones: bloque aparte, con número en vez del puntito */
+.tr2-bloque { margin-bottom:34px; }
+.tr2-bloque-titulo::before { display:none; }
+.tr2-bloque-num { flex:none; width:26px; height:26px; border-radius:50%; display:inline-grid; place-items:center; background:var(--gold-dim); border:1px solid var(--gold2); color:var(--gold); font:800 12px var(--fb); }
+
+/* botón grande para seguir */
+.tr2-siguiente-wrap { display:flex; justify-content:center; margin:8px 0 36px; }
+.tr2-siguiente { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--gold3),var(--gold2)); color:#1a1200; border:none; padding:14px 28px; border-radius:99px; font:800 14px var(--fb); cursor:pointer; transition:transform .2s var(--ease); -webkit-tap-highlight-color:transparent; }
+.tr2-siguiente:hover { transform:translateY(-2px); }
+.tr2-siguiente:active { transform:scale(.97); }
+
+@media (max-width:560px) {
+  .tr2-tab { padding:10px 12px; font-size:12.5px; gap:6px; }
+  .tr2-tab i { font-size:14px; }
+  #btn-velocidad { padding:10px 10px 10px 12px; margin-left:4px !important; }
+  .tr2-bloque { margin-bottom:28px; }
+}
+@media (prefers-reduced-motion:reduce) { .tr2-siguiente { transition:none; } }
+
+/* ═══ Práctica: "Ejercicio N de M" sobre cada juego (agregado al final) ═══ */
+.tr2-juego[data-num]::before { content:"Ejercicio " attr(data-num) " de " attr(data-total); display:block; font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+.tr2-juego[data-total="1"]::before { display:none; }
