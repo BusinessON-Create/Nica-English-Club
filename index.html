@@ -3573,9 +3573,20 @@ function renderBanner(data) {
           <span class="banner-lite-txt"><b>Para ti</b><span>Toca para ver</span></span>
         </button>`;
         area.querySelector('.banner-lite').onclick = () => activarBannerVideo(yt);
+    } else if (data.tipo === 'video' && /^https?:\/\//i.test(url)) {
+        // Video subido por el admin (comprimido): se reproduce solo, en bucle y sin sonido. Pausa fuera de pantalla.
+        area.classList.remove('lite');
+        const poster = data.posterUrl && /^https?:\/\//i.test(data.posterUrl) ? ` poster="${String(data.posterUrl).replace(/"/g, '%22')}"` : '';
+        area.innerHTML = `<video src="${String(url).replace(/"/g, '%22')}"${poster} autoplay muted loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video>`;
+        const v = area.querySelector('video');
+        if (v && 'IntersectionObserver' in window) {
+          if (bannerObs) bannerObs.disconnect();
+          bannerObs = new IntersectionObserver((en) => en.forEach(e => { e.isIntersecting ? v.play().catch(()=>{}) : v.pause(); }), { threshold: 0.15 });
+          bannerObs.observe(area);
+        }
     } else {
         area.classList.remove('lite');
-        area.innerHTML = `<img src="${resolverUrlDrive(url)}">`;
+        area.innerHTML = `<img src="${resolverUrlDrive(url)}" decoding="async">`;
     }
 }
 function activarBannerVideo(yt) {
@@ -5433,20 +5444,25 @@ const MENU_DEFAULT = {
 };
 const ordenarMenu = (x, y) => ((x.orden ?? 0) - (y.orden ?? 0)) || String(x.nombre || '').localeCompare(String(y.nombre || ''));
 let menuCatsCache = [], menuBtnsCache = [], menuIdx = {}, menuEscuchando = false;
+/* Evita el parpadeo del menú por defecto: no se dibuja nada hasta que Firestore respondió (categorías Y botones). Si tarda más de 4 s (sin conexión), se usa el menú por defecto como respaldo. */
+let menuCatsListo = false, menuBtnsListo = false, menuTiempoVencido = false;
 const menuCatsAbiertas = new Set(), menuCatsVistas = new Set();
 const menuCatsCfg = {};   // último valor de "abierta" aplicado por categoría (datos reales)
 
 function escucharMenu() {
   if (menuEscuchando) return;
   menuEscuchando = true;
+  setTimeout(() => { if (!(menuCatsListo && menuBtnsListo)) { menuTiempoVencido = true; renderMenuDrawer(); } }, 4000);
   onSnapshot(collection(db,'menu_categorias'), snap => {
     menuCatsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    menuCatsListo = true;
     renderMenuDrawer();
-  }, err => console.error('No se pudo leer menu_categorias (revisa las reglas de Firestore):', err));
+  }, err => { console.error('No se pudo leer menu_categorias (revisa las reglas de Firestore):', err); menuCatsListo = true; renderMenuDrawer(); });
   onSnapshot(collection(db,'menu_botones'), snap => {
     menuBtnsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    menuBtnsListo = true;
     renderMenuDrawer();
-  }, err => console.error('No se pudo leer menu_botones (revisa las reglas de Firestore):', err));
+  }, err => { console.error('No se pudo leer menu_botones (revisa las reglas de Firestore):', err); menuBtnsListo = true; renderMenuDrawer(); });
 }
 
 /* Compatibilidad: enlaces_fijos (las "Internal tools" de antes) solo se usan mientras el menú nuevo no exista */
@@ -5484,6 +5500,7 @@ function menuItemHTML(b) {
 window.renderMenuDrawer = function () {
   const cont = document.getElementById('drawer-menu-dinamico');
   if (!cont) return;
+  if (!((menuCatsListo && menuBtnsListo) || menuTiempoVencido)) { cont.innerHTML = ''; return; }   // todavía cargando: nada (ni el menú por defecto)
   const hayMenuReal = !!(menuCatsCache.length || menuBtnsCache.length);
   const { cats, btns } = menuDatos();
   const vis = btns.filter(menuVisibleParaMi).filter(b => !(b.destino === 'videos' && menuVideosVacio()));
@@ -5829,7 +5846,7 @@ function escucharRecursos() {
 
 let alumnosCacheAdmin = [];
 function cargarDatosAdmin() {
-  getDoc(doc(db, 'config', 'banner')).then(d => { if(d.exists()) { document.getElementById('config-banner-url').value = d.data().url; previsualizarBanner(); } });
+  getDoc(doc(db, 'config', 'banner')).then(d => { if(d.exists()) { document.getElementById('config-banner-url').value = d.data().url; bannerAdminSubido = d.data().path ? { url:d.data().url, path:d.data().path, tipo:d.data().tipo||'imagen', posterUrl:d.data().posterUrl||'', posterPath:d.data().posterPath||'' } : null; previsualizarBanner(); } });
   getDoc(doc(db, 'config', 'mentalidad')).then(d => {
     if(d.exists()) {
       document.getElementById('config-mindset-titulo').value = d.data().titulo || '';
@@ -8151,10 +8168,17 @@ window.mantBorrarArchivosSel = async () => {
 };
 
 window.alAbrirFormEnPC = () => { const d = document.getElementById('al-form-det'); if (d && window.matchMedia('(min-width:1100px)').matches) d.open = true; };
+let bannerAdminSubido = null;   // archivo subido que está activo hoy: {url, path, tipo, posterUrl, posterPath}
 window.previsualizarBanner = () => {
   const inp = document.getElementById('config-banner-url'); if (!inp) return;
   const box = document.getElementById('banner-preview'), img = document.getElementById('banner-preview-img'), txt = document.getElementById('banner-preview-txt');
+  const vid = document.getElementById('banner-preview-video');
   const v = inp.value.trim(); let thumb = '', etiqueta = '';
+  if (vid) { vid.pause(); vid.style.display = 'none'; vid.removeAttribute('src'); }
+  img.style.display = '';
+  if (bannerAdminSubido && bannerAdminSubido.tipo === 'video' && v === bannerAdminSubido.url && vid) {
+    img.style.display = 'none'; vid.src = v; vid.style.display = 'block'; txt.textContent = 'Video subido'; box.style.display = 'block'; return;
+  }
   try {
     const u = new URL(v); const host = u.hostname.replace(/^(www\.|m\.)/, ''); let id = '';
     if (host === 'youtu.be') id = u.pathname.slice(1);
@@ -8326,8 +8350,83 @@ async function mantLimpiarRastroAlumno(id) {
 
 window.guardarBanner = async () => {
     const url = document.getElementById('config-banner-url').value.trim();
-    await setDoc(doc(db, 'config', 'banner'), { url });
+    const previo = bannerAdminSubido;
+    const sigueSubido = previo && previo.url === url;      // no se tocó el archivo: se conserva tal cual
+    const data = sigueSubido ? { url, tipo: previo.tipo, path: previo.path, posterUrl: previo.posterUrl || '', posterPath: previo.posterPath || '' } : { url, tipo: 'link' };
+    await setDoc(doc(db, 'config', 'banner'), data);
+    if (previo && !sigueSubido) { await borrarArchivosBannerViejos(previo); bannerAdminSubido = null; }   // reemplazaron el archivo por un link: no acumular basura en Storage
     showModal("Éxito", "Banner actualizado correctamente.");
+};
+async function borrarArchivosBannerViejos(b) {
+  try {
+    const { storage, storageRef, deleteObject } = await cargarStorage();
+    for (const p of [b && b.path, b && b.posterPath]) { if (p) { try { await deleteObject(storageRef(storage, p)); } catch (e) { /* ya no existía */ } } }
+  } catch (e) {}
+}
+// Subir imagen o video como banner: se comprime en el navegador, se sube y queda guardado al instante.
+window.subirArchivoBanner = async (ev) => {
+  const file = ev.target.files[0]; ev.target.value = '';
+  if (!file) return;
+  const esImg = !!file.type && file.type.startsWith('image/'), esVid = !!file.type && file.type.startsWith('video/');
+  if (!esImg && !esVid) { showModal('Archivo no válido', 'Elige una imagen (JPG, PNG, WebP) o un video (MP4, MOV).'); return; }
+  const btn = document.getElementById('btn-banner-subir'), txtBtn = btn.innerHTML;
+  const wrap = document.getElementById('banner-progreso-wrap'), bar = document.getElementById('banner-progreso-bar'), txt = document.getElementById('banner-progreso-texto');
+  const prog = (pct, msg) => { bar.style.width = Math.round(pct) + '%'; txt.innerText = msg; };
+  btn.disabled = true; wrap.style.display = 'block'; prog(0, 'Preparando...');
+  const subidas = [];
+  try {
+    const previo = bannerAdminSubido;
+    let archivo = file, posterBlob = null, base = 0;
+    if (esImg) {
+      prog(5, 'Optimizando imagen...');
+      archivo = await comprimirImagen(file, 1920, 0.82);
+    } else {
+      prog(2, 'Generando miniatura...');
+      try { posterBlob = await posterDeVideo(file); } catch (e) {}
+      const cfg = await mantConfigCargar();
+      if (cfg.comprimirVideo !== false) {
+        prog(2, 'Comprimiendo video... 0% (mantén esta pestaña abierta y visible)');
+        const r = await comprimirVideoNeclub(file, (f) => prog(f * 45, `Comprimiendo video... ${Math.round(f * 100)}% (mantén esta pestaña abierta y visible)`), null);
+        archivo = r.file; base = r.comprimido ? 45 : 0;
+      }
+    }
+    const { storage, storageRef, uploadBytes, uploadBytesResumable, getDownloadURL } = await cargarStorage();
+    const sello = Date.now();
+    const ext = esImg ? 'jpg' : ((archivo.type || '').includes('webm') ? 'webm' : 'mp4');
+    const path = `banner/banner_${sello}.${ext}`;
+    const ref = storageRef(storage, path);
+    const url = await new Promise((resolve, reject) => {
+      const task = uploadBytesResumable(ref, archivo, { contentType: archivo.type || (esImg ? 'image/jpeg' : 'video/mp4') });
+      task.on('state_changed', (snap) => prog(base + (96 - base) * (snap.bytesTransferred / snap.totalBytes), `Subiendo ${esImg ? 'imagen' : 'video'}... ${Math.round(base + (96 - base) * (snap.bytesTransferred / snap.totalBytes))}%`),
+        reject, async () => { try { resolve(await getDownloadURL(task.snapshot.ref)); } catch (e) { reject(e); } });
+    });
+    subidas.push(path);
+    let posterUrl = '', posterPath = '';
+    if (esVid && posterBlob) {
+      try {
+        posterPath = `banner/banner_${sello}_poster.jpg`;
+        const pr = storageRef(storage, posterPath);
+        await uploadBytes(pr, posterBlob, { contentType: 'image/jpeg' });
+        posterUrl = await getDownloadURL(pr); subidas.push(posterPath);
+      } catch (e) { posterUrl = ''; posterPath = ''; }
+    }
+    prog(98, 'Guardando banner...');
+    const tipo = esImg ? 'imagen' : 'video';
+    await setDoc(doc(db, 'config', 'banner'), { url, tipo, path, posterUrl, posterPath, actualizadoEn: Date.now() });
+    bannerAdminSubido = { url, path, tipo, posterUrl, posterPath };
+    document.getElementById('config-banner-url').value = url;
+    previsualizarBanner();
+    if (previo) await borrarArchivosBannerViejos(previo);      // se reemplaza el anterior: no acumular archivos viejos
+    prog(100, 'Listo.');
+    showModal('Éxito', 'Banner actualizado: el archivo se optimizó y ya lo ven los alumnos.');
+  } catch (e) {
+    console.error(e);
+    for (const p of subidas) { try { const { storage, storageRef, deleteObject } = await cargarStorage(); await deleteObject(storageRef(storage, p)); } catch (er) {} }
+    showModal('Error', 'No se pudo subir el banner. Revisa tu conexión y las reglas de Storage (carpeta banner/).');
+  } finally {
+    btn.disabled = false; btn.innerHTML = txtBtn;
+    setTimeout(() => { wrap.style.display = 'none'; bar.style.width = '0%'; }, 1500);
+  }
 };
 
 window.confirmarAccion = ({ titulo, mensaje = '', detalle = '', textoBoton = 'Confirmar', peligro = false, escribir = null }) => new Promise(resolve => {
