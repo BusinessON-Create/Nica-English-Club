@@ -1,0 +1,47 @@
+/* ==========================================================
+   FAVORITOS
+   Favoritos, estados y compartir.
+   ========================================================== */
+
+/* ---------- Favoritos, estados y compartir ---------- */
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:disabled:active { transform: none; }
+.count-badge { background: var(--accent); color: var(--accent-ink); border-radius: 999px; font-size: 0.72rem; padding: 1px 9px; font-weight: 800; }
+.count-badge:empty { display: none; }
+.verb-actions { display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+    width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+    border: 1.5px solid var(--line); color: var(--muted); background: var(--surface-2); font-size: 0.95rem;
+    transition: border-color 0.15s, color 0.15s, transform 0.1s;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--text); }
+.icon-btn:active { transform: scale(0.92); }
+.icon-btn.on { color: var(--bad); border-color: rgba(239, 68, 68, 0.55); }
+.verb-actions .icon-btn { width: 34px; height: 34px; font-size: 0.85rem; }
+.prompt-tools { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
+
+.status-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.status-seg button {
+    padding: 8px 4px; border-radius: 10px; font-size: 0.74rem; font-weight: 800;
+    border: 1.5px solid var(--line); color: var(--muted); background: transparent;
+}
+.status-seg button.active[data-status="new"] { background: #60a5fa; border-color: #60a5fa; color: #0a0908; }
+.status-seg button.active[data-status="learning"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.status-seg button.active[data-status="done"] { background: var(--ok); border-color: var(--ok); color: #04210f; }
+
+.fav-section { margin-bottom: 28px; }
+.section-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+.section-title span { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+.section-title i { color: var(--accent); }
+
+.share-panel { max-width: 520px; margin: 0 auto 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+.share-panel label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.text-input {
+    width: 100%; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: var(--surface-2); color: var(--text); font: inherit; font-weight: 600; outline: none; margin-bottom: 12px;
+}
+.text-input:focus { border-color: var(--accent); }
+.share-actions { display: grid; gap: 10px; }
+.share-panel .hint { margin-top: 10px; text-align: center; min-height: 1.2em; }
+.setup-note { color: var(--muted); font-size: 0.82rem; text-align: center; margin-top: 12px; }
+.warn { color: #fbbf24; }
