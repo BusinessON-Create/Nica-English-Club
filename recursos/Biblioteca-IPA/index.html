@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0908">
+<title>IPA Game Center · Nica English Club</title>
+<!-- SEGURIDAD: ajusta la ruta según la profundidad de la carpeta (../seguridad.js, ../../seguridad.js) -->
+<script src="../seguridad.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{bg:'#0a0908',surface:'#131110',surface2:'#1a1714',line:'#2a2520',line2:'#38322b',gold:'#f0b429',golddeep:'#c8891a',goldlight:'#ffd966',ember:'#ff6a1a',lake:'#5aa9ff',ink:'#f4efe6',muted:'#9a948a'},fontFamily:{display:["'Bricolage Grotesque'",'system-ui','sans-serif'],sans:['Figtree','system-ui','sans-serif']}}}}</script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark}
+[x-cloak]{display:none!important}
+html,body{margin:0;min-height:100%;background:#0a0908;color:#f4efe6;font-family:Figtree,system-ui,sans-serif}
+body{background-image:radial-gradient(90% 50% at 15% -10%,rgba(240,180,41,.10),rgba(10,9,8,0) 60%),radial-gradient(60% 40% at 100% 0%,rgba(255,106,26,.06),rgba(10,9,8,0) 60%);background-repeat:no-repeat;background-attachment:fixed}
+::selection{background:#f0b429;color:#0a0908}
+:focus-visible{outline:2px solid #ffd966;outline-offset:3px;border-radius:8px}
+.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-.14em;flex:none}
+.fd{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em}
+.card{background:#131110;border:1px solid #2a2520;border-radius:22px;box-shadow:0 18px 50px -32px #000,inset 0 1px 0 rgba(255,255,255,.025)}
+.btn-gold{background:linear-gradient(135deg,#ffe27c,#f0b429 48%,#c8891a);color:#0a0908;border:1px solid rgba(255,217,102,.38);box-shadow:0 10px 28px -10px rgba(240,180,41,.55),inset 0 1px 0 rgba(255,255,255,.32);transition:transform .18s,filter .15s}
+.btn-gold:hover{filter:brightness(1.05);transform:translateY(-2px)}.btn-gold:active{transform:none}
+.btn-ghost{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);transition:.2s}
+.btn-ghost:hover{border-color:#f0b429;color:#ffd966;background:rgba(240,180,41,.07)}
+.opt{background:#1a1714;border:2px solid #2a2520;border-radius:22px;transition:transform .15s,border-color .2s,background .2s}
+.opt:active{transform:scale(.97)}
+.opt.ok{background:rgba(52,211,153,.14);border-color:#34d399;color:#6ee7b7}
+.opt.bad{background:rgba(239,68,68,.14);border-color:#ef4444;color:#fca5a5;animation:sh .4s}
+@keyframes sh{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pop{animation:pop .3s cubic-bezier(.16,1,.3,1)}
+.bar{width:4px;height:16px;background:#0a0908;display:inline-block;border-radius:2px;animation:pl .8s infinite ease-in-out}
+@keyframes pl{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1.5)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body x-data="ipa" x-cloak>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-1.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98 1.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2z"/></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></symbol>
+<symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22M18 2l4 4-4 4M2 6h1.9c1.5 0 2.9.9 3.6 2.2M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8M18 14l4 4-4 4"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5zM16 9a5 5 0 0 1 0 6M19.4 18.4a9 9 0 0 0 0-12.8"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M21.8 10A10 10 0 1 1 17 3.3M9 11l3 3L22 4"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4M3.3 19a10 10 0 1 1 17.4 0"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+</defs></svg>
+<div class="min-h-screen flex flex-col" style="padding-bottom:env(safe-area-inset-bottom)">
+
+<header class="sticky top-0 z-30 border-b border-line/70 bg-bg/80 backdrop-blur-md" style="padding-top:env(safe-area-inset-top)">
+ <div class="max-w-xl mx-auto px-5 py-3 flex items-center justify-between">
+  <button @click="home()" class="text-left">
+   <span class="block text-[12px] text-muted">Hola, <span class="text-ink font-semibold" x-text="user.name||'campeón'"></span></span>
+   <span class="fd text-lg font-extrabold text-white">Nica <span class="text-gold">English</span> Club</span>
+  </button>
+  <div class="flex items-center gap-4 text-right">
+   <div><span class="block text-[11px] text-muted">Racha</span><span class="fd font-bold text-ember inline-flex items-center gap-1"><svg class="ic " aria-hidden="true"><use href="#i-flame"/></svg><span x-text="streak"></span></span></div>
+   <div><span class="block text-[11px] text-muted">Puntos</span><span class="fd font-bold text-gold" x-text="score"></span></div>
+  </div>
+ </div>
+</header>
+
+<main class="flex-1 max-w-xl w-full mx-auto px-5 py-6">
+
+<!-- MENÚ -->
+<section x-show="step==='intro'" class="pop">
+ <h1 class="fd text-4xl font-extrabold text-white leading-tight">IPA <span class="text-gold">Game Center</span></h1>
+ <p class="text-muted mt-1">Entrena los 44 sonidos del inglés.</p>
+
+ <div class="card p-4 mt-5">
+  <div class="flex justify-between text-sm mb-2"><span class="font-semibold">Sonidos dominados</span><span class="text-gold fd font-bold" x-text="masteredCount()+' / 44'"></span></div>
+  <div class="h-2 rounded-full bg-line overflow-hidden"><div class="h-full rounded-full transition-all duration-700" style="background:linear-gradient(90deg,#f0b429,#ffd966)" :style="'width:'+(masteredCount()/44*100)+'%'"></div></div>
+  <p class="text-[12px] text-muted mt-2">Acierta un sonido 3 veces para dominarlo.</p>
+ </div>
+
+ <button @click="startExam()" class="btn-gold w-full mt-5 rounded-[22px] p-5 flex items-center justify-between text-left">
+  <span><span class="block text-[12px] font-bold uppercase tracking-widest opacity-70">Reto final</span><span class="fd text-2xl font-extrabold">Certificación IPA</span></span>
+  <span class="text-4xl"><svg class="ic " aria-hidden="true"><use href="#i-trophy"/></svg></span>
+ </button>
+
+ <div class="grid grid-cols-3 gap-3 mt-4">
+  <template x-for="g in games" :key="g.k">
+   <button @click="startGame(g.k)" class="card p-4 text-left hover:border-gold transition">
+    <span class="block mb-2 text-gold text-2xl"><svg class="ic"><use :href="'#i-'+g.i"/></svg></span>
+    <span class="fd font-bold text-white text-[15px] leading-tight block" x-text="g.t"></span>
+    <span class="text-[12px] text-muted" x-text="g.d"></span>
+   </button>
+  </template>
+ </div>
+
+ <div class="flex items-end justify-between mt-8 mb-3">
+  <h2 class="fd text-xl font-bold text-white">Biblioteca <span class="text-gold">IPA</span></h2>
+  <button @click="slow=!slow;save()" class="btn-ghost rounded-full px-3 py-1.5 text-[13px] font-semibold inline-flex items-center gap-1.5" ><svg class="ic"><use href="#i-gauge"/></svg> <span x-text="slow?'Voz lenta':'Voz normal'"></span></button>
+ </div>
+ <div class="flex gap-2 mb-4 overflow-x-auto">
+  <template x-for="(l,k) in cats" :key="k">
+   <button @click="cat=k" :class="cat===k?'bg-gold text-bg border-gold':'btn-ghost text-muted'" class="rounded-full border px-4 py-2 text-[14px] font-semibold whitespace-nowrap" x-text="l"></button>
+  </template>
+ </div>
+ <div class="grid gap-3">
+  <template x-for="s in sounds[cat]" :key="s.sym">
+   <div class="card p-4">
+    <div class="flex items-start justify-between gap-3">
+     <button @click="speak(s.ex[0])" class="text-left" :aria-label="'Escuchar '+s.sym">
+      <span class="fd text-3xl font-extrabold text-gold" x-text="'/'+s.sym+'/'"></span>
+      <span class="block text-[12px] text-muted uppercase tracking-wider mt-1"><span x-text="s.type"></span><span x-show="(mastered[s.sym]||0)>=3" class="text-emerald-400 inline-flex items-center gap-1 ml-1"><svg class="ic " aria-hidden="true"><use href="#i-check"/></svg> dominado</span></span>
+     </button>
+     <span class="text-[14px] text-muted italic text-right max-w-[55%]" x-text="s.tip"></span>
+    </div>
+    <div class="flex flex-wrap gap-2 mt-3">
+     <template x-for="w in s.ex" :key="w">
+      <button @click="speak(w)" class="btn-ghost rounded-xl px-3 py-2 text-[15px] font-semibold"><span class="inline-flex items-center gap-2"><svg class="ic text-gold"><use href="#i-volume"/></svg><span x-text="w"></span></span></button>
+     </template>
+    </div>
+   </div>
+  </template>
+ </div>
+</section>
+
+<!-- JUEGO -->
+<section x-show="step==='play'" class="text-center pop">
+ <div class="mb-6" x-show="exam">
+  <div class="flex justify-between text-[13px] font-semibold mb-2"><span class="text-muted">Pregunta <span x-text="examStep"></span> de 30</span><span class="text-gold" x-text="examScore+' pts'"></span></div>
+  <div class="h-2 rounded-full bg-line overflow-hidden"><div class="h-full bg-gold transition-all duration-500" :style="'width:'+(examStep/30*100)+'%'"></div></div>
+  <p class="text-[12px] text-muted mt-2">Necesitas 85 para certificar · cada error resta 5</p>
+ </div>
+ <span class="block text-[12px] font-bold text-gold uppercase tracking-[.25em] mb-2" x-text="exam?'Certificación oficial':titles[mode]"></span>
+ <h2 class="fd text-2xl font-bold text-white mb-8" x-text="instruction"></h2>
+
+ <div class="flex justify-center mb-8">
+  <template x-if="mode!=='reading'">
+   <button @click="speak(target)" class="w-32 h-32 rounded-[2.4rem] btn-gold flex items-center justify-center text-5xl" aria-label="Escuchar de nuevo">
+    <svg x-show="!playing" class="ic"><use href="#i-volume"/></svg>
+    <span x-show="playing" class="flex gap-1"><i class="bar"></i><i class="bar" style="animation-delay:.1s"></i><i class="bar" style="animation-delay:.2s"></i></span>
+   </button>
+  </template>
+  <template x-if="mode==='reading'">
+   <div class="card p-7 w-full"><p class="fd text-2xl font-bold text-white" x-text="target"></p>
+    <button @click="speak(target)" class="mt-4 text-gold text-sm font-semibold inline-flex items-center gap-2"><svg class="ic"><use href="#i-volume"/></svg> Escuchar guía</button></div>
+  </template>
+ </div>
+
+ <div class="grid grid-cols-2 gap-3">
+  <template x-for="o in options" :key="o">
+   <button @click="pick(o)" :class="optClass(o)" class="opt py-7 fd text-3xl font-extrabold" x-text="mode==='pairs'?o:'/'+o+'/'"></button>
+  </template>
+ </div>
+ <p class="mt-5 h-6 text-[15px] font-semibold" :class="lastOk?'text-emerald-300':'text-red-300'" x-text="feedback"></p>
+ <button @click="home()" class="text-muted text-sm mt-3 underline underline-offset-4">Salir</button>
+</section>
+
+<!-- CERTIFICADO -->
+<section x-show="step==='cert'" class="pop text-center">
+ <div class="card p-8 relative overflow-hidden" style="border-color:rgba(240,180,41,.35);box-shadow:0 0 60px -20px rgba(240,180,41,.35)">
+  <div class="text-6xl mb-3 text-gold"><svg class="ic " aria-hidden="true"><use href="#i-trophy"/></svg></div>
+  <span class="block text-[12px] font-bold tracking-[.3em] text-gold uppercase">Nica English Club</span>
+  <h2 class="fd text-4xl font-extrabold text-white mt-2 leading-none">Certificado<br><span class="text-gold">IPA Master</span></h2>
+  <p class="text-muted text-sm mt-6">Otorgado a</p>
+  <p class="fd text-2xl font-bold text-white" x-text="fullName()"></p>
+  <div class="flex justify-center gap-10 mt-6">
+   <div><p class="text-[12px] text-muted uppercase tracking-wider">Nota final</p><p class="fd text-3xl font-extrabold text-gold" x-text="examScore+'/100'"></p></div>
+   <div><p class="text-[12px] text-muted uppercase tracking-wider">Estado</p><p class="fd text-3xl font-extrabold text-emerald-400">Aprobado</p></div>
+  </div>
+  <p class="text-[12px] text-muted mt-6" x-text="today()"></p>
+ </div>
+ <button @click="download()" class="btn-gold w-full rounded-2xl py-4 fd font-bold text-lg mt-6 inline-flex items-center justify-center gap-2"><svg class="ic"><use href="#i-download"/></svg> Descargar imagen para compartir</button>
+ <button @click="home()" class="btn-ghost w-full rounded-2xl py-4 font-semibold mt-3">Volver al club</button>
+</section>
+
+<!-- FALLO -->
+<section x-show="step==='failed'" class="pop text-center py-10">
+ <div class="text-6xl mb-4 text-gold"><svg class="ic " aria-hidden="true"><use href="#i-target"/></svg></div>
+ <h2 class="fd text-3xl font-extrabold text-white">¡Casi lo logras!</h2>
+ <p class="text-muted mt-2">Llegaste a <b class="text-white" x-text="examScore"></b>. Necesitas 85.</p>
+ <div class="card p-4 mt-5 text-left" x-show="missed.length">
+  <p class="text-sm font-semibold mb-2">Repasa estos sonidos:</p>
+  <div class="flex flex-wrap gap-2"><template x-for="m in missed" :key="m"><button @click="speak(exOf(m))" class="btn-ghost rounded-xl px-3 py-2 fd font-bold text-gold" x-text="'/'+m+'/'"></button></template></div>
+ </div>
+ <button @click="startExam()" class="btn-gold w-full rounded-2xl py-4 fd font-bold mt-6">Reintentar</button>
+ <button @click="home()" class="btn-ghost w-full rounded-2xl py-4 font-semibold mt-3">Entrenar más</button>
+</section>
+
+</main>
+</div>
+
+<script>
+const RAW=`#vowels
+i:|Larga|Sonríe muy grande como para una foto.|See,Tree,Meat
+ɪ|Corta|Suelta la cara, es una risa floja.|Sit,Fish,Milk
+e|Corta|Abre la boca como si fueras a comer una uva.|Egg,Bed,Red
+æ|Abierta|Baja mucho la barbilla, ¡como un grito feliz!|Cat,Apple,Bag
+ʌ|Corta|Haz un ruidito corto en la garganta.|Cup,Luck,Sun
+ɑ:|Larga|Dile "Aaaa" al doctor cuando te revisa.|Car,Farm,Star
+ɒ|Corta|Haz un círculo pequeño con tus labios.|Hot,Stop,Dog
+ɔ:|Larga|Pon boca de "Oh" y mantenla un rato.|Four,Door,Talk
+ʊ|Corta|Pon boca de beso pero sin apretar.|Good,Foot,Book
+u:|Larga|Lanza un beso largo con labios muy juntos.|Blue,Food,Moon
+ɜ:|Larga|Haz el sonido de cuando no sabes algo: "Errr".|Bird,Girl,Word
+ə|Schwa|Relaja toda la cara, como si tuvieras sueño.|About,Teacher,Banana
+#diphthongs
+eɪ|Diptongo|Empieza con sonrisa y ciérrala un poquito.|Face,Day,Make
+aɪ|Diptongo|Abre grande y termina sonriendo.|Price,High,Sky
+ɔɪ|Diptongo|Boca redonda que termina en sonrisa.|Choice,Boy,Toy
+əʊ|Diptongo|Empieza relajado y termina en círculo.|Goat,Show,No
+aʊ|Diptongo|Abre la boca y grita "Au" como si te pincharas.|Mouth,Now,Cloud
+ɪə|Diptongo|Empieza con risita y termina relajado.|Near,Here,Ear
+eə|Diptongo|Boca abierta que se relaja al final.|Square,Fair,Air
+ʊə|Diptongo|Boca de beso que se abre un poquito.|Cure,Tourist,Pure
+#consonants
+p|Sorda|Sopla fuerte como apagando una vela.|Pen,Stop,Map
+b|Sonora|Haz que tus labios reboten con fuerza.|Bad,Baby,Cab
+t|Sorda|Toca tus dientes con la lengua y suelta aire.|Tea,Hat,Table
+d|Sonora|Haz un ruidito fuerte golpeando tus dientes.|Did,Dog,Mad
+k|Sorda|Como si tuvieras algo en la garganta.|Cat,Back,Key
+ɡ|Sonora|Gargantea como un pequeño monstruo.|Go,Big,Bag
+f|Sorda|Muerde tu labio de abajo suave y sopla.|Fish,Leaf,Off
+v|Sonora|Haz que tu labio vibre como un teléfono.|Van,Very,Save
+θ|Sorda|Saca un poco la lengua y sopla aire.|Thin,Three,Math
+ð|Sonora|Saca la lengua y hazla vibrar un poquito.|This,That,Mother
+s|Sorda|Haz el sonido de una serpiente: sssss.|Sun,Miss,Nice
+z|Sonora|Imita a una abeja volando: zzzzz.|Zoo,Lazy,Buzz
+ʃ|Sorda|Pide silencio: ¡shhhhh!|She,Ship,Cash
+ʒ|Sonora|Como "shhh" pero con motor en la voz.|Vision,Pleasure,Beige
+tʃ|Sorda|Como el sonido de un estornudo: ¡Achú!|Chair,Much,Watch
+dʒ|Sonora|Imita el motor de un tractor: ¡Yum-yum!|June,Edge,Job
+m|Nasal|Cierra la boca y di "Mmm" ¡qué rico!|Man,Name,Mom
+n|Nasal|Pon la lengua arriba y di "No".|No,Nine,Sun
+ŋ|Nasal|Sonido de campana: ¡Ding Dong!|Sing,Long,Ring
+h|Sorda|Echa aire para calentar tus manos.|Hot,He,Hat
+l|Líquida|Canta: La la la la.|Leg,Tall,Light
+r|Líquida|Gruñe como un perrito: ¡Grrr!|Red,Car,Road
+w|Semivocal|Abre la boca rápido desde un beso.|Wet,Win,Way
+j|Semivocal|Di "I" muy rápido para empezar.|Yes,You,Yellow`;
+/* palabra A, palabra B, sonido A, sonido B */
+const PAIRS=`Ship,Sheep,ɪ,i:|Fill,Feel,ɪ,i:|Bin,Bean,ɪ,i:|Bad,Bed,æ,e|Pan,Pen,æ,e|Cat,Cut,æ,ʌ|Cap,Cup,æ,ʌ|Look,Luke,ʊ,u:|Pull,Pool,ʊ,u:|Full,Fool,ʊ,u:|Not,Note,ɒ,əʊ|Wait,Wet,eɪ,e|Paper,Pepper,eɪ,e|Shoes,Choose,ʃ,tʃ|Ship,Chip,ʃ,tʃ|Wash,Watch,ʃ,tʃ|Fan,Van,f,v|Fast,Vast,f,v|Leaf,Leave,f,v|Think,Sink,θ,s|Thin,Sin,θ,s|Thank,Sank,θ,s|Then,Den,ð,d|They,Day,ð,d|Rice,Rise,s,z|Ice,Eyes,s,z|Sue,Zoo,s,z|Right,Light,r,l|Road,Load,r,l|Fry,Fly,r,l`;
+const READ=[["The cat sat on the mat.","æ"],["See the green tree.","i:"],["Pick a big fish with this.","ɪ"],["Ten red pens on the bed.","e"],["About a banana teacher.","ə"],["Sing a long song.","ŋ"],["This and that mother.","ð"],["Thin math three.","θ"],["She sells shiny shoes.","ʃ"],["Jim jumps in June.","dʒ"]];
+
+document.addEventListener('alpine:init',()=>{Alpine.data('ipa',()=>({
+ step:'intro',mode:'',cat:'vowels',exam:false,examStep:0,examScore:100,
+ cats:{vowels:'Vocales',diphthongs:'Diptongos',consonants:'Consonantes'},
+ titles:{match:'Listen & Match',pairs:'Minimal Pairs',reading:'Reading Lab'},
+ games:[{k:'match',i:'headphones',t:'Listen Match',d:'Escucha y elige'},{k:'pairs',i:'shuffle',t:'Minimal Pairs',d:'¿Qué palabra oyes?'},{k:'reading',i:'book',t:'Reading Lab',d:'Sonido de la frase'}],
+ sounds:{},pairs:[],user:{name:'',surname:'',schedule:''},
+ score:0,streak:0,best:0,mastered:{},slow:false,missed:[],
+ target:'',correct:'',options:[],instruction:'',picked:null,locked:false,feedback:'',lastOk:true,playing:false,
+
+ init(){
+  if(window.NEC_BLOQUEADO) return;
+  let c='';RAW.split('\n').forEach(l=>{if(l[0]==='#'){c=l.slice(1);this.sounds[c]=[]}else{const p=l.split('|');this.sounds[c].push({sym:p[0],type:p[1],tip:p[2],ex:p[3].split(',')})}});
+  this.pairs=PAIRS.split('|').map(p=>p.split(','));
+  this.user=this.readUser();
+  try{const d=JSON.parse(localStorage.getItem(this.key())||'{}');this.score=d.score||0;this.best=d.best||0;this.mastered=d.mastered||{};this.slow=!!d.slow}catch(e){}
+ },
+ /* Lee el nombre del alumno desde la sesión del login (prueba varias claves comunes) */
+ readUser(){
+  const u={name:'',surname:'',schedule:''};
+  try{
+   for(const k of ['nica_usuario','nica_user','nica_alumno','nica_sesion','nec_usuario','usuario','user']){
+    const raw=localStorage.getItem(k);if(!raw)continue;
+    try{const o=JSON.parse(raw);if(o&&typeof o==='object'){u.name=o.name||o.nombre||o.nombres||u.name;u.surname=o.surname||o.apellido||o.apellidos||u.surname;u.schedule=o.schedule||o.horario||u.schedule;if(u.name)break}}catch(e){if(raw.length<40&&raw!=='true'){u.name=raw;break}}
+   }
+   if(!u.name)for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/nombre|name/i.test(k)&&!/file|user_?agent/i.test(k)){const v=localStorage.getItem(k);if(v&&v.length<40&&v[0]!=='{'){u.name=v;break}}}
+   if(!u.name)u.name=localStorage.getItem('ipa_nombre')||'';
+  }catch(e){}
+  u.name=(u.name||'').toString().split(' ')[0]&&u.name;return u;
+ },
+ key(){return 'ipa_v2_'+(this.user.name||'alumno')},
+ save(){try{localStorage.setItem(this.key(),JSON.stringify({score:this.score,best:this.best,mastered:this.mastered,slow:this.slow}))}catch(e){}},
+ masteredCount(){return Object.values(this.mastered).filter(n=>n>=3).length},
+ allSyms(){return Object.values(this.sounds).flat().map(s=>s.sym)},
+ exOf(sym){const s=Object.values(this.sounds).flat().find(x=>x.sym===sym);return s?s.ex[0]:sym},
+
+ speak(t){
+  if(!window.speechSynthesis)return;speechSynthesis.cancel();
+  const m=new SpeechSynthesisUtterance(t);m.lang='en-US';m.rate=this.slow?.5:.85;
+  const v=speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang));if(v)m.voice=v;
+  m.onstart=()=>this.playing=true;m.onend=m.onerror=()=>this.playing=false;speechSynthesis.speak(m);
+ },
+ home(){speechSynthesis&&speechSynthesis.cancel();if(this.step==='play'&&this.exam&&!confirm('¿Salir del examen? Perderás tu avance.'))return;this.exam=false;this.step='intro';window.scrollTo(0,0)},
+ startExam(){this.exam=true;this.examStep=1;this.examScore=100;this.missed=[];this.mode='match';this.nextRound()},
+ startGame(m){this.exam=false;this.mode=m;this.nextRound()},
+
+ nextRound(){
+  this.step='play';this.picked=null;this.locked=false;this.feedback='';
+  const rnd=a=>a[Math.floor(Math.random()*a.length)];
+  const syms=()=>{const o=[this.correct];const all=this.allSyms();while(o.length<4){const r=rnd(all);if(!o.includes(r))o.push(r)}return o.sort(()=>Math.random()-.5)};
+  if(this.mode==='reading'){
+   const p=rnd(READ);this.target=p[0];this.correct=p[1];this.instruction='¿Qué sonido se repite en esta frase?';this.options=syms();
+  }else if(this.mode==='pairs'){
+   const p=rnd(this.pairs),i=Math.random()<.5?0:1;
+   this.target=p[i];this.correct=p[i];this.options=[p[0],p[1]];this.instruction='¿Qué palabra escuchas?';
+   setTimeout(()=>this.speak(this.target),350);
+  }else{
+   let pool=this.sounds[this.cat];
+   if(this.exam)pool=this.sounds[['vowels','diphthongs','consonants'][Math.min(2,Math.floor((this.examStep-1)/10))]];
+   const t=rnd(pool);this.correct=t.sym;this.target=rnd(t.ex);this.instruction='¿Qué sonido IPA escuchas?';this.options=syms();
+   setTimeout(()=>this.speak(this.target),350);
+  }
+ },
+ optClass(o){if(!this.locked)return '';if(o===this.correct)return 'ok';if(o===this.picked)return 'bad';return 'opacity-50'},
+ pick(o){
+  if(this.locked)return;this.locked=true;this.picked=o;const ok=o===this.correct;this.lastOk=ok;
+  if(ok){
+   this.streak++;this.best=Math.max(this.best,this.streak);
+   if(!this.exam)this.score+=10+Math.min(this.streak,10)*2;
+   if(this.mode!=='pairs')this.mastered[this.correct]=(this.mastered[this.correct]||0)+1;
+   this.feedback=this.streak>=3?'¡Excelente! Racha de '+this.streak:'¡Correcto!';
+   navigator.vibrate&&navigator.vibrate(30);
+  }else{
+   this.streak=0;this.feedback='Era '+(this.mode==='pairs'?this.correct:'/'+this.correct+'/');
+   if(this.mode!=='pairs'&&!this.missed.includes(this.correct))this.missed.push(this.correct);
+   if(this.exam)this.examScore-=5;
+   navigator.vibrate&&navigator.vibrate([80,40,80]);
+  }
+  this.save();
+  setTimeout(()=>{
+   if(this.exam){
+    if(this.examScore<85){this.step='failed';return}
+    if(this.examStep>=30){this.step='cert';return}
+    this.examStep++;
+   }
+   this.nextRound();
+  },ok?750:1500);
+ },
+
+ fullName(){return((this.user.name||'')+' '+(this.user.surname||'')).trim()||'Alumno NEC'},
+ today(){return new Date().toLocaleDateString('es-NI',{day:'numeric',month:'long',year:'numeric'})},
+ async download(){
+  if(!this.user.name){const n=prompt('¿Con qué nombre quieres tu certificado?');if(n){this.user.name=n;try{localStorage.setItem('ipa_nombre',n)}catch(e){}}}
+  try{await document.fonts.load('800 80px "Bricolage Grotesque"')}catch(e){}
+  const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');
+  x.fillStyle='#0a0908';x.fillRect(0,0,1080,1350);
+  const g=x.createRadialGradient(300,0,0,300,0,900);g.addColorStop(0,'rgba(240,180,41,.22)');g.addColorStop(1,'rgba(10,9,8,0)');x.fillStyle=g;x.fillRect(0,0,1080,1350);
+  x.strokeStyle='#f0b429';x.lineWidth=4;x.strokeRect(50,50,980,1250);x.strokeStyle='rgba(240,180,41,.3)';x.lineWidth=1.5;x.strokeRect(68,68,944,1214);
+  x.textAlign='center';const F='"Bricolage Grotesque",system-ui,sans-serif';
+  const t=(s,y,sz,col,w=700)=>{x.fillStyle=col;x.font=w+' '+sz+'px '+F;x.fillText(s,540,y)};
+  t('NICA ENGLISH CLUB',200,34,'#f0b429');t('Certificado',390,110,'#ffffff',800);t('IPA Master',510,120,'#f0b429',800);
+  t('Otorgado a',680,36,'#9a948a',500);t(this.fullName().toUpperCase(),770,68,'#ffffff');
+  t('NOTA FINAL',930,28,'#9a948a',500);t(this.examScore+'/100',1010,96,'#f0b429',800);
+  t('Aprobado · 44 sonidos del inglés',1110,34,'#34d399');t(this.today(),1220,28,'#9a948a',500);
+  const a=document.createElement('a');a.download='certificado-ipa-nec.png';a.href=c.toDataURL('image/png');a.click();
+ }
+}))});
+</script>
+</body>
+</html>
