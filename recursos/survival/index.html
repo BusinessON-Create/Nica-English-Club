@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0908">
+<title>Survival Hub · Nica English Club</title>
+<!-- SEGURIDAD: ajusta la ruta según la carpeta (../seguridad.js, ../../seguridad.js) -->
+<script src="../seguridad.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0908;--s:#131110;--s2:#1a1714;--l:#2a2520;--l2:#38322b;--g:#f0b429;--gd:#c8891a;--gl:#ffd966;--em:#ff6a1a;--ink:#f4efe6;--mu:#9a948a;--ok:#34d399;--bad:#ef4444;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg) radial-gradient(90% 50% at 15% -10%,rgba(240,180,41,.10),transparent 60%),radial-gradient(60% 40% at 100% 0,rgba(255,106,26,.06),transparent 60%) no-repeat fixed;color:var(--ink);font-family:Figtree,system-ui,sans-serif;line-height:1.55;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+::selection{background:var(--g);color:var(--bg)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gl);outline-offset:3px;border-radius:10px}
+.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.14em;flex:none}
+.fd{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em}
+.w{max-width:640px;margin:0 auto;padding:18px 18px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:6px 0 18px}
+.brand{font-weight:800;font-size:1.15rem;color:#fff}.brand b{color:var(--g)}
+.card{background:var(--s);border:1px solid var(--l);border-radius:22px;box-shadow:0 18px 50px -32px #000,inset 0 1px 0 rgba(255,255,255,.025)}
+.gold{background:linear-gradient(135deg,#ffe27c,#f0b429 48%,#c8891a);color:var(--bg);border:1px solid rgba(255,217,102,.4);border-radius:16px;padding:15px 22px;font-weight:800;box-shadow:0 10px 28px -10px rgba(240,180,41,.55),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .18s,filter .15s;display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.gold:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.ghost{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 16px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.ghost:hover{border-color:var(--g);color:var(--gl);background:rgba(240,180,41,.07)}
+.full{width:100%}
+h1,h2{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.03em;margin:0;color:#fff;font-weight:800}
+.mu{color:var(--mu)}.kick{font-size:.75rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--g)}
+.story{padding:20px;display:block;width:100%;text-align:left;margin-top:12px;transition:.2s;position:relative;overflow:hidden}
+.story:hover{border-color:var(--g);transform:translateY(-2px)}
+.story .big{font-size:2rem;color:var(--g)}
+.pill{display:inline-block;border:1px solid var(--l2);border-radius:99px;padding:2px 10px;font-size:.75rem;font-weight:700;color:var(--mu)}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.bar{background:var(--s);border:1px solid var(--l);border-radius:14px;padding:9px 12px}
+.bar span{display:flex;justify-content:space-between;font-size:.78rem;font-weight:600;color:var(--mu);margin-bottom:5px}
+.bar i{display:block;height:6px;border-radius:9px;background:var(--l);overflow:hidden}.bar i b{display:block;height:100%;border-radius:9px;transition:width .5s}
+.inv{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;min-height:30px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--l2);background:var(--s2);border-radius:99px;padding:4px 12px;font-size:.82rem;font-weight:600}
+.chip .ic{color:var(--g)}
+.scene{padding:24px;animation:in .4s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.scene p{font-size:1.1rem;color:#e4ddd0;margin:12px 0 18px}
+.blind{border:1px dashed var(--l2);border-radius:16px;padding:20px;text-align:center;margin:12px 0 18px}
+.opt{display:flex;align-items:center;gap:10px;justify-content:space-between;width:100%;text-align:left;background:var(--s2);border:1px solid var(--l);border-radius:16px;padding:16px 18px;margin-top:10px;transition:.2s}
+.opt:hover:not(:disabled){border-color:var(--g);transform:translateY(-2px)}
+.opt:disabled{opacity:.45;cursor:not-allowed}
+.note{border-left:3px solid var(--g);background:rgba(240,180,41,.07);border-radius:0 14px 14px 0;padding:14px 16px;margin:14px 0}
+.note.bad{border-color:var(--bad);background:rgba(239,68,68,.08)}
+.end{text-align:center}
+.cert{padding:28px 20px;border:1px solid rgba(240,180,41,.35);box-shadow:0 0 60px -20px rgba(240,180,41,.35);border-radius:22px;background:var(--s);text-align:center;margin:16px 0}
+.rank{font-size:4rem;font-weight:800;color:var(--g);line-height:1}
+.ref{border:1px solid rgba(240,180,41,.35);border-radius:18px;padding:18px;margin:16px 0;background:rgba(240,180,41,.05);text-align:left}
+.nb{position:fixed;inset:0;background:rgba(10,9,8,.96);z-index:50;overflow:auto;padding:18px}
+.nb .w{padding-top:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--l);padding:12px 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+<symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2z"/></symbol>
+<symbol id="i-waves" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol>
+<symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9z"/></symbol>
+<symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5zM16 9a5 5 0 0 1 0 6M19.4 18.4a9 9 0 0 0 0-12.8"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.7V17c0 .5-.5 1-2 1.2C7.8 18.8 7 20.2 7 22M14 14.7V17c0 .5.5 1 2 1.2 1.2.6 2 2 2 3.8M18 2H6v7a6 6 0 0 0 12 0z"/></symbol>
+<symbol id="i-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M21.8 10A10 10 0 1 1 17 3.3M9 11l3 3L22 4"/></symbol>
+</defs></svg>
+<div class="w" id="app"></div>
+<script>
+const I=(n,c)=>`<svg class="ic ${c||''}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+/* Formato de opción: [texto, siguiente, efectos] · efectos: h salud, e energía, add objeto, req objeto requerido, m explicación */
+const ST={
+a:{t:"Last Flight",lv:"A2",ic:"plane",d:"Tu avioneta cae en la selva. Hay un teléfono satelital, un piloto herido y una noche por delante.",start:[],first:"a1",s:{
+ a1:{t:"The Crash",x:"The small plane lands between the trees. The engine is dead, but you are alive. Captain Rivas is hurt and the radio is broken.",w:["engine|motor","hurt|herido","broken|roto"],cp:1,o:[
+  ["Help Captain Rivas out of the plane.","a2",{add:"Phone",m:"Rivas gives you his satellite phone. Good teamwork."}],
+  ["Take the survival kit first.","a2",{add:"Kit",h:-10,m:"You get the kit, but Rivas needs more help. He is weaker now."}]]},
+ a2:{t:"The Camp",x:"Smoke rises from the plane. It is three in the afternoon. You need to ask for help before dark.",w:["smoke|humo","help|ayuda"],cp:1,o:[
+  ["Use the satellite phone.","a3",{req:"Phone"}],
+  ["Search the wreck for a phone.","a3",{add:"Phone",h:-15,m:"The smoke hurts your lungs, but you find a phone."}]]},
+ a3:{t:"The Call",say:"Rescue team here. We see smoke north of the river. Stay near the plane. Do not walk. We arrive at nine tomorrow morning.",blind:1,x:"Listen to the rescue team. When do they arrive?",w:["stay|quedarse","arrive|llegar"],o:[
+  ["Tomorrow morning.","a4",{}],
+  ["Tonight.","a4",{h:-15,m:"They said tomorrow at nine. A wrong plan wastes energy."}],
+  ["In one hour.","a4",{h:-15,m:"They said tomorrow at nine. A wrong plan wastes energy."}]]},
+ a4:{t:"The Night",x:"Night comes. The jungle is cold and loud. Rivas shakes. The rescue team said not to walk.",w:["cold|frío","fire|fuego"],cp:1,o:[
+  ["Make a fire near the plane.","a5",{req:"Kit",e:-10}],
+  ["Stay inside the broken plane.","a5",{h:-25,e:-20,m:"The plane is cold and smells of fuel. You do not sleep."}],
+  ["Walk to the river in the dark.","L",{m:"The team told you to stay. In the dark, you got lost and they could not find you."}]]},
+ a5:{t:"Morning",x:"You hear a helicopter. The phone rings: 'Where are you? How many people?' What do you say?",w:["helicopter|helicóptero"],o:[
+  ["We are two people. One is hurt.","W1",{}],
+  ["I no know where. Help.","W2",{m:"The sentence was unclear. Say clearly: who, how many, and what happened."}]]},
+ W1:{t:"Perfect Rescue",x:"Your message is clear. The helicopter lands by the smoke and takes you and Rivas to the hospital.",end:1},
+ W2:{t:"Rescued Late",x:"They find you after a long search. You and Rivas are safe, but it was close.",end:1}}},
+b:{t:"Lost in the Fog",lv:"B1",ic:"mountain",d:"La niebla separa al grupo en un bosque nublado. Tu guía está herida y solo tienes un mapa.",start:[],first:"b1",s:{
+ b1:{t:"Separated",x:"The fog is thick and the group is gone. Marta, your guide, slipped and hurt her ankle. She gives you the trail map. 'Do not leave without a plan', she says.",w:["fog|niebla","ankle|tobillo","trail|sendero"],cp:1,o:[
+  ["Take the map and look for the ranger station.","b2",{add:"Map"}],
+  ["Stay with Marta and call for help.","b3",{}]]},
+ b2:{t:"The Signs",x:"A sign says: 'Lookout, 500 m, left. Ranger station, 1 km, straight. Cliff: do not enter.' Where is the ranger station?",w:["lookout|mirador","cliff|acantilado","straight|derecho"],o:[
+  ["One kilometre straight ahead.","b4",{req:"Map"}],
+  ["Left, five hundred metres.","b4",{h:-15,e:-15,m:"That is the lookout, not the station. You lose time and energy."}],
+  ["Beyond the cliff.","L",{m:"The sign says: cliff, do not enter. Reading signs carefully can save your life."}]]},
+ b3:{t:"The Message",x:"Shouting does not work in the fog. Your phone has 9% battery. Marta asks you to write to the ranger. Which message is best?",w:["battery|batería","ranger|guardabosque"],o:[
+  ["We are on the main trail, near the red sign. Marta's ankle is hurt.","W2",{}],
+  ["Help! Come now!","W2",{h:-20,e:-15,m:"Without a place and a reason, the ranger cannot find you. Be specific."}]]},
+ b4:{t:"The Station",x:"The station is empty. A note says: 'Back at five. In an emergency, use the radio on channel three.'",w:["note|nota","channel|canal"],cp:1,o:[
+  ["Use the radio on channel three.","W1",{}],
+  ["Wait outside for the ranger.","W1",{e:-25,m:"Waiting costs time, and Marta is in pain. The note said to use the radio."}]]},
+ W1:{t:"Ranger on the Radio",x:"You describe the trail, the red sign and Marta's ankle. The ranger sends a team with a stretcher.",end:1},
+ W2:{t:"Help Is Coming",x:"The ranger answers: 'Stay there. We are coming.' You wait with Marta until the lights appear in the fog.",end:1}}},
+c:{t:"Storm on the Pacific",lv:"B1+",ic:"waves",d:"Motor apagado, tormenta cerca y una radio. Cada palabra que digas importa.",start:["Radio","Flashlight"],first:"c1",s:{
+ c1:{t:"Engine Failure",x:"You and your friend Luis are fishing when the engine stops. Dark clouds are coming and the boat drifts away from the coast.",w:["drift|ir a la deriva","storm|tormenta","coast|costa"],cp:1,o:[
+  ["Call the coast guard on the radio.","c2",{req:"Radio"}],
+  ["Try to fix the engine.","c2",{e:-25,m:"The engine is flooded. You lose energy and time."}]]},
+ c2:{t:"The Coast Guard",say:"Coast Guard here. What is your position and how many people are on board?",x:"The coast guard asks for your position and people on board. What do you answer?",w:["position|posición","on board|a bordo"],o:[
+  ["Two kilometres south of the lighthouse. Two people.","c3",{}],
+  ["We are in the sea.","c3",{h:-15,m:"Too vague. They need a place and a number of people."}]]},
+ c3:{t:"The Instructions",say:"Stay on the boat. Show a light every ten minutes. We need forty minutes to arrive.",blind:1,x:"Listen carefully. What must you do?",w:["lighthouse|faro","flashlight|linterna"],o:[
+  ["Show a light every ten minutes.","c4",{}],
+  ["Swim to the lighthouse.","L",{m:"They said to stay on the boat. Swimming in a storm is very dangerous."}]]},
+ c4:{t:"Rough Waves",x:"The waves are high and water enters the boat. Luis is scared. You are thirsty.",w:["bucket|balde","thirsty|sediento","wave|ola"],cp:1,o:[
+  ["Use a bucket to remove the water.","c5",{e:-15}],
+  ["Drink some sea water.","c5",{h:-30,e:-20,m:"Sea water makes you more thirsty and sick."}]]},
+ c5:{t:"The Signal",x:"You see a light in the dark: it is the rescue boat. How do you signal?",w:["rescue|rescate","signal|señal"],o:[
+  ["Flash the flashlight: three short flashes.","W1",{req:"Flashlight"}],
+  ["Turn off everything to save battery.","W2",{h:-10,m:"If they cannot see you, they cannot find you. Signal clearly."}]]},
+ W1:{t:"Rescued at Sea",x:"The rescue boat sees your signal and reaches you in minutes. You and Luis return to the coast safe.",end:1},
+ W2:{t:"A Late Rescue",x:"The boat passes twice before seeing you. You are safe, but tired and cold.",end:1}}}
+};
+let U={name:"",surname:""},P={xp:0,done:{},words:[]},G=null,app=document.getElementById('app');
+const key=()=>'surv_v1_'+(U.name||'alumno');
+const save=()=>{try{localStorage.setItem(key(),JSON.stringify(P))}catch(e){}};
+function readUser(){const u={name:"",surname:""};try{for(const k of ['nica_usuario','nica_user','nica_alumno','nica_sesion','nec_usuario','usuario','user']){const r=localStorage.getItem(k);if(!r)continue;try{const o=JSON.parse(r);if(o&&typeof o==='object'){u.name=o.name||o.nombre||o.nombres||'';u.surname=o.surname||o.apellido||o.apellidos||'';if(u.name)break}}catch(e){if(r.length<40&&r!=='true'){u.name=r;break}}}
+ if(!u.name)for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/nombre|name/i.test(k)&&!/file|agent/i.test(k)){const v=localStorage.getItem(k);if(v&&v.length<40&&v[0]!=='{'){u.name=v;break}}}
+ if(!u.name)u.name=localStorage.getItem('surv_nombre')||''}catch(e){}return u}
+const rankName=()=>P.xp>=300?'Experto':P.xp>=100?'Superviviente':'Explorador';
+const full=()=>((U.name||'')+' '+(U.surname||'')).trim()||'Alumno NEC';
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const m=new SpeechSynthesisUtterance(t);m.lang='en-US';m.rate=.88;const v=speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang));if(v)m.voice=v;speechSynthesis.speak(m)}
+const say=i=>speak(i===-1?G.sc.say||G.sc.x:i);
+
+function hub(){speechSynthesis&&speechSynthesis.cancel();G=null;
+ app.innerHTML=`<div class="top"><div class="brand fd">Nica <b>English</b> Club</div><button class="ghost" onclick="nb()">${I('book')} Notebook</button></div>
+ <span class="kick">Survival Hub</span><h1 style="font-size:2.3rem;line-height:1.05;margin:6px 0 4px">Choose your <span style="color:var(--g)">mission</span></h1>
+ <p class="mu" style="margin:0 0 6px">Hola, <b style="color:var(--ink)">${U.name||'explorador'}</b>. Rango: <b style="color:var(--g)">${rankName()}</b> · ${P.xp} XP</p>
+ ${Object.entries(ST).map(([k,s])=>{const d=P.done[k];return `<button class="card story" onclick="play('${k}')"><div style="display:flex;gap:16px;align-items:flex-start"><span class="big">${I(s.ic)}</span><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="font-size:1.35rem">${s.t}</h2><span class="pill">${s.lv}</span></div><p class="mu" style="margin:6px 0 0;font-size:.95rem">${s.d}</p>${d?`<p style="margin:10px 0 0;color:var(--g);font-weight:700;font-size:.9rem">${I('check')} Completada · Rango ${d}</p>`:''}</div></div></button>`}).join('')}`}
+
+function play(k){const s=ST[k];G={k,h:100,e:100,inv:[...s.start],id:s.first,sc:null,cp:null,m:'',seen:false};goto(s.first)}
+function goto(id){const sc=ST[G.k].s[id];G.id=id;G.sc=sc;G.m='';
+ if(sc.cp)G.cp={id,h:G.h,e:G.e,inv:[...G.inv]};
+ (sc.w||[]).forEach(w=>{if(!P.words.includes(w)){P.words.push(w)}});save();
+ sc.end?finish():scene()}
+function hud(){return `<div class="top" style="padding-bottom:12px"><button class="ghost" onclick="hub()">Salir</button><button class="ghost" onclick="nb()">${I('book')} Notebook</button></div>
+ <div class="bars"><div class="bar"><span><em>${I('heart')} Health</em><em>${G.h}</em></span><i><b style="width:${G.h}%;background:${G.h>40?'var(--ok)':'var(--bad)'}"></b></i></div>
+ <div class="bar"><span><em>${I('bolt')} Energy</em><em>${G.e}</em></span><i><b style="width:${G.e}%;background:var(--g)"></b></i></div></div>
+ <div class="inv">${G.inv.map(i=>`<span class="chip">${I('gem')} ${i}</span>`).join('')||'<span class="mu" style="font-size:.85rem">Empty backpack</span>'}</div>`}
+function scene(){const sc=G.sc;
+ app.innerHTML=hud()+`<div class="card scene"><span class="kick">${ST[G.k].t}</span><h2 style="font-size:1.8rem;margin-top:4px">${sc.t}</h2>
+ ${sc.blind?`<div class="blind"><p class="mu" style="margin:0 0 12px">Listen to the message</p><button class="gold" onclick="say(-1)">${I('vol')} Play audio</button></div><p style="margin-top:0">${sc.x}</p>`:`<p>${sc.x}</p><button class="ghost" onclick="say(-1)">${I('vol')} Listen</button>`}
+ ${sc.o.map((o,i)=>{const r=o[2].req,lock=r&&!G.inv.includes(r);return `<button class="opt" ${lock?'disabled':''} onclick="pick(${i})"><span>${o[0]}</span>${lock?`<span class="pill">${I('lock')} Needs ${r}</span>`:I('arrow')}</button>`}).join('')}</div>`;
+ if(sc.say&&!sc.blind)setTimeout(()=>say(-1),300);}
+function pick(i){const o=G.sc.o[i],f=o[2];speechSynthesis.cancel();
+ if(f.h)G.h=Math.max(0,G.h+f.h);if(f.e)G.e=Math.max(0,G.e+f.e);if(f.add&&!G.inv.includes(f.add))G.inv.push(f.add);
+ G.next=o[1];G.m=f.m||'';
+ if(G.h<=0)return lose(f.m||'Your health reached zero. Every decision has a cost: check what you choose.');
+ if(o[1]==='L')return lose(f.m);
+ if(G.m){app.innerHTML=hud()+`<div class="card scene"><div class="note ${f.h<0||f.e<0?'bad':''}">${G.m}</div><button class="gold full" onclick="goto(G.next)">Continue ${I('arrow')}</button></div>`}else goto(o[1])}
+function lose(m){app.innerHTML=hud()+`<div class="card scene end"><span class="kick" style="color:var(--bad)">Mission failed</span><h2 style="font-size:2rem;margin:6px 0 12px">Not this time</h2><div class="note bad" style="text-align:left">${m}</div>
+ <button class="gold full" onclick="retry()">${I('redo')} Try again from checkpoint</button><button class="ghost full" style="margin-top:10px;justify-content:center" onclick="hub()">Back to missions</button></div>`}
+function retry(){const c=G.cp;G.h=Math.max(c.h,60);G.e=Math.max(c.e,60);G.inv=[...c.inv];goto(c.id)}
+function finish(){const sc=G.sc,s=ST[G.k],r=G.h>=70?'S':G.h>=40?'A':'B',bonus={S:100,A:70,B:50}[r];
+ if(!P.done[G.k]){P.xp+=bonus;}else if('SAB'.indexOf(r)<'SAB'.indexOf(P.done[G.k])){P.xp+=20}
+ if(!P.done[G.k]||'SAB'.indexOf(r)<'SAB'.indexOf(P.done[G.k]))P.done[G.k]=r;save();G.r=r;
+ app.innerHTML=`<div class="top"><div class="brand fd">Nica <b>English</b> Club</div></div>
+ <div class="cert"><span class="kick">Mission complete</span><h2 style="font-size:1.9rem;margin:6px 0">${sc.t}</h2><p style="color:#e4ddd0;margin:0 0 16px">${sc.x}</p>
+ <div class="rank fd">${r}</div><p class="mu" style="margin:4px 0 14px">Rank · Health left ${G.h}</p><div class="fd" style="font-size:1.4rem;font-weight:700">${full()}</div><p class="mu" style="margin:2px 0 0">${s.t} · Level ${s.lv}</p></div>
+ <button class="gold full" onclick="cert()">${I('dl')} Download certificate</button>
+ <div class="ref"><span class="kick">Club benefits</span><h2 style="font-size:1.25rem;margin:6px 0">Train as a team and earn credit</h2><p class="mu" style="margin:0 0 12px">Invite a friend to NicaEnglishClub. If they enroll, you get $10.00 credit on your next invoice.</p><button class="ghost" onclick="refer()">Refer a friend ${I('arrow')}</button></div>
+ <button class="ghost full" style="justify-content:center" onclick="play('${G.k}')">${I('redo')} Play again</button>
+ <button class="ghost full" style="justify-content:center;margin-top:10px" onclick="hub()">Back to missions</button>`}
+function refer(){const n=prompt('Nombre del referido'),w=n&&prompt('WhatsApp del referido'),c=w&&prompt('Ciudad');if(!c)return;
+ open('https://wa.me/50581481862?text='+encodeURIComponent(`Hola Gus, me gustaría reportar un referido:\n\nReferido: ${n}\nWhatsApp: ${w}\nCiudad: ${c}\nReferido por: ${full()}`),'_blank')}
+function nb(){const d=document.createElement('div');d.className='nb';d.innerHTML=`<div class="w"><div class="top"><h2 style="font-size:1.6rem">Field <span style="color:var(--g)">Notebook</span></h2><button class="ghost" onclick="this.closest('.nb').remove()">Close</button></div>
+ ${P.words.length?P.words.map(w=>{const[a,b]=w.split('|');return `<div class="row"><div><b style="color:var(--gl)">${a}</b><div class="mu" style="font-size:.88rem">${b}</div></div><button class="ghost" data-w="${a}" onclick="speak(this.dataset.w)">${I('vol')}</button></div>`}).join(''):'<p class="mu">Las palabras aparecen aquí cuando las descubres en una misión.</p>'}</div>`;document.body.appendChild(d)}
+async function cert(){if(!U.name){const n=prompt('¿Con qué nombre quieres tu certificado?');if(n){U.name=n;try{localStorage.setItem('surv_nombre',n)}catch(e){}}}
+ try{await document.fonts.load('800 80px "Bricolage Grotesque"')}catch(e){}
+ const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d'),F='"Bricolage Grotesque",system-ui,sans-serif';
+ x.fillStyle='#0a0908';x.fillRect(0,0,1080,1350);const g=x.createRadialGradient(300,0,0,300,0,900);g.addColorStop(0,'rgba(240,180,41,.22)');g.addColorStop(1,'rgba(10,9,8,0)');x.fillStyle=g;x.fillRect(0,0,1080,1350);
+ x.strokeStyle='#f0b429';x.lineWidth=4;x.strokeRect(50,50,980,1250);x.strokeStyle='rgba(240,180,41,.3)';x.lineWidth=1.5;x.strokeRect(68,68,944,1214);x.textAlign='center';
+ const t=(s,y,z,col,w=700)=>{x.fillStyle=col;x.font=w+' '+z+'px '+F;x.fillText(s,540,y)},s=ST[G.k];
+ t('NICA ENGLISH CLUB',200,34,'#f0b429');t('Survival',390,120,'#ffffff',800);t('Mastery',515,130,'#f0b429',800);t('Otorgado a',680,36,'#9a948a',500);t(full().toUpperCase(),770,64,'#ffffff');
+ t(s.t,860,40,'#f4efe6',600);t('RANGO',960,28,'#9a948a',500);t(G.r,1090,150,'#f0b429',800);t('Level '+s.lv+' · ID NEC-'+Math.floor(100000+Math.random()*899999),1210,28,'#9a948a',500);
+ const a=document.createElement('a');a.download='certificado-survival-nec.png';a.href=c.toDataURL('image/png');a.click()}
+if(!window.NEC_BLOQUEADO){U=readUser();try{Object.assign(P,JSON.parse(localStorage.getItem(key())||'{}'))}catch(e){}hub()}
+</script>
+</body>
+</html>
