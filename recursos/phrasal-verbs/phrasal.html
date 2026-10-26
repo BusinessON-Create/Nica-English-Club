@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0908">
+<title>Phrasal Verbs · Nica English Club</title>
+<!-- SEGURIDAD: ajusta la ruta según la carpeta (../seguridad.js, ../../seguridad.js) -->
+<script src="../seguridad.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0908;--s:#131110;--s2:#1a1714;--l:#2a2520;--l2:#38322b;--g:#f0b429;--gl:#ffd966;--em:#ff6a1a;--ink:#f4efe6;--mu:#9a948a;--ok:#34d399;--bad:#ef4444;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg) radial-gradient(90% 50% at 15% -10%,rgba(240,180,41,.10),transparent 60%),radial-gradient(60% 40% at 100% 0,rgba(255,106,26,.06),transparent 60%) no-repeat fixed;color:var(--ink);font-family:Figtree,system-ui,sans-serif;line-height:1.55;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+::selection{background:var(--g);color:var(--bg)}
+button,input{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--gl);outline-offset:3px;border-radius:10px}
+.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.14em;flex:none}
+.fd,h1,h2,h3{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.03em}
+h1,h2,h3{margin:0;color:#fff;font-weight:800}
+.w{max-width:960px;margin:0 auto;padding:18px 18px 50px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0 14px}
+.brand{font-weight:800;font-size:1.15rem;color:#fff}.brand b{color:var(--g)}
+.mu{color:var(--mu)}.kick{font-size:.75rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--g)}
+.card{background:var(--s);border:1px solid var(--l);border-radius:22px;box-shadow:0 18px 50px -32px #000,inset 0 1px 0 rgba(255,255,255,.025)}
+.gold{background:linear-gradient(135deg,#ffe27c,#f0b429 48%,#c8891a);color:var(--bg);border:1px solid rgba(255,217,102,.4);border-radius:16px;padding:15px 22px;font-weight:800;box-shadow:0 10px 28px -10px rgba(240,180,41,.55),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .18s,filter .15s;display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.gold:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.ghost{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 16px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.ghost:hover{border-color:var(--g);color:var(--gl);background:rgba(240,180,41,.07)}
+.full{width:100%}
+.tabs{display:flex;gap:8px;margin:6px 0 22px;overflow-x:auto}
+.tab{border:1px solid var(--l);background:transparent;border-radius:99px;padding:10px 20px;font-weight:700;color:var(--mu);white-space:nowrap;transition:.2s}
+.tab.on{background:var(--g);border-color:var(--g);color:var(--bg)}
+.sec{display:none;animation:in .35s ease}.sec.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.prog{padding:16px 18px;margin-bottom:16px}
+.track{height:8px;border-radius:9px;background:var(--l);overflow:hidden}.track b{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#f0b429,#ffd966);transition:width .6s}
+.srch{display:flex;gap:10px;align-items:center;background:var(--s);border:1px solid var(--l);border-radius:16px;padding:0 14px;margin-bottom:16px}
+.srch input{flex:1;background:none;border:0;outline:0;padding:14px 0;font-size:1rem}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.pv{padding:18px;display:flex;flex-direction:column;gap:10px;transition:.2s}.pv:hover{border-color:var(--g);transform:translateY(-3px)}
+.pv h3{font-size:1.45rem;color:var(--g)}
+.sp{width:42px;height:42px;border-radius:50%;border:0;background:rgba(240,180,41,.12);color:var(--g);display:grid;place-items:center;font-size:1.1rem;transition:.2s}.sp:hover{background:var(--g);color:var(--bg)}
+.ex{border-left:3px solid var(--g);background:rgba(0,0,0,.3);border-radius:0 12px 12px 0;padding:10px 12px;font-size:.92rem;color:#e4ddd0;display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:auto}
+mark{background:none;color:var(--gl);font-weight:700}
+.tag{font-size:.72rem;font-weight:700;color:var(--ok);display:inline-flex;align-items:center;gap:5px}
+.q{padding:26px;max-width:640px;margin:0 auto;text-align:center}
+.q .big{font-size:1.5rem;font-weight:700;color:#fff;margin:10px 0 22px}
+.opts{display:grid;gap:10px}.opts.two{grid-template-columns:1fr 1fr}
+@media(max-width:480px){.opts.two{grid-template-columns:1fr}}
+.opt{background:var(--s2);border:2px solid var(--l);border-radius:16px;padding:16px;font-weight:600;transition:.2s}
+.opt:hover:not(:disabled){border-color:var(--g);transform:translateY(-2px)}
+.opt.ok{background:rgba(52,211,153,.14);border-color:var(--ok);color:#6ee7b7}
+.opt.bad{background:rgba(239,68,68,.14);border-color:var(--bad);color:#fca5a5;animation:sh .4s}
+.opt.dim{opacity:.45}
+@keyframes sh{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.fb{min-height:48px;margin-top:16px;font-weight:600;font-size:.95rem}
+input.name{width:100%;background:var(--s2);border:1px solid var(--l2);border-radius:14px;padding:15px;font-size:1rem;outline:0;margin:8px 0 16px}input.name:focus{border-color:var(--g)}
+.stat{display:flex;justify-content:space-between;gap:12px;font-weight:700;font-size:.9rem;margin-bottom:12px}
+.cert{padding:26px 18px;border:1px solid rgba(240,180,41,.35);box-shadow:0 0 60px -20px rgba(240,180,41,.35);border-radius:22px;background:var(--s);margin:16px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.chip{border:1px solid var(--l2);background:var(--s2);border-radius:99px;padding:5px 12px;font-size:.85rem;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5zM16 9a5 5 0 0 1 0 6M19.4 18.4a9 9 0 0 0 0-12.8"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M21.8 10A10 10 0 1 1 17 3.3M9 11l3 3L22 4"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.7V17c0 .5-.5 1-2 1.2C7.8 18.8 7 20.2 7 22M14 14.7V17c0 .5.5 1 2 1.2 1.2.6 2 2 2 3.8M18 2H6v7a6 6 0 0 0 12 0z"/></symbol>
+<symbol id="i-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4.1 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4M3.3 19a10 10 0 1 1 17.4 0"/></symbol>
+</defs></svg>
+<div class="w">
+ <div class="top"><div class="brand fd">Nica <b>English</b> Club</div><button class="ghost" id="spd" onclick="toggleSlow()"></button></div>
+ <span class="kick">Phrasal Verbs</span>
+ <h1 style="font-size:2.3rem;line-height:1.05;margin:6px 0 4px">30 verbos que usarás <span style="color:var(--g)">todos los días</span></h1>
+ <p class="mu" style="margin:0 0 6px">Hola, <b id="who" style="color:var(--ink)"></b>. Aprende, practica y certifícate.</p>
+ <div class="tabs" role="tablist">
+  <button class="tab on" data-t="learn" onclick="tab('learn')">Aprender</button>
+  <button class="tab" data-t="trivia" onclick="tab('trivia')">Trivia</button>
+  <button class="tab" data-t="exam" onclick="tab('exam')">Certificado</button>
+ </div>
+
+ <section id="learn" class="sec on">
+  <div class="card prog"><div class="stat"><span>Verbos dominados</span><span style="color:var(--g)" id="mc"></span></div><div class="track"><b id="mb"></b></div><p class="mu" style="margin:8px 0 0;font-size:.82rem">Acierta un verbo 3 veces en Trivia o en el examen para dominarlo.</p></div>
+  <label class="srch"><svg class="ic" style="color:var(--mu)"><use href="#i-search"/></svg><input id="q" placeholder="Buscar en inglés o en español" oninput="renderList()" aria-label="Buscar"></label>
+  <div class="grid" id="list"></div>
+ </section>
+
+ <section id="trivia" class="sec">
+  <div class="card q">
+   <div class="stat"><span style="color:var(--em)"><svg class="ic"><use href="#i-flame"/></svg> Racha <span id="tst">0</span></span><span style="color:var(--g)">Mejor <span id="tbs">0</span></span></div>
+   <span class="kick">Trivia</span><div class="big" id="tq"></div><div class="opts" id="to"></div><div class="fb" id="tf"></div>
+  </div>
+ </section>
+
+ <section id="exam" class="sec">
+  <div class="card q" id="eIntro">
+   <span class="kick">Examen oficial</span><h2 style="font-size:1.9rem;margin:6px 0 10px">Certificado Phrasal Verbs</h2>
+   <p class="mu" style="margin:0 0 6px">15 preguntas al azar de los 30 verbos. Necesitas <b style="color:var(--g)">85% o más</b> (13 aciertos) para tu diploma.</p>
+   <div id="nameBox" style="text-align:left"><label class="mu" style="font-size:.85rem">Tu nombre completo (así aparecerá en el diploma)</label><input class="name" id="fn" placeholder="Ej: Juan Pérez" autocomplete="name"></div>
+   <p class="mu" id="bestTxt" style="font-size:.9rem"></p>
+   <button class="gold full" onclick="startExam()">Comenzar examen</button>
+  </div>
+  <div class="card q" id="eQuiz" style="display:none">
+   <div class="stat"><span id="ep"></span><span style="color:var(--g)" id="es"></span></div><div class="track" style="margin-bottom:18px"><b id="eb" style="width:0"></b></div>
+   <div class="big" id="eq"></div><div class="opts two" id="eo"></div><div class="fb" id="ef"></div>
+  </div>
+  <div class="card q" id="eRes" style="display:none"></div>
+ </section>
+</div>
+<script>
+const RAW=`Get up|Levantarse|/guet ap/|I {get up} at 6 AM every day.
+Work out|Hacer ejercicio|/uerk aut/|She {works out} at the gym.
+Look for|Buscar|/luk for/|I am {looking for} my keys.
+Pick up|Recoger / Aprender|/pik ap/|Can you {pick up} some milk?
+Give up|Rendirse / Dejar de|/guiv ap/|Never {give up} on your dreams.
+Hang out|Pasar el rato|/jang aut/|Let's {hang out} this weekend.
+Turn off|Apagar|/tern of/|{Turn off} the lights, please.
+Find out|Descubrir|/faind aut/|I just {found out} the truth.
+Check in|Registrarse|/chek in/|We need to {check in} at the hotel.
+Call back|Devolver llamada|/kol bak/|I will {call back} later.
+Go on|Continuar|/gou on/|Please, {go on} with your story.
+Break up|Terminar (relación)|/breik ap/|They decided to {break up}.
+Put on|Ponerse (ropa)|/put on/|{Put on} your coat, it's cold.
+Take off|Quitarse / Despegar|/teik of/|{Take off} your shoes inside.
+Run out of|Quedarse sin|/ran aut ov/|We {ran out of} coffee.
+Wake up|Despertarse|/ueik ap/|I {wake up} before the alarm.
+Look after|Cuidar|/luk after/|Can you {look after} my dog?
+Carry on|Continuar|/kari on/|{Carry on} with your work.
+Come back|Regresar|/kam bak/|When will you {come back}?
+Get along|Llevarse bien|/guet along/|I {get along} with my boss.
+Look forward to|Anhelar|/luk for-uard tu/|I {look forward to} meeting you.
+Set up|Configurar / Instalar|/set ap/|I need to {set up} my new phone.
+Back up|Respaldar / Retroceder|/bak ap/|Always {back up} your files.
+Bring up|Mencionar / Criar|/bring ap/|Don't {bring up} that topic now.
+Hold on|Esperar (teléfono)|/jold on/|{Hold on} a second, please.
+Keep on|Seguir haciendo|/kip on/|{Keep on} trying, you can do it.
+Clean up|Limpiar|/klin ap/|We must {clean up} this mess.
+Fill out|Rellenar (formulario)|/fil aut/|{Fill out} this application form.
+Calm down|Calmarse|/kam daun/|{Calm down}, everything is fine.
+Show up|Aparecer / Llegar|/shou ap/|He didn't {show up} to the party.`;
+const PV=RAW.split('\n').map(l=>{const[v,es,pr,ex]=l.split('|');return{v,es,pr,ex:ex.replace(/[{}]/g,''),hl:ex.replace(/\{(.+?)\}/,'<mark>$1</mark>'),blank:ex.replace(/\{.+?\}/,'_____'),f:ex.match(/\{(.+?)\}/)[1]}});
+const $=id=>document.getElementById(id),I=n=>`<svg class="ic"><use href="#i-${n}"/></svg>`,rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>[...a].sort(()=>Math.random()-.5);
+let U={name:''},P={m:{},best:0,exam:0,slow:false},T={cur:null,streak:0,locked:false},E=null;
+const key=()=>'phv_v1_'+(U.name||'alumno'),save=()=>{try{localStorage.setItem(key(),JSON.stringify(P))}catch(e){}};
+function readUser(){const u={name:''};try{for(const k of ['nica_usuario','nica_user','nica_alumno','nica_sesion','nec_usuario','usuario','user']){const r=localStorage.getItem(k);if(!r)continue;try{const o=JSON.parse(r);if(o&&typeof o==='object'){u.name=((o.name||o.nombre||o.nombres||'')+' '+(o.surname||o.apellido||o.apellidos||'')).trim();if(u.name)break}}catch(e){if(r.length<40&&r!=='true'){u.name=r;break}}}
+ if(!u.name)for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/nombre|name/i.test(k)&&!/file|agent/i.test(k)){const v=localStorage.getItem(k);if(v&&v.length<40&&v[0]!=='{'){u.name=v;break}}}
+ if(!u.name)u.name=localStorage.getItem('phv_nombre')||''}catch(e){}return u}
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const m=new SpeechSynthesisUtterance(t);m.lang='en-US';m.rate=P.slow?.55:.88;const v=speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang));if(v)m.voice=v;speechSynthesis.speak(m)}
+function toggleSlow(){P.slow=!P.slow;save();$('spd').innerHTML=I('gauge')+(P.slow?' Voz lenta':' Voz normal')}
+const mc=()=>PV.filter(p=>(P.m[p.v]||0)>=3).length;
+function stats(){$('mc').textContent=mc()+' / 30';$('mb').style.width=mc()/30*100+'%'}
+function tab(id){document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id===id));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===id));speechSynthesis&&speechSynthesis.cancel();if(id==='trivia')nextT();if(id==='exam')resetExam();if(id==='learn')stats()}
+function renderList(){const q=$('q').value.trim().toLowerCase();
+ $('list').innerHTML=PV.filter(p=>!q||p.v.toLowerCase().includes(q)||p.es.toLowerCase().includes(q)).map(p=>{const i=PV.indexOf(p);return `<div class="card pv"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><h3>${p.v}</h3>${(P.m[p.v]||0)>=3?`<span class="tag">${I('check')} Dominado</span>`:''}</div><button class="sp" onclick="speak(PV[${i}].v)" aria-label="Escuchar ${p.v}">${I('vol')}</button></div><div><div class="mu" style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase">Significado</div><div style="font-weight:600">${p.es}</div><div class="mu" style="font-style:italic;font-size:.88rem">${p.pr}</div></div><div class="ex"><span>${p.hl}</span><button class="sp" style="width:34px;height:34px;font-size:.9rem" onclick="speak(PV[${i}].ex)" aria-label="Escuchar ejemplo">${I('vol')}</button></div></div>`}).join('')||'<p class="mu">No encontré resultados.</p>'}
+function credit(v){P.m[v]=(P.m[v]||0)+1;save();stats()}
+/* TRIVIA */
+function nextT(){const p=rnd(PV);T.cur=p;T.locked=false;$('tq').innerHTML=`¿Qué significa <span style="color:var(--g)">"${p.v}"</span>?`;
+ const o=[p.es];while(o.length<4){const r=rnd(PV).es;if(!o.includes(r))o.push(r)}
+ $('to').innerHTML=shuf(o).map(x=>`<button class="opt" onclick="ansT(this,${x===p.es})">${x}</button>`).join('');$('tf').textContent='';$('tst').textContent=T.streak;$('tbs').textContent=P.best}
+function ansT(b,ok){if(T.locked)return;T.locked=true;mark(b,ok,'to',T.cur.es);
+ if(ok){T.streak++;P.best=Math.max(P.best,T.streak);credit(T.cur.v);$('tf').style.color='#6ee7b7';$('tf').innerHTML=`Correcto. ${T.cur.hl}`;speak(T.cur.v);setTimeout(nextT,1500)}
+ else{T.streak=0;$('tf').style.color='#fca5a5';$('tf').innerHTML=`Era "${T.cur.es}". ${T.cur.hl}`;navigator.vibrate&&navigator.vibrate([80,40,80]);setTimeout(nextT,2200)}
+ $('tst').textContent=T.streak;$('tbs').textContent=P.best;save()}
+function mark(b,ok,box,right){document.querySelectorAll('#'+box+' .opt').forEach(x=>{x.disabled=true;if(x.textContent===right)x.classList.add('ok');else if(x===b)x.classList.add('bad');else x.classList.add('dim')});if(ok)b.classList.add('ok')}
+/* EXAMEN */
+function resetExam(){$('eIntro').style.display='';$('eQuiz').style.display='none';$('eRes').style.display='none';$('nameBox').style.display=U.name?'none':'';$('bestTxt').textContent=P.exam?`Tu mejor nota: ${P.exam}%`:''}
+function startExam(){if(!U.name){const n=$('fn').value.trim();if(n.length<3){$('fn').focus();return}U.name=n;try{localStorage.setItem('phv_nombre',n)}catch(e){}$('who').textContent=n.split(' ')[0]}
+ E={qs:shuf(PV).slice(0,15),i:0,s:0,miss:[],locked:false};$('eIntro').style.display='none';$('eRes').style.display='none';$('eQuiz').style.display='';eq()}
+function eq(){const p=E.qs[E.i];E.locked=false;E.fill=Math.random()<.5;
+ $('ep').textContent=`Pregunta ${E.i+1} de 15`;$('es').textContent=`${E.s} correctas`;$('eb').style.width=E.i/15*100+'%';$('ef').textContent='';
+ $('eq').innerHTML=E.fill?`Completa:<br><span style="color:var(--gl)">${p.blank}</span>`:`¿Cuál verbo significa <span style="color:var(--g)">"${p.es}"</span>?`;
+ const o=[p.v];while(o.length<4){const r=rnd(PV).v;if(!o.includes(r))o.push(r)}
+ $('eo').innerHTML=shuf(o).map(x=>`<button class="opt" onclick="ea(this,${x===p.v})">${x}</button>`).join('');}
+function ea(b,ok){if(E.locked)return;E.locked=true;const p=E.qs[E.i];mark(b,ok,'eo',p.v);
+ if(ok){E.s++;credit(p.v);$('ef').style.color='#6ee7b7';$('ef').innerHTML='Correcto. '+p.hl;speak(p.ex)}
+ else{E.miss.push(p);$('ef').style.color='#fca5a5';$('ef').innerHTML=`Era "${p.v}". ${p.hl}`;navigator.vibrate&&navigator.vibrate([80,40,80])}
+ setTimeout(()=>{E.i++;E.i>=15?eEnd():eq()},ok?1100:2000)}
+function eEnd(){const pc=Math.round(E.s/15*100),pass=pc>=85;E.pc=pc;if(pc>P.exam){P.exam=pc;save()}
+ $('eQuiz').style.display='none';const r=$('eRes');r.style.display='';
+ r.innerHTML=`<span class="kick" style="color:${pass?'var(--g)':'var(--em)'}">${pass?'Aprobado':'Casi lo logras'}</span><h2 style="font-size:2.2rem;margin:6px 0">${pc}% <span class="mu" style="font-size:1.1rem">(${E.s}/15)</span></h2>
+ ${pass?`<div class="cert"><div style="font-size:2.6rem;color:var(--g)">${I('trophy')}</div><span class="kick">Nica English Club</span><h2 style="font-size:1.8rem;margin:6px 0">Certificado<br><span style="color:var(--g)">Phrasal Verbs Master</span></h2><p class="mu" style="margin:10px 0 0">Otorgado a</p><div class="fd" style="font-size:1.4rem;font-weight:700">${U.name}</div></div><button class="gold full" onclick="cert()">${I('dl')} Descargar certificado</button>`:`<p class="mu">Necesitas 85% (13 aciertos). Repasa estos verbos y vuelve a intentarlo:</p>`}
+ ${E.miss.length?`<p class="mu" style="margin:16px 0 4px;font-size:.9rem">${pass?'Para repasar:':''}</p><div class="chips">${E.miss.map(m=>`<button class="chip" onclick="speak('${m.v}')">${m.v} · ${m.es}</button>`).join('')}</div>`:''}
+ <button class="ghost full" style="justify-content:center;margin-top:12px" onclick="resetExam()">${I('redo')} Volver al inicio del examen</button>`}
+async function cert(){try{await document.fonts.load('800 80px "Bricolage Grotesque"')}catch(e){}
+ const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d'),F='"Bricolage Grotesque",system-ui,sans-serif';
+ x.fillStyle='#0a0908';x.fillRect(0,0,1080,1350);const g=x.createRadialGradient(300,0,0,300,0,900);g.addColorStop(0,'rgba(240,180,41,.22)');g.addColorStop(1,'rgba(10,9,8,0)');x.fillStyle=g;x.fillRect(0,0,1080,1350);
+ x.strokeStyle='#f0b429';x.lineWidth=4;x.strokeRect(50,50,980,1250);x.strokeStyle='rgba(240,180,41,.3)';x.lineWidth=1.5;x.strokeRect(68,68,944,1214);x.textAlign='center';
+ const t=(s,y,z,col,w=700)=>{x.fillStyle=col;x.font=w+' '+z+'px '+F;x.fillText(s,540,y)};
+ t('NICA ENGLISH CLUB',200,34,'#f0b429');t('Certificado',390,110,'#ffffff',800);t('Phrasal Verbs',510,100,'#f0b429',800);t('Otorgado a',680,36,'#9a948a',500);t(U.name.toUpperCase(),770,64,'#ffffff');
+ t('NOTA FINAL',930,28,'#9a948a',500);t(E.pc+'%',1030,110,'#f0b429',800);t('30 phrasal verbs de uso diario',1120,34,'#f4efe6',600);t(new Date().toLocaleDateString('es-NI',{day:'numeric',month:'long',year:'numeric'})+' · ID NEC-'+Math.floor(100000+Math.random()*899999),1220,26,'#9a948a',500);
+ const a=document.createElement('a');a.download='certificado-phrasal-verbs-nec.png';a.href=c.toDataURL('image/png');a.click()}
+if(!window.NEC_BLOQUEADO){U=readUser();try{Object.assign(P,JSON.parse(localStorage.getItem(key())||'{}'))}catch(e){}
+ $('who').textContent=(U.name||'campeón').split(' ')[0];$('spd').innerHTML=I('gauge')+(P.slow?' Voz lenta':' Voz normal');renderList();stats()}
+</script>
+</body>
+</html>
