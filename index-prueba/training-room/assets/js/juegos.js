@@ -49,8 +49,12 @@ function mezclar(arr) {
 }
 
 // ── HTML de cada ejercicio ────────────────────────────────────────────
+// El marcador de puntos y racha está apagado (no se guardaba al recargar, así que no servía).
+// nivel.js lo sigue llamando, por eso la función existe pero no dibuja nada.
+// Para volver a mostrarlo: cambia el return por la línea que está comentada abajo.
 export function marcador() {
-  return `<div id="tr2-marcador" class="tr2-marcador">${textoMarcador()}</div>`;
+  return '';
+  // return `<div id="tr2-marcador" class="tr2-marcador">${textoMarcador()}</div>`;
 }
 
 export function renderOpcion(pregunta, opciones, correcta) {
@@ -106,6 +110,10 @@ function registrarError() {
   actualizarMarcador();
 }
 
+// Mensajes amables
+const FELICITA = ['¡Muy bien!', '¡Correcto!', '¡Excelente!', '¡Eso es!'];
+const felicita = () => FELICITA[Math.floor(Math.random() * FELICITA.length)];
+
 // ── Avisos dentro de un juego ──────────────────────────────────────────
 function mostrarAviso(cont, texto, tipo) {
   quitarAviso(cont);
@@ -159,10 +167,12 @@ export function instalarJuegos() {
       if (ok) {
         sumarAcierto(10);
         cont.classList.add('tr2-juego-ok');
+        mostrarAviso(cont, felicita(), 'ok');
       } else {
         opBtn.classList.add('tr2-mal');
         registrarError();
         cont.classList.add('tr2-juego-mal');
+        mostrarAviso(cont, '¡Casi! La respuesta correcta quedó en verde.', 'mal');
       }
       return;
     }
@@ -203,7 +213,7 @@ export function instalarJuegos() {
         cont.classList.add('tr2-juego-ok');
         // 10 pts si acertó a la primera, 5 si necesitó corregir
         sumarAcierto(cont.dataset.fallos ? 5 : 10);
-        mostrarAviso(cont, '¡Correcto!', 'ok');
+        mostrarAviso(cont, felicita(), 'ok');
       } else {
         cont.dataset.fallos = String(Number(cont.dataset.fallos || 0) + 1);
         armada.classList.add('tr2-mal');

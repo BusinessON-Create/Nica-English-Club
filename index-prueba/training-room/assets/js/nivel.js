@@ -459,20 +459,54 @@ function tituloBloque(b) {
 }
 
 function renderSeccion(bloques, unidadId) {
-  return bloques.map((b) => `
+  return bloques.map((b, i) => `
     <div class="tr2-bloque">
-      <div class="tr2-bloque-titulo"><i class="fa-solid ${ICONOS_BLOQUE[b.type] || 'fa-circle'}"></i> ${tituloBloque(b)}</div>
+      <div class="tr2-bloque-titulo"><span class="tr2-bloque-num">${i + 1}</span><i class="fa-solid ${ICONOS_BLOQUE[b.type] || 'fa-circle'}"></i> ${tituloBloque(b)}</div>
       ${contenidoBloque(b, unidadId)}
     </div>`).join('');
 }
 
+// Botón grande al final de una pestaña: lleva a la siguiente (sin buscarla arriba).
+function btnSiguiente(tab, etiqueta, icono) {
+  return `<div class="tr2-siguiente-wrap"><button type="button" class="tr2-siguiente" data-ir-tab="${tab}">Siguiente: ${etiqueta} <i class="fa-solid ${icono}"></i></button></div>`;
+}
+
+// Un solo listener para todos los botones "Siguiente": hace clic en la pestaña de arriba
+// (así se usa la misma lógica de cambio de pestaña que ya existe).
+function instalarSiguiente() {
+  if (typeof document === 'undefined' || window.__tr2SiguienteListo) return;
+  window.__tr2SiguienteListo = true;
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ir-tab]');
+    if (!b) return;
+    const tab = document.querySelector(`.tr2-tab[data-tab="${b.dataset.irTab}"]`);
+    if (tab) tab.click();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+instalarSiguiente();
+
+// Pone "Ejercicio N de M" a cada juego de la pestaña Práctica (el texto lo dibuja el CSS).
+function numerarEjercicios(html) {
+  const marca = '<div class="tr2-juego" ';
+  const total = html.split(marca).length - 1;
+  let k = 0;
+  return html.split(marca).join('\u0000').replace(/\u0000/g, () => `${marca}data-num="${++k}" data-total="${total}" `);
+}
+
 // ── Cabecera de unidad + pestañas + velocidad de audio ───────────────────
 export function renderContenido(pagina, unidad, unidadId) {
+  // "Hoy aprenderás": los temas de gramática de la unidad (si no hay, no se muestra)
+  const temas = (pagina.tema || []).filter((b) => b.type === 'grammar').map(tituloBloque).slice(0, 4);
+  const resumen = temas.length
+    ? `<div class="tr2-unit-resumen"><i class="fa-solid fa-bullseye"></i><div>Hoy aprenderás: <span>${temas.join(' · ')}</span></div></div>`
+    : '';
   return `
     <button class="tr2-volver" id="btn-volver-portada"><i class="fa-solid fa-arrow-left"></i> Portada</button>
     <div class="tr2-unit-head">
       <div class="tr2-uni-kicker">Unidad ${unidad.orden} · Semana ${unidad.semana}</div>
       <h2>${unidad.nombre}</h2>
+      ${resumen}
     </div>
     <div class="tr2-tabs" id="tr2-tabs">
       <button class="tr2-tab active" data-tab="tema"><i class="fa-solid fa-book-open"></i>Tema</button>
@@ -482,9 +516,9 @@ export function renderContenido(pagina, unidad, unidadId) {
         <i class="fa-solid fa-gauge"></i>${etiquetaVelocidad()}
       </button>
     </div>
-    <div id="tr2-tab-tema" class="tr2-tab-panel">${renderSeccion(pagina.tema, unidadId)}</div>
-    <div id="tr2-tab-vocabulario" class="tr2-tab-panel" style="display:none;">${renderSeccion(pagina.vocabulario, unidadId)}</div>
-    <div id="tr2-tab-practica" class="tr2-tab-panel" style="display:none;">${marcador()}${renderSeccion(pagina.practica, unidadId)}</div>
+    <div id="tr2-tab-tema" class="tr2-tab-panel">${renderSeccion(pagina.tema, unidadId)}${btnSiguiente('vocabulario', 'Vocabulario', 'fa-arrow-right')}</div>
+    <div id="tr2-tab-vocabulario" class="tr2-tab-panel" style="display:none;">${renderSeccion(pagina.vocabulario, unidadId)}${btnSiguiente('practica', 'Práctica', 'fa-arrow-right')}</div>
+    <div id="tr2-tab-practica" class="tr2-tab-panel" style="display:none;">${marcador()}${numerarEjercicios(renderSeccion(pagina.practica, unidadId))}</div>
   `;
 }
 
