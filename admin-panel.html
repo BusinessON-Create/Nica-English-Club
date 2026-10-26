@@ -37,7 +37,7 @@
                 <div id="banner-preview" class="banner-preview" style="display:none;"><img id="banner-preview-img" alt="Vista previa del banner"><video id="banner-preview-video" controls muted playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video><span id="banner-preview-txt"></span></div>
                 <button class="btn-login btn-outline-gold" onclick="guardarBanner()">Actualizar Banner</button>
                 <p class="form-hint" style="margin:14px 0 8px;">…o sube una imagen o un video: se optimizan solos antes de subirse y se publican al instante.</p>
-                <input type="file" id="banner-archivo" accept="image/*,video/*" style="display:none;" onchange="subirArchivoBanner(event)">
+                <input type="file" id="banner-archivo" accept="image/*,video/*" style="display:none;" onchange="if (window.subirArchivoBanner) { subirArchivoBanner(event); } else { this.value = ''; alert('Tu index.html está desactualizado (falta la función de subir banner). Sube el index.html nuevo, borra la caché de la app y recarga.'); }">
                 <button class="btn-login btn-outline-gold" id="btn-banner-subir" onclick="document.getElementById('banner-archivo').click()"><i class="fa-solid fa-cloud-arrow-up"></i> Subir imagen o video</button>
                 <div id="banner-progreso-wrap" style="display:none; margin-top:10px;">
                   <div style="background:rgba(255,255,255,.08); border-radius:99px; height:8px; overflow:hidden;"><div id="banner-progreso-bar" style="background:linear-gradient(135deg, var(--gold3), var(--gold2)); height:100%; width:0%; transition:width .2s linear;"></div></div>

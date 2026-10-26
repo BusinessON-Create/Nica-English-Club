@@ -5444,38 +5444,20 @@ const MENU_DEFAULT = {
 };
 const ordenarMenu = (x, y) => ((x.orden ?? 0) - (y.orden ?? 0)) || String(x.nombre || '').localeCompare(String(y.nombre || ''));
 let menuCatsCache = [], menuBtnsCache = [], menuIdx = {}, menuEscuchando = false;
-/* Evita el parpadeo del menú por defecto: no se dibuja nada hasta que Firestore respondió (categorías Y botones). Si tarda más de 4 s (sin conexión), se usa el menú por defecto como respaldo. */
-let menuCatsListo = false, menuBtnsListo = false, menuTiempoVencido = false;
-const menuCatsAbiertas = new Set(), menuCatsVistas = new Set();
+let menuCatsListo = false, menuBtnsListo = false;   // el menú se dibuja solo cuando llegaron categorías Y botones reales
+const menuCatsAbiertas = new Set();
 const menuCatsCfg = {};   // último valor de "abierta" aplicado por categoría (datos reales)
 
 function escucharMenu() {
   if (menuEscuchando) return;
   menuEscuchando = true;
-  // 1) Último menú REAL guardado en este celular: se pinta al instante, así nunca se ve el menú por defecto al abrir.
-  try {
-    const c = JSON.parse(localStorage.getItem('nec_menu_cache') || 'null');
-    if (c && Array.isArray(c.cats) && Array.isArray(c.btns) && (c.cats.length || c.btns.length)) {
-      menuCatsCache = c.cats; menuBtnsCache = c.btns; menuCatsListo = menuBtnsListo = true; renderMenuDrawer();
-    }
-  } catch (e) {}
-  // 2) Respaldo solo si Firestore no responde en 10 s (sin conexión) y no hay nada guardado.
-  setTimeout(() => { if (!(menuCatsListo && menuBtnsListo)) { menuTiempoVencido = true; renderMenuDrawer(); } }, 10000);
-  const guardar = () => { try { localStorage.setItem('nec_menu_cache', JSON.stringify({ cats: menuCatsCache, btns: menuBtnsCache })); } catch (e) {} };
-  // Un snapshot VACÍO que viene solo de la caché no es la respuesta real del servidor: se ignora hasta que llegue la verdadera.
   onSnapshot(collection(db,'menu_categorias'), snap => {
-    if (snap.empty && snap.metadata.fromCache) return;
     menuCatsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-    menuCatsListo = true;
-    if (!snap.metadata.fromCache) guardar();
-    renderMenuDrawer();
+    menuCatsListo = true; renderMenuDrawer();
   }, err => { console.error('No se pudo leer menu_categorias (revisa las reglas de Firestore):', err); menuCatsListo = true; renderMenuDrawer(); });
   onSnapshot(collection(db,'menu_botones'), snap => {
-    if (snap.empty && snap.metadata.fromCache) return;
     menuBtnsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-    menuBtnsListo = true;
-    if (!snap.metadata.fromCache) guardar();
-    renderMenuDrawer();
+    menuBtnsListo = true; renderMenuDrawer();
   }, err => { console.error('No se pudo leer menu_botones (revisa las reglas de Firestore):', err); menuBtnsListo = true; renderMenuDrawer(); });
 }
 
@@ -5483,14 +5465,9 @@ function escucharMenu() {
 function escucharEflinks() {
   onSnapshot(collection(db,'enlaces_fijos'), snap => {
     eflinksCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
-    renderMenuDrawer();
   }, err => {
     console.error('No se pudo leer enlaces_fijos (revisa las reglas de Firestore para el rol alumno):', err);
   });
-}
-function eflinksActivosParaMi() {
-  const miId = sessionActiva ? sessionActiva.id : null;
-  return eflinksCache.filter(e => e.activo && (!e.destinatarios || !e.destinatarios.length || (miId && e.destinatarios.includes(miId))));
 }
 function menuVisibleParaMi(b) {
   if (b.activo === false) return false;
@@ -5501,11 +5478,7 @@ function menuVideosVacio() {
   const sec = document.getElementById('video-gallery-section');
   return !sec || getComputedStyle(sec).display === 'none';
 }
-function menuDatos() {
-  if (menuCatsCache.length || menuBtnsCache.length) return { cats: menuCatsCache, btns: menuBtnsCache };
-  const extra = eflinksActivosParaMi().map((e, i) => ({ id:'ef_' + e.id, nombre:e.nombre || 'Herramienta', icono:e.icono, destino:'link', url:e.url, abrirNuevaPestana:e.abrirNuevaPestana, categoriaId:'classroom', orden:100 + i }));
-  return { cats: MENU_DEFAULT.cats, btns: MENU_DEFAULT.btns.concat(extra) };
-}
+function menuDatos() { return { cats: menuCatsCache, btns: menuBtnsCache }; }   // solo datos reales de Firestore; MENU_DEFAULT se usa únicamente en "Restaurar menú por defecto"
 function menuItemHTML(b) {
   const star = b.destacado ? ' <i class="fa-solid fa-star premium-star"></i>' : '';
   const badge = b.destino === 'actividades' ? '<span class="drawer-item-badge" id="notif-badge">0</span>' : '';
@@ -5514,8 +5487,7 @@ function menuItemHTML(b) {
 window.renderMenuDrawer = function () {
   const cont = document.getElementById('drawer-menu-dinamico');
   if (!cont) return;
-  if (!((menuCatsListo && menuBtnsListo) || menuTiempoVencido)) { cont.innerHTML = ''; return; }   // todavía cargando: nada (ni el menú por defecto)
-  const hayMenuReal = !!(menuCatsCache.length || menuBtnsCache.length);
+  if (!(menuCatsListo && menuBtnsListo)) { cont.innerHTML = ''; return; }   // todavía cargando: no se dibuja nada
   const { cats, btns } = menuDatos();
   const vis = btns.filter(menuVisibleParaMi).filter(b => !(b.destino === 'videos' && menuVideosVacio()));
   menuIdx = {}; vis.forEach(b => { menuIdx[b.id] = b; });
@@ -5525,11 +5497,9 @@ window.renderMenuDrawer = function () {
   cats.filter(c => c.activo !== false).sort(ordenarMenu).forEach(c => {
     const items = vis.filter(b => b.categoriaId === c.id).sort(ordenarMenu);
     if (!items.length) return;                       // categoría vacía = no se muestra
-    // "Abierta al entrar": solo con datos reales de Firestore (no con el menú por defecto de arranque) y se reaplica si el admin lo cambia
-    if (hayMenuReal) {
-      const cfg = c.abierta !== false;
-      if (menuCatsCfg[c.id] !== cfg) { menuCatsCfg[c.id] = cfg; if (cfg) menuCatsAbiertas.add(c.id); else menuCatsAbiertas.delete(c.id); }
-    } else if (!menuCatsAbiertas.has(c.id) && !menuCatsVistas.has(c.id)) { menuCatsVistas.add(c.id); menuCatsAbiertas.add(c.id); }
+    // "Abierta al entrar": se aplica lo que configuró el admin y se reaplica solo si él lo cambia
+    const cfg = c.abierta !== false;
+    if (menuCatsCfg[c.id] !== cfg) { menuCatsCfg[c.id] = cfg; if (cfg) menuCatsAbiertas.add(c.id); else menuCatsAbiertas.delete(c.id); }
     const open = menuCatsAbiertas.has(c.id);
     const cid = escNeclub(c.id);
     html += `<button class="side-drawer-item drawer-cat${open ? ' open' : ''}" id="drawer-cat-btn-${cid}" onclick="menuToggleCat('${cid}')"><i class="${escNeclub(c.icono || 'fa-solid fa-folder')}"></i> ${escNeclub(c.nombre || 'Categoría')}<i class="fa-solid fa-chevron-down drawer-cat-chev"></i></button>`
