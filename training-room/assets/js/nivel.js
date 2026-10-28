@@ -156,6 +156,31 @@ export async function cargarAperturaAlumno(alumnoId) {
   }
 }
 
+// ¿Está abierto el NIVEL completo? porGrupo: lo abrió el coach para todo el grupo; propio: solo para ese alumno.
+export async function cargarNivelAbierto(nivelId, dias, franja, alumnoId) {
+  const tiene = async (col, id) => {
+    try {
+      const snap = await getDoc(doc(window.trv2_db, col, id));
+      return snap.exists() && Array.isArray(snap.data().niveles) && snap.data().niveles.includes(nivelId);
+    } catch (e) {
+      console.error('No se pudo leer el nivel abierto:', e);
+      return false;
+    }
+  };
+  const d = slugGrupo(dias), f = slugGrupo(franja);
+  return {
+    porGrupo: d && f ? await tiene('training_v2_apertura_grupo', `${d}__${f}`) : false,
+    propio: alumnoId ? await tiene('training_v2_apertura_alumno', alumnoId) : false,
+  };
+}
+
+// Solo coach/admin: abre/cierra el NIVEL completo para el grupo o, con alumnoId, solo para ese alumno.
+// No toca las unidades: cada una conserva su propio estado.
+export async function setNivel(dias, franja, nivelKey, abierta, alumnoId) {
+  const fn = httpsCallable(getFunctions(getApp(), 'us-central1'), 'trv2SetApertura');
+  await fn(alumnoId ? { alumnoId, nivelKey, abierta } : { dias, franja, nivelKey, abierta });
+}
+
 // Alumnos de un grupo (para el selector del coach). Excluye a los coaches.
 export async function cargarAlumnosGrupo(dias, franja) {
   try {

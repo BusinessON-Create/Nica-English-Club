@@ -26,6 +26,34 @@ const NIVELES = [
   { id: "c1", nombre: "C1" },
 ];
 
+// Mismo slug que usa el servidor para armar el ID del grupo.
+function slugGrupo(t) {
+  return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+// Unidades que el coach abrió para este alumno (por grupo o solo para él), como claves "a2-u1".
+// Si el coach abrió una unidad de un nivel, ese nivel queda disponible: no hace falta
+// marcarlo aparte en training_v2_progreso.
+async function clavesAbiertas(db, alumno) {
+  const claves = new Set();
+  const leer = async (col, id) => {
+    try {
+      const snap = await getDoc(doc(db, col, id));
+      if (snap.exists() && Array.isArray(snap.data().unidades)) snap.data().unidades.forEach((k) => claves.add(k));
+      // Nivel abierto completo por el coach (interruptor "Nivel abierto"): se marca como "a2-nivel".
+      if (snap.exists() && Array.isArray(snap.data().niveles)) snap.data().niveles.forEach((n) => claves.add(n + '-nivel'));
+    } catch (e) {
+      console.error('No se pudo leer ' + col + ':', e);
+    }
+  };
+  const h = alumno.horario || {};
+  const d = slugGrupo(h.dias), f = slugGrupo(h.franja);
+  if (d && f) await leer('training_v2_apertura_grupo', `${d}__${f}`);
+  if (alumno.id) await leer('training_v2_apertura_alumno', alumno.id);
+  return claves;
+}
+
 export async function pintarNiveles(alumno) {
   const db = window.trv2_db;
   const grid = document.getElementById("tr2-grid-niveles");
@@ -44,9 +72,12 @@ export async function pintarNiveles(alumno) {
     }
   }
 
+  const abiertas = alumno.esCoach ? new Set() : await clavesAbiertas(db, alumno);
+
   for (const nivel of NIVELES) {
     let desbloqueado = alumno.esCoach ||
-      !!(progreso.niveles && progreso.niveles[nivel.id] && progreso.niveles[nivel.id].desbloqueado);
+      !!(progreso.niveles && progreso.niveles[nivel.id] && progreso.niveles[nivel.id].desbloqueado) ||
+      [...abiertas].some((k) => k.startsWith(nivel.id + '-'));
 
     // A1 se desbloquea por defecto para cualquier alumno nuevo sin progreso aún.
     if (nivel.id === "a1" && !desbloqueado) desbloqueado = true;
