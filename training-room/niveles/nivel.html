@@ -43,7 +43,7 @@
     import { esperarSesionYAlumno } from "../assets/js/auth-init.js";
     import { montarBarra, pintarAvatar, pintarNotifBadge } from "../assets/js/barra-red.js";
     import { mostrarAviso, NIVEL_INFO } from "../assets/js/ui.js";
-    import { cargarUnidades, cargarPagina, cargarAperturaGrupo, cargarAperturaAlumno, cargarAlumnosGrupo, setApertura, renderListaUnidades, renderPortada, renderContenido, activarVelocidad, setContexto, setUnidadActual, cargarEstadosEntrega } from "../assets/js/nivel.js";
+    import { cargarUnidades, cargarPagina, cargarAperturaGrupo, cargarAperturaAlumno, cargarAlumnosGrupo, setApertura, cargarNivelAbierto, setNivel, renderListaUnidades, renderPortada, renderContenido, activarVelocidad, setContexto, setUnidadActual, cargarEstadosEntrega } from "../assets/js/nivel.js";
 
     montarBarra({ portal: '../../', volver: { href: '../index.html', title: 'Niveles' } });
 
@@ -58,6 +58,7 @@
     let alumnoElegido = null;    // coach: null = todo el grupo; si no, { id, nombre }
     let selAlumno = null;
     let notaApertura = null;
+    let nivelBox = null;         // coach: interruptor del nivel completo
     let abiertasGrupo = new Set();
 
     (async function init() {
@@ -118,7 +119,9 @@
             await recargarAlumnos();
             pintarLista();
           };
-          cont.append(sel, nota, etiquetaAl, selAlumno);
+          nivelBox = document.createElement('div');
+          nivelBox.style.cssText = 'margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;';
+          cont.append(sel, nota, etiquetaAl, selAlumno, nivelBox);
           grupoActivo = grupos[0];
           await recargarAlumnos();
         } else {
@@ -151,9 +154,38 @@
       });
     }
 
+    // Coach: abre/cierra el NIVEL completo para el grupo o para un alumno (las unidades no se tocan).
+    async function pintarSwitchNivel() {
+      if (!nivelBox || !grupoActivo) return;
+      const modoAlumno = !!alumnoElegido;
+      const est = await cargarNivelAbierto(nivelId, grupoActivo.dias, grupoActivo.franja, modoAlumno ? alumnoElegido.id : null);
+      const nombreNivel = nivelId.toUpperCase();
+      if (modoAlumno && est.porGrupo) {
+        nivelBox.innerHTML = `<span class="tr2-uni-chip abierta" style="white-space:nowrap;"><i class="fa-solid fa-users"></i> Nivel ${nombreNivel} abierto por el grupo</span>`;
+        return;
+      }
+      const abierto = modoAlumno ? est.propio : est.porGrupo;
+      const para = modoAlumno ? alumnoElegido.nombre : 'todo el grupo';
+      nivelBox.innerHTML = `<label class="tr2-switch"><input type="checkbox" ${abierto ? 'checked' : ''}><span>${abierto ? 'Nivel abierto' : 'Nivel cerrado'}</span></label><span class="tr2-muted">Nivel ${nombreNivel} para ${para}. Las unidades conservan su estado.</span>`;
+      const inp = nivelBox.querySelector('input');
+      inp.onchange = async () => {
+        const quiere = inp.checked;
+        inp.disabled = true;
+        try {
+          await setNivel(grupoActivo.dias, grupoActivo.franja, nivelId, quiere, modoAlumno ? alumnoElegido.id : undefined);
+          inp.nextElementSibling.textContent = quiere ? 'Nivel abierto' : 'Nivel cerrado';
+        } catch (e) {
+          inp.checked = !quiere;
+          mostrarAviso((e && e.message) || 'No se pudo guardar. Intenta de nuevo.');
+        }
+        inp.disabled = false;
+      };
+    }
+
     async function pintarLista() {
       const lista = document.getElementById('tr2-lista-unidades');
       const modoAlumno = esCoach && !!alumnoElegido;
+      if (esCoach) await pintarSwitchNivel();
       abiertasGrupo = grupoActivo ? await cargarAperturaGrupo(grupoActivo.dias, grupoActivo.franja) : new Set();
       if (modoAlumno) {
         // Coach con un alumno elegido: "abiertas" = lo abierto solo para ese alumno.
