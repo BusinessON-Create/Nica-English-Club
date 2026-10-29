@@ -1,0 +1,11 @@
+PIZARRAS - NICA ENGLISH CLUB  (para GitHub Pages)
+
+1) En github.com crea un repositorio NUEVO (ej. "pizarras"), publico.
+2) Sube TODO el contenido de esta carpeta (incluidos .github y .env).
+   Arrastra los archivos en "uploading an existing file". Asegurate de que
+   la carpeta .github quede subida (si no la ves, activa "mostrar archivos ocultos").
+3) Repositorio > Settings > Pages > Source: "GitHub Actions".
+4) Pestana Actions: espera la palomita verde (2-3 min). 
+5) Tu pagina queda en:  https://TU-USUARIO.github.io/pizarras/#/admin
+
+Prueba local (OPCIONAL): INICIAR.bat (Windows) o iniciar.command (Mac).
