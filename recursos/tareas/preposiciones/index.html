@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Time Expressions Challenge | Nica English Club</title>
+<script src="../../../seguridad.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070a;--card:#101014;--card2:#17171d;--line:#2a2a33;--text:#f3f3f6;--muted:#9a9aa8;--gold:#ffc21a;--gold2:#e0a400;--goldsoft:rgba(255,194,26,.12);--ok:#5ad39b;--bad:#ff7a7a;--fh:'Outfit','Segoe UI',system-ui,sans-serif;--fb:'Inter','Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--fb);line-height:1.55}
+body{min-height:100vh;background:radial-gradient(ellipse 80% 40% at 50% -5%,rgba(255,194,26,.13),transparent 70%),var(--bg);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.wrap{max-width:620px;margin:0 auto;padding:18px 16px 48px}
+.brand{display:flex;align-items:center;gap:10px;font:800 .95rem var(--fh);letter-spacing:.04em}
+.logo{height:38px;width:auto;max-width:120px;object-fit:contain;border-radius:9px}
+.mark{width:34px;height:34px;border:2px solid var(--gold);border-radius:10px;display:grid;place-items:center;color:var(--gold);font-weight:800}
+.brand small{margin-left:auto;color:var(--muted);font:500 .8rem var(--fb)}
+h1{font:800 clamp(2.1rem,9vw,3rem)/1.02 var(--fh);letter-spacing:-.03em;margin:34px 0 12px}
+h1 em{font-style:normal;color:var(--gold)}
+.lead{color:#c3c3cf;margin:0 0 20px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:.85rem;color:#dcdce5;background:var(--card)}
+.pill i{color:var(--gold)}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+.chip{font:600 1rem var(--fh);color:var(--text);background:var(--card2);border:1px solid #3a3a46;border-radius:12px;padding:11px 18px;cursor:pointer;min-height:46px;transition:transform .12s,border-color .12s,background .12s}
+.chip:hover{border-color:var(--gold)}.chip:active{transform:scale(.95)}
+.chip:disabled{opacity:.4;cursor:default;transform:none;border-color:#3a3a46}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:14px;padding:15px 24px;font:800 1rem var(--fh);cursor:pointer;min-height:50px;transition:transform .12s,filter .12s}
+.btn:hover{filter:brightness(1.07)}.btn:active{transform:scale(.97)}
+.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1300}
+.btn.ghost{background:var(--card2);color:var(--text);border:1px solid #3a3a46}
+.btn.full{width:100%}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.top{display:flex;align-items:center;gap:12px;margin:18px 0 22px}
+.bar{flex:1;height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:99px;transition:width .4s}
+.count{font:700 .9rem var(--fh);color:var(--muted);min-width:44px;text-align:right}
+.streak{display:inline-flex;align-items:center;gap:6px;font:800 .95rem var(--fh);color:var(--gold);background:var(--goldsoft);border:1px solid rgba(255,194,26,.3);padding:5px 11px;border-radius:99px}
+.qcard{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:22px;padding:24px 20px}
+.situation{color:var(--gold);font:700 .9rem var(--fh);margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.sentence{font:500 clamp(1.3rem,5.4vw,1.65rem)/1.7 var(--fh);margin:0 0 6px}
+.blank{display:inline-block;min-width:92px;height:44px;vertical-align:middle;margin:0 4px;padding:0 12px;border:0;border-bottom:3px dashed var(--gold);border-radius:10px 10px 0 0;background:var(--goldsoft);color:var(--gold);font:800 1.15rem var(--fh);cursor:pointer;text-align:center}
+.blank.ok{border-bottom:3px solid var(--ok);background:rgba(90,211,155,.12);color:var(--ok)}
+.blank.bad{border-bottom:3px solid var(--bad);background:rgba(255,122,122,.12);color:var(--bad)}
+.blank.shake{animation:sh .4s}
+@keyframes sh{20%{transform:translateX(-6px)}50%{transform:translateX(6px)}80%{transform:translateX(-3px)}}
+.hint{color:var(--muted);font-size:.82rem;margin:18px 0 10px}
+.fb{display:none;margin-top:18px;border-radius:16px;padding:14px 16px;font-size:.95rem;border:1px solid}
+.fb.show{display:block}
+.fb.good{background:rgba(90,211,155,.09);border-color:rgba(90,211,155,.4)}
+.fb.miss{background:rgba(255,122,122,.08);border-color:rgba(255,122,122,.4)}
+.fb.retry{background:var(--goldsoft);border-color:rgba(255,194,26,.4)}
+.fb b{display:flex;align-items:center;gap:8px;font:800 1rem var(--fh);margin-bottom:3px}
+.fb.good b{color:var(--ok)}.fb.miss b{color:var(--bad)}.fb.retry b{color:var(--gold)}
+.row{display:flex;gap:10px;margin-top:16px}
+.row .btn{flex:1}
+.hide{display:none!important}
+.score{display:grid;place-items:center;margin:26px 0 8px}
+.ring{position:relative;width:176px;height:176px}
+.ring svg{transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font:800 2.6rem/1 var(--fh)}
+.ring .n small{display:block;font:500 .85rem var(--fb);color:var(--muted);margin-top:4px}
+.msg{text-align:center;font:700 1.25rem var(--fh);margin:10px 0 4px}
+.sub{text-align:center;color:var(--muted);margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+.card h2{font:800 1.05rem var(--fh);margin:0 0 14px;display:flex;align-items:center;gap:9px}
+.card h2 i{color:var(--gold)}
+.brk{display:grid;grid-template-columns:96px 1fr 44px;align-items:center;gap:10px;margin:9px 0;font-size:.92rem}
+.brk .w{font:700 .95rem var(--fh)}
+.brk .t{height:9px;background:var(--card2);border-radius:99px;overflow:hidden}
+.brk .t i{display:block;height:100%;border-radius:99px}
+.brk .v{text-align:right;color:var(--muted);font-size:.85rem}
+.key ol{padding-left:22px;margin:0}.key li{margin:8px 0;color:#d6d6e0}
+.key mark{background:none;color:var(--gold);font-weight:700}
+.rule{color:var(--muted);font-size:.88rem;margin:12px 0 0}
+footer{text-align:center;color:#6e6e7c;font-size:.82rem;margin-top:34px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><img class="logo" src="../../../logo.png" alt="Nica English Club" onerror="this.outerHTML='<div class=&quot;mark&quot;>EC</div>'">NICA ENGLISH CLUB<small>Practice lab</small></div>
+
+  <!-- INICIO -->
+  <section id="v-start">
+    <h1>Time expressions<br><em>challenge</em></h1>
+    <p class="lead">Read the situation, tap the word that fits, and learn from every answer. Think about the meaning, not the translation.</p>
+    <div class="pills">
+      <span class="pill"><i class="fa-solid fa-bullseye"></i>20 questions</span>
+      <span class="pill"><i class="fa-solid fa-gauge-high"></i>At your pace</span>
+      <span class="pill"><i class="fa-solid fa-layer-group"></i>Beginner to intermediate</span>
+    </div>
+    <p class="hint" style="margin-top:0">Your word bank</p>
+    <div class="bank" id="bank-preview"></div>
+    <button class="btn gold full" id="go"><i class="fa-solid fa-play"></i>Start challenge</button>
+  </section>
+
+  <!-- PREGUNTAS -->
+  <section id="v-quiz" class="hide">
+    <div class="top">
+      <div class="bar"><i id="bar"></i></div>
+      <span class="count" id="count">1/20</span>
+      <span class="streak"><i class="fa-solid fa-fire"></i><span id="streak">0</span></span>
+    </div>
+    <div class="qcard">
+      <p class="situation"><i class="fa-solid fa-location-dot"></i><span id="tag"></span></p>
+      <p class="sentence" id="sentence"></p>
+      <div class="fb" id="fb" role="status" aria-live="polite"></div>
+      <div class="row hide" id="after">
+        <button class="btn ghost hide" id="listen"><i class="fa-solid fa-volume-high"></i>Listen</button>
+        <button class="btn gold" id="next">Next<i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+    <p class="hint" id="hint">Tap a word to fill the gap. Tap the gap to clear it.</p>
+    <div class="bank" id="bank"></div>
+  </section>
+
+  <!-- RESULTADO -->
+  <section id="v-end" class="hide">
+    <div class="score"><div class="ring">
+      <svg width="176" height="176" viewBox="0 0 176 176"><circle cx="88" cy="88" r="76" fill="none" stroke="#1e1e26" stroke-width="14"/><circle id="arc" cx="88" cy="88" r="76" fill="none" stroke="#ffc21a" stroke-width="14" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="477.5" style="transition:stroke-dashoffset 1s"/></svg>
+      <div class="n"><div><span id="sc">0</span><small>of 20 on first try</small></div></div>
+    </div></div>
+    <p class="msg" id="msg"></p>
+    <p class="sub" id="sub"></p>
+    <div class="card"><h2><i class="fa-solid fa-chart-simple"></i>How you did by expression</h2><div id="brk"></div>
+      <p class="rule" id="rule"></p></div>
+    <div class="row" style="flex-direction:column">
+      <button class="btn gold full hide" id="retry"><i class="fa-solid fa-rotate-right"></i><span id="retry-t"></span></button>
+      <button class="btn ghost full" id="again"><i class="fa-solid fa-shuffle"></i>Start over with a new order</button>
+      <button class="btn ghost full" id="keybtn"><i class="fa-solid fa-key"></i>Show answer key</button>
+    </div>
+    <div class="card key hide" id="key" style="margin-top:16px"><h2><i class="fa-solid fa-key"></i>Answer key</h2><ol id="keylist"></ol></div>
+  </section>
+
+  <footer>Learn it, Love it, Live it.</footer>
+</div>
+
+<script>
+// [situation, sentence ({} = blank), answers, why]
+const Q=[
+["Catching up","I saw Maria two days {}. We had a lot to talk about.",["ago"],"ago counts back from now: two days before today."],
+["At the café","We talked {} almost an hour before we left.",["for"],"for tells us how long something lasted."],
+["Old friends","We've been friends {} high school.",["since"],"since marks the starting point of something that continues."],
+["Movie night","The movie starts at 7:00, so let's wait here {} then.",["until"],"until means up to that moment, and then it stops."],
+["Making plans","How {} meeting at the park tomorrow?",["about"],"How about + -ing is a way to suggest an idea."],
+["Work schedule","I work {} 8 a.m. {} 4 p.m.",["from","to"],"from … to … gives the start and the end."],
+["Deadline","Can you send me the homework {} tonight? I need to check it tomorrow.",["by"],"by is a deadline: at that time or before."],
+["Quick estimate","It takes {} twenty minutes to get to my house.",["about"],"about + a number means approximately."],
+["New habit","I've practiced English every day {} January.",["since"],"since + a starting point (January) in the past."],
+["Waiting","I've been waiting for the bus {} thirty minutes!",["for"],"for + a length of time (thirty minutes)."],
+["At the office","My boss is in a meeting, so I have to wait {} she finishes.",["until"],"until: the waiting stops when she finishes."],
+["Travel story","We arrived in Granada three hours {}.",["ago"],"ago + a time expression tells us how long before now."],
+["Getting ready","The taxi will be here at 6:30. Please be ready {} then.",["by"],"by: ready at 6:30 or earlier."],
+["Opening hours","The store is open {} Monday {} Saturday.",["from","to"],"from … to … marks where the period begins and ends."],
+["Almost late","Hurry up! We're {} to leave.",["about"],"be about to + verb means very soon, almost now."],
+["Learning","My sister has studied at the university {} three years.",["for"],"for + a duration (three years)."],
+["A change","I haven't eaten fast food {} I started cooking at home.",["since"],"since + a past moment, even when it is a full clause."],
+["A promise","I'll call you {} 9 p.m. at the latest.",["by"],"by + 'at the latest' = deadline."],
+["Conversation","What are you talking {}? You both look excited.",["about"],"talk about = the topic of the conversation."],
+["Weekend plans","It's Saturday tomorrow, so I can sleep {} 10 a.m.",["until"],"until: sleeping continues up to 10 a.m."]
+];
+const WORDS=["for","ago","since","until","from","to","by","about"];
+const RULES={for:"for = how long",ago:"ago = before now",since:"since = starting point",until:"until = up to a time",by:"by = deadline","from…to":"from … to … = start and end",about:"about = approximately, topic, or about to"};
+const GROUPS=["for","since","ago","until","by","about","from…to"];
+const $=s=>document.querySelector(s), key=q=>q[2].length>1?"from…to":q[2][0];
+const S={order:[],i:0,fill:[],tries:0,locked:false,streak:0,first:Q.map(()=>false),played:false};
+const show=id=>["start","quiz","end"].forEach(n=>$("#v-"+n).classList.toggle("hide",n!==id));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const full=q=>{let k=0;return q[1].replace(/\{\}/g,()=>q[2][k++])};
+
+function mkBank(el,clickable){
+  el.innerHTML="";
+  WORDS.forEach(w=>{const b=document.createElement("button");b.className="chip";b.textContent=w;b.dataset.w=w;
+    if(clickable)b.onclick=()=>choose(w);else{b.disabled=true;b.style.opacity=1}el.appendChild(b)});
+}
+function begin(list){
+  S.order=shuffle(list.slice());S.i=0;S.streak=0;S.played=true;
+  if(list.length===Q.length)S.first=Q.map(()=>false);
+  show("quiz");render();
+}
+function render(){
+  const q=Q[S.order[S.i]];
+  S.fill=q[2].map(()=>null);S.tries=0;S.locked=false;
+  $("#tag").textContent=q[0];
+  const parts=q[1].split("{}");let h="";
+  parts.forEach((p,k)=>{h+=p.replace(/&/g,"&amp;").replace(/</g,"&lt;");if(k<q[2].length)h+=`<button class="blank" data-k="${k}" aria-label="Blank ${k+1}"></button>`});
+  $("#sentence").innerHTML=h;
+  document.querySelectorAll(".blank").forEach(b=>b.onclick=()=>{if(S.locked)return;S.fill[b.dataset.k]=null;paint()});
+  $("#fb").className="fb";$("#after").classList.add("hide");$("#hint").classList.remove("hide");
+  document.querySelectorAll("#bank .chip").forEach(c=>c.disabled=false);
+  $("#bar").style.width=(S.i/S.order.length*100)+"%";
+  $("#count").textContent=(S.i+1)+"/"+S.order.length;$("#streak").textContent=S.streak;
+  $("#next").innerHTML=S.i===S.order.length-1?'See results<i class="fa-solid fa-flag-checkered"></i>':'Next<i class="fa-solid fa-arrow-right"></i>';
+  paint();
+}
+function paint(){document.querySelectorAll(".blank").forEach(b=>{b.textContent=S.fill[b.dataset.k]||""})}
+function choose(w){
+  if(S.locked)return;const k=S.fill.findIndex(x=>!x);if(k<0)return;
+  S.fill[k]=w;paint();if(S.fill.every(Boolean))check();
+}
+function note(cls,icon,title,text){const f=$("#fb");f.className="fb show "+cls;f.innerHTML=`<b><i class="fa-solid ${icon}"></i>${title}</b>${text}`}
+function check(){
+  const qi=S.order[S.i],q=Q[qi];S.tries++;
+  const ok=q[2].every((a,k)=>S.fill[k]===a),bl=[...document.querySelectorAll(".blank")];
+  if(ok){
+    bl.forEach(b=>b.classList.add("ok"));done(qi,S.tries===1);
+    note("good","fa-circle-check",S.tries===1?"Correct!":"Got it on the second try",q[3]);
+  }else if(S.tries===1){
+    bl.forEach(b=>{b.classList.add("bad","shake")});
+    note("retry","fa-lightbulb","Not quite","Read the situation again and try once more.");
+    setTimeout(()=>{bl.forEach(b=>b.classList.remove("bad","shake"));S.fill=q[2].map(()=>null);paint();$("#fb").className="fb"},900);
+  }else{
+    S.fill=q[2].slice();paint();bl.forEach(b=>b.classList.add("ok"));done(qi,false);
+    note("miss","fa-circle-xmark","The answer is: "+q[2].join(" … "),q[3]);
+  }
+}
+function done(qi,first){
+  S.locked=true;S.first[qi]=first;S.streak=first?S.streak+1:0;$("#streak").textContent=S.streak;
+  document.querySelectorAll("#bank .chip").forEach(c=>c.disabled=true);
+  $("#hint").classList.add("hide");$("#after").classList.remove("hide");
+  $("#bar").style.width=((S.i+1)/S.order.length*100)+"%";
+  $("#next").focus({preventScroll:true});
+}
+$("#next").onclick=()=>{if(S.i<S.order.length-1){S.i++;render()}else finish()};
+
+// Audio: solo si el navegador lo soporta
+const TTS="speechSynthesis" in window&&"SpeechSynthesisUtterance" in window;
+if(TTS){$("#listen").classList.remove("hide");speechSynthesis.getVoices();
+  $("#listen").onclick=()=>{const u=new SpeechSynthesisUtterance(full(Q[S.order[S.i]]));u.lang="en-US";u.rate=.92;
+    const v=speechSynthesis.getVoices().find(x=>/^en[-_]US/i.test(x.lang))||speechSynthesis.getVoices().find(x=>/^en/i.test(x.lang));
+    if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}}
+
+function finish(){
+  const total=S.first.filter(Boolean).length,missed=S.first.map((f,i)=>f?-1:i).filter(i=>i>=0);
+  show("end");$("#key").classList.add("hide");$("#keybtn").innerHTML='<i class="fa-solid fa-key"></i>Show answer key';
+  $("#sc").textContent=total;
+  setTimeout(()=>{$("#arc").style.strokeDashoffset=477.5*(1-total/Q.length)},60);
+  const m=total===20?["Perfect score","You nailed every expression."]:total>=16?["Great work","Review the ones you missed and try them again."]:total>=10?["Good effort","Read the situation carefully and give the missed ones another go."]:["Keep practicing","Look at the breakdown below and try the missed ones again."];
+  $("#msg").textContent=m[0];$("#sub").textContent=m[1];
+  let h="",weak=[];
+  GROUPS.forEach(g=>{const ids=Q.map((q,i)=>key(q)===g?i:-1).filter(i=>i>=0),ok=ids.filter(i=>S.first[i]).length,p=ok/ids.length;
+    if(p<1)weak.push(g);
+    h+=`<div class="brk"><span class="w">${g==="from…to"?"from … to":g}</span><span class="t"><i style="width:${p*100}%;background:${p===1?"var(--ok)":p>=.5?"var(--gold)":"var(--bad)"}"></i></span><span class="v">${ok}/${ids.length}</span></div>`});
+  $("#brk").innerHTML=h;
+  $("#rule").textContent=weak.length?"To review: "+weak.map(g=>RULES[g]).join(" · "):"Every expression is solid. Nice.";
+  $("#retry").classList.toggle("hide",!missed.length);
+  $("#retry-t").textContent="Retry the "+missed.length+" I missed";
+  $("#retry").onclick=()=>begin(missed);
+  $("#keylist").innerHTML=Q.map(q=>{let k=0;return "<li>"+q[1].replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\{\}/g,()=>"<mark>"+q[2][k++]+"</mark>")+"</li>"}).join("");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("#keybtn").onclick=()=>{const k=$("#key");k.classList.toggle("hide");
+  $("#keybtn").innerHTML=k.classList.contains("hide")?'<i class="fa-solid fa-key"></i>Show answer key':'<i class="fa-solid fa-eye-slash"></i>Hide answer key';
+  if(!k.classList.contains("hide"))k.scrollIntoView({behavior:"smooth",block:"nearest"})};
+$("#again").onclick=()=>begin(Q.map((_,i)=>i));
+$("#go").onclick=()=>begin(Q.map((_,i)=>i));
+mkBank($("#bank-preview"),false);mkBank($("#bank"),true);
+</script>
+</body>
+</html>
