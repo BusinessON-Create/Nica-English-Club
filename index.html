@@ -1180,6 +1180,12 @@ body.neclub-visitante .neclub-composer { display:none; }
 .panel-link{display:flex;align-items:center;gap:10px;padding:14px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border2);color:#fff;font:700 13px var(--fb);cursor:pointer;text-align:left}
 .panel-link i{color:var(--gold);font-size:16px}
 .panel-link:last-child:nth-child(odd){grid-column:1/-1}
+.panel-ent{display:flex;align-items:center;gap:12px;width:100%;padding:12px;margin-bottom:8px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);text-align:left;cursor:pointer}
+.panel-ent.nueva{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+.panel-ent>i{font-size:20px;width:24px;text-align:center}
+.panel-ent .t{flex:1;min-width:0;font-size:13.5px;font-weight:700}
+.panel-ent .t small{display:block;font-weight:400;font-size:11.5px;color:var(--muted);margin-top:2px}
+.panel-ent .go{color:var(--muted);font-size:12px}
 .panel-fav-group{font:700 11px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--muted-dim);margin:12px 0 6px}
 .panel-fav-group:first-of-type{margin-top:0}
 .panel-fav{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;border-radius:var(--r-sm);background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:13px;text-decoration:none;cursor:pointer;width:100%;text-align:left;font-family:var(--fb)}
@@ -5345,6 +5351,7 @@ function escucharTrv2Notifs() {
   onSnapshot(query(collection(db,'training_v2_notificaciones'), where('destinatarioId','==', sessionActiva.id)), snap => {
     trv2NotifsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
     renderNeclubNotifBadge();
+    try { if (window.panelRefrescar) window.panelRefrescar(); } catch (e) {}
     if (document.getElementById('neclub-notif-dropdown')?.classList.contains('open')) renderNeclubNotifList();
   }, err => {
     console.warn('No se pudieron escuchar los avisos del Class Room (¿reglas sin publicar?):', err);
@@ -8861,10 +8868,54 @@ function panelPendientes() {
   const checks = (sessionActiva && sessionActiva.checks_actividades) || {};
   return (ultimasActividades || []).filter(a => !checks[a.id]).length;
 }
+// ---- Mis entregas: revisiones del coach (avisos "entrega_revisada" que ya crea el servidor) ----
+// Una revisión es "nueva" hasta que el alumno TOCA esa entrega (no basta con abrir el panel ni la campanita).
+const panelEntVistasKey = () => 'nec_entregas_vistas_' + (sessionActiva ? sessionActiva.id : '');
+function panelEntVistas() {
+  const v = new Set(Array.isArray(sessionActiva && sessionActiva.entregas_vistas) ? sessionActiva.entregas_vistas : []);
+  try { JSON.parse(localStorage.getItem(panelEntVistasKey()) || '[]').forEach(x => v.add(x)); } catch (e) {}
+  return v;
+}
+function panelEntregas() {
+  return trv2NotifsCache.filter(n => n.tipo === 'entrega_revisada').sort((a, b) => fechaMsNotif(b) - fechaMsNotif(a));
+}
+function panelEntregasSinVer() {
+  const vistas = panelEntVistas();
+  return panelEntregas().filter(n => !vistas.has(n.id)).length;
+}
+let panelEntTodas = false;
+window.panelToggleEntregas = function () { panelEntTodas = !panelEntTodas; renderMiPanel(false); };
+window.panelAbrirEntrega = function (id) {
+  const n = trv2NotifsCache.find(x => x.id === id);
+  if (!n || !sessionActiva) return;
+  const vistas = panelEntVistas(); vistas.add(id);
+  sessionActiva.entregas_vistas = [...vistas];
+  try { localStorage.setItem(panelEntVistasKey(), JSON.stringify([...vistas])); } catch (e) {}
+  updateDoc(doc(db, 'alumnos', sessionActiva.id), { entregas_vistas: arrayUnion(id) }).catch(() => {});
+  location.href = './training-room/niveles/nivel.html?nivel=' + encodeURIComponent(n.nivelId || 'a1') +
+    (/^u[0-9]+$/.test(n.unidadId || '') ? '&unidad=' + encodeURIComponent(n.unidadId) : '');
+};
+function panelEntregasHTML() {
+  const todas = panelEntregas(), vistas = panelEntVistas();
+  const lista = panelEntTodas ? todas : todas.slice(0, 4);
+  const fila = n => {
+    const ok = n.estado === 'aprobada', nueva = !vistas.has(n.id);
+    const que = n.entregaTipo === 'speaking' ? 'Speaking' : 'Writing';
+    const fecha = new Date(fechaMsNotif(n)).toLocaleDateString('es', { day: 'numeric', month: 'short' });
+    return `<button type="button" class="panel-ent ${nueva ? 'nueva' : ''}" onclick="panelAbrirEntrega('${String(n.id).replace(/[^A-Za-z0-9_-]/g, '')}')">
+      <i class="fa-solid ${ok ? 'fa-circle-check' : 'fa-rotate-left'}" style="color:${ok ? 'var(--green)' : 'var(--red)'}"></i>
+      <span class="t">${ok ? 'Aprobada' : 'Volver a entregar'} · ${que}${nueva ? ' <span class="panel-new">NUEVA</span>' : ''}
+        <small>${escHtml(String(n.nivelId || '').toUpperCase())}${n.unidadNombre ? ' · ' + escHtml(n.unidadNombre) : ''} · ${escHtml(n.coachNombre || 'Tu coach')} · ${fecha}</small></span>
+      <i class="fa-solid fa-chevron-right go"></i></button>`;
+  };
+  return `<div class="panel-card"><h3><i class="fa-solid fa-inbox"></i>Mis entregas${todas.length ? `<span class="panel-count">${todas.length}</span>` : ''}</h3>
+    ${todas.length ? lista.map(fila).join('') + (todas.length > 4 ? `<button class="panel-more" onclick="panelToggleEntregas()">${panelEntTodas ? 'Ver menos' : `Ver historial (${todas.length})`}</button>` : '')
+      : '<p class="panel-empty">Cuando tu coach revise un Speaking o Writing, lo vas a ver aquí.</p>'}</div>`;
+}
 window.panelActualizarBadge = function () {
   const b = document.getElementById('panel-notif-badge');
   if (!b || !sessionActiva) return;
-  const n = panelNotasNuevas() + panelPendientes();
+  const n = panelNotasNuevas() + panelPendientes() + panelEntregasSinVer();
   b.innerText = n > 9 ? '9+' : n;
   b.classList.toggle('show', n > 0);
   const btn = b.closest('button'); if (btn) btn.classList.toggle('tiene-pendientes', n > 0);
@@ -8974,6 +9025,7 @@ window.renderMiPanel = function (marcarVisto = true) {
   cont.innerHTML = `
     ${tarjetaHome}
     <div class="panel-card"><h3><i class="fa-solid fa-clipboard-list"></i>Mensajes de mi coach</h3>${notasHtml}</div>
+    ${panelEntregasHTML()}
     <div class="panel-card"><h3><i class="fa-solid fa-chart-line"></i>Mi progreso</h3>
       <div class="panel-grid">
         <div class="panel-stat"><b>${p.rachaSemanas || 0}</b><span><i class="fa-solid fa-fire"></i> Semanas seguidas</span></div>
