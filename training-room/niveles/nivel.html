@@ -134,6 +134,9 @@
         }
       }
       await pintarLista();
+      // Enlace directo desde "Mis entregas" del panel del alumno: ?nivel=a2&unidad=u1 abre esa unidad.
+      const unidadDirecta = params.get('unidad');
+      if (unidadDirecta && /^u[0-9]+$/.test(unidadDirecta)) await abrirUnidad(unidadDirecta);
     })();
 
     // Coach: llena el selector con "Todo el grupo" + los alumnos del grupo elegido.
