@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Cerrado o abierto? · Present Perfect vs Past Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0a0908;--s:#131110;--s2:#1a1714;--l:#2a2520;--l2:#38322b;--gold:#f0b429;--gd:#c8891a;--gl:#ffd966;--ember:#ff6a1a;--lake:#5aa9ff;--ink:#f4efe6;--mut:#9a948a}
+*{box-sizing:border-box;margin:0}
+body{font-family:Figtree,system-ui,sans-serif;color:var(--ink);background:var(--bg);background-image:radial-gradient(90% 50% at 15% -10%,rgba(240,180,41,.10),rgba(10,9,8,0) 60%),radial-gradient(60% 40% at 100% 0%,rgba(255,106,26,.06),rgba(10,9,8,0) 60%);background-repeat:no-repeat;min-height:100vh;line-height:1.5;padding:24px 16px 70px}
+::selection{background:var(--gold);color:var(--bg)}
+:focus-visible{outline:2px solid var(--gl);outline-offset:3px;border-radius:6px}
+.w{max-width:640px;margin:0 auto}
+h1,h2,h3{font-family:'Bricolage Grotesque',system-ui,sans-serif;color:#fff;letter-spacing:-.025em}
+h1{font-weight:800;font-size:clamp(2.2rem,8vw,3.4rem);line-height:.98;margin:10px 0 14px}
+h1 em{font-style:normal;color:var(--gold)}
+h2{font-weight:700;font-size:1.45rem;line-height:1.1;margin:26px 0 12px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--l2);background:rgba(255,255,255,.035);padding:5px 12px;border-radius:99px}
+p{color:var(--mut)}
+.lead{font-size:1.1rem;color:var(--ink);margin-bottom:22px}
+.i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em;flex:none}
+.ic{color:var(--lake)}.io{color:var(--gold)}
+.card{background:var(--s);border:1px solid var(--l);border-radius:20px;padding:20px;margin-bottom:14px;text-align:left;color:inherit;font:inherit;width:100%}
+.card h3{font-weight:700;font-size:1.25rem;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card.c{border-color:rgba(90,169,255,.4)}.card.c h3{color:var(--lake)}
+.card.o{border-color:rgba(240,180,41,.45)}.card.o h3{color:var(--gold)}
+.card b{color:var(--ink)}
+button.card{cursor:pointer;display:block;transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s}
+button.card:hover{transform:translateY(-3px);box-shadow:0 14px 34px -16px rgba(240,180,41,.35)}
+.more{display:flex;align-items:center;gap:6px;margin-top:10px;font-weight:700;font-size:14px;color:var(--ink)}
+.keys{margin-top:8px;font-weight:600;color:var(--ink)}
+.trick{background:var(--s2);border:1px dashed var(--l2);border-radius:16px;padding:16px;margin:14px 0 18px;color:var(--ink)}
+.trick b{color:var(--gl)}
+.rules{display:grid;gap:8px;margin:0 0 22px}
+.rules div{display:flex;gap:10px;align-items:center;color:var(--ink);font-size:15px}
+.rules .i{color:var(--gold);width:1.4em;height:1.4em}
+.btn,.ghost{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;cursor:pointer;padding:14px 24px;border-radius:14px;display:inline-flex;align-items:center;gap:8px;transition:transform .18s cubic-bezier(.16,1,.3,1),filter .15s,border-color .2s}
+.btn{color:var(--bg);border:0;background:linear-gradient(135deg,#ffd966,#c8891a);box-shadow:0 8px 26px -8px rgba(240,180,41,.5)}
+.btn:hover{filter:brightness(1.06);transform:translateY(-2px)}
+.ghost{color:var(--ink);background:transparent;border:1px solid var(--l2)}
+.ghost:hover{border-color:var(--gold);transform:translateY(-2px)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.mt{position:fixed;top:14px;right:14px;z-index:5;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--s);border:1px solid var(--l2);color:var(--ink);cursor:pointer}
+.mt:hover{border-color:var(--gold)}
+.scr{animation:fd .45s cubic-bezier(.16,1,.3,1)}
+.hud{display:flex;justify-content:space-between;align-items:center;margin:0 50px 14px 0}
+.lives{display:flex;gap:6px}
+.lives .i{width:28px;height:28px;color:var(--gold);fill:rgba(240,180,41,.25);transition:all .35s}
+.lives .i.off{color:var(--l2);fill:none;transform:scale(.85)}
+.lives .i.hit{animation:shake .45s}
+.lives .i.gain{animation:pop .6s}
+.stk{display:flex;align-items:center;gap:8px;color:var(--gold)}
+.sg{display:flex;gap:3px}
+.sg span{width:8px;height:14px;border-radius:3px;background:var(--l);transition:background .25s,transform .25s}
+.sg span.on{background:linear-gradient(var(--gl),var(--gd));transform:scaleY(1.15)}
+.top{display:flex;justify-content:space-between;font-size:14px;color:var(--mut);margin-bottom:8px}
+.bar{height:6px;background:var(--l);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--ember));transition:width .5s;position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-100%);animation:sh 2.2s infinite}
+#qc.in{animation:inR .4s cubic-bezier(.16,1,.3,1)}
+#qc.out{animation:outL .22s ease-in forwards}
+.rnd{margin-bottom:12px}
+.q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(1.35rem,5vw,1.8rem);line-height:1.2;color:#fff;letter-spacing:-.02em;margin-bottom:6px}
+.q .bl{display:inline-block;min-width:70px;border-bottom:3px solid var(--gold);color:var(--gl);text-align:center}
+.hint{font-size:14px;margin-bottom:20px}
+.opts{display:grid;gap:10px}
+.opt{font-family:Figtree,sans-serif;font-weight:600;font-size:1.1rem;text-align:left;color:var(--ink);background:var(--s);border:1px solid var(--l2);border-radius:16px;padding:16px 18px;cursor:pointer;transition:border-color .2s,transform .18s,background .2s}
+.opt:hover:not(:disabled){border-color:var(--gold);transform:translateY(-2px)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--gold);background:rgba(240,180,41,.14);animation:glow .8s}
+.opt.no{border-color:var(--ember);background:rgba(255,106,26,.12);animation:shake .45s}
+.fb{margin-top:16px;border-radius:18px;padding:16px 18px;background:var(--s2);border:1px solid var(--l2);animation:fd .35s}
+.fb.g{border-color:rgba(240,180,41,.5)}.fb.r{border-color:rgba(255,106,26,.5)}
+.fb .h{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.fb.g .h .i{color:var(--gold)}.fb.r .h .i{color:var(--ember)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;border:1px solid var(--l2);border-radius:99px;padding:4px 12px;margin:6px 0;color:var(--ink)}
+.fb .k{color:var(--ink);margin-top:6px}
+.fb .k b{color:var(--gl)}
+.fb .btn{margin-top:14px}
+.big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:4.5rem;line-height:1;color:var(--gold);letter-spacing:-.04em;margin-top:12px}
+.rs{list-style:none;padding:0;margin:16px 0 22px}
+.rs li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--l);color:var(--ink)}
+.rs li b{color:var(--gold)}
+.ov{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:rgba(255,106,26,.12);border:1px solid rgba(255,106,26,.5);color:var(--ember);margin-bottom:10px}
+.ov .i{width:32px;height:32px}
+.toast{position:fixed;left:50%;top:70px;transform:translate(-50%,-20px);opacity:0;pointer-events:none;background:var(--s2);border:1px solid var(--gold);color:var(--gl);font-weight:700;padding:10px 18px;border-radius:99px;display:flex;gap:8px;align-items:center;z-index:6;transition:all .4s cubic-bezier(.16,1,.3,1)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* aprender */
+.mini{border-top:1px solid var(--l);padding-top:12px;margin-top:12px}
+.sit{background:var(--s);border:1px solid var(--l);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.sit small{display:block;font-weight:700;color:var(--mut);margin-bottom:2px}
+.sit .en{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.2rem;color:#fff}
+.er{background:var(--s);border:1px solid var(--l);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.er div{display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-weight:600}
+.er .bad{color:var(--ember)}.er .bad s{text-decoration-thickness:2px}
+.er .good{color:var(--gold);margin-top:4px}
+.er p{margin-top:8px;font-size:15px}
+.vg{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.vw{background:var(--s);border:1px solid var(--l);border-radius:16px;padding:14px 16px}
+.vw b{font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;color:var(--gold)}
+.vw span{display:block;color:var(--ink);font-weight:600}
+.vw i{display:block;color:var(--mut);font-style:normal;margin-top:4px}
+.fu{background:var(--s2);border:1px solid var(--gold);border-radius:20px;padding:18px;margin-top:26px}
+.fu h3{margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.fu li{margin:8px 0 0 18px;color:var(--ink)}
+.fu li b{color:var(--gl)}
+.fu li em{display:block;font-style:normal;color:var(--mut);font-size:14px}
+svg.tl{width:100%;height:auto;margin-bottom:6px}
+[hidden]{display:none!important}
+@keyframes fd{from{opacity:0;transform:translateY(10px)}}
+@keyframes inR{from{opacity:0;transform:translateX(44px)}}
+@keyframes outL{to{opacity:0;transform:translateX(-44px)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes glow{0%{box-shadow:0 0 0 0 rgba(240,180,41,.7)}100%{box-shadow:0 0 0 22px rgba(240,180,41,0)}}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.4)}100%{transform:scale(1)}}
+@keyframes sh{to{transform:translateX(100%)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-unlock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></symbol>
+<symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.2-3 7.7-7 9.5-4-1.8-7-5.3-7-9.5V6l7-3z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H12v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H12v15h6.5a1.5 1.5 0 0 1 1.5 1.5z"/></symbol>
+</defs></svg>
+
+<button class="mt" id="mt" aria-label="Sonido"></button>
+<div class="toast" id="ts"></div>
+
+<main class="w">
+
+<section id="intro" class="scr">
+  <span class="tag">Nica English Club · Práctica</span>
+  <h1>¿Cerrado o <em>abierto</em>?</h1>
+  <p class="lead">El truco para no confundir <b>Past Simple</b> y <b>Present Perfect</b>. Sin reglas largas. Solo una pregunta.</p>
+
+  <button class="card c" data-go="past">
+    <h3><svg class="i"><use href="#i-lock"/></svg>Past Simple = cerrado</h3>
+    <p>La historia <b>ya terminó</b>. Esa hora, ese día o ese año ya pasó. Ya no vuelve.</p>
+    <p class="keys">yesterday · last year · two days ago · in 2019</p>
+    <span class="more ic">Aprender con ejemplos<svg class="i"><use href="#i-next"/></svg></span>
+  </button>
+  <button class="card o" data-go="perf">
+    <h3><svg class="i"><use href="#i-unlock"/></svg>Present Perfect = abierto</h3>
+    <p>La historia <b>sigue abierta</b> o <b>todavía se ve hoy</b>. Mi vida, mi semana, mi hoy.</p>
+    <p class="keys">today · so far · ever · never · already · yet · since · for</p>
+    <span class="more io">Aprender con ejemplos<svg class="i"><use href="#i-next"/></svg></span>
+  </button>
+
+  <div class="trick">
+    <b>Ojo:</b> en español dices «ya comí» o «hoy fui al banco» y todo suena igual. En inglés <b>no</b>. No importa si pasó hace poco. Importa si el tiempo está <b>cerrado</b> o <b>abierto</b>.<br><br>
+    <b>Truco:</b> si puedes decir <b>CUÁNDO</b> pasó (ayer, en 2019, hace dos días), es <b>Past Simple</b>.
+  </div>
+
+  <div class="rules">
+    <div><svg class="i"><use href="#i-shield"/></svg>Tienes 3 vidas. Cada error te quita una.</div>
+    <div><svg class="i"><use href="#i-bolt"/></svg>10 aciertos seguidos te dan 1 vida extra (nunca más de 3).</div>
+    <div><svg class="i"><use href="#i-redo"/></svg>Si pierdes las 3, empiezas de nuevo con otro orden.</div>
+  </div>
+  <button class="btn" data-act="start"><svg class="i"><use href="#i-play"/></svg>Empezar práctica · 32 ejercicios</button>
+</section>
+
+<section id="learn" class="scr" hidden></section>
+
+<section id="quiz" hidden>
+  <div class="hud"><div class="lives" id="lv"></div><div class="stk"><svg class="i"><use href="#i-bolt"/></svg><div class="sg" id="sg"></div></div></div>
+  <div class="top"><span id="cnt"></span><span id="sc"></span></div>
+  <div class="bar"><i id="pg"></i></div>
+  <div id="qc">
+    <span class="tag rnd" id="rn"></span>
+    <div class="q" id="q"></div>
+    <p class="hint" id="ht"></p>
+    <div class="opts" id="op"></div>
+    <div class="fb" id="fb" hidden></div>
+  </div>
+</section>
+
+<section id="over" class="scr" hidden>
+  <div class="ov"><svg class="i"><use href="#i-x"/></svg></div>
+  <h1>Se acabaron las vidas</h1>
+  <p class="lead" id="ovt"></p>
+  <p>No pasa nada. El orden cambia por completo y tú ya sabes más que antes. Tip: antes de elegir, pregúntate si el tiempo está cerrado o abierto.</p>
+  <div class="row"><button class="btn" data-act="start"><svg class="i"><use href="#i-redo"/></svg>Empezar de nuevo</button><button class="ghost" data-act="intro"><svg class="i"><use href="#i-book"/></svg>Repasar la explicación</button></div>
+</section>
+
+<section id="end" class="scr" hidden>
+  <span class="tag">Completado</span>
+  <div class="big" id="bg"></div>
+  <h2 id="em" style="margin-top:8px"></h2>
+  <p id="ed"></p>
+  <ul class="rs" id="rs"></ul>
+  <div class="row"><button class="btn" data-act="start"><svg class="i"><use href="#i-redo"/></svg>Practicar otra vez</button><button class="ghost" data-act="intro">Inicio</button></div>
+</section>
+
+</main>
+<script>
+const R=['Busca la pista','Lee la historia','Trampa','Detecta el error','Conversación'];
+const Q=[
+[0,'I ___ pizza yesterday.','ate','have eaten','«Yesterday» es un tiempo cerrado [C]. Si dices cuándo, usa Past Simple.'],
+[0,'She ___ three emails so far today.','has sent','sent','«So far today»: el día sigue abierto [O]. Present Perfect.'],
+[0,'We ___ to Granada last year.','went','have gone','«Last year» ya se cerró [C]. Past Simple.'],
+[0,'I ___ snow.','have never seen','never saw','«Never» habla de toda mi vida hasta hoy. Mi vida sigue abierta [O].'],
+[0,'He ___ his phone two days ago.','lost','has lost','«Two days ago» dice cuándo. Si dices cuándo, es cerrado [C].'],
+[0,'I ___ here since 2020.','have lived','lived','«Since» empieza en el pasado y llega hasta hoy [O]. En español dices «vivo», pero en inglés usas Present Perfect.'],
+
+[1,'Ana is at the airport. Her bag is gone. Someone ___ it!','has taken','took','Hoy se ve el resultado: no hay bolso. Está conectado con ahora [O].'],
+[1,'My grandpa worked on a farm his whole life. Now he is retired. He ___ on a farm for 50 years.','worked','has worked','Esa etapa ya terminó. Está cerrada [C], aunque no haya una palabra clave.'],
+[1,'Pedro loves his job. He ___ there for 10 years and he is still there.','has worked','worked','Todavía trabaja allí. La historia sigue abierta [O].'],
+[1,'Careful! The floor is wet. Someone ___ water.','has spilled','spilled','Hoy se ve el resultado: el piso mojado [O].'],
+[1,'Maria lives in León. She ___ to Mexico three times. She loves it.','has been','was','Habla de experiencias en su vida, y su vida sigue abierta [O].'],
+[1,'The movie is finished now. It ___ two hours long.','was','has been','La película ya terminó. Está cerrada [C].'],
+
+[2,'My sister is back in Nicaragua now. She ___ in Canada for 3 years.','lived','has lived','Ella ya volvió: esa etapa se cerró [C]. Mira la historia, no la oración.'],
+[2,'My sister is still in Canada. She ___ there for 3 years.','has lived','lived','Todavía está allá. Sigue abierto [O]. ¡La misma oración, otra historia!'],
+[2,'Michael Jackson is no longer alive. He ___ many songs.','wrote','has written','Su vida se cerró [C]. Una persona que ya no está no tiene experiencias abiertas.'],
+[2,'Shakira is still making music. She ___ many songs.','has written','wrote','Su vida sigue abierta [O]. Puede escribir más.'],
+[2,'Look at the window! Someone ___ it.','has broken','broke','«Look!»: lo ves ahora. El resultado está aquí [O].'],
+[2,'The window is fixed now. Someone ___ it last night.','broke','has broken','«Last night» es un tiempo cerrado [C]. Dices cuándo.'],
+[2,'Question about your life: ___ fried cheese?','Have you ever tried','Did you ever try','«Ever» pregunta por toda tu vida hasta hoy [O]. La pregunta se abre con Present Perfect.'],
+[2,'Yes! I ___ it in Granada last summer.','tried','have tried','Ahora das el detalle: dónde y cuándo. Con detalles el tiempo se cierra [C]. La pregunta abre, la respuesta cierra.'],
+
+[3,'','I saw him yesterday.','I have seen him yesterday.','«Yesterday» está cerrado [C]. Nunca lo mezcles con Present Perfect.'],
+[3,'','I haven’t eaten breakfast yet.','I didn’t eat breakfast yet.','«Yet» pertenece al tiempo abierto [O]. En inglés: Present Perfect.'],
+[3,'','She finished school in 2018.','She has finished school in 2018.','«In 2018» es una fecha exacta [C]. Past Simple.'],
+[3,'','I have lived here since 2020.','I live here since 2020.','En español dices «vivo aquí desde». En inglés no: «since» pide Present Perfect [O].'],
+[3,'','When did you arrive?','When have you arrived?','«When» pregunta por un momento exacto. Un momento exacto es cerrado [C].'],
+[3,'','We went to the beach last Sunday.','We have been to the beach last Sunday.','«Last Sunday» ya pasó [C]. Past Simple.'],
+
+[4,'Job interview. A: ___ you ever worked in sales?','Have','Did','Es una pregunta sobre tu vida entera [O]. Present Perfect.'],
+[4,'B: Yes! I ___ in sales for two years at a shop in Masaya. I left in 2021.','worked','have worked','Ya no trabaja allí, y dice cuándo salió [C].'],
+[4,'First date. A: Where ___ you grow up?','did','have','Crecer es algo que ya terminó [C]. Past Simple.'],
+[4,'B: I ___ in León until I was 18.','lived','have lived','«Until I was 18»: esa etapa se cerró [C].'],
+[4,'Airport officer: How many times ___ to the US?','have you been','did you go','Cuenta todas las veces en tu vida [O].'],
+[4,'You: Twice. The first time I ___ there for a week in 2015.','went','have gone','Das el año exacto: 2015 [C]. Después de contar, cuentas los detalles en Past Simple.']
+];
+const L={
+past:{k:'Past Simple',st:'c',t:'Cerrado',ic:'lock',
+ idea:'La historia <b>ya terminó</b>. Pasó, se acabó y ya no sigue. Es como una puerta cerrada con llave.',
+ how:'Usa el verbo en pasado: <b>played, ate, went</b>. Para preguntar o decir «no», usa <b>did</b>: <i>Did you eat? I didn’t eat.</i>',
+ sit:[['Pasó ayer o antes','I played soccer yesterday.','Jugué fútbol ayer.'],['Dices cuándo pasó','We met in 2019.','Nos conocimos en 2019.'],['Una etapa que ya terminó','My grandpa worked on a farm.','Mi abuelo trabajaba en una finca (ya no).'],['Contar una historia en orden','I woke up. Then I ate.','Me desperté. Luego comí.'],['Una hora exacta','I saw her at 5 o’clock.','La vi a las 5.']],
+ err:[['I have seen him yesterday.','I saw him yesterday.','Yesterday ya se cerró. Si dices cuándo, usa pasado.'],['When have you arrived?','When did you arrive?','When pregunta por un momento exacto. Momento exacto = cerrado.'],['She has finished school in 2018.','She finished school in 2018.','2018 es una fecha exacta. Se cierra.'],['I didn’t went to school.','I didn’t go to school.','Después de did o didn’t, el verbo vuelve a su forma simple: go.'],['Did you saw it?','Did you see it?','Igual: después de did se usa see, no saw.']],
+ voc:[['yesterday','ayer','I called him yesterday.'],['ago','hace','She left two days ago.'],['last','pasado / pasada','We traveled last year.'],['in + año','en','I was born in 2005.'],['at / exactly','a las / exactamente','It started at exactly 5.'],['when','cuando','When I was a kid, I lived in León.'],['until','hasta','I lived there until 2020.'],['then','luego','I ate. Then I slept.']]},
+perf:{k:'Present Perfect',st:'o',t:'Abierto',ic:'unlock',
+ idea:'La historia <b>sigue abierta</b> o <b>todavía se ve hoy</b>. Es como una puerta abierta: todavía puede pasar más.',
+ how:'Usa <b>have / has + el verbo en su tercera forma</b>: <b>eaten, seen, been, gone</b>. Con I, you, we, they: <b>have</b>. Con he, she, it: <b>has</b>.',
+ sit:[['Cosas que hice en mi vida','I have been to Mexico.','He estado en México.'],['Empezó antes y sigue ahora','I have lived here for 5 years.','Vivo aquí hace 5 años.'],['Se ve el resultado hoy','Look! He has broken the window.','¡Mira! Rompió la ventana (y sigue rota).'],['Hoy o esta semana (aún no acaba)','I have drunk two coffees today.','Hoy tomé dos cafés.'],['Noticias con ya, todavía, acabo de','I have just finished.','Acabo de terminar.']],
+ err:[['I live here since 2020.','I have lived here since 2020.','En español dices «vivo». En inglés, si empezó antes y sigue, usa have lived.'],['I didn’t eat yet.','I haven’t eaten yet.','Yet va con el tiempo abierto.'],['I have been in Miami in 2019.','I went to Miami in 2019.','Si dices el año, la historia se cierra. Usa pasado.'],['She have finished.','She has finished.','Con he, she e it se usa has.'],['I have went to the beach.','I have gone to the beach.','Después de have se usa la tercera forma: gone, seen, eaten, been.']],
+ voc:[['since','desde (un punto)','I have lived here since 2020.'],['for','durante (cuánto tiempo)','I have worked here for 3 years.'],['already','ya (en frases normales)','I have already eaten.'],['yet','todavía / ya (preguntas y negativas)','Have you eaten yet?'],['ever','alguna vez (preguntas)','Have you ever tried sushi?'],['never','nunca','I have never seen snow.'],['just','acabo de','She has just left.'],['so far','hasta ahora','I have read ten pages so far.'],['today / this week','hoy / esta semana','I have studied today.']]}
+};
+const $=id=>document.getElementById(id);
+const I=(n,c='')=>'<svg class="i '+c+'"><use href="#i-'+n+'"/></svg>';
+const tok=s=>s.replace(/\[C\]/g,I('lock','ic')).replace(/\[O\]/g,I('unlock','io'));
+/* sonido (todo generado en el navegador) */
+let AC,mut=false;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tn(f,d,t,v,at,to){const a=ac();if(!a||mut)return;const s=a.currentTime+(at||0),o=a.createOscillator(),g=a.createGain();o.type=t||'sine';o.frequency.setValueAtTime(f,s);if(to)o.frequency.exponentialRampToValueAtTime(to,s+d);g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(v||.15,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g);g.connect(a.destination);o.start(s);o.stop(s+d+.05)}
+function wh(){const a=ac();if(!a||mut)return;const n=a.sampleRate*.3,b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(let k=0;k<n;k++)d[k]=Math.random()*2-1;const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain(),t=a.currentTime;s.buffer=b;f.type='bandpass';f.Q.value=2;f.frequency.setValueAtTime(500,t);f.frequency.exponentialRampToValueAtTime(2600,t+.28);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.07,t+.08);g.gain.exponentialRampToValueAtTime(.0001,t+.3);s.connect(f);f.connect(g);g.connect(a.destination);s.start(t)}
+const arp=(fs,d,t,v,gap)=>fs.forEach((f,k)=>tn(f,d,t,v,k*gap));
+const SFX={ok:()=>{tn(660,.18,'sine',.16);tn(880,.32,'sine',.16,.09)},bad:()=>tn(230,.35,'triangle',.2,0,110),go:wh,tap:()=>tn(520,.07,'sine',.08),life:()=>arp([523,659,784,1047],.25,'sine',.14,.08),over:()=>arp([392,330,262,196],.32,'triangle',.17,.17),win:()=>arp([523,659,784,659,784,1047,1319],.3,'sine',.15,.13)};
+function drawMt(){$('mt').innerHTML=I(mut?'mute':'vol')}
+$('mt').onclick=()=>{mut=!mut;drawMt();if(!mut)SFX.tap()};drawMt();
+document.addEventListener('pointerdown',ac,{once:true});
+/* pantallas */
+function show(s){['intro','learn','quiz','over','end'].forEach(x=>{const e=$(x);e.hidden=x!==s;if(x===s&&x!=='quiz'){e.classList.remove('scr');void e.offsetWidth;e.classList.add('scr')}});window.scrollTo({top:0,behavior:'smooth'})}
+function tl(k){const o=k==='perf';return '<svg class="tl" viewBox="0 0 300 78" aria-hidden="true"><g font-family="Figtree,sans-serif" font-size="12" fill="#9a948a"><line x1="20" y1="34" x2="280" y2="34" stroke="#2a2520" stroke-width="3" stroke-linecap="round"/>'+
+(o?'<line x1="40" y1="34" x2="270" y2="34" stroke="#f0b429" stroke-width="4" stroke-linecap="round"/><path d="M262 27l9 7-9 7" fill="none" stroke="#f0b429" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="34" r="7" fill="#f0b429"/><text x="40" y="62" text-anchor="middle">empezó</text><text x="240" y="62" text-anchor="middle" fill="#f0b429">ahora… y sigue</text>'
+:'<line x1="40" y1="34" x2="170" y2="34" stroke="#5aa9ff" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="34" r="7" fill="#5aa9ff"/><rect x="170" y="18" width="8" height="32" rx="3" fill="#5aa9ff"/><circle cx="262" cy="34" r="6" fill="none" stroke="#9a948a" stroke-width="2"/><text x="40" y="62" text-anchor="middle">pasó</text><text x="174" y="68" text-anchor="middle" fill="#5aa9ff">se cerró</text><text x="262" y="62" text-anchor="middle">ahora</text>')+'</g></svg>'}
+function learn(k){
+  const d=L[k],o=k==='perf',c=d.st,oth=o?'past':'perf';
+  $('learn').innerHTML=
+   '<button class="ghost" data-act="intro">'+I('back')+'Volver</button><div style="margin-top:18px"></div>'+
+   '<span class="tag">'+I(d.ic,c==='c'?'ic':'io')+d.t+'</span><h1>'+d.k+'</h1><p class="lead">'+d.idea+'</p>'+
+   '<div class="card '+c+'">'+tl(k)+'<p>'+d.how+'</p></div>'+
+   '<h2>Situaciones típicas</h2>'+d.sit.map(s=>'<div class="sit"><small>'+s[0]+'</small><div class="en">'+s[1]+'</div><p>'+s[2]+'</p></div>').join('')+
+   '<h2>Errores comunes</h2>'+d.err.map(e=>'<div class="er"><div class="bad">'+I('x')+'<s>'+e[0]+'</s></div><div class="good">'+I('check')+'<span>'+e[1]+'</span></div><p>'+e[2]+'</p></div>').join('')+
+   '<h2>Palabras importantes</h2><div class="vg">'+d.voc.map(v=>'<div class="vw"><b>'+v[0]+'</b><span>'+v[1]+'</span><i>'+v[2]+'</i></div>').join('')+'</div>'+
+   '<div class="fu"><h3>'+I('bolt','io')+'Ojo con for, since y until</h3><ul>'+
+   '<li><b>for</b> = cuánto tiempo (3 years). Sirve en los dos tiempos:<em>I lived there for 3 years. (ya no vivo allá, cerrado)</em><em>I have lived here for 3 years. (sigo aquí, abierto)</em></li>'+
+   '<li><b>since</b> = desde cuándo. Es un punto en el tiempo:<em>I have lived here since 2020.</em></li>'+
+   '<li><b>until</b> = hasta cuándo. Marca el final de algo cerrado:<em>I lived there until 2020.</em></li></ul></div>'+
+   '<div class="row"><button class="ghost" data-go="'+oth+'">Ver '+L[oth].k+I('next')+'</button><button class="btn" data-act="start">'+I('play')+'Practicar</button></div>';
+  show('learn')
+}
+/* juego */
+let ord,idx,lives,streak,score,tries=0,busy,res;
+const sh=a=>{for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+function hud(hit,gain){
+  $('lv').innerHTML=[0,1,2].map(k=>I('shield',(k<lives?'':'off ')+(hit&&k===lives?'hit':'')+(gain&&k===lives-1?'gain':''))).join('');
+  $('sg').innerHTML=[...Array(10)].map((_,k)=>'<span class="'+(k<streak?'on':'')+'"></span>').join('');
+  $('sc').textContent=score+' aciertos'
+}
+function toast(t){const e=$('ts');e.innerHTML=I('shield','io')+t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
+function start(){tries++;ord=sh(Q.map((_,k)=>k));idx=0;lives=3;streak=0;score=0;res=R.map(()=>[0,0]);show('quiz');SFX.go();load(true)}
+function load(first){
+  busy=false;const [r,s,c,w]=Q[ord[idx]];
+  $('cnt').textContent='Ejercicio '+(idx+1)+' de '+Q.length;
+  $('pg').style.width=(idx/Q.length*100)+'%';
+  $('rn').textContent=R[r];
+  $('q').innerHTML=s?s.replace('___','<span class="bl">&nbsp;&nbsp;?&nbsp;&nbsp;</span>'):'¿Cuál oración está bien?';
+  $('ht').textContent=s?'Elige la opción que completa la historia.':'Una está mal. Piensa: ¿cerrado o abierto?';
+  $('fb').hidden=true;$('op').innerHTML='';
+  sh([c,w]).forEach(t=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>pick(b,t===c);$('op').appendChild(b)});
+  const q=$('qc');q.classList.remove('out','in');void q.offsetWidth;q.classList.add('in');
+  hud()
+}
+function pick(b,ok){
+  if(busy)return;busy=true;const [r,s,c,w,why]=Q[ord[idx]];
+  res[r][1]++;let gain=false;
+  document.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x.textContent===c)x.classList.add('ok')});
+  if(ok){score++;res[r][0]++;streak++;SFX.ok();
+    if(streak===10){streak=0;if(lives<3){lives++;gain=true;toast('Vida extra ganada');setTimeout(SFX.life,420)}else toast('Racha de 10. Ya tienes las 3 vidas')}}
+  else{b.classList.add('no');lives--;streak=0;SFX.bad()}
+  hud(!ok,gain);
+  if(s)$('q').innerHTML=s.replace('___','<span class="bl">'+c+'</span>');
+  const closed=why.indexOf('[C]')>=0&&(why.indexOf('[O]')<0||why.indexOf('[C]')<why.indexOf('[O]'));
+  const last=lives===0,end=idx===Q.length-1;
+  const f=$('fb');f.hidden=false;f.className='fb '+(ok?'g':'r');
+  f.innerHTML='<div class="h">'+I(ok?'check':'x')+(ok?'¡Bien pensado!':'Casi. Piénsalo otra vez.')+'</div>'+
+   '<span class="chip">'+(closed?I('lock','ic')+'Cerrado · Past Simple':I('unlock','io')+'Abierto · Present Perfect')+'</span>'+
+   (ok?'':'<p>Pregúntate: ¿ese momento ya se cerró o sigue abierto?</p>')+
+   '<p class="k"><b>La clave:</b> '+tok(why)+'</p>'+
+   '<button class="btn" id="nx">'+(last?'Continuar':end?'Ver resultado':'Siguiente')+I('next')+'</button>';
+  $('nx').onclick=()=>{SFX.tap();if(last)return over();if(end)return finish();
+    $('qc').classList.remove('in');$('qc').classList.add('out');SFX.go();setTimeout(()=>{idx++;load()},230)};
+  $('nx').focus({preventScroll:true})
+}
+function over(){SFX.over();$('ovt').textContent='Llegaste al ejercicio '+(idx+1)+' de '+Q.length+'. Para terminar tienes que completar los 32.';show('over')}
+function finish(){
+  SFX.win();show('end');const p=score/Q.length;
+  $('bg').textContent=score+' / '+Q.length;
+  $('em').textContent=p>=.9?'Ya piensas en inglés':p>=.75?'Muy bien, vas por buen camino':'Lo lograste. Ahora hazlo con menos errores';
+  $('ed').textContent='Completaste los 32 ejercicios'+(tries>1?' en tu intento número '+tries:' en tu primer intento')+'. Recuerda: no importa si pasó hace poco. Importa si el tiempo está cerrado o abierto.';
+  $('rs').innerHTML=R.map((n,k)=>'<li><span>'+n+'</span><b>'+res[k][0]+'/'+res[k][1]+'</b></li>').join('')
+}
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]'),a=e.target.closest('[data-act]');
+  if(g){SFX.tap();learn(g.dataset.go)}
+  else if(a){const v=a.dataset.act;if(v==='start')start();else if(v==='intro'){SFX.tap();show('intro')}}
+});
+</script>
+</body>
+</html>
