@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Foto o película? · Nica English Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0b09;--card:#131211;--gold:#F0B323;--blue:#4DA3FF;--ok:#3ddc84;--bad:#ff6b6b;--txt:#fff;--mut:#a8a29a}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(900px 400px at 0 0,#1d1710,var(--bg));color:var(--txt);font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:28px 20px 60px}
+.w{max-width:720px;margin:0 auto}
+.pill{display:inline-block;border:1px solid #3a3226;background:#16130f;color:var(--gold);font-weight:600;font-size:13px;letter-spacing:.14em;padding:10px 18px;border-radius:99px;text-transform:uppercase}
+h1{font-size:clamp(38px,9vw,60px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:22px 0 14px}
+h1 b{color:var(--gold)}
+.sub{font-size:19px;line-height:1.6;margin-bottom:26px}
+.sub b{font-weight:800}
+.card{display:block;width:100%;text-align:left;color:inherit;font:inherit;background:var(--card);border:1px solid;border-radius:26px;padding:24px 26px;margin-bottom:16px;cursor:pointer}
+.card.pp{border-color:#5a4410}.card.ppc{border-color:#1e4170}
+.card h2{display:flex;align-items:center;gap:12px;font-size:25px;font-weight:800;letter-spacing:-.02em}
+.pp h2{color:var(--gold)}.ppc h2{color:var(--blue)}
+.card p{color:var(--mut);font-size:17px;line-height:1.55;margin-top:10px}
+.card p b{color:#fff}
+.kw{color:#fff;font-weight:600;font-size:18px;margin-top:12px}
+.more{margin-top:14px;font-weight:600;font-size:16px}
+.det{display:none;margin-top:16px;padding-top:16px;border-top:1px solid #2a2622}
+.card.open .det{display:block}
+.card.open .arr{transform:rotate(90deg)}
+.arr{display:inline-block;transition:.2s}
+.ex{background:#0d0c0b;border-radius:14px;padding:12px 16px;margin-top:10px;font-size:17px}
+.ex i{display:block;color:var(--mut);font-style:normal;font-size:15px;margin-top:3px}
+.form{font-weight:600;color:#fff;font-size:16px;margin-top:10px}
+.btn{display:block;width:100%;background:var(--gold);color:#1a1408;border:0;border-radius:18px;padding:18px;font:inherit;font-size:19px;font-weight:800;cursor:pointer;margin-top:10px}
+.btn.ghost{background:transparent;color:#fff;border:1px solid #3a3226}
+.bar{height:8px;background:#1f1b16;border-radius:9px;overflow:hidden;margin:10px 0 24px}
+.bar i{display:block;height:100%;background:var(--gold);width:0;transition:.3s}
+.top{display:flex;justify-content:space-between;color:var(--mut);font-weight:600;font-size:15px}
+.q{font-size:clamp(26px,6vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.25;margin:10px 0 24px}
+.q span{color:var(--gold);border-bottom:3px solid var(--gold);padding:0 6px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:#fff;border:1px solid #3a3226;border-radius:18px;padding:18px 20px;font:inherit;font-size:20px;font-weight:600;margin-bottom:12px;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:#0f2218}.opt.no{border-color:var(--bad);background:#2a1212}
+.fb{display:none;background:var(--card);border-radius:18px;padding:18px 20px;margin-top:8px;font-size:17px;line-height:1.55;border-left:4px solid}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--bad)}
+.hide{display:none}
+.big{font-size:72px;font-weight:800;color:var(--gold);letter-spacing:-.04em}
+.ic{width:30px;height:30px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5));vertical-align:middle;flex:none}
+.card h2 .ic{width:46px;height:46px}
+.card h2 [data-i]{display:flex}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:1px 10px 1px 4px;border-radius:99px;font-weight:800;vertical-align:middle}
+.chip.f{background:#2a2108;color:var(--gold)}.chip.p{background:#0f2238;color:var(--blue)}
+.chip .ic{width:22px;height:22px;filter:none}
+.big .ic{width:120px;height:120px;display:block;margin:10px auto}
+.btn{box-shadow:0 6px 0 #9a7208,0 12px 16px rgba(0,0,0,.4);margin-bottom:10px}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #9a7208}
+.btn.ghost{box-shadow:0 5px 0 #000}
+.opt{box-shadow:0 5px 0 #000}.opt:active{transform:translateY(3px);box-shadow:0 2px 0 #000}
+.opt.ok{box-shadow:0 5px 0 #1a7a45}.opt.no{box-shadow:0 5px 0 #8a2a2a}
+.card{box-shadow:0 6px 0 #050403,0 12px 18px rgba(0,0,0,.35)}
+.fb .h{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;margin-bottom:8px}
+.fb .h .ic{width:34px;height:34px}
+.fb p{margin-top:10px}
+.fb .x{color:var(--mut)}
+.lb{display:block;font-weight:600;color:var(--mut);margin:6px 0 8px;font-size:15px}
+.inp{width:100%;background:var(--card);color:#fff;border:1px solid #3a3226;border-radius:16px;padding:16px 18px;font:inherit;font-size:20px;font-weight:600;margin-bottom:12px}
+.inp:focus{outline:2px solid var(--gold)}
+.err{color:var(--bad);font-weight:600;margin:-4px 0 12px}
+.brk{display:flex;gap:12px;margin:6px 0 24px}
+.brk div{flex:1;background:var(--card);border-radius:18px;padding:14px;font-weight:600;font-size:15px;color:var(--mut)}
+.brk b{display:block;font-size:26px;color:#fff}
+.btn.wa{background:#25D366;color:#06260f;box-shadow:0 6px 0 #138a40,0 12px 16px rgba(0,0,0,.4)}
+.hint{color:var(--mut);font-size:14px;margin:-2px 0 20px}
+.btn.ghost{margin-top:14px}
+.prev{width:100%;max-width:420px;border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.5);margin:0 auto 22px;display:block}
+.snd{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;width:52px;height:52px;border-radius:50%;background:#16130f;border:1px solid #3a3226;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;box-shadow:0 4px 0 #000}
+.snd:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.snd svg{width:26px;height:26px;fill:currentColor;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.snd svg path.w{fill:none}
+.top{align-items:center}.lv{display:inline-flex;gap:2px}.lv .ic{width:34px;height:34px}.lv .off{opacity:.22;filter:grayscale(1)}
+.lh{display:none;color:var(--mut);font-size:14px;font-weight:600;margin:-12px 0 16px}
+.tip{background:var(--card);border-left:4px solid var(--gold);border-radius:18px;padding:16px 18px;text-align:left;margin-bottom:26px;font-size:17px;line-height:1.55}
+.tip b{color:var(--gold)}
+.tip.last{border-color:var(--blue);font-size:16px}.tip.last b{color:var(--blue)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD766"/><stop offset=".55" stop-color="#F0B323"/><stop offset="1" stop-color="#B5810A"/></linearGradient>
+<linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8CC8FF"/><stop offset=".55" stop-color="#4DA3FF"/><stop offset="1" stop-color="#1F6FD1"/></linearGradient>
+<linearGradient id="gK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7CF0B0"/><stop offset=".55" stop-color="#3DDC84"/><stop offset="1" stop-color="#1E9E5A"/></linearGradient>
+<linearGradient id="gO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD766"/><stop offset=".5" stop-color="#FF8A3D"/><stop offset="1" stop-color="#E03A1E"/></linearGradient>
+<linearGradient id="gR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9AA2"/><stop offset=".5" stop-color="#FF4D63"/><stop offset="1" stop-color="#B81E35"/></linearGradient>
+<linearGradient id="gS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#1b1b1b"/></linearGradient>
+</defs></svg>
+<button id="snd" class="snd" onclick="toggleSnd()" aria-label="Sonido"></button>
+<div class="w">
+
+<section id="home">
+  <span class="pill">Nica English Club · Práctica</span>
+  <h1>¿Foto o <b>película</b>?</h1>
+  <p class="sub">El truco para no confundir <b>Present Perfect</b> y <b>Present Perfect Continuous</b>. Toca cada tarjeta.</p>
+
+  <div class="card pp" onclick="this.classList.toggle('open')">
+    <h2><span data-i="cam"></span>Present Perfect = foto</h2>
+    <p>Te importa <b>lo que hay ahora</b>: algo listo, un número, un resultado.</p>
+    <div class="kw">finished · done · how many · already · yet</div>
+    <div class="more">Aprender con ejemplos <span class="arr">›</span></div>
+    <div class="det">
+      <p>Piensa: “Mira la foto. ¿Qué quedó?”. No importa cuánto tardaste, importa que <b>ya está ahí</b>.</p>
+      <div class="form">have / has + participio</div>
+      <div class="ex">I’ve cleaned my room.<i>Ya está limpio. Míralo.</i></div>
+      <div class="ex">I’ve lost my phone.<i>Ahora no lo tengo.</i></div>
+      <div class="ex">How many books have you read?<i>Contamos el resultado.</i></div>
+    </div>
+  </div>
+
+  <div class="card ppc" onclick="this.classList.toggle('open')">
+    <h2><span data-i="clap"></span>Present Perfect Continuous = película</h2>
+    <p>Te importa <b>la acción en movimiento</b>: cuánto tiempo y qué huellas dejó.</p>
+    <div class="kw">for · since · how long · all day · lately</div>
+    <div class="more">Aprender con ejemplos <span class="arr">›</span></div>
+    <div class="det">
+      <p>Piensa: “Mira la película. ¿Qué estuve haciendo?”. Importa el <b>proceso</b>, aunque no haya terminado.</p>
+      <div class="form">have / has been + verbo-ing</div>
+      <div class="ex">I’ve been studying.<i>Por eso estoy cansado.</i></div>
+      <div class="ex">It’s been raining.<i>Por eso la calle está mojada.</i></div>
+      <div class="ex">How long have you been waiting?<i>Contamos el tiempo.</i></div>
+    </div>
+  </div>
+
+  <p class="sub" style="font-size:17px;color:var(--mut)">Pregunta mágica: ¿me importa <b style="color:var(--gold)">lo que quedó</b> o <b style="color:var(--blue)">lo que estuve haciendo</b>?</p>
+  <label class="lb" for="nm">Tu nombre</label>
+  <input id="nm" class="inp" type="text" maxlength="40" placeholder="Escribe tu nombre" autocomplete="given-name">
+  <div id="nmerr" class="err hide">Escribe tu nombre para empezar.</div>
+  <button class="btn" onclick="startGame()">Jugar · 30 preguntas</button>
+</section>
+
+<section id="game" class="hide">
+  <div class="top"><span id="n">1/30</span><span id="lv" class="lv"></span><span id="sc">Aciertos: 0</span></div>
+  <div class="bar"><i id="pg"></i></div>
+  <div id="lh" class="lh"></div>
+  <div class="q" id="q"></div>
+  <div id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="btn hide" id="next" onclick="next()">Siguiente</button>
+</section>
+
+<section id="over" class="hide" style="text-align:center;padding-top:30px">
+  <span class="pill">Sigue intentando</span>
+  <div id="ovic"></div>
+  <h1 style="font-size:clamp(34px,8vw,50px);margin:6px 0 12px">¡No te <b>rindas</b>!</h1>
+  <p class="sub" id="ovmsg"></p>
+  <div class="tip last" id="ovlast"></div>
+  <div class="tip" id="ovtip"></div>
+  <button class="btn" onclick="runAgain()">Intentarlo otra vez</button>
+  <button class="btn ghost" onclick="review()">Repasar el tema</button>
+  <button class="btn wa" style="margin-top:14px" onclick="askCoach()">Preguntar al coach</button>
+  <p class="hint">Cada intento te acerca. Quien sigue practicando, aprende.</p>
+</section>
+
+<section id="end" class="hide" style="text-align:center;padding-top:30px">
+  <span class="pill">Resultado</span>
+  <div id="tr"></div>
+  <p class="sub" id="msg" style="margin-bottom:16px"></p>
+  <img id="prev" class="prev" alt="Captura del resultado">
+  <button class="btn wa" onclick="sendImg()">Enviar resultado al coach</button>
+  <p class="hint" id="shmsg">Se abre WhatsApp: elige el chat de tu coach y toca Enviar.</p>
+  <button class="btn ghost" onclick="sendWA()">Enviar solo texto al coach</button>
+  <button class="btn ghost" onclick="startGame()">Jugar otra vez</button>
+  <button class="btn ghost" onclick="show('home')">Volver a las tarjetas</button>
+</section>
+
+</div>
+<script>
+var Q=[
+{s:"I ___ the report. It's on your desk.",a:"have finished",b:"have been finishing",c:"a",
+ w:"Mira el reporte: ya está ahí, terminado. Cuando lo que importa es que algo <b>ya quedó listo</b>, en inglés usas <b>have finished</b>. Es como tomarle una {F} a lo que hay ahora.",
+ x:"<b>Have been finishing</b> suena como si todavía lo estuvieras terminando, y tú ya acabaste."},
+{s:"My eyes hurt. I ___ all morning.",a:"have read",b:"have been reading",c:"b",
+ w:"Fíjate en <b>all morning</b>: llevas toda la mañana leyendo, y por eso te duelen los ojos. Empezó antes y todavía lo sientes ahora. Eso es una {P}. En español sería: \"llevo toda la mañana leyendo\".",
+ x:"<b>I have read all morning</b> suena raro porque <b>have read</b> se siente como algo ya cerrado, y <b>all morning</b> dice que fue un rato largo que todavía pesa."},
+{s:"She ___ three coffees today.",a:"has drunk",b:"has been drinking",c:"a",
+ w:"Aquí alguien está contando: <b>three</b> cafés. Cuando cuentas cuántos, en inglés miras el resultado, como una {F}.",
+ x:"<b>Has been drinking three coffees</b> suena raro porque con un número ya no miras el proceso, estás contando."},
+{s:"I'm so tired. I ___ English all night.",a:"have studied",b:"have been studying",c:"b",
+ w:"Estudiaste <b>toda la noche</b> y por eso estás cansado. Lo importante es ese rato largo que te dejó así. Eso es una {P}. En español: \"llevo toda la noche estudiando\".",
+ x:"<b>Have studied</b> suena como un dato cerrado, y no se siente el cansancio de toda la noche."},
+{s:"I ___ my keys! I can't find them.",a:"have lost",b:"have been losing",c:"a",
+ w:"Perdiste las llaves y <b>ahora no las tienes</b>. Cuando algo que pasó cambia cómo estás ahora, usas <b>have lost</b>. Eso es una {F}.",
+ x:"<b>Have been losing</b> suena como si las perdieras una y otra vez. Perder es un momento, no un proceso."},
+{s:"The streets are wet. It ___ since morning.",a:"has rained",b:"has been raining",c:"b",
+ w:"Las calles mojadas son la huella de la lluvia, y con <b>since morning</b> la lluvia viene desde hace rato. Es una acción que se ve en movimiento: {P}.",
+ x:"<b>Has rained</b> suena como un dato suelto. <b>Has been raining</b> deja ver la lluvia en acción."},
+{s:"How many emails ___ today?",a:"have you sent",b:"have you been sending",c:"a",
+ w:"<b>How many</b> pregunta por un número. Cuando preguntas cuántos, miras el resultado: {F}.",
+ x:"<b>Have you been sending</b> suena más a preguntar cuánto tiempo llevas enviando, no cuántos enviaste."},
+{s:"I ___ him for years. He's my best friend.",a:"have known",b:"have been knowing",c:"a",
+ w:"<b>Know</b> no es algo que haces, es algo que <b>ya sabes</b>. Los verbos como know, like, love o have casi nunca llevan <b>-ing</b>. Por eso: <b>have known</b>.",
+ x:"<b>Have been knowing</b> no se dice en inglés normal. Conocer a alguien no es una acción en movimiento."},
+{s:"Her hands are dirty. She ___ in the garden all afternoon.",a:"has worked",b:"has been working",c:"b",
+ w:"Las manos sucias son la huella de lo que estuvo haciendo <b>toda la tarde</b>. Importa la acción y cómo la dejó: {P}.",
+ x:"<b>Has worked</b> suena como un dato general de su trabajo, no como algo que acaba de pasar toda la tarde."},
+{s:"He ___ the marathon! He's so happy.",a:"has finished",b:"has been finishing",c:"a",
+ w:"¡Llegó a la meta! Terminar la maratón es un <b>resultado</b>: ya está hecho, ahí está su medalla. Eso es una {F}.",
+ x:"<b>Has been finishing</b> suena como si todavía estuviera terminando, y él ya llegó."},
+{s:"I ___ this movie three times. It's my favorite.",a:"have seen",b:"have been seeing",c:"a",
+ w:"<b>Three times</b>: estás contando veces. Cuando cuentas, miras el resultado: {F}.",
+ x:"<b>Have been seeing</b> no encaja con un número de veces. Con números, cuentas; no miras el proceso."},
+{s:"She ___ her phone. Look, the screen is broken!",a:"has broken",b:"has been breaking",c:"a",
+ w:"La pantalla ya está rota y ahí está el resultado. Romper es un momento: {F}.",
+ x:"<b>Has been breaking</b> suena como si lo estuviera rompiendo poco a poco, y ya se rompió."},
+{s:"I ___ sushi in my life.",a:"have never eaten",b:"have never been eating",c:"a",
+ w:"<b>Never</b> habla de toda tu vida, como una colección de experiencias. Preguntas si lo hiciste alguna vez, no cómo pasó: {F}.",
+ x:"Con <b>never</b> o <b>ever</b> hablas de experiencias, no de una acción en movimiento."},
+{s:"Mom, I ___ my room already!",a:"have cleaned",b:"have been cleaning",c:"a",
+ w:"<b>Already</b> avisa que ya está hecho. Importa el resultado: {F}.",
+ x:"<b>Have been cleaning</b> suena como si todavía estuvieras limpiando, y con <b>already</b> ya terminaste."},
+{s:"We ___ a new car. Come see it!",a:"have bought",b:"have been buying",c:"a",
+ w:"El carro nuevo ya está ahí, listo para verlo. Comprar es un momento y queda el resultado: {F}.",
+ x:"<b>Have been buying</b> suena como si lo compraras poco a poco, y el carro ya es suyo."},
+{s:"How many pages ___ today?",a:"have you written",b:"have you been writing",c:"a",
+ w:"<b>How many</b> pide un número: cuántas páginas. Cuando cuentas, usas la {F}.",
+ x:"<b>Have you been writing</b> suena más a preguntar cuánto rato llevas escribiendo."},
+{s:"I ___ my teacher's name. What was it?",a:"have forgotten",b:"have been forgetting",c:"a",
+ w:"Olvidaste el nombre y <b>ahora no lo recuerdas</b>. Lo que importa es cómo estás ahora: {F}.",
+ x:"Olvidar es un momento, no un proceso. Por eso <b>have been forgetting</b> suena extraño."},
+{s:"I ___ this phone for two years.",a:"have had",b:"have been having",c:"a",
+ w:"<b>Have</b> como \"tener\" es un estado, no una acción que haces. Los estados casi nunca llevan <b>-ing</b>: <b>have had</b>.",
+ x:"<b>Have been having</b> casi no se usa para decir que tienes algo."},
+{s:"He ___ to Costa Rica twice.",a:"has been",b:"has been going",c:"a",
+ w:"<b>Twice</b> significa dos veces: estás contando viajes. Cuando cuentas veces, usas la {F}.",
+ x:"<b>Has been going</b> no encaja con un número exacto de veces."},
+{s:"I'm sweaty and out of breath. I ___ all morning.",a:"have run",b:"have been running",c:"b",
+ w:"Fíjate en <b>all morning</b>: pasaste toda la mañana corriendo y por eso estás sudado. Importa la acción y cómo te dejó: {P}.",
+ x:"<b>Have run</b> suena como un dato cerrado, y <b>all morning</b> pide ese rato largo que todavía se siente."},
+{s:"Why is your hair wet? ___ in the pool?",a:"Have you swum",b:"Have you been swimming",c:"b",
+ w:"El pelo mojado es la huella de lo que estuviste haciendo. Si ves la huella y preguntas qué hacías, usas la {P}.",
+ x:"<b>Have you swum</b> suena a preguntar si alguna vez nadaste en tu vida."},
+{s:"He's very tired. He ___ since 6 a.m.",a:"has worked",b:"has been working",c:"b",
+ w:"Con <b>since 6 a.m.</b> y el cansancio se nota el rato largo trabajando, que empezó y todavía se siente: {P}.",
+ x:"<b>Has worked</b> suena como un dato suelto, sin ese cansancio de horas."},
+{s:"Ana is sweaty. She ___ basketball all afternoon.",a:"has played",b:"has been playing",c:"b",
+ w:"<b>All afternoon</b> es mucho rato haciendo algo, y se ve la huella: está sudada. Eso es una {P}.",
+ x:"<b>Has played</b> suena como algo ya cerrado, sin el rato largo que todavía se nota."},
+{s:"The kids are sleepy. They ___ video games all night.",a:"have played",b:"have been playing",c:"b",
+ w:"Están dormidos porque pasaron <b>toda la noche</b> jugando. Importa el proceso largo: {P}.",
+ x:"<b>Have played</b> suena como un dato cerrado, y no se siente toda la noche."},
+{s:"I ___ for you since 5 o'clock! Where were you?",a:"have looked",b:"have been looking",c:"b",
+ w:"Con <b>since 5 o'clock</b> llevas rato buscando y todavía se nota. En español: \"llevo buscándote desde las cinco\". Eso es una {P}.",
+ x:"<b>Have looked for you since 5</b> suena raro: buscar es un proceso, no un momento."},
+{s:"Your eyes are red. ___?",a:"Have you cried",b:"Have you been crying",c:"b",
+ w:"Los ojos rojos son la huella de lo que estuviste haciendo. Ves la huella y preguntas qué hacías: {P}.",
+ x:"<b>Have you cried</b> suena a preguntar si alguna vez lloraste en tu vida."},
+{s:"It ___ all week, so we can't go to the beach.",a:"has rained",b:"has been raining",c:"b",
+ w:"<b>All week</b> es mucho tiempo con la lluvia en movimiento, y por eso no pueden ir: {P}.",
+ x:"<b>Has rained</b> suena como un dato suelto, sin esa semana de lluvia que todavía se siente."},
+{s:"My phone is hot. I ___ it all day.",a:"have used",b:"have been using",c:"b",
+ w:"El teléfono caliente es la huella de usarlo <b>todo el día</b>. Importa el proceso y cómo quedó: {P}.",
+ x:"<b>Have used</b> suena como algo ya cerrado, y <b>all day</b> pide ese rato largo."},
+{s:"We ___ for the exam all week. We're tired.",a:"have studied",b:"have been studying",c:"b",
+ w:"<b>All week</b> y el cansancio muestran un proceso largo que todavía se siente. Eso es una {P}.",
+ x:"<b>Have studied</b> suena como un dato cerrado, sin el cansancio de toda la semana."},
+{s:"Tom is covered in paint. He ___ the fence all day.",a:"has painted",b:"has been painting",c:"b",
+ w:"La pintura encima de Tom es la huella de lo que estuvo haciendo <b>todo el día</b>: {P}.",
+ x:"<b>Has painted</b> suena como un dato cerrado, y <b>all day</b> pide ese proceso largo."}
+];
+var OKH=["¡Eso es!","¡Lo lograste!","¡Muy bien!","¡Así se hace!"];
+var NOH=["¡Uy, casi!","¡Buen intento!","¡Cerquita!","¡Esta es difícil!"];
+var SH='<ellipse cx="24" cy="44" rx="13" ry="2.5" fill="#000" opacity=".35"/>';
+var IC={
+cam:SH+'<rect x="5" y="14" width="38" height="27" rx="7" fill="url(#gG)"/><rect x="15" y="8" width="18" height="9" rx="3" fill="url(#gG)"/><circle cx="24" cy="28" r="10" fill="#1a1408"/><circle cx="24" cy="28" r="7" fill="url(#gB)"/><circle cx="21.5" cy="25.5" r="2.5" fill="#fff" opacity=".7"/><rect x="8" y="16" width="32" height="4" rx="2" fill="#fff" opacity=".25"/>',
+clap:SH+'<rect x="6" y="20" width="36" height="21" rx="4" fill="url(#gB)"/><rect x="6" y="10" width="36" height="10" rx="3" fill="#10243d"/><path d="M11 10h6l-4 10H7zM23 10h6l-4 10h-6zM35 10h6v10h-8z" fill="#fff" opacity=".9"/><path d="M20 26l10 5.5-10 5.5z" fill="#fff"/><rect x="8" y="22" width="32" height="3" rx="1.5" fill="#fff" opacity=".25"/>',
+star:SH+'<path d="M24 4l6 12 13 2-9.5 9 2.3 13L24 34l-11.8 6 2.3-13L5 18l13-2z" fill="url(#gG)"/><path d="M24 4l6 12-6 3z" fill="#fff" opacity=".4"/>',
+bulb:SH+'<path d="M24 4c-8 0-13 6-13 13 0 5 3 8 5 11v4h16v-4c2-3 5-6 5-11 0-7-5-13-13-13z" fill="url(#gG)"/><rect x="17" y="34" width="14" height="7" rx="3" fill="url(#gS)"/><ellipse cx="18" cy="14" rx="3" ry="5" fill="#fff" opacity=".45" transform="rotate(20 18 14)"/>',
+trophy:SH+'<path d="M14 6h20v12c0 7-4 12-10 12S14 25 14 18z" fill="url(#gG)"/><path d="M14 10H6c0 8 3 12 9 13M34 10h8c0 8-3 12-9 13" fill="none" stroke="#B5810A" stroke-width="3"/><rect x="21" y="30" width="6" height="7" fill="url(#gG)"/><rect x="14" y="37" width="20" height="6" rx="2" fill="url(#gS)"/><path d="M18 9h4v14l-4-4z" fill="#fff" opacity=".4"/>',
+flame:SH+'<path d="M24 3c2 8 11 12 11 25a11 11 0 0 1-22 0c0-5 3-8 5-11 1 3 2 4 4 4 0-6-1-12 2-18z" fill="url(#gO)"/><path d="M24 24c3 3 5 5 5 8a5 5 0 0 1-10 0c0-3 3-5 5-8z" fill="#FFE9A8"/>',
+heart:SH+'<path d="M24 41C10 31 5 23 5 16a9.500 9.500 0 0 1 19-3 9.500 9.500 0 0 1 19 3c0 7-5 15-19 25z" fill="url(#gR)"/><ellipse cx="15" cy="15" rx="4" ry="2.800" fill="#fff" opacity=".45" transform="rotate(-30 15 15)"/>',
+check:SH+'<circle cx="24" cy="24" r="17" fill="url(#gK)"/><path d="M15 25l7 7 12-14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="19" cy="13" rx="8" ry="3.5" fill="#fff" opacity=".3"/>'
+};
+function ic(n){return '<svg class="ic" viewBox="0 0 48 48">'+IC[n]+'</svg>'}
+function chips(t){return t.replace("{F}",'<span class="chip f">'+ic("cam")+'foto</span>').replace("{P}",'<span class="chip p">'+ic("clap")+'película</span>')}
+document.querySelectorAll("[data-i]").forEach(function(e){e.innerHTML=ic(e.getAttribute("data-i"))});
+var streak=0;
+function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+var i,score,locked,L;
+function $(x){return document.getElementById(x)}
+function show(id){["home","game","end","over"].forEach(function(s){$(s).classList.toggle("hide",s!==id)});window.scrollTo(0,0)}
+function shuffle(a){for(var j=a.length-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=a[j];a[j]=a[k];a[k]=t}return a}
+var AC=null,muted=false;
+try{muted=localStorage.getItem("nec_mute")==="1"}catch(e){}
+function actx(){
+  if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C()}
+  if(AC.state==="suspended")AC.resume();
+  return AC}
+function tone(f,t0,d,type,vol){
+  try{
+    var a=actx();if(!a||muted)return;
+    var o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;
+    o.type=type||"sine";o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol||.2,t+.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+    o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.05);
+  }catch(e){}}
+function seq(fs,gap,d,type,vol){fs.forEach(function(f,k){tone(f,k*gap,d,type,vol)})}
+var SFX={
+  tap:function(){tone(660,0,.07,"triangle",.12)},
+  start:function(){seq([392,523,659],.09,.2,"sine",.2)},
+  ok:function(){tone(784,0,.12,"sine",.22);tone(1047,.1,.28,"sine",.22)},
+  streak:function(){seq([523,659,784,1047],.07,.22,"sine",.2)},
+  no:function(){tone(330,0,.18,"triangle",.18);tone(262,.14,.32,"triangle",.18)},
+  win:function(){seq([523,659,784,1047],.12,.25,"sine",.22);tone(1319,.5,.6,"sine",.25);tone(1047,.5,.6,"triangle",.1)},
+  end:function(){seq([392,523],.15,.3,"sine",.2)},
+  over:function(){seq([330,262,196,147],.16,.3,"triangle",.2)},
+  life:function(){tone(880,0,.12,"sine",.22);tone(1319,.1,.35,"sine",.24)}
+};
+function setSnd(){
+  $("snd").innerHTML=muted
+   ?'<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M17 9l5 6M22 9l-5 6"/></svg>'
+   :'<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>'}
+function toggleSnd(){
+  muted=!muted;try{localStorage.setItem("nec_mute",muted?"1":"0")}catch(e){}
+  setSnd();if(!muted)SFX.tap()}
+document.addEventListener("click",function(e){
+  var t=e.target.closest&&e.target.closest(".btn,.card");if(t)SFX.tap()});
+setSnd();
+var name="",st,wrong,COACH="50581481862",lives=3,attempts=1,cameFromOver=false;
+function startGame(){
+  var v=$("nm").value.trim();
+  if(!v){$("nmerr").classList.remove("hide");show("home");$("nm").focus();return}
+  $("nmerr").classList.add("hide");name=v;
+  try{localStorage.setItem("nec_nombre",v)}catch(e){}
+  if(cameFromOver){cameFromOver=false;runAgain();return}
+  i=0;score=0;streak=0;lives=3;attempts=1;st={a:[0,0],b:[0,0]};wrong=[];L=shuffle(Q.slice());show("game");render();SFX.start()}
+function runAgain(){i=0;score=0;streak=0;lives=3;attempts++;st={a:[0,0],b:[0,0]};L=shuffle(Q.slice());show("game");render();SFX.start()}
+function drawLives(){
+  var s="";for(var k=0;k<3;k++)s+='<span class="'+(k<lives?"":"off")+'">'+ic("heart")+"</span>";
+  $("lv").innerHTML=s;
+  var hint=$("lh");
+  if(lives<3&&lives>0){hint.style.display="block";hint.textContent="Con 10 seguidas recuperas una vida: "+(streak%10)+"/10"}else hint.style.display="none"}
+try{var sv=localStorage.getItem("nec_nombre");if(sv)$("nm").value=sv}catch(e){}
+function render(){
+  locked=false;var q=L[i];drawLives();
+  $("n").textContent=(i+1)+"/"+L.length;$("sc").textContent="Aciertos: "+score;
+  $("pg").style.width=(i/L.length*100)+"%";
+  $("q").innerHTML=q.s.replace(/___/g,'<span id="bl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+  var o=shuffle([{k:"a",t:q.a},{k:"b",t:q.b}]);
+  $("opts").innerHTML="";
+  o.forEach(function(x){
+    var b=document.createElement("button");b.className="opt";b.textContent=x.t;
+    b.onclick=function(){pick(x.k,b)};$("opts").appendChild(b)});
+  $("fb").style.display="none";$("next").classList.add("hide");
+}
+function pick(k,btn){
+  if(locked)return;locked=true;var q=L[i],ok=k===q.c;
+  if(ok)score++;streak=ok?streak+1:0;st[q.c][1]++;if(ok)st[q.c][0]++;else{var ws=q.s.replace("___",q[q.c]);if(wrong.indexOf(ws)<0)wrong.push(ws);lives--}
+  var gained=false;if(ok&&streak%10===0&&lives<3){lives++;gained=true}drawLives();
+  btn.classList.add(ok?"ok":"no");if(ok){if(gained)SFX.life();else if(streak>=3)SFX.streak();else SFX.ok()}else{if(lives<=0)SFX.over();else SFX.no()}
+  if(lives<=0){showOver(q);return}
+  Array.prototype.forEach.call($("opts").children,function(b){
+    if(b.textContent===q[q.c])b.classList.add("ok")});
+  var bl=$("bl");if(bl)bl.textContent=q[q.c];
+  $("sc").textContent="Aciertos: "+score;
+  var f=$("fb");f.className="fb "+(ok?"ok":"no");f.style.display="block";
+  f.innerHTML="<div class='h'>"+ic(ok?"check":"bulb")+(ok?rnd(OKH):rnd(NOH))+"</div>"+(ok?"":"<p>La respuesta era: <b>"+q[q.c]+"</b></p>")+"<p>"+chips(q.w)+"</p><p class='x'>"+q.x+"</p>"+(ok?(streak>=3?"<p><span style='display:inline-flex;align-items:center;gap:6px'>"+ic("flame")+"<b>¡Llevas "+streak+" seguidas!</b></span></p>":""):(lives===1?"<p>Te queda 1 vida. ¡Con calma, tú puedes!</p>":"<p>Tranquilo, así se aprende. ¡Vamos con la siguiente!</p>"));
+  if(gained)f.innerHTML+="<p style='display:flex;align-items:center;gap:8px'>"+ic("heart")+"<b>¡Recuperaste una vida!</b></p>";
+  $("next").textContent=i===L.length-1?"Ver resultado":"Siguiente";
+  $("next").classList.remove("hide");
+}
+function showOver(q){
+  var fa=st.a[1]-st.a[0],fb=st.b[1]-st.b[0],tip;
+  if(fb>fa)tip="Pista: te costó más la <b>película</b> (Present Perfect Continuous). Repasa su tarjeta y recuerda la pregunta: ¿me importa <b>lo que estuve haciendo</b>?";
+  else if(fa>fb)tip="Pista: te costó más la <b>foto</b> (Present Perfect). Repasa su tarjeta y recuerda la pregunta: ¿me importa <b>lo que quedó</b>?";
+  else tip="Pista: repasa las dos tarjetas con calma. La pregunta mágica es: ¿me importa <b>lo que quedó</b> o <b>lo que estuve haciendo</b>?";
+  $("ovic").innerHTML='<div class="big">'+ic("bulb")+'</div>';
+  $("ovmsg").textContent="Llegaste a la pregunta "+(i+1)+" de "+L.length+" y ya sabes más que cuando empezaste. Equivocarse es parte de aprender.";
+  $("ovlast").innerHTML="<b>La última pregunta</b><br>"+q.s.replace("___",q[q.c])+"<br><br>"+chips(q.w);
+  $("ovtip").innerHTML=tip;
+  show("over")}
+function review(){cameFromOver=true;show("home")}
+function askCoach(){
+  var t="Hola coach, soy "+name+". Me quedé sin vidas en la práctica de Present Perfect vs Present Perfect Continuous (intento "+attempts+", llegué a la pregunta "+(i+1)+" de "+L.length+").";
+  if(wrong.length)t+="\n\nMe costaron:\n"+wrong.slice(0,5).map(function(s,k){return (k+1)+") "+s}).join("\n");
+  t+="\n\n¿Me ayudas a entenderlo mejor?";
+  window.open("https://wa.me/"+COACH+"?text="+encodeURIComponent(t),"_blank")}
+function next(){
+  i++;
+  if(i>=L.length){finish()}else render();
+}
+function finish(){
+  var pct=score/L.length;
+  $("msg").textContent=pct>=.9?"¡Increíble! Ya piensas en inglés":pct>=.6?"¡Muy bien! Juega otra vez y sigues mejorando":"¡Buen comienzo! Lee las tarjetas y vuelve a jugar, vas a mejorar";
+  $("tr").innerHTML="<div class=\"big\">"+ic(pct>=.9?"trophy":pct>=.6?"star":"bulb")+"</div>";
+  makeImg();
+  $("shmsg").textContent="Se abre WhatsApp: elige el chat de tu coach y toca Enviar.";
+  show("end");
+  if(pct>=.6)SFX.win();else SFX.end();
+}
+function waText(){
+  var t="Hola coach, soy "+name+". Terminé la práctica de Present Perfect vs Present Perfect Continuous.\n\nResultado: "+score+"/"+L.length+"\nFoto (Present Perfect): "+st.a[0]+"/"+st.a[1]+"\nPelícula (Continuous): "+st.b[0]+"/"+st.b[1]+"\nVidas que le quedaron: "+lives+"/3"+(attempts>1?"\nIntentos: "+attempts:"");
+  if(wrong.length){t+="\n\nMe costaron:\n"+wrong.slice(0,8).map(function(s,k){return (k+1)+") "+s}).join("\n");if(wrong.length>8)t+="\n(y "+(wrong.length-8)+" más)"}
+  else t+="\n\n¡Sin errores!";
+  return t}
+function sendWA(){window.open("https://wa.me/"+COACH+"?text="+encodeURIComponent(waText()),"_blank")}
+function drawCard(){
+  var c=document.createElement("canvas");c.width=1080;c.height=1350;var x=c.getContext("2d");
+  var g=x.createLinearGradient(0,0,0,1350);g.addColorStop(0,"#1d1710");g.addColorStop(1,"#0d0b09");x.fillStyle=g;x.fillRect(0,0,1080,1350);
+  x.textAlign="center";var F="Inter,system-ui,sans-serif";
+  x.fillStyle="#F0B323";x.font="600 34px "+F;x.fillText("NICA ENGLISH CLUB · PRÁCTICA",540,130);
+  x.fillStyle="#fff";x.font="800 72px "+F;x.fillText("Foto o película",540,260);
+  x.font="800 64px "+F;x.fillText(name,540,400);
+  x.fillStyle="#F0B323";x.font="800 280px "+F;x.fillText(score+"/"+L.length,540,720);
+  x.fillStyle="#fff";x.font="600 44px "+F;
+  x.fillText("Foto (Present Perfect): "+st.a[0]+"/"+st.a[1],540,880);
+  x.fillText("Película (Continuous): "+st.b[0]+"/"+st.b[1],540,960);
+  x.fillStyle="#fff";x.font="600 40px "+F;x.fillText("Vidas: "+lives+"/3"+(attempts>1?"  ·  Intentos: "+attempts:""),540,1040);
+  x.fillStyle="#a8a29a";x.font="500 34px "+F;x.fillText(new Date().toLocaleDateString("es-NI"),540,1100);
+  return c}
+var imgFile=null;
+function makeImg(){
+  var url=drawCard().toDataURL("image/png");
+  $("prev").src=url;
+  var bin=atob(url.split(",")[1]),arr=new Uint8Array(bin.length);
+  for(var k=0;k<bin.length;k++)arr[k]=bin.charCodeAt(k);
+  imgFile=new File([arr],"resultado-"+name.replace(/\s+/g,"-")+".png",{type:"image/png"});
+}
+function sendImg(){
+  var m=$("shmsg");
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[imgFile]})){
+      navigator.share({files:[imgFile]}).catch(function(e){
+        if(e&&e.name==="AbortError")return;
+        m.textContent="No se pudo abrir el menú. Mantén presionada la imagen para guardarla y envíala por WhatsApp."});
+      return}
+  }catch(e){}
+  var a=document.createElement("a");a.href=URL.createObjectURL(imgFile);a.download=imgFile.name;document.body.appendChild(a);a.click();a.remove();
+  m.textContent="Se guardó la imagen. Se abrirá WhatsApp con tu coach: adjunta la imagen guardada y toca Enviar.";
+  setTimeout(sendWA,1200);
+}
+</script>
+</body>
+</html>
