@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sunday Lunch | Nica English Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<style>
+:root{--y:#FFD60A;--k:#0A0A0A;--c:#181818;--l:#2b2b2b;--t:#F4F4F4;--ok:#3ddc84;--bad:#ff5a5a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--k);color:var(--t);font-family:Poppins,system-ui,sans-serif;line-height:1.6}
+main{max-width:640px;margin:0 auto;padding:0 18px 60px}
+header{text-align:center;padding:26px 0 8px}
+header svg{width:170px;height:auto}
+header h1{margin:6px 0 2px;font-size:2rem;font-weight:700;letter-spacing:-.5px}
+header p{margin:0;color:#bbb;font-size:.95rem}
+.brain{fill:none;stroke:var(--y);stroke-width:3;stroke-linejoin:round}
+.lk{stroke:var(--y);stroke-width:1.6;stroke-dasharray:4 5;animation:flow 2.4s linear infinite}
+.nd{fill:var(--y);animation:pulse 2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.nd:nth-of-type(2n){animation-delay:.6s}.nd:nth-of-type(3n){animation-delay:1.2s}
+@keyframes flow{to{stroke-dashoffset:-18}}
+@keyframes pulse{50%{transform:scale(1.7)}}
+.bar{display:flex;gap:8px;margin:18px 0 10px}
+button{font:inherit;cursor:pointer;border:0}
+.pill{background:var(--l);color:var(--t);padding:8px 14px;border-radius:99px;font-size:.85rem;font-weight:600}
+.pill:hover{background:#3a3a3a}
+.pill.on{background:var(--y);color:var(--k)}
+#tabs{margin-bottom:0}
+.pill.lock{background:#3b3300;color:var(--y);font-variant-numeric:tabular-nums}
+.lkn{margin:8px 0 0;font-size:.85rem;color:#cfcfcf}
+.card{background:var(--c);border-radius:18px;padding:22px 20px}
+.read p{margin:0 0 14px;font-size:1.08rem}
+.s{background:var(--y);color:var(--k);font-weight:700;padding:1px 6px;border-radius:6px}
+.w{border-bottom:2px dotted var(--y);cursor:pointer;padding:0 1px}
+.w.on{background:#3b3300;border-bottom-style:solid}
+#info{min-height:46px;margin-top:10px;padding:10px 14px;border-radius:12px;background:var(--l);font-size:.95rem;color:#cfcfcf}
+#info b{color:var(--y)}
+h2{font-size:1.25rem;margin:34px 0 12px}
+.prog{height:6px;background:var(--l);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--y);transition:width .3s}
+.cnt{color:#aaa;font-size:.85rem;margin-bottom:6px}
+.q{font-size:1.12rem;font-weight:600;margin:0 0 14px}
+.opt{display:block;width:100%;text-align:left;background:var(--l);color:var(--t);padding:13px 15px;border-radius:12px;margin-bottom:9px;font-size:1rem;border:2px solid transparent}
+.opt:hover:not(:disabled){border-color:var(--y)}
+.opt.ok{background:#12391f;border-color:var(--ok)}
+.opt.no{background:#431a1a;border-color:var(--bad)}
+.go{background:var(--y);color:var(--k);font-weight:700;padding:13px 24px;border-radius:12px;font-size:1rem;margin-top:8px}
+.go:disabled{opacity:.35;cursor:not-allowed}
+.hide{display:none}
+.score{font-size:2.6rem;font-weight:700;color:var(--y);margin:0}
+input{width:100%;font:inherit;padding:13px 15px;border-radius:12px;border:2px solid var(--l);background:var(--k);color:var(--t);margin:6px 0 12px}
+input:focus{outline:0;border-color:var(--y)}
+.mic{background:#3b3300;border-radius:12px;padding:14px 16px;margin:14px 0;font-size:.95rem}
+button:focus-visible,input:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.lk,.nd{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <svg viewBox="0 0 170 130" aria-hidden="true">
+    <path class="brain" d="M70 16C44 10 22 28 28 52C10 62 14 90 38 94C42 112 70 118 84 104C98 118 128 112 132 94C156 90 160 62 142 52C148 28 126 10 100 16C94 10 76 10 70 16Z"/>
+    <path class="brain" d="M85 20V104" opacity=".4"/>
+    <g>
+      <line class="lk" x1="52" y1="42" x2="84" y2="62"/><line class="lk" x1="84" y1="62" x2="118" y2="40"/>
+      <line class="lk" x1="52" y1="42" x2="48" y2="80"/><line class="lk" x1="48" y1="80" x2="84" y2="62"/>
+      <line class="lk" x1="84" y1="62" x2="122" y2="82"/><line class="lk" x1="118" y1="40" x2="122" y2="82"/>
+      <line class="lk" x1="84" y1="62" x2="84" y2="92"/>
+      <circle class="nd" cx="52" cy="42" r="4.5"/><circle class="nd" cx="84" cy="62" r="6"/><circle class="nd" cx="118" cy="40" r="4.5"/>
+      <circle class="nd" cx="48" cy="80" r="4.5"/><circle class="nd" cx="122" cy="82" r="4.5"/><circle class="nd" cx="84" cy="92" r="4"/>
+    </g>
+  </svg>
+  <h1 id="ttl">Sunday Lunch</h1>
+  <p id="sub"></p>
+</header>
+
+<div class="bar" id="tabs">
+  <button class="pill on" data-k="lectura">Lectura</button>
+  <button class="pill" data-k="homework" id="hwb">Homework</button>
+</div>
+<p class="lkn hide" id="lk"></p>
+<div class="bar">
+  <button class="pill" id="play">Escuchar lectura</button>
+  <button class="pill" id="slow">Escuchar lento</button>
+</div>
+<div class="card read" id="read"></div>
+<div id="info">Toca las palabras subrayadas: las escuchas y ves su significado. Las partes amarillas las deduces tú.</div>
+
+<h2 id="h2"></h2>
+<div class="card" id="quiz">
+  <div class="cnt" id="cnt"></div>
+  <div class="prog"><i id="pg"></i></div>
+  <p class="q" id="qt"></p>
+  <div id="opts"></div>
+  <button class="go hide" id="nx">Siguiente</button>
+</div>
+
+<div class="card hide" id="end">
+  <p class="score" id="sc"></p>
+  <p id="msg"></p>
+  <label for="nm"><b>Tu nombre</b> (obligatorio)</label>
+  <input id="nm" placeholder="Escribe tu nombre completo" autocomplete="name">
+  <div class="mic"><b>Último paso:</b> después de enviar tus resultados, manda un audio por WhatsApp leyendo el texto completo. Léela con energía y con confianza. No tiene que ser perfecta, tiene que ser tuya. Cada audio que mandas es un paso más hacia hablar inglés de verdad.</div>
+  <button class="go" id="send" disabled>Enviar resultados al coach</button>
+</div>
+</main>
+
+<script>
+const PHONE="50581481862";
+const SETS={
+lectura:{title:"Sunday Lunch",sub:"Nica English Club. Lee, escucha y piensa en inglés.",h:"Ahora demuestra lo que entendiste",hint:"Toca las palabras subrayadas: las escuchas y ves su significado. Las partes amarillas las deduces tú.",TEXT:[
+`I *am cooking* [rice and beans|arroz con frijoles] in the [kitchen|cocina]. My [brother|hermano] Carlos comes in and says, "You *were talking* on the [phone|teléfono] when I [arrived|llegué]. Who was it?"`,
+`"It was Ana," I say. "She *was going to come* for [lunch|almuerzo], but now she can't. She *will work* all [weekend|fin de semana]. She *got* a [call|llamada] from her [boss|jefe] this [morning|mañana]."`,
+`"[That's too bad|Qué lástima]," Carlos says. "I *am going to call* her [tonight|esta noche]. Maybe she can *get* some [rest|descanso] on Sunday."`,
+`"Good idea. I *worked* [all day|todo el día] [yesterday|ayer], so I *got* really [tired|cansado]. Today I just want to [relax|relajarme]. After lunch, let's watch a [movie|película]."`,
+`"Which one?"`,
+`"My [favorite|favorita]. I *have seen* this movie five [times|veces], but I love it! Let's *get* [comfortable|cómodos] on the [couch|sofá]."`,
+`Carlos laughs. "I *have been studying* since I *got* up. I really need a [break|pausa]!"`
+],Q:[
+{q:"The narrator is cooking right now.",o:["True","False"],a:0},
+{q:"What was the narrator doing when Carlos arrived?",o:["Cooking lunch","Talking on the phone","Watching a movie"],a:1},
+{q:"Ana is coming to lunch today.",o:["True","False"],a:1},
+{q:"\"She was going to come for lunch.\" What does it mean?",o:["She came and ate","She planned to come, but she did not","She is arriving right now"],a:1},
+{q:"\"She will work all weekend.\" When is this?",o:["In the past","In the future","Every day, always"],a:1},
+{q:"Ana got a call from her boss.",o:["True","False"],a:0},
+{q:"You hear: \"I am going to call her tonight.\" What do you imagine?",o:["He is dialing the phone at this moment","He has a plan to call her later","He already called her yesterday"],a:1},
+{q:"\"I worked all day yesterday.\" The action is...",o:["Finished, in the past","Happening now","Planned for tomorrow"],a:0},
+{q:"The narrator worked yesterday and got tired.",o:["True","False"],a:0},
+{q:"In \"I got really tired\", the word got is closest to...",o:["became","took","bought"],a:0},
+{q:"What does the narrator want to do today?",o:["Work more","Relax","Study"],a:1},
+{q:"How many times has the narrator seen the movie?",o:["Never","Once","Five times"],a:2},
+{q:"The narrator has never seen this movie.",o:["True","False"],a:1},
+{q:"\"I have been studying since I got up.\" What happened?",o:["Carlos started in the morning and is still studying","Carlos finished studying last week","Carlos will study tomorrow"],a:0},
+{q:"Who really needs a break?",o:["Ana","The narrator","Carlos"],a:2}
+]},
+homework:{title:"Homework",sub:"Cómo se aprende un idioma de forma natural.",h:"Demuestra lo que entendiste",hint:"Toca las palabras subrayadas: las escuchas y ves su significado.",TEXT:[
+`Think about how you learned Spanish. Nobody gave you a grammar book when you were a [baby|bebé]. You [listened|escuchaste], you lived the moment, and one day you started to talk.`,
+`English works the same way. Your [brain|cerebro] does not need to [translate|traducir] every word. When you hear "I'm [hungry|con hambre]" and see someone eating, your brain connects the [sound|sonido] with the [feeling|sensación]. No Spanish needed.`,
+`So, the first step is to listen a lot. The second step is to live small situations: [ordering food|pedir comida], [asking for help|pedir ayuda], calling a friend. The third step is to make [mistakes|errores] and [fix|corregir] them with your coach. Mistakes are not bad. They are [proof|prueba] that you are [trying|intentando].`,
+`The last step is to [answer|responder] without thinking. At first it is slow. After many times, the words come out [by themselves|solas], like in Spanish.`,
+`That is why we practice a little [every day|todos los días]. Ten minutes every day are better than three hours once a week. Be [patient|paciente]. Your brain is working, even when you don't feel it.`
+],Q:[
+{q:"Babies learn their first language with a grammar book.",o:["True","False"],a:1},
+{q:"How did you learn Spanish?",o:["By listening and living the moment","By translating every word","Only with exams"],a:0},
+{q:"Your brain needs to translate every English word into Spanish.",o:["True","False"],a:1},
+{q:"You hear \"I'm hungry\" and see someone eating. What happens?",o:["Your brain connects the sound with the feeling","You must open a dictionary","You forget the word"],a:0},
+{q:"What is the first step to learn naturally?",o:["Memorize a list","Listen a lot","Write grammar rules"],a:1},
+{q:"Which one is a small situation to live?",o:["Ordering food","Copying a list of words","Reading the rules of grammar"],a:0},
+{q:"Mistakes are bad, so you should hide them.",o:["True","False"],a:1},
+{q:"Mistakes are proof that you are...",o:["Trying","Lazy","Finished"],a:0},
+{q:"Which practice is better?",o:["Ten minutes every day","Three hours once a week","Only the night before an exam"],a:0},
+{q:"At first, answering in English is slow. After a lot of practice...",o:["The words come out by themselves","You must start again","You need to translate more"],a:0},
+{q:"If you don't feel progress, your brain is not working.",o:["True","False"],a:1}
+]}
+};
+const $=id=>document.getElementById(id);
+const plain=t=>t.replace(/\*/g,"").replace(/\[(.+?)\|.+?\]/g,"$1");
+function say(t,r){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=r||.95;speechSynthesis.speak(u)}catch(e){}}
+let K="lectura",S=SETS.lectura,Q=S.Q,i=0,score=0,done=false;
+function setMode(k){
+  K=k;S=SETS[k];Q=S.Q;i=0;score=0;
+  document.querySelectorAll("#tabs .pill").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+  $("ttl").textContent=S.title;$("sub").textContent=S.sub;$("h2").textContent=S.h;$("info").textContent=S.hint;
+  $("read").innerHTML=S.TEXT.map(t=>"<p>"+t.replace(/\*(.+?)\*/g,'<span class="s">$1</span>').replace(/\[(.+?)\|(.+?)\]/g,'<span class="w" data-es="$2">$1</span>')+"</p>").join("");
+  $("end").classList.add("hide");$("quiz").classList.remove("hide");
+  speechSynthesis&&speechSynthesis.cancel();
+  show();
+}
+const OPEN=Date.UTC(2026,10,12,18,0,0); // 12 nov 2026, 12:00 pm Nicaragua (UTC-6)
+const pad=n=>String(n).padStart(2,"0");
+function locked(){return Date.now()<OPEN}
+function tick(){
+  const b=$("hwb"),ms=OPEN-Date.now();
+  if(ms>0){
+    const s=Math.floor(ms/1000),d=Math.floor(s/86400);
+    b.textContent="Homework "+(d?d+"d ":"")+pad(Math.floor(s%86400/3600))+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60);
+    b.classList.add("lock");
+  }else{b.textContent="Homework";b.classList.remove("lock");$("lk").classList.add("hide")}
+}
+function openTab(k){
+  if(k==="homework"&&locked()){
+    let t="";
+    try{t=new Date(OPEN).toLocaleString("es",{weekday:"long",day:"numeric",month:"long",hour:"numeric",minute:"2-digit",timeZoneName:"short"})}catch(e){}
+    $("lk").textContent="El Homework se abre el "+t+" (en tu hora). Sería a las 12:00 pm hora Nicaragua.";
+    $("lk").classList.remove("hide");return;
+  }
+  setMode(k);
+}
+document.querySelectorAll("#tabs .pill").forEach(b=>b.onclick=()=>openTab(b.dataset.k));
+tick();setInterval(tick,1000);
+$("read").addEventListener("click",e=>{
+  const w=e.target.closest(".w");if(!w)return;
+  document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on"));
+  w.classList.add("on");say(w.textContent,.8);
+  $("info").innerHTML="<b>"+w.textContent+"</b> significa: "+w.dataset.es;
+});
+$("play").onclick=()=>say(S.TEXT.map(plain).join(" "),.95);
+$("slow").onclick=()=>say(S.TEXT.map(plain).join(" "),.65);
+function show(){
+  const q=Q[i];done=false;
+  $("cnt").textContent="Pregunta "+(i+1)+" de "+Q.length;
+  $("pg").style.width=(i/Q.length*100)+"%";
+  $("qt").textContent=q.q;$("nx").classList.add("hide");
+  $("nx").textContent=i===Q.length-1?"Ver resultado":"Siguiente";
+  $("opts").innerHTML="";
+  q.o.forEach((t,k)=>{const b=document.createElement("button");b.className="opt";b.textContent=t;
+    b.onclick=()=>pick(k);$("opts").appendChild(b)});
+}
+function pick(k){
+  if(done)return;done=true;
+  const q=Q[i],bs=$("opts").children;
+  if(k===q.a)score++;else bs[k].classList.add("no");
+  bs[q.a].classList.add("ok");
+  [...bs].forEach(b=>b.disabled=true);
+  $("nx").classList.remove("hide");
+}
+$("nx").onclick=()=>{i++;i<Q.length?show():finish()};
+function finish(){
+  $("quiz").classList.add("hide");$("end").classList.remove("hide");
+  $("sc").textContent=score+"/"+Q.length;
+  const p=score/Q.length;
+  $("msg").textContent=p>=.8?"Excelente trabajo. Tu cerebro ya está conectando estas ideas.":p>=.5?"Vas bien. Vuelve a leer y escuchar el texto, y cada vez te saldrá más natural.":"Buen intento. Lee y escucha de nuevo con calma, y verás cómo mejora.";
+  $("end").scrollIntoView({behavior:"smooth"});
+}
+$("nm").oninput=()=>{$("send").disabled=!$("nm").value.trim()};
+$("send").onclick=()=>{
+  const n=$("nm").value.trim();if(!n){$("nm").focus();return}
+  const m="Hola coach, soy "+n+". Terminé "+(K==="lectura"?"la lectura Sunday Lunch":"el Homework")+": aprobadas "+score+"/"+Q.length+". Ahora te mando mi audio leyendo el texto.";
+  window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(m),"_blank");
+};
+setMode("lectura");
+</script>
+</body>
+</html>
