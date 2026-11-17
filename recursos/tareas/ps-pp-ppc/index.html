@@ -1,0 +1,277 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Escribe, no toques · Nica English Club</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet"><style>
+:root{--bg:#0d0b09;--card:#131211;--gold:#F0B323;--blue:#4DA3FF;--ok:#3ddc84;--bad:#ff6b6b;--txt:#fff;--mut:#a8a29a}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(900px 400px at 0 0,#1d1710,var(--bg));color:var(--txt);font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:28px 20px 60px}
+.w{max-width:720px;margin:0 auto}
+.pill{display:inline-block;border:1px solid #3a3226;background:#16130f;color:var(--gold);font-weight:600;font-size:13px;letter-spacing:.14em;padding:10px 18px;border-radius:99px;text-transform:uppercase}
+h1{font-size:clamp(38px,9vw,60px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:22px 0 14px}
+h1 b{color:var(--gold)}
+.sub{font-size:19px;line-height:1.6;margin-bottom:26px}
+.sub b{font-weight:800}
+.card{display:block;width:100%;text-align:left;color:inherit;font:inherit;background:var(--card);border:1px solid;border-radius:26px;padding:24px 26px;margin-bottom:16px;cursor:pointer}
+.card.pp{border-color:#5a4410}.card.ppc{border-color:#1e4170}
+.card h2{display:flex;align-items:center;gap:12px;font-size:25px;font-weight:800;letter-spacing:-.02em}
+.pp h2{color:var(--gold)}.ppc h2{color:var(--blue)}
+.card p{color:var(--mut);font-size:17px;line-height:1.55;margin-top:10px}
+.card p b{color:#fff}
+.kw{color:#fff;font-weight:600;font-size:18px;margin-top:12px}
+.more{margin-top:14px;font-weight:600;font-size:16px}
+.det{display:none;margin-top:16px;padding-top:16px;border-top:1px solid #2a2622}
+.card.open .det{display:block}
+.card.open .arr{transform:rotate(90deg)}
+.arr{display:inline-block;transition:.2s}
+.ex{background:#0d0c0b;border-radius:14px;padding:12px 16px;margin-top:10px;font-size:17px}
+.ex i{display:block;color:var(--mut);font-style:normal;font-size:15px;margin-top:3px}
+.form{font-weight:600;color:#fff;font-size:16px;margin-top:10px}
+.btn{display:block;width:100%;background:var(--gold);color:#1a1408;border:0;border-radius:18px;padding:18px;font:inherit;font-size:19px;font-weight:800;cursor:pointer;margin-top:10px}
+.btn.ghost{background:transparent;color:#fff;border:1px solid #3a3226}
+.bar{height:8px;background:#1f1b16;border-radius:9px;overflow:hidden;margin:10px 0 24px}
+.bar i{display:block;height:100%;background:var(--gold);width:0;transition:.3s}
+.top{display:flex;justify-content:space-between;color:var(--mut);font-weight:600;font-size:15px}
+.q{font-size:clamp(26px,6vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.25;margin:10px 0 24px}
+.q span{color:var(--gold);border-bottom:3px solid var(--gold);padding:0 6px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:#fff;border:1px solid #3a3226;border-radius:18px;padding:18px 20px;font:inherit;font-size:20px;font-weight:600;margin-bottom:12px;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:#0f2218}.opt.no{border-color:var(--bad);background:#2a1212}
+.fb{display:none;background:var(--card);border-radius:18px;padding:18px 20px;margin-top:8px;font-size:17px;line-height:1.55;border-left:4px solid}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--bad)}
+.hide{display:none}
+.big{font-size:72px;font-weight:800;color:var(--gold);letter-spacing:-.04em}
+.ic{width:30px;height:30px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5));vertical-align:middle;flex:none}
+.card h2 .ic{width:46px;height:46px}
+.card h2 [data-i]{display:flex}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:1px 10px 1px 4px;border-radius:99px;font-weight:800;vertical-align:middle}
+.chip.f{background:#2a2108;color:var(--gold)}.chip.p{background:#0f2238;color:var(--blue)}
+.chip .ic{width:22px;height:22px;filter:none}
+.big .ic{width:120px;height:120px;display:block;margin:10px auto}
+.btn{box-shadow:0 6px 0 #9a7208,0 12px 16px rgba(0,0,0,.4);margin-bottom:10px}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #9a7208}
+.btn.ghost{box-shadow:0 5px 0 #000}
+.opt{box-shadow:0 5px 0 #000}.opt:active{transform:translateY(3px);box-shadow:0 2px 0 #000}
+.opt.ok{box-shadow:0 5px 0 #1a7a45}.opt.no{box-shadow:0 5px 0 #8a2a2a}
+.card{box-shadow:0 6px 0 #050403,0 12px 18px rgba(0,0,0,.35)}
+.fb .h{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;margin-bottom:8px}
+.fb .h .ic{width:34px;height:34px}
+.fb p{margin-top:10px}
+.fb .x{color:var(--mut)}
+.lb{display:block;font-weight:600;color:var(--mut);margin:6px 0 8px;font-size:15px}
+.inp{width:100%;background:var(--card);color:#fff;border:1px solid #3a3226;border-radius:16px;padding:16px 18px;font:inherit;font-size:20px;font-weight:600;margin-bottom:12px}
+.inp:focus{outline:2px solid var(--gold)}
+.err{color:var(--bad);font-weight:600;margin:-4px 0 12px}
+.brk{display:flex;gap:12px;margin:6px 0 24px}
+.brk div{flex:1;background:var(--card);border-radius:18px;padding:14px;font-weight:600;font-size:15px;color:var(--mut)}
+.brk b{display:block;font-size:26px;color:#fff}
+.btn.wa{background:#25D366;color:#06260f;box-shadow:0 6px 0 #138a40,0 12px 16px rgba(0,0,0,.4)}
+.hint{color:var(--mut);font-size:14px;margin:-2px 0 20px}
+.btn.ghost{margin-top:14px}
+.prev{width:100%;max-width:420px;border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.5);margin:0 auto 22px;display:block}
+.snd{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;width:52px;height:52px;border-radius:50%;background:#16130f;border:1px solid #3a3226;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;box-shadow:0 4px 0 #000}
+.snd:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.snd svg{width:26px;height:26px;fill:currentColor;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.snd svg path.w{fill:none}
+.top{align-items:center}.lv{display:inline-flex;gap:2px}.lv .ic{width:34px;height:34px}.lv .off{opacity:.22;filter:grayscale(1)}
+.lh{display:none;color:var(--mut);font-size:14px;font-weight:600;margin:-12px 0 16px}
+.tip{background:var(--card);border-left:4px solid var(--gold);border-radius:18px;padding:16px 18px;text-align:left;margin-bottom:26px;font-size:17px;line-height:1.55}
+.tip b{color:var(--gold)}
+.tip.last{border-color:var(--blue);font-size:16px}.tip.last b{color:var(--blue)}
+
+.sub{margin-bottom:20px}.top{gap:10px}.ex{margin-bottom:4px}html{padding-top:env(safe-area-inset-top,0px)}</style></head><body><div class="w">
+<section id="home">
+<span class="pill">Nica English Club · Seguimiento 1 de 4</span>
+<h1>Escribe, <b>no toques</b></h1>
+<p class="sub">Tres tiempos, tres imágenes. Aquí <b>siempre escribes</b> en inglés.</p>
+<div class="card pp" onclick="this.classList.toggle('open')"><h2>📅 Past Simple = calendario</h2><p>Pasó y <b>ya cerró</b>, con fecha o momento.</p><div class="kw">yesterday · last week · ago · in 2019</div><div class="det"><div class="form">verbo en pasado (went, played) · did + verbo base</div><div class="ex">I went to the cinema yesterday.<i>Ayer. Ya cerró.</i></div></div></div>
+<div class="card pp" onclick="this.classList.toggle('open')"><h2>📷 Present Perfect = foto</h2><p>Conectado con el ahora: importa <b>lo que quedó</b>.</p><div class="kw">already · yet · how many · ever · never</div><div class="det"><div class="form">have / has + participio</div><div class="ex">I've lost my keys.<i>Ahora no las tengo.</i></div></div></div>
+<div class="card ppc" onclick="this.classList.toggle('open')"><h2>🎬 Present Perfect Continuous = película</h2><p>Importa <b>lo que estuve haciendo</b> y la huella que dejó.</p><div class="kw">for · since · how long · all day</div><div class="det"><div class="form">have / has been + verbo-ing</div><div class="ex">I've been studying.<i>Por eso estoy cansado.</i></div></div></div>
+<p class="sub" style="font-size:17px;color:var(--mut)"><b style="color:#fff">Truco en 2 preguntas:</b> 1) ¿Cerró en el pasado, con fecha? → <b style="color:#b58cff">Calendario</b>. 2) Si no, ¿importa lo que quedó (<b style="color:var(--gold)">Foto</b>) o lo que estuve haciendo (<b style="color:var(--blue)">Película</b>)?</p>
+<div id="last" class="hint"></div>
+<p class="hint" style="font-size:15px">❤️❤️❤️ Tienes 3 vidas. Cada error quita una. 10 aciertos seguidos recuperan una. Sin vidas, empiezas de nuevo.</p>
+<label class="lb" for="nm">Tu nombre</label>
+<input id="nm" class="inp" type="text" maxlength="40" placeholder="Escribe tu nombre" autocomplete="given-name">
+<div id="nmerr" class="err hide">Escribe tu nombre para empezar.</div>
+<button class="btn" onclick="start()">Empezar · 30 actividades</button>
+</section>
+<section id="game" class="hide">
+<div class="top"><span id="n"></span><span id="hp" style="color:#fff"></span><span id="lv"></span></div>
+<div class="bar"><i id="pg"></i></div>
+<div class="q" id="q"></div><div id="opts"></div>
+<input id="ans" class="inp" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe tu respuesta en inglés">
+<div id="err" class="err hide"></div>
+<button class="btn" id="chk" onclick="check()">Comprobar</button>
+<div class="fb" id="fb"></div>
+<button class="btn hide" id="next" onclick="nextQ()">Siguiente</button>
+</section>
+<section id="over" class="hide" style="text-align:center;padding-top:30px">
+<span class="pill">Sin vidas</span>
+<div class="big">💔</div>
+<h1 style="font-size:clamp(34px,8vw,50px);margin:6px 0 12px">¡Sin <b>vidas</b>!</h1>
+<p class="sub" id="ovmsg"></p>
+<div class="fb" id="ovfb" style="text-align:left;margin-bottom:18px"></div>
+<button class="btn" onclick="start()">Intentarlo otra vez</button>
+<button class="btn ghost" onclick="show('home')">Repasar las tarjetas</button>
+<p class="hint">Cada intento trae preguntas distintas. Quien sigue practicando, aprende.</p>
+</section>
+<section id="end" class="hide" style="text-align:center;padding-top:30px">
+<span class="pill">Resultado · Seguimiento 1</span>
+<div class="big" id="pct"></div>
+<div class="brk" id="brk"></div>
+<div id="ownl" style="text-align:left"></div>
+<p class="sub" style="margin-top:16px">Dominar toma tiempo: <b>vuelve en 2 o 3 días</b> para el seguimiento 2, con preguntas nuevas y tus errores.</p>
+<button class="btn wa" onclick="wa()">Enviar al coach por WhatsApp</button>
+<button class="btn ghost" onclick="cp()" id="cpb">Copiar resultado</button>
+<button class="btn ghost" onclick="show('home')">Volver al inicio</button>
+</section>
+</div>
+<script>
+var C="C",F="F",P="P";
+var LV=["Parte 1 · ¿Cómo dirías...?","Parte 2 · Rellena el hueco","Parte 3 · Corrige el error","Parte 4 · Tus propias frases"];
+var TN={C:"📅 Calendario",F:"📷 Foto",P:"🎬 Película"};
+var HT={C:"Pista: ¿cerró en el pasado, con fecha?",F:"Pista: ¿qué quedó ahora, o cuántos hay?",P:"Pista: ¿qué estuviste haciendo y qué huella dejó?"};
+var RAW={mc:`F|Ya terminé el reporte. Está en tu escritorio.|I have finished the report.|I have been finishing the report.|I finish the report.|Está ahí ahora: importa lo que <b>quedó</b>. Es una foto: <b>have finished</b>.
+P|Me duelen los ojos: llevo toda la mañana leyendo.|I have been reading all morning.|I have read all morning.|I read all morning.|<b>All morning</b> + huella (ojos cansados): es una película, <b>have been reading</b>.
+F|Perdí mis llaves y ahora no las encuentro.|I have lost my keys.|I have been losing my keys.|I lose my keys now.|Pasó antes, pero afecta el ahora: foto, <b>have lost</b>. Perder es un momento, no un proceso.
+P|¿Cuánto tiempo llevas esperando?|How long have you been waiting?|How long have you waited?|How long are you waiting?|<b>How long</b> pide duración: película, <b>have you been waiting</b>.
+C|Ayer fui al cine.|I went to the cinema yesterday.|I have gone to the cinema yesterday.|I goed to the cinema yesterday.|<b>Yesterday</b> es fecha cerrada: calendario. <b>Go</b> es irregular: <b>went</b>.
+C|Mi abuelo murió en 2015.|My grandfather died in 2015.|My grandfather has died in 2015.|My grandfather dies in 2015.|<b>In 2015</b> es una fecha cerrada: <b>died</b>.
+C|Visité Granada hace dos años.|I visited Granada two years ago.|I have visited Granada two years ago.|I have been visiting Granada two years ago.|<b>Ago</b> marca un momento cerrado: <b>visited</b>.
+F|Nunca he comido sushi.|I have never eaten sushi.|I never ate sushi.|I have never been eating sushi.|<b>Never</b> habla de experiencias de vida, sin fecha: foto, <b>have never eaten</b>.
+P|Está mojada porque ha estado lloviendo desde la mañana.|It has been raining since morning.|It rained since morning.|It is rained since morning.|<b>Since</b> + huella (mojado): película, <b>has been raining</b>.
+C|Anoche cenamos pizza.|We ate pizza last night.|We have eaten pizza last night.|We have been eating pizza last night.|<b>Last night</b> cerró: calendario, <b>ate</b>.
+C|¿Viste el partido ayer?|Did you watch the game yesterday?|Have you watched the game yesterday?|Did you watched the game yesterday?|Con <b>yesterday</b>: <b>did</b> + verbo base.
+C|Ella no vino a la fiesta el sábado.|She didn't come to the party on Saturday.|She hasn't come to the party on Saturday.|She didn't came to the party on Saturday.|Fecha cerrada: <b>didn't</b> + verbo base.
+C|Nací en 2005.|I was born in 2005.|I have been born in 2005.|I born in 2005.|<b>In 2005</b> cerró: <b>was born</b>.
+C|Mi hermano estudió inglés el año pasado.|My brother studied English last year.|My brother has studied English last year.|My brother has been studying English last year.|<b>Last year</b> cerró: <b>studied</b>.
+C|Hace una hora llamé a mi mamá.|I called my mom an hour ago.|I have called my mom an hour ago.|I have been calling my mom an hour ago.|<b>Ago</b> marca un momento cerrado.
+C|El lunes escribí un mensaje al coach.|I wrote a message to the coach on Monday.|I have written a message to the coach on Monday.|I writed a message to the coach on Monday.|Momento cerrado; <b>write</b> → <b>wrote</b>.
+F|Ya hice la tarea.|I have already done my homework.|I have already been doing my homework.|I already do my homework.|<b>Already</b>: importa el resultado.
+F|Todavía no he comido.|I haven't eaten yet.|I haven't been eating yet.|I didn't ate yet.|<b>Yet</b> pide foto: <b>haven't eaten</b>.
+F|¿Alguna vez has viajado en avión?|Have you ever travelled by plane?|Did you ever travelled by plane?|Have you ever been travelling by plane?|<b>Ever</b>: experiencia de vida.
+F|Mi hermana ha leído cinco libros este año.|My sister has read five books this year.|My sister has been reading five books this year.|My sister read five books this year.|Con número cuentas resultados: foto.
+F|Acaba de llegar.|He has just arrived.|He has just been arriving.|He just has arrive.|<b>Just</b> + resultado: <b>has just arrived</b>.
+F|Me he cortado el dedo.|I have cut my finger.|I have been cutting my finger.|I have cutted my finger.|Quedó la herida: foto. <b>Cut</b> no cambia.
+F|Nunca hemos ido a Costa Rica.|We have never been to Costa Rica.|We have never been going to Costa Rica.|We never have been to Costa Rica.|Experiencia de vida: <b>have never been to</b>.
+P|Llevo dos horas esperando el bus.|I have been waiting for the bus for two hours.|I have waited for the bus for two hours ago.|I am waiting for the bus since two hours.|<b>For two hours</b> + proceso: película.
+P|Está cansada: ha estado corriendo.|She is tired because she has been running.|She is tired because she has run yesterday.|She is tired because she is running.|La huella (cansancio): <b>has been running</b>.
+P|¿Cuánto tiempo llevas viviendo aquí?|How long have you been living here?|How long do you live here?|How long did you been living here?|<b>How long</b> pide duración: película.
+P|Llevamos toda la tarde jugando.|We have been playing all afternoon.|We played all afternoon now.|We have been play all afternoon.|<b>All afternoon</b>: proceso con huella.
+P|Mi teléfono está caliente porque lo he estado usando.|My phone is hot because I have been using it.|My phone is hot because I used it yesterday.|My phone is hot because I have been use it.|La huella es el teléfono caliente.
+P|Ha estado trabajando desde las 6.|He has been working since 6.|He works since 6.|He is working since 6.|<b>Since</b> + proceso: película.
+P|Llevo meses aprendiendo inglés.|I have been learning English for months.|I learned English for months now.|I am learning English for months.|<b>For months</b>: duración que sigue.`,fill:`F|How many emails ___ (you / send) today?|have you sent|<b>How many</b> cuenta resultados: foto, <b>have you sent</b>.
+P|My hands are dirty. I ___ (work) in the garden all day.|have been working|Las manos sucias son la huella de <b>all day</b>: <b>have been working</b>.
+C|She ___ (buy) a new phone last week.|bought|<b>Last week</b> cerró: calendario. <b>Buy</b> es irregular: <b>bought</b>.
+C|We ___ (not / see) him yesterday.|did not see|En negativo: <b>did not (didn't) + verbo base</b>.
+F|He ___ (finish) the marathon! Look at his medal.|has finished|La medalla es el resultado: foto, <b>has finished</b>.
+P|Why are you so tired? ___ (you / run)?|have you been running|Ves la huella y preguntas qué hacías: <b>have you been running</b>.
+C|They ___ (visit) us last Sunday.|visited|<b>Last Sunday</b> cerró: <b>visited</b>.
+C|I ___ (go) to the market yesterday.|went|<b>Go</b> → <b>went</b>.
+C|___ (you / call) me last night?|did you call|Pregunta en pasado: <b>did you call</b>.
+C|He ___ (eat) dinner at 7 yesterday.|ate|<b>Eat</b> → <b>ate</b>.
+C|My mom ___ (cook) dinner two hours ago.|cooked|<b>Ago</b> cerró: <b>cooked</b>.
+C|We ___ (not / play) soccer last Friday.|did not play|<b>Didn't play</b>.
+C|She ___ (write) a poem in 2020.|wrote|<b>Write</b> → <b>wrote</b>.
+C|I ___ (see) a great movie last weekend.|saw|<b>See</b> → <b>saw</b>.
+F|I ___ (lose) my wallet. I can't pay.|have lost|Resultado ahora: <b>have lost</b>.
+F|She ___ (already / finish) her exam.|has already finished/has finished already|<b>Already</b>: foto.
+F|___ (you / ever / eat) mango with salt?|have you ever eaten|<b>Ever</b>: experiencia de vida.
+F|We ___ (not / see) that movie yet.|have not seen|<b>Yet</b>: <b>haven't seen</b>.
+F|He ___ (break) his arm. It's in a cast.|has broken|Resultado: <b>has broken</b>.
+F|How many pages ___ (you / read)?|have you read|<b>How many</b>: resultado.
+F|They ___ (just / arrive).|have just arrived|<b>Just</b>: <b>have just arrived</b>.
+F|I ___ (never / try) sushi.|have never tried|<b>Never</b>: experiencia.
+P|It ___ (rain) all day. The streets are wet.|has been raining|<b>All day</b> + huella: <b>has been raining</b>.
+P|I ___ (study) English for two years.|have been studying|<b>For two years</b>: <b>have been studying</b>.
+P|How long ___ (you / wait)?|have you been waiting|<b>How long</b>: duración.
+P|She ___ (cook) since noon. The kitchen smells great.|has been cooking|Huella: olor a comida.
+P|They ___ (play) video games all night.|have been playing|<b>All night</b>: proceso.
+P|We ___ (live) here since 2018.|have been living/have lived|<b>Since</b>: sigue abierto.
+P|My eyes are red. I ___ (cry).|have been crying|Ojos rojos = huella.
+P|He ___ (practice) guitar for three hours.|has been practicing/has been practising|<b>For three hours</b>: proceso.`,fix:`C|Did you went to school yesterday?|did you go to school yesterday|Después de <b>did</b> el verbo va en base: <b>Did you go</b>.
+C|I have seen her yesterday.|i saw her yesterday|<b>Yesterday</b> cerró: usa calendario, <b>I saw</b>.
+F|I have been knowing him for years.|i have known him for years|<b>Know</b> es un estado, no lleva -ing: <b>have known</b>.
+F|She has been writing three emails today.|she has written three emails today|Con un número cuentas el resultado: <b>has written</b>.
+C|She didn't went to school.|she did not go to school|Después de <b>didn't</b>: verbo base.
+C|We have visited Rome in 2019.|we visited rome in 2019|<b>In 2019</b> cerró: <b>visited</b>.
+C|I buyed a new bike yesterday.|i bought a new bike yesterday|<b>Buy</b> → <b>bought</b>.
+C|Did she called you last night?|did she call you last night|Después de <b>did</b>: base.
+C|He has been born in 1990.|he was born in 1990|Fecha cerrada: <b>was born</b>.
+C|They have played soccer last Sunday.|they played soccer last sunday|<b>Last Sunday</b> cerró: <b>played</b>.
+C|I didn't saw him yesterday.|i did not see him yesterday|<b>Didn't</b> + base: <b>see</b>.
+C|Where did you went last weekend?|where did you go last weekend|<b>Did you go</b>.
+F|I have already ate lunch.|i have already eaten lunch|Participio: <b>eaten</b>.
+F|She has been breaking her phone!|she has broken her phone|Romper es un momento: <b>has broken</b>.
+F|Have you ever went to Mexico?|have you ever been to mexico|Experiencia: <b>been to</b>.
+F|How many books have you been reading?|how many books have you read|<b>How many</b>: resultado.
+F|He have lost his keys.|he has lost his keys|Con he/she: <b>has</b>.
+F|We has never seen snow.|we have never seen snow|Con we: <b>have</b>.
+F|I have been losing my wallet!|i have lost my wallet|Perder es un momento: <b>have lost</b>.
+F|They have been finishing the project.|they have finished the project|Importa el resultado: <b>have finished</b>.
+P|I am waiting for you since 5.|i have been waiting for you since 5|<b>Since</b>: <b>have been waiting</b>.
+P|How long do you study English?|how long have you been studying english|<b>How long</b>: <b>have you been studying</b>.
+P|She is working here for two years.|she has been working here for two years|<b>For two years</b>: <b>has been working</b>.
+P|It rains all day, so the streets are wet.|it has been raining all day so the streets are wet|Huella: <b>has been raining</b>.
+P|We have been wait for an hour.|we have been waiting for an hour|Después de <b>been</b>: verbo-ing.
+P|I have been working since three hours.|i have been working for three hours|Duración: <b>for</b>, no since.
+P|He has been play video games all night.|he has been playing video games all night|<b>Been playing</b>.
+P|They are living here since 2015.|they have been living here since 2015|<b>Since</b>: <b>have been living</b>.
+P|I have been run all morning.|i have been running all morning|<b>Been running</b>.
+P|Have you been cry?|have you been crying|<b>Been crying</b>.`,own:`C|Escribe una frase sobre lo que hiciste ayer. Usa <b>yesterday</b>.|yesterday|Ejemplo: I played soccer yesterday.
+F|Escribe una frase sobre algo que ya lograste o nunca has hecho. Usa <b>already</b> o <b>never</b>.|already|never|Ejemplo: I have already finished my homework.
+P|Escribe una frase sobre algo que llevas haciendo. Usa <b>for</b> o <b>since</b>.|\bfor\b|since|Ejemplo: I have been learning English for two years.
+C|Escribe una frase sobre un viaje o evento del pasado. Usa <b>ago</b> o <b>last</b>.|\bago\b|\blast\b|Ejemplo: We traveled to Granada two years ago.
+C|Escribe una frase sobre qué cenaste anoche. Usa <b>last night</b>.|last night|Ejemplo: I ate rice last night.
+C|Escribe una frase negativa sobre ayer. Usa <b>didn't</b>.|did not|Ejemplo: I didn't study yesterday.
+C|Escribe una frase sobre tu último cumpleaños. Usa <b>last</b>.|\blast\b|Ejemplo: I celebrated my birthday last month.
+F|Escribe una frase sobre algo que acabas de hacer. Usa <b>just</b>.|just|Ejemplo: I have just eaten.
+F|Escribe una pregunta con <b>ever</b>.|ever|Ejemplo: Have you ever visited Granada?
+F|Escribe una frase sobre algo que no has hecho todavía. Usa <b>yet</b>.|\byet\b|Ejemplo: I haven't seen that movie yet.
+P|Escribe una frase sobre algo que has hecho toda la semana. Usa <b>all week</b>.|all week|Ejemplo: I have been working all week.
+P|Escribe una pregunta con <b>How long</b>.|how long|Ejemplo: How long have you been studying here?`,};
+var PL=["Parte 1 · ¿Cómo dirías...?","Parte 2 · Rellena el hueco","Parte 3 · Corrige el error","Parte 4 · Tus propias frases"],NN=[10,8,6,6],KS=["mc","fill","fix","own"],I=[];
+function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function pool(k){return RAW[k].trim().split("\n").map(function(s,n){var f=s.split("|"),o={k:k,t:f[0],id:k+n,p:f[1]};
+if(k=="mc"){o.o=f.slice(2,5);o.w=f[5]}else if(k=="own"){o.kw=new RegExp(f[2]);o.w=f[3]}else{o.a=f[2].split("/");o.w=f[3];if(k=="fix")o.p="Corrige: "+f[1]}return o})}
+function pick(k,n,seen){var g={C:[],F:[],P:[]},r=[],o;pool(k).forEach(function(x){g[x.t].push(x)});
+for(o in g)g[o]=sh(g[o].filter(function(x){return seen.indexOf(x.id)<0})).concat(sh(g[o].filter(function(x){return seen.indexOf(x.id)>-1})));
+var ts=sh(["C","F","P"]);while(r.length<n){var t=ts[r.length%3];if(g[t].length)r.push(g[t].shift());else if(!g.C.length&&!g.F.length&&!g.P.length)break}return sh(r)}
+function build(){var seen=[];try{seen=JSON.parse(localStorage.getItem("nec1s"))||[]}catch(e){}I=[];
+KS.forEach(function(k,n){pick(k,NN[n],seen).forEach(function(x){x.l=n;if(k=="mc"){var c=x.o[0];x.o=sh(x.o);x.a=x.o.indexOf(c)}I.push(x);seen.push(x.id)})});
+try{localStorage.setItem("nec1s",JSON.stringify(seen.slice(-200)))}catch(e){}}
+
+var PT={C:/\b(\w+ed|went|saw|ate|bought|had|was|were|did|got|made|took|came|gave|met|ran|wrote|read|drank|slept|lost|found|left|paid|said|told|knew|felt|began|swam|won|sang|drove|spent)\b/,F:/\b(have|has)\s+(?!been\b)\w+/,P:/\b(have|has)\s+(\w+\s+)?been\s+\w+ing\b/};
+var ix,att,pts,st,own,miss,name,lives,streak;
+function hud(){$("hp").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives)+" · "+streak+"/10"}
+function over(i){$("ans").disabled=true;var ok=i.k=="mc"?i.o[i.a]:i.a[0],f=$("ovfb");f.className="fb no";f.style.display="block";f.innerHTML='<div class="h">Era: '+ok+'</div>'+i.w;$("ovmsg").textContent="Llegaste a la pregunta "+(ix+1)+" de "+I.length+".";show("over")}
+function $(i){return document.getElementById(i)}
+function show(s){["home","game","end","over"].forEach(function(x){$(x).classList.toggle("hide",x!=s)});scrollTo(0,0);if(s=="home")last()}
+function norm(s){return s.toLowerCase().replace(/[’‘`]/g,"'").replace(/won't/g,"will not").replace(/n't/g," not").replace(/'ve/g," have").replace(/'s been/g," has been").replace(/'m/g," am").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim()}
+function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++){d[i]=[i]}for(j=1;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]==b[j-1]?0:1));return d[a.length][b.length]}
+function last(){var t="";try{var r=JSON.parse(localStorage.getItem("nec1"));if(r)t="Último intento: "+r.pct+"% el "+r.d+". Vuelve a practicar en 2 o 3 días."}catch(e){}$("last").textContent=t}
+function start(){name=$("nm").value.trim();if(!name){$("nmerr").classList.remove("hide");return}$("nmerr").classList.add("hide");build();lives=3;streak=0;ix=0;pts=0;own=[];miss=[];st={C:[0,0],F:[0,0],P:[0,0]};show("game");render()}
+function render(){var i=I[ix];att=0;hud();$("n").textContent=(ix+1)+"/"+I.length;$("lv").textContent=LV[i.l];$("pg").style.width=(ix/I.length*100)+"%";
+var h=i.k=="mc"?"¿Cómo dirías en inglés?<br>“"+i.p+"”":i.k=="fix"?i.p:i.k=="fill"?"Completa: <span>"+i.p.replace("___","&nbsp;___&nbsp;")+"</span>":i.p;$("q").innerHTML=h;
+$("opts").innerHTML=i.k=="mc"?i.o.map(function(o,n){return '<div class="ex">'+"ABC"[n]+") "+o+"</div>"}).join("")+'<p class="hint" style="margin-top:12px">Escribe la opción completa. No la toques: ¡escríbela!</p>':"";
+$("ans").value="";$("ans").disabled=false;$("err").classList.add("hide");$("fb").style.display="none";$("next").classList.add("hide");$("chk").classList.remove("hide");$("ans").focus()}
+function err(m){$("err").textContent=m;$("err").classList.remove("hide")}
+function fb(ok,html){var f=$("fb");f.className="fb "+(ok?"ok":"no");f.innerHTML=html;f.style.display="block"}
+function done(){$("ans").disabled=true;$("chk").classList.add("hide");$("next").classList.remove("hide");$("next").textContent=ix==I.length-1?"Ver resultado":"Siguiente"}
+function check(){var i=I[ix],v=$("ans").value.trim();if(!v)return;$("err").classList.add("hide");var n=norm(v);
+if(i.k=="own"){var okS=n.split(" ").length>=4&&i.kw.test(n)&&PT[i.t].test(n);
+if(okS){own.push({p:i.p.replace(/<[^>]+>/g,""),v:v,ok:1});fb(1,'<div class="h">✓ Estructura bien</div>Tu coach revisará si suena natural. '+TN[i.t]);done();return}
+att++;if(att==1){fb(0,'<div class="h">Revisa tu frase</div>Usa la palabra pedida, al menos 4 palabras y el tiempo de '+TN[i.t]+'. '+i.w);return}
+own.push({p:i.p.replace(/<[^>]+>/g,""),v:v,ok:0});fb(0,'<div class="h">Guardada para el coach</div>'+i.w);done();return}
+var cor=(i.k=="mc"?[i.o[i.a]]:i.a).map(norm);
+if(cor.indexOf(n)>-1){pts+=att?1:2;st[i.t][0]++;st[i.t][1]++;var up="";if(!att&&++streak>=10){streak=0;if(lives<3){lives++;up="<br>🎉 ¡10 seguidas! Recuperaste una vida."}else up="<br>🎉 ¡10 seguidas!"}hud();fb(1,'<div class="h">¡Eso es!</div>'+i.w+up);done();return}
+if(cor.some(function(c){return lev(n,c)<=(i.k=="mc"?2:1)})){err("¡Casi! Revisa la ortografía y escríbela otra vez.");return}
+if(i.k=="mc"&&!i.o.some(function(o){return lev(n,norm(o))<=2})){err("Escribe una de las tres opciones, completa.");return}
+att++;streak=0;lives--;hud();if(lives<=0){over(i);return}if(att==1){fb(0,'<div class="h">Aún no</div>'+HT[i.t]+" Inténtalo otra vez.");return}
+st[i.t][1]++;miss.push(ix);fb(0,'<div class="h">Respuesta: '+(i.k=="mc"?i.o[i.a]:i.a[0])+'</div>'+i.w);done()}
+function nextQ(){ix++;if(ix>=I.length)return finish();render()}
+function mx(){return I.filter(function(i){return i.k!="own"}).length*2}
+function finish(){var p=Math.round(pts/mx()*100);$("pct").textContent=p+"%";
+$("brk").innerHTML=["C","F","P"].map(function(t){return "<div>"+TN[t]+"<b>"+st[t][0]+"/"+st[t][1]+"</b></div>"}).join("");
+$("ownl").innerHTML="<h3 style='margin:8px 0'>Tus frases</h3>"+own.map(function(o){return '<div class="ex">'+o.v.replace(/</g,"&lt;")+"<i>"+(o.ok?"Estructura OK · pendiente del coach":"Pendiente de revisión del coach")+"</i></div>"}).join("");
+try{localStorage.setItem("nec1",JSON.stringify({pct:p,d:new Date().toLocaleDateString(),miss:miss}))}catch(e){}show("end")}
+function txt(){var p=$("pct").textContent;return "Hola coach, soy "+name+". Seguimiento 1: "+p+".\n📅 Calendario "+st.C[0]+"/"+st.C[1]+" · 📷 Foto "+st.F[0]+"/"+st.F[1]+" · 🎬 Película "+st.P[0]+"/"+st.P[1]+"\nMis frases:\n"+own.map(function(o,n){return (n+1)+". "+o.v}).join("\n")}
+function wa(){window.open("https://wa.me/?text="+encodeURIComponent(txt()),"_blank")}
+function cp(){var b=$("cpb");try{navigator.clipboard.writeText(txt()).then(function(){b.textContent="¡Copiado!"},function(){b.textContent="No se pudo copiar"})}catch(e){b.textContent="No se pudo copiar"}}
+document.addEventListener("keydown",function(e){if(e.key=="Enter"&&!$("game").classList.contains("hide")){$("chk").classList.contains("hide")?nextQ():check()}});
+</script></body></html>
