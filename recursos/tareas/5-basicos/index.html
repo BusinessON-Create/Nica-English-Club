@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Escribe, no toques · Futuro y pasado en progreso</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#faf6ee;--card:#fff;--bd:#d9cfbd;--in:#f1ebdd;--txt:#1c1813;--mut:#6b6254;--ok:#15803d;--bad:#dc2626;--okb:#e3f5e9;--badb:#fde8e8;--gold:#F0B323;--G:#D99A00;--W:#2F7FE0;--N:#16A35A;--S:#8A5BF0;--D:#E5602A}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d0b09;--card:#131211;--bd:#3a3226;--in:#0d0c0b;--txt:#fff;--mut:#a8a29a;--ok:#3ddc84;--bad:#ff6b6b;--okb:#0f2218;--badb:#2a1212;--G:#F0B323;--W:#4DA3FF;--N:#3ddc84;--S:#b58cff;--D:#ff8a5c}}
+:root[data-theme=dark]{--bg:#0d0b09;--card:#131211;--bd:#3a3226;--in:#0d0c0b;--txt:#fff;--mut:#a8a29a;--ok:#3ddc84;--bad:#ff6b6b;--okb:#0f2218;--badb:#2a1212;--G:#F0B323;--W:#4DA3FF;--N:#3ddc84;--S:#b58cff;--D:#ff8a5c}
+*{box-sizing:border-box;margin:0}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:28px 20px 60px}
+.w{max-width:720px;margin:0 auto}
+.pill{display:inline-block;border:1px solid var(--bd);background:var(--card);color:var(--G);font-weight:600;font-size:13px;letter-spacing:.12em;padding:10px 18px;border-radius:99px;text-transform:uppercase}
+h1{font-size:clamp(36px,9vw,56px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:22px 0 14px}h1 b{color:var(--G)}
+.sub{font-size:19px;line-height:1.6;margin-bottom:20px}
+.card{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--c);border-radius:24px;padding:22px 24px;margin-bottom:16px;cursor:pointer;box-shadow:0 5px 0 var(--bd)}
+.card h2{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--c)}
+.card p{color:var(--mut);font-size:17px;line-height:1.55;margin-top:8px}.card p b{color:var(--txt)}
+.kw{font-weight:600;font-size:17px;margin-top:10px}
+.det{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}.card.open .det{display:block}
+.form{font-weight:600;font-size:16px}
+.ex{background:var(--in);border-radius:14px;padding:12px 16px;margin-top:10px;font-size:17px}.ex i{display:block;color:var(--mut);font-style:normal;font-size:15px;margin-top:3px}
+.btn{display:block;width:100%;background:var(--gold);color:#1a1408;border:0;border-radius:18px;padding:18px;font:inherit;font-size:19px;font-weight:800;cursor:pointer;margin-top:10px;box-shadow:0 6px 0 #9a7208}.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #9a7208}
+.btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--bd);box-shadow:0 5px 0 var(--bd);margin-top:14px}
+.btn.wa{background:#25D366;color:#06260f;box-shadow:0 6px 0 #138a40}
+.bar{height:8px;background:var(--in);border-radius:9px;overflow:hidden;margin:10px 0 24px}.bar i{display:block;height:100%;background:var(--gold);width:0;transition:.3s}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--mut);font-weight:600;font-size:15px}
+.q{font-size:clamp(25px,6vw,34px);font-weight:800;letter-spacing:-.02em;line-height:1.25;margin:10px 0 24px}.q span{color:var(--G);border-bottom:3px solid var(--G);padding:0 6px}
+.fb{display:none;background:var(--card);border-radius:18px;padding:18px 20px;margin-top:12px;font-size:17px;line-height:1.55;border-left:4px solid}.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--bad)}
+.fb .h{font-size:20px;font-weight:800;margin-bottom:6px}
+.hide{display:none}.big{font-size:72px;font-weight:800;color:var(--G);letter-spacing:-.04em}
+.lb{display:block;font-weight:600;color:var(--mut);margin:6px 0 8px;font-size:15px}
+.inp{width:100%;background:var(--card);color:var(--txt);border:1px solid var(--bd);border-radius:16px;padding:16px 18px;font:inherit;font-size:20px;font-weight:600;margin-bottom:12px}.inp:focus{outline:2px solid var(--gold)}
+.err{color:var(--bad);font-weight:600;margin:-4px 0 12px}
+.hint{color:var(--mut);font-size:15px;margin:4px 0 18px}
+.brk{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 24px}.brk div{flex:1 1 30%;background:var(--card);border-radius:16px;padding:12px;font-weight:600;font-size:14px;color:var(--mut)}.brk b{display:block;font-size:24px;color:var(--txt)}
+.ti{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:14px;flex:none;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.22)}.ti svg{width:26px;height:26px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.ti.sm{width:30px;height:30px;border-radius:10px}.ti.sm svg{width:18px;height:18px}
+.t-G{background:linear-gradient(145deg,#FFCB47,#F08A00)}.t-W{background:linear-gradient(145deg,#6BB8FF,#2563EB)}.t-N{background:linear-gradient(145deg,#5BE38D,#059669)}.t-S{background:linear-gradient(145deg,#C3A3FF,#6D3AE0)}.t-D{background:linear-gradient(145deg,#FFA26B,#E8441F)}
+.card h2{display:flex;align-items:center;gap:14px}
+.hs{width:18px;height:18px;vertical-align:-3px;margin-right:2px;fill:#ff4d5e}.hs.off{fill:var(--bd)}
+.brk .ti{margin-bottom:8px}.bh{display:block;margin:6px auto 0;width:110px;height:110px}.bh path:first-child{fill:#ff4d5e}.bh path+path{fill:none;stroke:var(--bg);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+</style></head><body><div class="w">
+<section id="home">
+<span class="pill">Nica English Club · Práctica</span>
+<h1>Escribe, <b>no toques</b></h1>
+<p class="sub">Cinco formas, cinco imágenes. Aquí <b>siempre escribes</b> en inglés.</p>
+<div class="card" style="--c:var(--G)" onclick="this.classList.toggle('open')"><h2><i class="ti t-G"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" fill="#fff" d="M12 2.5a7 7 0 0 0-7 7c0 5 7 12 7 12s7-7 7-12a7 7 0 0 0-7-7zm0 9.5a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg></i><span>going to = el plan</span></h2><p>Ya lo <b>decidí antes</b>, o veo una <b>señal</b> ahora.</p><div class="kw">tomorrow · next week · Look!</div><div class="det"><div class="form">am / is / are + going to + verbo base</div><div class="ex">I am going to study tonight.<i>Ya lo tengo decidido.</i></div></div></div>
+<div class="card" style="--c:var(--W)" onclick="this.classList.toggle('open')"><h2><i class="ti t-W"><svg viewBox="0 0 24 24"><path fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" d="M13.5 2 5 13.5h6l-1 8.5L19 10h-6z"/></svg></i><span>will = el impulso</span></h2><p>Lo decido <b>en este momento</b>, prometo u opino.</p><div class="kw">I think · probably · I promise · OK,</div><div class="det"><div class="form">will + verbo base (nunca “to”)</div><div class="ex">I will carry your bag.<i>Lo decido ahora mismo.</i></div></div></div>
+<div class="card" style="--c:var(--N)" onclick="this.classList.toggle('open')"><h2><i class="ti t-N"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="2"/><path fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round" d="M10 8.2v7.6l6-3.8z"/></svg></i><span>am / is / are + ing = en vivo</span></h2><p>Está pasando <b>ahora mismo</b> (o es un arreglo fijo).</p><div class="kw">now · right now · at the moment</div><div class="det"><div class="form">am / is / are + verbo-ing</div><div class="ex">She is cooking right now.<i>Lo veo en vivo.</i></div></div></div>
+<div class="card" style="--c:var(--S)" onclick="this.classList.toggle('open')"><h2><i class="ti t-S"><svg viewBox="0 0 24 24"><path fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" d="M11 6.5v11L3.5 12zM20.5 6.5v11L13 12z"/></svg></i><span>was / were + ing = película en pausa</span></h2><p>Qué estaba <b>en progreso</b> en un momento del pasado.</p><div class="kw">at 8 last night · while · when</div><div class="det"><div class="form">was / were + verbo-ing</div><div class="ex">I was sleeping when you called.<i>Estaba a la mitad de la acción.</i></div></div></div>
+<div class="card" style="--c:var(--D)" onclick="this.classList.toggle('open')"><h2><i class="ti t-D"><svg viewBox="0 0 24 24"><g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5.5 4.5 10 9 14.5"/><path d="M5 10h8a4.5 4.5 0 0 1 0 9H8"/></g></svg></i><span>was / were going to = plan que no pasó</span></h2><p>Iba a hacerlo… pero <b>no lo hice</b>.</p><div class="kw">but · I forgot · it rained</div><div class="det"><div class="form">was / were + going to + verbo base</div><div class="ex">I was going to call you, but I forgot.<i>El plan existía; no se cumplió.</i></div></div></div>
+<p class="sub" style="font-size:17px;color:var(--mut)"><b style="color:var(--txt)">Truco:</b> ¿Es pasado? → ¿estaba en progreso (<b style="color:var(--S)">was/were + ing</b>) o no se cumplió (<b style="color:var(--D)">was/were going to</b>)? ¿Es ahora o futuro? → ¿pasa ahora (<b style="color:var(--N)">ing</b>), plan o señal (<b style="color:var(--G)">going to</b>), o decido ahora (<b style="color:var(--W)">will</b>)?</p>
+<div id="last" class="hint"></div>
+<p class="hint"><svg class="hs" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg><svg class="hs" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg><svg class="hs" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg> Tienes 3 vidas. Cada error quita una. 10 aciertos seguidos recuperan una. Sin vidas, empiezas de nuevo.</p>
+<label class="lb" for="nm">Tu nombre</label>
+<input id="nm" class="inp" type="text" maxlength="40" placeholder="Escribe tu nombre" autocomplete="given-name">
+<div id="nmerr" class="err hide">Escribe tu nombre para empezar.</div>
+<button class="btn" onclick="start()">Empezar · 25 actividades</button>
+</section>
+<section id="game" class="hide">
+<div class="top"><span id="n"></span><span id="hp" style="color:var(--txt)"></span><span id="lv"></span></div>
+<div class="bar"><i id="pg"></i></div>
+<div class="q" id="q"></div><div id="opts"></div>
+<input id="ans" class="inp" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe tu respuesta en inglés">
+<div id="err" class="err hide"></div>
+<button class="btn" id="chk" onclick="check()">Comprobar</button>
+<div class="fb" id="fb"></div>
+<button class="btn hide" id="next" onclick="nextQ()">Siguiente</button>
+</section>
+<section id="over" class="hide" style="text-align:center;padding-top:30px">
+<span class="pill">Sin vidas</span><svg class="bh" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/><path d="M12.5 6.5 10 11l3 2-2 5"/></svg>
+<h1 style="font-size:clamp(34px,8vw,48px);margin:6px 0 12px">¡Sin <b>vidas</b>!</h1>
+<p class="sub" id="ovmsg"></p>
+<div class="fb" id="ovfb" style="text-align:left;margin-bottom:18px"></div>
+<button class="btn" onclick="start()">Intentarlo otra vez</button>
+<button class="btn ghost" onclick="show('home')">Repasar las tarjetas</button>
+</section>
+<section id="end" class="hide" style="text-align:center;padding-top:30px">
+<span class="pill">Resultado</span><div class="big" id="pct"></div>
+<div class="brk" id="brk"></div>
+<div id="ownl" style="text-align:left"></div>
+<p class="sub" style="margin-top:16px">Dominar toma tiempo: <b>vuelve en 2 o 3 días</b> con preguntas nuevas.</p>
+<button class="btn wa" onclick="wa()">Enviar al coach por WhatsApp</button>
+<button class="btn ghost" onclick="cp()" id="cpb">Copiar resultado</button>
+<button class="btn ghost" onclick="show('home')">Volver al inicio</button>
+</section>
+</div>
+<script>
+var SV={"G": "<svg viewBox=\"0 0 24 24\"><path fill-rule=\"evenodd\" fill=\"#fff\" d=\"M12 2.5a7 7 0 0 0-7 7c0 5 7 12 7 12s7-7 7-12a7 7 0 0 0-7-7zm0 9.5a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z\"/></svg>", "W": "<svg viewBox=\"0 0 24 24\"><path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1\" stroke-linejoin=\"round\" d=\"M13.5 2 5 13.5h6l-1 8.5L19 10h-6z\"/></svg>", "N": "<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2\"/><path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1.2\" stroke-linejoin=\"round\" d=\"M10 8.2v7.6l6-3.8z\"/></svg>", "S": "<svg viewBox=\"0 0 24 24\"><path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1.6\" stroke-linejoin=\"round\" d=\"M11 6.5v11L3.5 12zM20.5 6.5v11L13 12z\"/></svg>", "D": "<svg viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"#fff\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 5.5 4.5 10 9 14.5\"/><path d=\"M5 10h8a4.5 4.5 0 0 1 0 9H8\"/></g></svg>"},HRT='<svg class="hs" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg>';
+var TN={G:"going to",W:"will",N:"am/is/are + ing",S:"was/were + ing",D:"was/were going to"};
+function ic(t){return '<i class="ti sm t-'+t+'">'+SV[t]+"</i>"}
+var HT={G:"Pista: ¿ya estaba decidido, o hay una señal ahora?",W:"Pista: ¿lo decides ahora, prometes u opinas?",N:"Pista: ¿está pasando ahora mismo?",S:"Pista: ¿qué estaba en progreso en ese momento del pasado?",D:"Pista: ¿era un plan que al final no pasó?"};
+var LV=["Parte 1 · ¿Cómo dirías...?","Parte 2 · Rellena el hueco","Parte 3 · Corrige el error","Parte 4 · Tus propias frases"],KS=["mc","fill","fix","own"],NN=[8,8,5,4],TS=["G","W","N","S","D"];
+var RAW={mc:`G|Mira esas nubes negras: va a llover.|It is going to rain.|It is raining.|It is going rain.|Hay una señal ahora (nubes): <b>is going to</b> + verbo base.
+G|Mañana voy a visitar a mi abuela. Ya lo decidí.|I am going to visit my grandmother tomorrow.|I will visiting my grandmother tomorrow.|I am going visit my grandmother tomorrow.|Plan decidido: <b>am going to visit</b>.
+G|Mi hermana va a tener un bebé en mayo.|My sister is going to have a baby in May.|My sister is going have a baby in May.|My sister was going to have a baby in May.|Plan o hecho futuro ya en marcha: <b>is going to have</b>.
+W|Te lo prometo: te llamaré mañana.|I promise I will call you tomorrow.|I promise I was calling you tomorrow.|I promise I will to call you tomorrow.|Una promesa usa <b>will</b> + base, sin <b>to</b>.
+W|Suena el teléfono. ¡Yo contesto!|The phone is ringing. I will answer it.|The phone is ringing. I was answering it.|The phone is ringing. I will answering it.|Decisión al instante: <b>will answer</b>.
+W|Creo que mañana lloverá.|I think it will rain tomorrow.|I think it will to rain tomorrow.|I think it was raining tomorrow.|Opinión con <b>I think</b>: <b>will</b> + base.
+N|Mi mamá está cocinando ahora mismo.|My mom is cooking right now.|My mom was cooking right now.|My mom is cook right now.|<b>Right now</b>: <b>is cooking</b>.
+N|Estamos esperando el bus.|We are waiting for the bus.|We waiting for the bus.|We will waiting for the bus.|Pasa ahora: <b>are waiting</b>.
+N|El sábado me reúno con mis amigos. Ya quedamos.|I am meeting my friends on Saturday.|I was meeting my friends on Saturday.|I meeting my friends on Saturday.|Arreglo fijo: <b>am meeting</b>.
+S|Anoche a las 9 estaba viendo una serie.|I was watching a series at 9 last night.|I am watching a series at 9 last night.|I was watch a series at 9 last night.|Acción en progreso en el pasado: <b>was watching</b>.
+S|Estaba lloviendo cuando salí de casa.|It was raining when I left home.|It is raining when I left home.|It was rain when I left home.|Acción larga en progreso: <b>was raining</b>.
+S|Mientras ellos estudiaban, yo dormía.|While they were studying, I was sleeping.|While they are studying, I was sleeping.|While they were study, I was sleeping.|Dos acciones en progreso: <b>were studying</b>, <b>was sleeping</b>.
+S|¿Qué estabas haciendo cuando llamé?|What were you doing when I called?|What are you doing when I called?|What was you doing when I called?|Con <b>you</b>: <b>were</b> + ing.
+D|Iba a llamarte, pero me quedé sin batería.|I was going to call you, but my battery died.|I am going to call you, but my battery died.|I will call you, but my battery died.|Plan que no pasó: <b>was going to call</b>.
+D|Íbamos a viajar, pero cancelaron el vuelo.|We were going to travel, but they cancelled the flight.|We was going to travel, but they cancelled the flight.|We are going to travel, but they cancelled the flight.|Con <b>we</b>: <b>were going to</b>.
+D|Ella iba a estudiar, pero se durmió.|She was going to study, but she fell asleep.|She is going to study, but she fell asleep.|She were going to study, but she fell asleep.|Con <b>she</b>: <b>was going to</b>.
+D|Pensaba comprar pan, pero la tienda estaba cerrada.|I was going to buy bread, but the shop was closed.|I will buy bread, but the shop was closed.|I am going to buy bread, but the shop was closed.|El plan no se cumplió: <b>was going to buy</b>.`,
+fill:`G|Look! That boy ___ (fall).|is going to fall|Hay una señal ahora: <b>is going to fall</b>.
+G|We ___ (visit) my aunt next weekend. We bought the tickets.|are going to visit|Plan decidido: <b>are going to visit</b>.
+G|I ___ (not / study) tonight. I am too tired.|am not going to study|Plan negativo: <b>am not going to study</b>.
+W|Oh, no cash! OK, I ___ (pay) by card.|will pay|Decisión en el momento: <b>will pay</b>.
+W|Don’t worry. I ___ (help) you with your homework.|will help|Ofrecimiento: <b>will help</b>.
+W|I think Nicaragua ___ (win) the game.|will win|Opinión con <b>I think</b>: <b>will win</b>.
+W|I ___ (not / tell) anyone your secret. I promise.|will not tell|Promesa: <b>will not (won’t) tell</b>.
+N|Be quiet! The baby ___ (sleep).|is sleeping|Pasa ahora: <b>is sleeping</b>.
+N|Right now, we ___ (study) English.|are studying|<b>Right now</b>: <b>are studying</b>.
+N|I ___ (not / watch) TV at the moment.|am not watching|<b>At the moment</b>: <b>am not watching</b>.
+N|What ___ (you / do) right now?|are you doing|Pregunta en vivo: <b>are you doing</b>.
+S|At 8 last night, I ___ (cook) dinner.|was cooking|Estaba en progreso a esa hora: <b>was cooking</b>.
+S|They ___ (play) soccer when it started to rain.|were playing|Acción en progreso interrumpida: <b>were playing</b>.
+S|What ___ (you / do) at 10 last night?|were you doing|Pasado en progreso: <b>were you doing</b>.
+S|He ___ (not / sleep) when I called.|was not sleeping|<b>Was not (wasn’t) sleeping</b>.
+D|I ___ (call) you, but I forgot.|was going to call|El plan no pasó: <b>was going to call</b>.
+D|We ___ (play) soccer, but it rained.|were going to play|Con <b>we</b>: <b>were going to play</b>.
+D|She ___ (not / come), but she changed her mind.|was not going to come|<b>Was not (wasn’t) going to come</b>.
+D|They ___ (buy) a car, but it was too expensive.|were going to buy|Plan que no se cumplió: <b>were going to buy</b>.`,
+fix:`G|I am going to buying a bike.|i am going to buy a bike|Después de <b>going to</b>: verbo base.
+G|She going to travel tomorrow.|she is going to travel tomorrow|Falta <b>is</b>: <b>is going to</b>.
+W|I will to help you.|i will help you|Después de <b>will</b>: base, sin <b>to</b>.
+W|He will goes to the party.|he will go to the party|<b>Will</b> + base: <b>will go</b>.
+N|She is cook dinner now.|she is cooking dinner now|<b>Is</b> + verbo-ing.
+N|They playing soccer right now.|they are playing soccer right now|Falta <b>are</b>.
+S|I was watch TV when you called.|i was watching tv when you called|<b>Was</b> + verbo-ing.
+S|We was playing soccer at 5.|we were playing soccer at 5|Con <b>we</b>: <b>were</b>.
+D|I was going to called you.|i was going to call you|<b>Was going to</b> + base.
+D|She is going to come, but she was sick.|she was going to come but she was sick|El plan no pasó: <b>was going to</b>.`,
+own:`G|Escribe un plan que tienes para mañana. Usa <b>going to</b>.|going to|Ejemplo: I am going to visit my grandmother tomorrow.
+W|Escribe una promesa. Usa <b>I will</b>.|will|Ejemplo: I will call you tomorrow, I promise.
+W|Escribe tu opinión sobre el futuro. Usa <b>I think</b> + <b>will</b>.|i think|Ejemplo: I think it will rain tomorrow.
+N|Escribe qué estás haciendo ahora mismo. Usa <b>right now</b>.|right now|Ejemplo: I am doing this exercise right now.
+N|Escribe un plan fijo para este fin de semana. Usa <b>this weekend</b>.|weekend|Ejemplo: I am meeting my friends this weekend.
+S|Escribe qué estabas haciendo anoche. Usa <b>last night</b>.|last night|Ejemplo: I was studying at 9 last night.
+S|Escribe una frase en pasado con <b>while</b>.|while|Ejemplo: While I was cooking, my brother was watching TV.
+D|Escribe un plan que no pudiste hacer. Usa <b>but</b>.|but|Ejemplo: I was going to exercise, but it rained.`};
+var PT={G:/\b(am|is|are)( not)? going to \w+/,W:/\bwill( not)? \w+/,N:/\b(am|is|are)( not)? \w+ing\b/,S:/\b(was|were)( not)? \w+ing\b/,D:/\b(was|were)( not)? going to \w+/};
+var I=[],ix,att,pts,st,own,miss,name,lives,streak;
+function $(i){return document.getElementById(i)}
+function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function pool(k){return RAW[k].trim().split("\n").map(function(s,n){var f=s.split("|"),o={k:k,t:f[0],id:k+n,p:f[1]};
+if(k=="mc"){o.o=f.slice(2,5);o.w=f[5]}else if(k=="own"){o.kw=new RegExp(f[2]);o.w=f[3]}else{o.a=f[2].split("/");o.w=f[3];if(k=="fix")o.p="Corrige: "+f[1]}return o})}
+function pick(k,n,seen){var g={},r=[];TS.forEach(function(t){g[t]=[]});pool(k).forEach(function(x){g[x.t].push(x)});
+TS.forEach(function(t){g[t]=sh(g[t].filter(function(x){return seen.indexOf(x.id)<0})).concat(sh(g[t].filter(function(x){return seen.indexOf(x.id)>-1})))});
+var ts=sh(TS),m=0;while(r.length<n&&m<99){var t=ts[m++%5];if(g[t].length)r.push(g[t].shift())}return sh(r)}
+function build(){var seen=[];try{seen=JSON.parse(localStorage.getItem("nec2s"))||[]}catch(e){}I=[];
+KS.forEach(function(k,n){pick(k,NN[n],seen).forEach(function(x){x.l=n;if(k=="mc"){var c=x.o[0];x.o=sh(x.o);x.a=x.o.indexOf(c)}I.push(x);seen.push(x.id)})});
+try{localStorage.setItem("nec2s",JSON.stringify(seen.slice(-200)))}catch(e){}}
+function norm(s){return s.toLowerCase().replace(/[’‘`]/g,"'").replace(/won't/g,"will not").replace(/n't/g," not").replace(/'ve/g," have").replace(/'ll/g," will").replace(/'re/g," are").replace(/'m/g," am").replace(/'s (\w+ing)/g," is $1").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim()}
+function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++)d[i]=[i];for(j=1;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]==b[j-1]?0:1));return d[a.length][b.length]}
+function show(s){["home","game","end","over"].forEach(function(x){$(x).classList.toggle("hide",x!=s)});scrollTo(0,0);if(s=="home")last()}
+function last(){var t="";try{var r=JSON.parse(localStorage.getItem("nec2"));if(r)t="Último intento: "+r.pct+"% el "+r.d+". Vuelve a practicar en 2 o 3 días."}catch(e){}$("last").textContent=t}
+function hud(){$("hp").innerHTML=HRT.repeat(lives)+HRT.replace("hs","hs off").repeat(3-lives)+" · "+streak+"/10"}
+function start(){name=$("nm").value.trim();if(!name){$("nmerr").classList.remove("hide");return}$("nmerr").classList.add("hide");build();lives=3;streak=0;ix=0;pts=0;own=[];miss=[];st={};TS.forEach(function(t){st[t]=[0,0]});show("game");render()}
+function render(){var i=I[ix];att=0;hud();$("n").textContent=(ix+1)+"/"+I.length;$("lv").textContent=LV[i.l];$("pg").style.width=(ix/I.length*100)+"%";
+$("q").innerHTML=i.k=="mc"?"¿Cómo dirías en inglés?<br>“"+i.p+"”":i.k=="fill"?"Completa: <span>"+i.p.replace("___","&nbsp;___&nbsp;")+"</span>":i.p;
+$("opts").innerHTML=i.k=="mc"?i.o.map(function(o,n){return '<div class="ex">'+"ABC"[n]+") "+o+"</div>"}).join("")+'<p class="hint" style="margin-top:12px">Escribe la opción completa. No la toques: ¡escríbela!</p>':"";
+$("ans").value="";$("ans").disabled=false;$("err").classList.add("hide");$("fb").style.display="none";$("next").classList.add("hide");$("chk").classList.remove("hide");$("ans").focus()}
+function err(m){$("err").textContent=m;$("err").classList.remove("hide")}
+function fb(ok,h){var f=$("fb");f.className="fb "+(ok?"ok":"no");f.innerHTML=h;f.style.display="block"}
+function done(){$("ans").disabled=true;$("chk").classList.add("hide");$("next").classList.remove("hide");$("next").textContent=ix==I.length-1?"Ver resultado":"Siguiente"}
+function over(i){$("ans").disabled=true;var ok=i.k=="mc"?i.o[i.a]:i.a[0],f=$("ovfb");f.className="fb no";f.style.display="block";f.innerHTML='<div class="h">Era: '+ok+"</div>"+i.w;$("ovmsg").textContent="Llegaste a la actividad "+(ix+1)+" de "+I.length+".";show("over")}
+function check(){var i=I[ix],v=$("ans").value.trim();if(!v)return;$("err").classList.add("hide");var n=norm(v);
+if(i.k=="own"){var p=i.p.replace(/<[^>]+>/g,"");
+if(n.split(" ").length>=4&&i.kw.test(n)&&PT[i.t].test(n)){own.push({p:p,v:v,ok:1});fb(1,'<div class="h">Estructura bien</div>Tu coach revisará si suena natural. '+TN[i.t]);done();return}
+att++;if(att==1){fb(0,'<div class="h">Revisa tu frase</div>Usa la palabra pedida, al menos 4 palabras y la forma de '+TN[i.t]+". "+i.w);return}
+own.push({p:p,v:v,ok:0});fb(0,'<div class="h">Guardada para el coach</div>'+i.w);done();return}
+var cor=(i.k=="mc"?[i.o[i.a]]:i.a).map(norm);
+if(cor.indexOf(n)>-1){pts+=att?1:2;st[i.t][0]++;st[i.t][1]++;var up="";if(!att&&++streak>=10){streak=0;if(lives<3){lives++;up="<br>¡10 seguidas! Recuperaste una vida."}else up="<br>¡10 seguidas!"}hud();fb(1,'<div class="h">¡Eso es!</div>'+i.w+up);done();return}
+if(cor.some(function(c){return lev(n,c)<=(i.k=="mc"?2:1)})){err("¡Casi! Revisa la ortografía y escríbela otra vez.");return}
+if(i.k=="mc"&&!i.o.some(function(o){return lev(n,norm(o))<=2})){err("Escribe una de las tres opciones, completa.");return}
+att++;streak=0;lives--;hud();if(lives<=0){over(i);return}
+if(att==1){fb(0,'<div class="h">Aún no</div>'+HT[i.t]+" Inténtalo otra vez.");return}
+st[i.t][1]++;miss.push(ix);fb(0,'<div class="h">Respuesta: '+(i.k=="mc"?i.o[i.a]:i.a[0])+"</div>"+i.w);done()}
+function nextQ(){ix++;if(ix>=I.length)return finish();render()}
+function finish(){var mx=I.filter(function(i){return i.k!="own"}).length*2,p=Math.round(pts/mx*100);$("pct").textContent=p+"%";
+$("brk").innerHTML=TS.map(function(t){return "<div>"+ic(t)+TN[t]+"<b>"+st[t][0]+"/"+st[t][1]+"</b></div>"}).join("");
+$("ownl").innerHTML="<h3 style='margin:8px 0'>Tus frases</h3>"+own.map(function(o){return '<div class="ex">'+o.v.replace(/</g,"&lt;")+"<i>"+(o.ok?"Estructura OK · pendiente del coach":"Pendiente de revisión del coach")+"</i></div>"}).join("");
+try{localStorage.setItem("nec2",JSON.stringify({pct:p,d:new Date().toLocaleDateString()}))}catch(e){}show("end")}
+function txt(){return "Hola coach, soy "+name+". Práctica: "+$("pct").textContent+".\n"+TS.map(function(t){return TN[t]+" "+st[t][0]+"/"+st[t][1]}).join(" · ")+"\nMis frases:\n"+own.map(function(o,n){return (n+1)+". "+o.v}).join("\n")}
+function wa(){window.open("https://wa.me/?text="+encodeURIComponent(txt()),"_blank")}
+function cp(){var b=$("cpb");try{navigator.clipboard.writeText(txt()).then(function(){b.textContent="¡Copiado!"},function(){b.textContent="No se pudo copiar"})}catch(e){b.textContent="No se pudo copiar"}}
+document.addEventListener("keydown",function(e){if(e.key=="Enter"&&!$("game").classList.contains("hide")){$("chk").classList.contains("hide")?nextQ():check()}});
+</script></body></html>
