@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Escribe, no toques · Stative vs. Dynamic Verbs</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f7f6f2;--card:#fff;--text:#1f2328;--muted:#5d646c;--line:#e2e0d8;--ok:#15803d;--bad:#b42318;--okb:#e6f6ea;--badb:#fdeaea;--M:#2563eb;--W:#d97706;--P:#15803d;--A:#6d4ac9;--D:#0e8f8f;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14161a;--card:#1d2026;--text:#eceef1;--muted:#a1a8b1;--line:#2d323b;--ok:#5fd388;--bad:#ff8a80;--okb:#12301c;--badb:#3a1818;--M:#6aa0ff;--W:#f0a642;--P:#5fd388;--A:#b19cf5;--D:#4fd1c5;color-scheme:dark}}
+*{box-sizing:border-box;margin:0}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding:24px 16px 60px}
+.w{max-width:720px;margin:0 auto}.hide{display:none!important}
+.pill{display:inline-block;border:1px solid var(--line);background:var(--card);color:var(--W);font-weight:600;font-size:13px;padding:3px 12px;border-radius:99px}
+h1{font-size:clamp(30px,7vw,44px);line-height:1.1;margin:10px 0}h1 b{color:var(--W)}
+.sub{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;padding:12px 16px;margin:0 0 10px;cursor:pointer}
+.card h2{font-size:1.05rem;display:flex;gap:10px;align-items:center}
+.dot{width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex:none}
+.card p{margin:4px 0}.kw{font-size:.82rem;color:var(--c);font-weight:600}
+.det{display:none;margin-top:8px}.open .det{display:block}
+.ex{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0}.ex i{display:block;color:var(--muted);font-size:.85rem}
+.hint{color:var(--muted);font-size:.9rem;margin:10px 0}
+.lb{display:block;font-weight:600;margin:14px 0 4px}
+.inp{width:100%;font:inherit;color:var(--text);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:11px 14px;margin:8px 0}.inp:focus{outline:0;border-color:var(--M)}
+.btn{display:block;width:100%;font:inherit;font-weight:700;color:#fff;background:var(--text);border:0;border-radius:12px;padding:13px;margin:10px 0;cursor:pointer}
+html:not([data-theme=light]) .btn{color:var(--bg)}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--line)}.btn.wa{background:#15803d;color:#fff}
+.err{color:var(--bad);font-size:.9rem;margin:4px 0}
+.top{display:flex;justify-content:space-between;gap:8px;font-size:.88rem;color:var(--muted);margin-bottom:6px}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:16px}.bar i{display:block;height:100%;width:0;background:var(--M);transition:width .3s}
+.q{font-size:1.2rem;font-weight:600;margin-bottom:8px}.q span{color:var(--M)}
+.fb{display:none;border-left:4px solid;border-radius:10px;padding:10px 14px;margin:10px 0}.fb.ok{background:var(--okb);border-color:var(--ok)}.fb.no{background:var(--badb);border-color:var(--bad)}.fb .h{font-weight:700;margin-bottom:2px}
+.hs{width:18px;height:18px;vertical-align:-3px;fill:var(--bad)}.hs.off{fill:none;stroke:var(--muted);stroke-width:1.6}
+.big{font-size:72px;font-weight:800;color:var(--W)}.brk{text-align:left;margin:14px 0}.brk div{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+</style></head><body><div class="w">
+<section id="home">
+<span class="pill">Nica English Club · Práctica</span>
+<h1>Escribe, <b>no toques</b></h1>
+<p class="sub">Verbos de estado y de acción. Aquí <b>siempre escribes</b> en inglés.</p>
+<div class="card" style="--c:var(--M)" onclick="this.classList.toggle('open')"><h2><i class="dot">M</i><span>Mente = no se ve</span></h2><p>Pensar, saber, creer. <b>Sin -ing</b>.</p><div class="kw">know · believe · understand · remember</div><div class="det"><div class="ex">I know the answer.<i>No: I am knowing.</i></div></div></div>
+<div class="card" style="--c:var(--W)" onclick="this.classList.toggle('open')"><h2><i class="dot">W</i><span>Deseos y gustos</span></h2><p>Lo que quieres, necesitas o amas. <b>Sin -ing</b>.</p><div class="kw">want · need · like · love · hate</div><div class="det"><div class="ex">I want a latte, please.<i>No: I am wanting.</i></div></div></div>
+<div class="card" style="--c:var(--P)" onclick="this.classList.toggle('open')"><h2><i class="dot">P</i><span>Posesión y sentidos</span></h2><p>Tener algo o cómo se siente. <b>Presente simple</b>.</p><div class="kw">have (tener) · own · see · taste</div><div class="det"><div class="ex">I have a car. It tastes great.<i>Have = tener, es un estado.</i></div></div></div>
+<div class="card" style="--c:var(--A)" onclick="this.classList.toggle('open')"><h2><i class="dot">A</i><span>Acción = se puede filmar</span></h2><p>Si lo ves pasar, usa <b>am / is / are + -ing</b>.</p><div class="kw">run · eat · study · play</div><div class="det"><div class="ex">She is running right now.<i>Acción en vivo.</i></div></div></div>
+<div class="card" style="--c:var(--D)" onclick="this.classList.toggle('open')"><h2><i class="dot">D</i><span>Doble significado</span></h2><p>Mismo verbo, otro sentido: ahora es <b>actividad</b>.</p><div class="kw">think · have · see · taste</div><div class="det"><div class="ex">I’m having lunch. I’m thinking about it.<i>Comer y procesar = acción.</i></div></div></div>
+<p class="sub"><b style="color:var(--text)">Truco:</b> ¿Se puede ver o filmar? Sí → acción (-ing OK). No → estado (presente simple).</p>
+<div id="last" class="hint"></div>
+<p class="hint">❤️❤️❤️ Tienes 3 vidas. Cada error quita una. 10 aciertos seguidos recuperan una. Sin vidas, empiezas de nuevo.</p>
+<label class="lb" for="nm">Tu nombre</label>
+<input id="nm" class="inp" type="text" maxlength="40" placeholder="Escribe tu nombre" autocomplete="given-name">
+<div id="nmerr" class="err hide">Escribe tu nombre para empezar.</div>
+<button class="btn" onclick="start()">Empezar · 25 actividades</button>
+</section>
+<section id="game" class="hide">
+<div class="top"><span id="n"></span><span id="hp" style="color:var(--text)"></span><span id="lv"></span></div>
+<div class="bar"><i id="pg"></i></div>
+<div class="q" id="q"></div><div id="opts"></div>
+<input id="ans" class="inp" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe tu respuesta en inglés">
+<div id="err" class="err hide"></div>
+<button class="btn" id="chk" onclick="check()">Comprobar</button>
+<div class="fb" id="fb"></div>
+<button class="btn hide" id="next" onclick="nextQ()">Siguiente</button>
+</section>
+<section id="over" class="hide" style="text-align:center;padding-top:30px">
+<span class="pill">Sin vidas</span>
+<h1>¡Sin <b>vidas</b>!</h1>
+<p class="sub" id="ovmsg"></p>
+<div class="fb" id="ovfb" style="text-align:left;margin-bottom:18px"></div>
+<button class="btn" onclick="start()">Intentarlo otra vez</button>
+<button class="btn ghost" onclick="show('home')">Repasar las tarjetas</button>
+</section>
+<section id="end" class="hide" style="text-align:center;padding-top:30px">
+<span class="pill">Resultado</span><div class="big" id="pct"></div>
+<div class="brk" id="brk"></div>
+<div id="ownl" style="text-align:left"></div>
+<p class="sub" style="margin-top:16px">Dominar toma tiempo: <b>vuelve en 2 o 3 días</b> con preguntas nuevas.</p>
+<button class="btn wa" onclick="wa()">Enviar al coach por WhatsApp</button>
+<button class="btn ghost" onclick="cp()" id="cpb">Copiar resultado</button>
+<button class="btn ghost" onclick="show('home')">Volver al inicio</button>
+</section>
+</div>
+<script>
+var HRT='<svg class="hs" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg>';
+var TN={M:"Mente",W:"Deseos",P:"Posesión",A:"Acción",D:"Doble sentido"},ST={M:1,W:1,P:1};
+var HT={M:"Pista: ¿es algo que piensas o sabes? No se ve: sin -ing.",W:"Pista: ¿es un deseo, gusto o necesidad? Sin -ing.",P:"Pista: ¿es tener algo o un sentido? Presente simple.",A:"Pista: ¿se puede filmar? Entonces am/is/are + -ing.",D:"Pista: aquí have/think es una actividad: am/is/are + -ing."};
+var LV=["Parte 1 · ¿Cómo dirías...?","Parte 2 · Rellena el hueco","Parte 3 · Corrige el error","Parte 4 · Tus propias frases"],KS=["mc","fill","fix","own"],NN=[8,8,5,4],TS=["M","W","P","A","D"];
+var RAW={mc:`M|Yo sé la respuesta.|I know the answer.|I am knowing the answer.|I knowing the answer.|<b>know</b> es de la mente: sin -ing.
+M|Ella entiende la lección.|She understands the lesson.|She is understanding the lesson.|She understand the lesson.|<b>understand</b> es estado: presente simple, con -s.
+W|Yo quiero un café.|I want a coffee.|I am wanting a coffee.|I wanting a coffee.|<b>want</b> es un deseo: sin -ing.
+W|Ellos necesitan ayuda.|They need help.|They are needing help.|They needs help.|<b>need</b> es estado: sin -ing.
+W|A él le encanta la música.|He loves music.|He is loving music.|He love music.|<b>love</b> es un sentimiento: <b>loves</b> con he.
+P|Tengo un carro.|I have a car.|I am having a car.|I having a car.|<b>have</b> = posesión: estado.
+P|Ella es dueña de una casa.|She owns a house.|She is owning a house.|She own a house.|<b>own</b> es posesión: estado.
+A|Estoy corriendo ahora mismo.|I am running right now.|I run right now.|I am run right now.|Acción en vivo: <b>am running</b>.
+A|Ellos están estudiando.|They are studying.|They studying.|They is studying.|Acción: <b>are studying</b>.
+D|Estoy almorzando.|I am having lunch.|I having lunch.|I am have lunch.|<b>have</b> = comer es actividad: <b>am having</b>.
+D|Estoy pensando en el viaje.|I am thinking about the trip.|I thinking about the trip.|I am think about the trip.|<b>thinking about</b> = proceso: <b>am thinking</b>.`,
+fill:`M|I ___ (know) the answer.|know|Estado: <b>know</b>, sin -ing.
+M|She ___ (remember) my name.|remembers|Estado: <b>remembers</b> con she.
+W|I ___ (want) a latte, please.|want|Deseo: <b>want</b>.
+W|He ___ (need) help.|needs|Estado: <b>needs</b> con he.
+P|We ___ (have) a new house.|have|Posesión: <b>have</b>.
+P|It ___ (taste) great.|tastes|Sabor (estado): <b>tastes</b>.
+A|They ___ (play) soccer right now.|are playing|Acción en vivo: <b>are playing</b>.
+A|I ___ (study) English at the moment.|am studying|Acción: <b>am studying</b>.
+D|I ___ (think) about changing jobs.|am thinking|Todavía decides (proceso): <b>am thinking</b>.
+D|She ___ (have) dinner with her family now.|is having|Have = comer: <b>is having</b>.`,
+fix:`W|I am wanting to go.|I want to go|<b>want</b> es estado: sin -ing.
+M|She is understanding the lesson.|She understands the lesson|<b>understand</b> es estado.
+W|I am needing help.|I need help|<b>need</b> es estado.
+M|I am knowing the answer.|I know the answer|<b>know</b> es estado.
+P|He is owning a car.|He owns a car|<b>own</b> es posesión.
+A|She runs right now.|She is running right now|Ahora mismo = <b>is running</b>.`,
+own:`M|Escribe algo que sabes o crees. Usa <b>know</b> o <b>believe</b>.|know|believe|Ejemplo: I know that Managua is big.
+W|Escribe qué quieres comer hoy. Usa <b>want</b>.|want|Ejemplo: I want a pizza tonight.
+P|Escribe qué tienes en tu mochila. Usa <b>have</b>.|have|Ejemplo: I have a book and a bottle in my bag.
+A|Escribe qué estás haciendo ahora mismo. Usa <b>right now</b>.|right now|Ejemplo: I am doing this exercise right now.
+D|Escribe que estás pensando en algo. Usa <b>thinking about</b>.|thinking about|Ejemplo: I am thinking about my weekend.`};
+var PT={M:/\b(know|knows|believe|believes|understand|understands|remember|remembers)\b/,W:/\b(want|wants|need|needs|like|likes|love|loves|prefer|prefers|hate|hates)\b/,P:/\b(have|has|own|owns|belong|belongs)\b/,A:/\b(am|is|are) \w+ing\b/,D:/\b(am|is|are) (thinking|having|seeing|tasting)\b/};
+var BAD=/\b(am|is|are) (knowing|believing|understanding|remembering|wanting|needing|liking|loving|hating|owning|preferring)\b/;
+var I=[],ix,att,pts,st,own,miss,name,lives,streak;
+function $(i){return document.getElementById(i)}
+function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function pool(k){return RAW[k].trim().split("\n").map(function(s,n){var f=s.split("|"),o={k:k,t:f[0],id:k+n,p:f[1]};
+if(k=="mc"){o.o=f.slice(2,5);o.w=f[5]}else if(k=="own"){o.kw=new RegExp(f[2]+(f.length>4?"|"+f[3]:""));o.w=f[f.length-1]}else{o.a=f[2].split("/");o.w=f[3];if(k=="fix")o.p="Corrige: "+f[1]}return o})}
+function pick(k,n,seen){var g={},r=[];TS.forEach(function(t){g[t]=[]});pool(k).forEach(function(x){g[x.t].push(x)});
+TS.forEach(function(t){g[t]=sh(g[t].filter(function(x){return seen.indexOf(x.id)<0})).concat(sh(g[t].filter(function(x){return seen.indexOf(x.id)>-1})))});
+var ts=sh(TS),m=0;while(r.length<n&&m<99){var t=ts[m++%5];if(g[t].length)r.push(g[t].shift())}return sh(r)}
+function build(){var seen=[];try{seen=JSON.parse(localStorage.getItem("nec3s"))||[]}catch(e){}I=[];
+KS.forEach(function(k,n){pick(k,NN[n],seen).forEach(function(x){x.l=n;if(k=="mc"){var c=x.o[0];x.o=sh(x.o);x.a=x.o.indexOf(c)}I.push(x);seen.push(x.id)})});
+try{localStorage.setItem("nec3s",JSON.stringify(seen.slice(-200)))}catch(e){}}
+function norm(s){return s.toLowerCase().replace(/[’‘`]/g,"'").replace(/won't/g,"will not").replace(/n't/g," not").replace(/'ve/g," have").replace(/'ll/g," will").replace(/'re/g," are").replace(/'m/g," am").replace(/'s (\w+ing)/g," is $1").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim()}
+function ns(s){return s.replace(/s\b/g,"")}
+function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++)d[i]=[i];for(j=1;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]==b[j-1]?0:1));return d[a.length][b.length]}
+function show(s){["home","game","end","over"].forEach(function(x){$(x).classList.toggle("hide",x!=s)});scrollTo(0,0);if(s=="home")last()}
+function last(){var t="";try{var r=JSON.parse(localStorage.getItem("nec3"));if(r)t="Último intento: "+r.pct+"% el "+r.d+". Vuelve a practicar en 2 o 3 días."}catch(e){}$("last").textContent=t}
+function hud(){$("hp").innerHTML=HRT.repeat(lives)+HRT.replace("hs","hs off").repeat(3-lives)+" · "+streak+"/10"}
+function start(){name=$("nm").value.trim();if(!name){$("nmerr").classList.remove("hide");return}$("nmerr").classList.add("hide");build();lives=3;streak=0;ix=0;pts=0;own=[];miss=[];st={};TS.forEach(function(t){st[t]=[0,0]});show("game");render()}
+function render(){var i=I[ix];att=0;hud();$("n").textContent=(ix+1)+"/"+I.length;$("lv").textContent=LV[i.l];$("pg").style.width=(ix/I.length*100)+"%";
+$("q").innerHTML=i.k=="mc"?"¿Cómo dirías en inglés?<br>“"+i.p+"”":i.k=="fill"?"Completa: <span>"+i.p.replace("___","&nbsp;___&nbsp;")+"</span>":i.p;
+$("opts").innerHTML=i.k=="mc"?i.o.map(function(o,n){return '<div class="ex">'+"ABC"[n]+") "+o+"</div>"}).join("")+'<p class="hint">Escribe la opción completa. No la toques: ¡escríbela!</p>':"";
+$("ans").value="";$("ans").disabled=false;$("err").classList.add("hide");$("fb").style.display="none";$("next").classList.add("hide");$("chk").classList.remove("hide");$("ans").focus()}
+function err(m){$("err").textContent=m;$("err").classList.remove("hide")}
+function fb(ok,h){var f=$("fb");f.className="fb "+(ok?"ok":"no");f.innerHTML=h;f.style.display="block"}
+function done(){$("ans").disabled=true;$("chk").classList.add("hide");$("next").classList.remove("hide");$("next").textContent=ix==I.length-1?"Ver resultado":"Siguiente"}
+function over(i){$("ans").disabled=true;var ok=i.k=="mc"?i.o[i.a]:i.a[0],f=$("ovfb");f.className="fb no";f.style.display="block";f.innerHTML='<div class="h">Era: '+ok+"</div>"+i.w;$("ovmsg").textContent="Llegaste a la actividad "+(ix+1)+" de "+I.length+".";show("over")}
+function check(){var i=I[ix],v=$("ans").value.trim();if(!v)return;$("err").classList.add("hide");var n=norm(v);
+if(i.k=="own"){var p=i.p.replace(/<[^>]+>/g,"");
+if(n.split(" ").length>=4&&i.kw.test(n)&&PT[i.t].test(n)&&!(ST[i.t]&&BAD.test(n))){own.push({p:p,v:v,ok:1});fb(1,'<div class="h">Estructura bien</div>Tu coach revisará si suena natural.');done();return}
+att++;if(att==1){fb(0,'<div class="h">Revisa tu frase</div>Usa la palabra pedida, al menos 4 palabras y el tiempo correcto. '+HT[i.t]);return}
+own.push({p:p,v:v,ok:0});fb(0,'<div class="h">Guardada para el coach</div>'+i.w);done();return}
+var cor=(i.k=="mc"?[i.o[i.a]]:i.a).map(norm);
+if(cor.indexOf(n)>-1){pts+=att?1:2;st[i.t][0]++;st[i.t][1]++;var up="";if(!att&&++streak>=10){streak=0;if(lives<3){lives++;up="<br>¡10 seguidas! Recuperaste una vida."}else up="<br>¡10 seguidas!"}hud();fb(1,'<div class="h">¡Eso es!</div>'+i.w+up);done();return}
+var wr=i.k=="mc"?i.o.map(norm):[];
+if(wr.indexOf(n)<0&&cor.some(function(c){return lev(n,c)<=(i.k=="mc"?2:1)&&ns(n)!=ns(c)})){err("¡Casi! Revisa la ortografía y escríbela otra vez.");return}
+if(i.k=="mc"&&!i.o.some(function(o){return lev(n,norm(o))<=2})){err("Escribe una de las tres opciones, completa.");return}
+att++;streak=0;lives--;hud();if(lives<=0){over(i);return}
+if(att==1){fb(0,'<div class="h">Aún no</div>'+HT[i.t]+" Inténtalo otra vez.");return}
+st[i.t][1]++;miss.push(ix);fb(0,'<div class="h">Respuesta: '+(i.k=="mc"?i.o[i.a]:i.a[0])+"</div>"+i.w);done()}
+function nextQ(){ix++;if(ix>=I.length)return finish();render()}
+function finish(){var mx=I.filter(function(i){return i.k!="own"}).length*2,p=Math.round(pts/mx*100);$("pct").textContent=p+"%";
+$("brk").innerHTML=TS.map(function(t){return "<div><span style='color:var(--"+t+")'>● </span>"+TN[t]+"<b>"+st[t][0]+"/"+st[t][1]+"</b></div>"}).join("");
+$("ownl").innerHTML="<h3 style='margin:8px 0'>Tus frases</h3>"+own.map(function(o){return '<div class="ex">'+o.v.replace(/</g,"&lt;")+"<i>"+(o.ok?"Estructura OK · pendiente del coach":"Pendiente de revisión del coach")+"</i></div>"}).join("");
+try{localStorage.setItem("nec3",JSON.stringify({pct:p,d:new Date().toLocaleDateString()}))}catch(e){}show("end")}
+function txt(){return "Hola coach, soy "+name+". Práctica Stative vs Dynamic: "+$("pct").textContent+".\n"+TS.map(function(t){return TN[t]+" "+st[t][0]+"/"+st[t][1]}).join(" · ")+"\nMis frases:\n"+own.map(function(o,n){return (n+1)+". "+o.v}).join("\n")}
+function wa(){window.open("https://wa.me/?text="+encodeURIComponent(txt()),"_blank")}
+function cp(){var b=$("cpb");try{navigator.clipboard.writeText(txt()).then(function(){b.textContent="¡Copiado!"},function(){b.textContent="No se pudo copiar"})}catch(e){b.textContent="No se pudo copiar"}}
+document.addEventListener("keydown",function(e){if(e.key=="Enter"&&!$("game").classList.contains("hide")){$("chk").classList.contains("hide")?nextQ():check()}});
+</script></body></html>
