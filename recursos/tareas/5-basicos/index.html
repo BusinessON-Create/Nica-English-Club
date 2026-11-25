@@ -28,6 +28,7 @@ h1{font-size:clamp(36px,9vw,56px);font-weight:800;letter-spacing:-.03em;line-hei
 .inp{width:100%;background:var(--card);color:var(--txt);border:1px solid var(--bd);border-radius:16px;padding:16px 18px;font:inherit;font-size:20px;font-weight:600;margin-bottom:12px}.inp:focus{outline:2px solid var(--gold)}
 .err{color:var(--bad);font-weight:600;margin:-4px 0 12px}
 .hint{color:var(--mut);font-size:15px;margin:4px 0 18px}
+.q .tg{display:inline-block;font-size:14px;font-weight:800;letter-spacing:0;line-height:1.2;padding:6px 13px;border-radius:999px;border:2px solid var(--c);color:var(--txt);background:var(--card);margin-bottom:12px}
 .brk{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 24px}.brk div{flex:1 1 30%;background:var(--card);border-radius:16px;padding:12px;font-weight:600;font-size:14px;color:var(--mut)}.brk b{display:block;font-size:24px;color:var(--txt)}
 .ti{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:14px;flex:none;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.22)}.ti svg{width:26px;height:26px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
 .ti.sm{width:30px;height:30px;border-radius:10px}.ti.sm svg{width:18px;height:18px}
@@ -83,6 +84,7 @@ h1{font-size:clamp(36px,9vw,56px);font-weight:800;letter-spacing:-.03em;line-hei
 </div>
 <script>
 var SV={"G": "<svg viewBox=\"0 0 24 24\"><path fill-rule=\"evenodd\" fill=\"#fff\" d=\"M12 2.5a7 7 0 0 0-7 7c0 5 7 12 7 12s7-7 7-12a7 7 0 0 0-7-7zm0 9.5a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z\"/></svg>", "W": "<svg viewBox=\"0 0 24 24\"><path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1\" stroke-linejoin=\"round\" d=\"M13.5 2 5 13.5h6l-1 8.5L19 10h-6z\"/></svg>", "N": "<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2\"/><path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1.2\" stroke-linejoin=\"round\" d=\"M10 8.2v7.6l6-3.8z\"/></svg>", "S": "<svg viewBox=\"0 0 24 24\"><path fill=\"#fff\" stroke=\"#fff\" stroke-width=\"1.6\" stroke-linejoin=\"round\" d=\"M11 6.5v11L3.5 12zM20.5 6.5v11L13 12z\"/></svg>", "D": "<svg viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"#fff\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 5.5 4.5 10 9 14.5\"/><path d=\"M5 10h8a4.5 4.5 0 0 1 0 9H8\"/></g></svg>"},HRT='<svg class="hs" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg>';
+var LB={N:"Algo que se está haciendo",S:"Algo que se estaba haciendo",G:"Algo que se va a hacer",D:"Algo que se iba a hacer",W:"Algo que se hará"};
 var TN={G:"going to",W:"will",N:"am/is/are + ing",S:"was/were + ing",D:"was/were going to"};
 function ic(t){return '<i class="ti sm t-'+t+'">'+SV[t]+"</i>"}
 var HT={G:"Pista: ¿ya estaba decidido, o hay una señal ahora?",W:"Pista: ¿lo decides ahora, prometes u opinas?",N:"Pista: ¿está pasando ahora mismo?",S:"Pista: ¿qué estaba en progreso en ese momento del pasado?",D:"Pista: ¿era un plan que al final no pasó?"};
@@ -95,7 +97,7 @@ W|Suena el teléfono. ¡Yo contesto!|The phone is ringing. I will answer it.|The
 W|Creo que mañana lloverá.|I think it will rain tomorrow.|I think it will to rain tomorrow.|I think it was raining tomorrow.|Opinión con <b>I think</b>: <b>will</b> + base.
 N|Mi mamá está cocinando ahora mismo.|My mom is cooking right now.|My mom was cooking right now.|My mom is cook right now.|<b>Right now</b>: <b>is cooking</b>.
 N|Estamos esperando el bus.|We are waiting for the bus.|We waiting for the bus.|We will waiting for the bus.|Pasa ahora: <b>are waiting</b>.
-N|El sábado me reúno con mis amigos. Ya quedamos.|I am meeting my friends on Saturday.|I was meeting my friends on Saturday.|I meeting my friends on Saturday.|Arreglo fijo: <b>am meeting</b>.
+N|Mis hijos están jugando en el parque ahora.|My children are playing in the park now.|My children is playing in the park now.|My children are play in the park now.|<b>Now</b> con <b>children</b>: <b>are playing</b>.
 S|Anoche a las 9 estaba viendo una serie.|I was watching a series at 9 last night.|I am watching a series at 9 last night.|I was watch a series at 9 last night.|Acción en progreso en el pasado: <b>was watching</b>.
 S|Estaba lloviendo cuando salí de casa.|It was raining when I left home.|It is raining when I left home.|It was rain when I left home.|Acción larga en progreso: <b>was raining</b>.
 S|Mientras ellos estudiaban, yo dormía.|While they were studying, I was sleeping.|While they are studying, I was sleeping.|While they were study, I was sleeping.|Dos acciones en progreso: <b>were studying</b>, <b>was sleeping</b>.
@@ -103,7 +105,30 @@ S|¿Qué estabas haciendo cuando llamé?|What were you doing when I called?|What
 D|Iba a llamarte, pero me quedé sin batería.|I was going to call you, but my battery died.|I am going to call you, but my battery died.|I will call you, but my battery died.|Plan que no pasó: <b>was going to call</b>.
 D|Íbamos a viajar, pero cancelaron el vuelo.|We were going to travel, but they cancelled the flight.|We was going to travel, but they cancelled the flight.|We are going to travel, but they cancelled the flight.|Con <b>we</b>: <b>were going to</b>.
 D|Ella iba a estudiar, pero se durmió.|She was going to study, but she fell asleep.|She is going to study, but she fell asleep.|She were going to study, but she fell asleep.|Con <b>she</b>: <b>was going to</b>.
-D|Pensaba comprar pan, pero la tienda estaba cerrada.|I was going to buy bread, but the shop was closed.|I will buy bread, but the shop was closed.|I am going to buy bread, but the shop was closed.|El plan no se cumplió: <b>was going to buy</b>.`,
+D|Pensaba comprar pan, pero la tienda estaba cerrada.|I was going to buy bread, but the shop was closed.|I will buy bread, but the shop was closed.|I am going to buy bread, but the shop was closed.|El plan no se cumplió: <b>was going to buy</b>.
+G|Cuidado, el vaso se va a caer.|Careful! The glass is going to fall.|Careful! The glass going to fall.|Careful! The glass is going fall.|Hay una señal ahora: <b>is going to fall</b>.
+G|Este año voy a aprender inglés. Ya me inscribí.|I am going to learn English this year.|I going to learn English this year.|I am going to learning English this year.|Plan decidido: <b>am going to learn</b>.
+G|Mis padres van a comprar una casa. Ya tienen el dinero.|My parents are going to buy a house.|My parents is going to buy a house.|My parents are going to buying a house.|Con <b>parents</b>: <b>are going to buy</b>.
+G|Ella va a ser doctora. Ya empezó la universidad.|She is going to be a doctor.|She going to be a doctor.|She is going to being a doctor.|Plan en marcha: <b>is going to be</b>.
+G|Voy a preparar la cena esta noche.|I am going to cook dinner tonight.|I am going cook dinner tonight.|I will going to cook dinner tonight.|Plan: <b>am going to cook</b>.
+W|Hace calor. Yo abro la ventana.|It is hot. I will open the window.|It is hot. I will opening the window.|It is hot. I will to open the window.|Decisión al instante: <b>will open</b>.
+W|Creo que ella ganará el premio.|I think she will win the prize.|I think she will wins the prize.|I think she wills win the prize.|Opinión con <b>I think</b>: <b>will win</b>.
+W|Te prometo que no llegaré tarde.|I promise I will not be late.|I promise I will no be late.|I promise I not will be late.|Promesa negativa: <b>will not be</b>.
+W|No tienes lápiz. Yo te presto uno.|You do not have a pencil. I will lend you one.|You do not have a pencil. I will lending you one.|You do not have a pencil. I will to lend you one.|Ofrecimiento al instante: <b>will lend</b>.
+W|Creo que mañana hará frío.|I think it will be cold tomorrow.|I think it will is cold tomorrow.|I think it will to be cold tomorrow.|Opinión: <b>will be</b>.
+N|Mira, el niño está comiendo helado.|Look, the boy is eating ice cream.|Look, the boy eating ice cream.|Look, the boy is eat ice cream.|Pasa ahora: <b>is eating</b>.
+N|Ahora mismo estoy escribiendo un mensaje.|I am writing a message right now.|I writing a message right now.|I am write a message right now.|<b>Right now</b>: <b>am writing</b>.
+N|¿Estás escuchando música?|Are you listening to music?|Is you listening to music?|Do you listening to music?|Pregunta en vivo: <b>Are you listening</b>.
+N|Ellos no están trabajando hoy.|They are not working today.|They not working today.|They are not work today.|Negativo: <b>are not working</b>.
+N|Mi hermana está bañándose en este momento.|My sister is taking a shower at the moment.|My sister are taking a shower at the moment.|My sister is take a shower at the moment.|<b>At the moment</b>: <b>is taking</b>.
+S|Cuando llegaste, yo estaba comiendo.|I was eating when you arrived.|I am eating when you arrived.|I was eat when you arrived.|Pasado en progreso: <b>was eating</b>.
+S|Ayer a las 3 estábamos estudiando.|We were studying at 3 yesterday.|We was studying at 3 yesterday.|We were study at 3 yesterday.|Con <b>we</b>: <b>were studying</b>.
+S|Ella estaba hablando por teléfono cuando se fue la luz.|She was talking on the phone when the power went out.|She is talking on the phone when the power went out.|She was talk on the phone when the power went out.|Acción interrumpida: <b>was talking</b>.
+S|Los niños estaban durmiendo cuando llegué.|The children were sleeping when I arrived.|The children was sleeping when I arrived.|The children were sleep when I arrived.|Con <b>children</b>: <b>were sleeping</b>.
+D|Iba a estudiar, pero llegaron mis amigos.|I was going to study, but my friends arrived.|I am going to study, but my friends arrived.|I was going to studying, but my friends arrived.|Plan que no pasó: <b>was going to study</b>.
+D|Ellos iban a casarse, pero cambiaron de idea.|They were going to get married, but they changed their minds.|They was going to get married, but they changed their minds.|They are going to get married, but they changed their minds.|Con <b>they</b>: <b>were going to</b>.
+D|Ibas a venir a la fiesta, pero te enfermaste.|You were going to come to the party, but you got sick.|You was going to come to the party, but you got sick.|You will come to the party, but you got sick.|Con <b>you</b>: <b>were going to come</b>.
+D|Mi papá iba a arreglar el carro, pero no tenía tiempo.|My dad was going to fix the car, but he did not have time.|My dad is going to fix the car, but he did not have time.|My dad were going to fix the car, but he did not have time.|Plan que no pasó: <b>was going to fix</b>.`,
 fill:`G|Look! That boy ___ (fall).|is going to fall|Hay una señal ahora: <b>is going to fall</b>.
 G|We ___ (visit) my aunt next weekend. We bought the tickets.|are going to visit|Plan decidido: <b>are going to visit</b>.
 G|I ___ (not / study) tonight. I am too tired.|am not going to study|Plan negativo: <b>am not going to study</b>.
@@ -122,7 +147,28 @@ S|He ___ (not / sleep) when I called.|was not sleeping|<b>Was not (wasn’t) sle
 D|I ___ (call) you, but I forgot.|was going to call|El plan no pasó: <b>was going to call</b>.
 D|We ___ (play) soccer, but it rained.|were going to play|Con <b>we</b>: <b>were going to play</b>.
 D|She ___ (not / come), but she changed her mind.|was not going to come|<b>Was not (wasn’t) going to come</b>.
-D|They ___ (buy) a car, but it was too expensive.|were going to buy|Plan que no se cumplió: <b>were going to buy</b>.`,
+D|They ___ (buy) a car, but it was too expensive.|were going to buy|Plan que no se cumplió: <b>were going to buy</b>.
+G|Look at the sky! It ___ (rain).|is going to rain|Hay una señal ahora: <b>is going to rain</b>.
+G|I ___ (start) a new job on Monday. I signed the contract.|am going to start|Plan decidido: <b>am going to start</b>.
+G|My brother ___ (not / go) to the party. He is sick.|is not going to go|Negativo: <b>is not going to go</b>.
+G|They ___ (build) a new school next year. The plans are ready.|are going to build|Plan en marcha: <b>are going to build</b>.
+G|What ___ (you / do) this weekend?|are you going to do|Pregunta sobre planes: <b>are you going to do</b>.
+W|I think my sister ___ (like) this gift.|will like|Opinión con <b>I think</b>: <b>will like</b>.
+W|The bag is heavy. I ___ (carry) it for you.|will carry|Ofrecimiento al instante: <b>will carry</b>.
+W|I ___ (not / forget) your birthday. I promise.|will not forget|Promesa: <b>will not (won’t) forget</b>.
+W|I think it ___ (be) a great year.|will be|Opinión: <b>will be</b>.
+N|Listen! Someone ___ (knock) on the door.|is knocking|Pasa ahora: <b>is knocking</b>.
+N|At the moment, I ___ (read) a book.|am reading|<b>At the moment</b>: <b>am reading</b>.
+N|The students ___ (not / listen) right now.|are not listening|<b>Right now</b> negativo: <b>are not listening</b>.
+N|Where ___ (they / go) now?|are they going|Pregunta en vivo: <b>are they going</b>.
+S|At 7 yesterday, we ___ (have) breakfast.|were having|Estaban en progreso a esa hora: <b>were having</b>.
+S|I ___ (walk) home when it started to rain.|was walking|Acción interrumpida: <b>was walking</b>.
+S|They ___ (not / work) when the boss arrived.|were not working|<b>Were not (weren’t) working</b>.
+S|What ___ (she / do) at 9 last night?|was she doing|Pasado en progreso: <b>was she doing</b>.
+D|I ___ (visit) my grandma, but I had no time.|was going to visit|El plan no pasó: <b>was going to visit</b>.
+D|He ___ (not / stay), but the party was fun.|was not going to stay|<b>Was not (wasn’t) going to stay</b>.
+D|You ___ (call) me, but you forgot.|were going to call|Con <b>you</b>: <b>were going to call</b>.
+D|We ___ (eat) out, but the restaurant was closed.|were going to eat|Plan que no se cumplió: <b>were going to eat</b>.`,
 fix:`G|I am going to buying a bike.|i am going to buy a bike|Después de <b>going to</b>: verbo base.
 G|She going to travel tomorrow.|she is going to travel tomorrow|Falta <b>is</b>: <b>is going to</b>.
 W|I will to help you.|i will help you|Después de <b>will</b>: base, sin <b>to</b>.
@@ -132,15 +178,37 @@ N|They playing soccer right now.|they are playing soccer right now|Falta <b>are<
 S|I was watch TV when you called.|i was watching tv when you called|<b>Was</b> + verbo-ing.
 S|We was playing soccer at 5.|we were playing soccer at 5|Con <b>we</b>: <b>were</b>.
 D|I was going to called you.|i was going to call you|<b>Was going to</b> + base.
-D|She is going to come, but she was sick.|she was going to come but she was sick|El plan no pasó: <b>was going to</b>.`,
+D|She is going to come, but she was sick.|she was going to come but she was sick|El plan no pasó: <b>was going to</b>.
+G|He is going to eating pizza.|he is going to eat pizza|Después de <b>going to</b>: verbo base.
+G|They are going visit Rome.|they are going to visit rome|Falta <b>to</b>: <b>going to</b>.
+G|I going to call you later.|i am going to call you later|Falta <b>am</b>: <b>am going to</b>.
+W|She will studies tonight.|she will study tonight|<b>Will</b> + base: <b>will study</b>.
+W|We will to win the game.|we will win the game|Después de <b>will</b>: base, sin <b>to</b>.
+W|I will am there at six.|i will be there at six|Con <b>will</b> usa <b>be</b>, no <b>am</b>.
+N|He is run in the park now.|he is running in the park now|<b>Is</b> + verbo-ing.
+N|We studying English right now.|we are studying english right now|Falta <b>are</b>.
+N|I am watch a movie now.|i am watching a movie now|<b>Am</b> + verbo-ing.
+S|They was sleeping at ten.|they were sleeping at ten|Con <b>they</b>: <b>were</b>.
+S|I were cooking when you called.|i was cooking when you called|Con <b>I</b>: <b>was</b>.
+S|She was cook dinner at six.|she was cooking dinner at six|<b>Was</b> + verbo-ing.
+D|We were going to played soccer.|we were going to play soccer|<b>Were going to</b> + base.
+D|She is going to travel, but she had no money.|she was going to travel but she had no money|El plan no pasó: <b>was going to</b>.
+D|They was going to come.|they were going to come|Con <b>they</b>: <b>were going to</b>.`,
 own:`G|Escribe un plan que tienes para mañana. Usa <b>going to</b>.|going to|Ejemplo: I am going to visit my grandmother tomorrow.
 W|Escribe una promesa. Usa <b>I will</b>.|will|Ejemplo: I will call you tomorrow, I promise.
 W|Escribe tu opinión sobre el futuro. Usa <b>I think</b> + <b>will</b>.|i think|Ejemplo: I think it will rain tomorrow.
 N|Escribe qué estás haciendo ahora mismo. Usa <b>right now</b>.|right now|Ejemplo: I am doing this exercise right now.
-N|Escribe un plan fijo para este fin de semana. Usa <b>this weekend</b>.|weekend|Ejemplo: I am meeting my friends this weekend.
+N|Escribe qué están haciendo tus amigos en este momento. Usa <b>at the moment</b>.|at the moment|Ejemplo: My friends are playing soccer at the moment.
 S|Escribe qué estabas haciendo anoche. Usa <b>last night</b>.|last night|Ejemplo: I was studying at 9 last night.
 S|Escribe una frase en pasado con <b>while</b>.|while|Ejemplo: While I was cooking, my brother was watching TV.
-D|Escribe un plan que no pudiste hacer. Usa <b>but</b>.|but|Ejemplo: I was going to exercise, but it rained.`};
+D|Escribe un plan que no pudiste hacer. Usa <b>but</b>.|but|Ejemplo: I was going to exercise, but it rained.
+G|Escribe qué vas a hacer el próximo año. Usa <b>next year</b>.|next year|Ejemplo: I am going to learn English next year.
+G|Escribe un plan para esta noche. Usa <b>tonight</b>.|tonight|Ejemplo: I am going to watch a movie tonight.
+W|Escribe una decisión rápida para ayudar a alguien. Usa <b>will help</b>.|will help|Ejemplo: I will help you with your homework.
+N|Escribe qué está haciendo tu familia ahora. Usa <b>now</b>.|now|Ejemplo: My mom is cooking now.
+S|Escribe qué estabas haciendo ayer a las 8. Usa <b>yesterday</b>.|yesterday|Ejemplo: I was eating dinner at 8 yesterday.
+D|Escribe algo que ibas a hacer y no hiciste. Explica por qué. Usa <b>because</b>.|because|Ejemplo: I was going to go out, but I stayed home because it rained.
+D|Escribe un plan de un amigo que no pasó. Usa <b>but</b>.|but|Ejemplo: My friend was going to travel, but he had no money.`};
 var PT={G:/\b(am|is|are)( not)? going to \w+/,W:/\bwill( not)? \w+/,N:/\b(am|is|are)( not)? \w+ing\b/,S:/\b(was|were)( not)? \w+ing\b/,D:/\b(was|were)( not)? going to \w+/};
 var I=[],ix,att,pts,st,own,miss,name,lives,streak;
 function $(i){return document.getElementById(i)}
@@ -160,7 +228,7 @@ function last(){var t="";try{var r=JSON.parse(localStorage.getItem("nec2"));if(r
 function hud(){$("hp").innerHTML=HRT.repeat(lives)+HRT.replace("hs","hs off").repeat(3-lives)+" · "+streak+"/10"}
 function start(){name=$("nm").value.trim();if(!name){$("nmerr").classList.remove("hide");return}$("nmerr").classList.add("hide");build();lives=3;streak=0;ix=0;pts=0;own=[];miss=[];st={};TS.forEach(function(t){st[t]=[0,0]});show("game");render()}
 function render(){var i=I[ix];att=0;hud();$("n").textContent=(ix+1)+"/"+I.length;$("lv").textContent=LV[i.l];$("pg").style.width=(ix/I.length*100)+"%";
-$("q").innerHTML=i.k=="mc"?"¿Cómo dirías en inglés?<br>“"+i.p+"”":i.k=="fill"?"Completa: <span>"+i.p.replace("___","&nbsp;___&nbsp;")+"</span>":i.p;
+$("q").innerHTML='<span class="tg" style="--c:var(--'+i.t+')">'+LB[i.t]+'</span><br>'+(i.k=="mc"?"¿Cómo dirías en inglés?<br>“"+i.p+"”":i.k=="fill"?"Completa: <span>"+i.p.replace("___","&nbsp;___&nbsp;")+"</span>":i.p);
 $("opts").innerHTML=i.k=="mc"?i.o.map(function(o,n){return '<div class="ex">'+"ABC"[n]+") "+o+"</div>"}).join("")+'<p class="hint" style="margin-top:12px">Escribe la opción completa. No la toques: ¡escríbela!</p>':"";
 $("ans").value="";$("ans").disabled=false;$("err").classList.add("hide");$("fb").style.display="none";$("next").classList.add("hide");$("chk").classList.remove("hide");$("ans").focus()}
 function err(m){$("err").textContent=m;$("err").classList.remove("hide")}
