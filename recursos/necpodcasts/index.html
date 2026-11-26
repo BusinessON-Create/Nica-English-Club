@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="../../seguridad.js"></script>
 <title>NEC Podcasts · Nica English Club</title>
 <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,6 +149,9 @@ header{position:sticky;top:0;z-index:30;margin:0 -18px;padding:12px 18px;backgro
 .btn:active,.chip:active,.ib:active,.opt:active{transform:scale(.96)}
 .pc:active{transform:scale(.97)}
 @media(min-width:900px){.pg{grid-template-columns:minmax(0,430px) minmax(0,1fr)}.left{position:sticky;top:84px}.nbl{max-height:min(52vh,460px)}}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);max-width:min(92vw,420px);background:var(--card2);border:1px solid var(--gold3);color:var(--tx);border-radius:16px;padding:12px 16px;font-size:14px;line-height:1.35;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.cls{padding:0 18px 6px 56px;font-size:12px;line-height:1.4;color:var(--mut)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -159,7 +163,7 @@ header{position:sticky;top:0;z-index:30;margin:0 -18px;padding:12px 18px;backgro
 </div>
 <script>
 const $=s=>document.querySelector(s),app=$('#app');
-const LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const LS={get(k,d){try{const r=localStorage.getItem('necpod:'+k)??localStorage.getItem(k);return r===null?d:(JSON.parse(r)??d)}catch(e){return d}},set(k,v){try{localStorage.setItem('necpod:'+k,JSON.stringify(v))}catch(e){}}};
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=s=>{s=Math.max(0,s|0);return (s/60|0)+':'+String(s%60).padStart(2,'0')};
@@ -167,10 +171,11 @@ const LEVELS=['A1','A2','B1','B2','C1'],LN={A1:'Principiante',A2:'Elemental',B1:
 const LV={A1:['#f0b429','#c8891a'],A2:['#ffd966','#f0b429'],B1:['#ff9a3d','#f0b429'],B2:['#ff6a1a','#d92c0e'],C1:['#f4efe6','#f0b429']};
 const IC={play:'<path d="M8 5v14l11-7z"/>',pause:'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',prev:'<path d="M6 5h2v14H6zM20 5v14L9 12z"/>',next:'<path d="M16 5h2v14h-2zM4 5l11 7L4 19z"/>'};
 const svg=p=>`<svg viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
-let eps=[],cur=null,cleanup=null,tm=null;
-function stopAll(){if(cleanup)cleanup();cleanup=null;clearInterval(tm)}
+let eps=[],cur=null,cleanup=null,tm=null,onSync=null;
+function stopAll(){if(cleanup)cleanup();cleanup=null;onSync=null;clearInterval(tm)}
 
 async function route(){
+  if(window.NEC_BLOQUEADO)return;
   stopAll();
   if(!eps.length){try{eps=await (await fetch('podcasts.json')).json()}catch(e){app.innerHTML='<div class="card">No se pudo cargar podcasts.json. Abre la página desde GitHub Pages, no con doble clic.</div>';return}}
   const h=location.hash;
@@ -180,7 +185,7 @@ addEventListener('hashchange',route);
 
 /* ---------- Cuaderno de vocabulario ---------- */
 const DE_EMAIL=''; /* PON AQUÍ TU CORREO (opcional): sube el límite diario de MyMemory */
-const getV=id=>LS.get('vocab:'+id,[]),setV=(id,v)=>LS.set('vocab:'+id,v),pending=new Set();
+const getV=id=>LS.get('vocab:'+id,[]),setV=(id,v)=>{LS.set('vocab:'+id,v);cloudPush(id)},liveV=id=>getV(id).filter(x=>!x.del),pending=new Set();
 const clean=w=>w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'');
 const words=t=>t.split(/(\s+)/).map(p=>{const c=clean(p);return c?`<button class="wd" data-w="${esc(c)}">${esc(p)}</button>`:esc(p)}).join('');
 const mm=async(text,f,t)=>{
@@ -209,19 +214,72 @@ async function translate(text,dir){
   try{list=await gt(text,f,t)}catch(e){list=await mm(text,f,t)}
   c[key]=list;LS.set('trcache2',c);return list;
 }
-const speak=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';speechSynthesis.speak(u)}catch(e){}};
+let voices=[];const loadV=()=>{try{voices=speechSynthesis.getVoices()||[]}catch(e){}};try{loadV();speechSynthesis.onvoiceschanged=loadV}catch(e){}
+const toast=m=>{let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),4200)};
+const speak=t=>{
+  if(!t)return;
+  if(!('speechSynthesis' in window)){toast('Tu navegador no puede leer en voz alta.');return}
+  const ss=speechSynthesis,NOVOICE='No se oye la voz. Revisa que tu teléfono tenga una voz en inglés (Ajustes › Texto a voz) y el volumen de medios.';
+  try{
+    ss.cancel();loadV();
+    const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.9;
+    const v=voices.find(x=>x.lang.replace('_','-')==='en-US')||voices.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;
+    let ok=false;u.onstart=()=>{ok=true};
+    u.onerror=e=>{if(e.error!=='canceled'&&e.error!=='interrupted')toast(NOVOICE)};
+    setTimeout(()=>{try{ss.resume();ss.speak(u)}catch(e){toast(NOVOICE)}},80);
+    setTimeout(()=>{if(!ok&&!ss.speaking)toast(NOVOICE)},1800);
+  }catch(e){toast(NOVOICE)}
+};
 const entryHTML=(x,ctx,pid)=>`<div class="en" data-id="${x.id}" data-p="${esc(pid)}"><div class="er"><div class="ew"><b>${esc(x.w)}</b>${x.tr&&x.tr.length?`<span class="tl">${x.tr.map(esc).join(' · ')}</span>`:pending.has(x.id)?'<span class="tl dim">traduciendo…</span>':'<span class="mn"><input class="in" placeholder="Escribe la traducción" aria-label="Traducción"><button class="ib sv" aria-label="Guardar traducción">✓</button></span>'}</div><button class="ib sp" aria-label="Escuchar pronunciación">🔊</button><button class="ib dl" aria-label="Borrar">🗑</button></div>${ctx&&x.ctx?`<small class="cx">${esc(x.ctx)}</small>`:''}</div>`;
 function wire(root,redraw){root.onclick=e=>{const b=e.target.closest('button'),en=e.target.closest('.en');if(!b||!en)return;
   const P=en.dataset.p,L=getV(P),i=L.findIndex(x=>x.id===en.dataset.id);if(i<0)return;
   if(b.classList.contains('sp')){const x=L[i];speak(x.dir==='es-en'?(x.tr&&x.tr[0]||''):x.w)}
-  else if(b.classList.contains('dl')){L.splice(i,1);setV(P,L);redraw()}
+  else if(b.classList.contains('dl')){L[i]={id:L[i].id,del:true};setV(P,L);redraw()}
   else if(b.classList.contains('sv')){const v=en.querySelector('.in').value.trim();if(v){L[i].tr=[v];setV(P,L);redraw()}}}}
 function mybook(){
   $('#back').hidden=false;document.title='Mi cuaderno · NEC Podcasts';
-  const draw=()=>{const g=eps.map(e=>({e,L:getV(e.id)})).filter(x=>x.L.length),n=g.reduce((s,x)=>s+x.L.length,0);
+  const draw=()=>{const g=eps.map(e=>({e,L:liveV(e.id)})).filter(x=>x.L.length),n=g.reduce((s,x)=>s+x.L.length,0);
     app.innerHTML=`<h1 style="font-size:clamp(30px,7vw,46px)">Mi <em>cuaderno</em></h1><p class="sub">${n?`${n} ${n===1?'anotación':'anotaciones'} de todos tus podcasts.`:'Aún no hay palabras. Abre un podcast y toca una palabra de la frase amarilla.'}</p>${g.map(x=>`<h2 class="lvt">${esc(x.e.title)}<span>${esc(x.e.level||'')}</span></h2><div class="card nb"><div class="nbl" style="max-height:none">${x.L.slice().reverse().map(y=>entryHTML(y,true,x.e.id)).join('')}</div></div>`).join('')}`;
     app.querySelectorAll('.nbl').forEach(el=>wire(el,draw))};
-  draw();
+  onSync=draw;draw();
+}
+
+/* ---------- Sincronización con la cuenta del alumno (Firebase, opcional) ---------- */
+const FBC={apiKey:"AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",authDomain:"nicaenglishportal.firebaseapp.com",projectId:"nicaenglishportal",appId:"1:304752198925:web:bd98007b81d1f3860fdc44"};
+const FBV='10.14.1',CL={st:'load',ref:null,fs:null,t:0,q:new Set()};
+const cloudLabel=()=>({ok:'☁ Guardado en tu cuenta',load:'Conectando con tu cuenta…',err:'No se pudo sincronizar ahora. Se guarda en este dispositivo.',noalumno:'No encontré tu ficha de alumno. Se guarda solo en este dispositivo.',off:'Solo en este dispositivo. <a href="https://app.nicaenglishclub.com" style="color:var(--gold)">Inicia sesión en la app</a> para guardarlo en tu cuenta.'}[CL.st]);
+const setLabel=()=>{const c=$('#cls');if(c)c.innerHTML=cloudLabel()};
+const refresh=()=>{setLabel();if(onSync)onSync();else if(!location.hash||location.hash==='#/')home()};
+const mergeL=(a,b)=>{const m=new Map();[...a,...b].forEach(x=>{const o=m.get(x.id);if(!o){m.set(x.id,x);return}
+  if(o.del||x.del){m.set(x.id,{id:x.id,del:true});return}m.set(x.id,(o.tr&&o.tr.length)||!(x.tr&&x.tr.length)?o:x)});return[...m.values()].sort((p,q)=>p.id<q.id?-1:1)};
+function cloudPush(id){if(!CL.ref)return;CL.q.add(id);clearTimeout(CL.t);
+  CL.t=setTimeout(async()=>{const v={};CL.q.forEach(i=>v[i]=getV(i));CL.q.clear();
+    try{await CL.fs.setDoc(CL.ref,{v,t:CL.fs.serverTimestamp()},{merge:true});CL.st='ok'}catch(e){CL.st='err'}setLabel()},800)}
+async function cloudInit(){
+  try{
+    const B=`https://www.gstatic.com/firebasejs/${FBV}/`;
+    const[A,Au,fs]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+    const app=A.getApps().length?A.getApp():A.initializeApp(FBC),auth=Au.getAuth(app),db=fs.getFirestore(app);
+    Au.onAuthStateChanged(auth,async u=>{
+      CL.ref=null;
+      if(!u||u.isAnonymous||!u.email){CL.st='off';setLabel();return}
+      CL.st='load';setLabel();
+      try{
+        const col=fs.collection(db,'alumnos'),mail=u.email.toLowerCase();
+        let q=await fs.getDocs(fs.query(col,fs.where('email','==',mail),fs.limit(1)));
+        if(q.empty&&u.email!==mail)q=await fs.getDocs(fs.query(col,fs.where('email','==',u.email),fs.limit(1)));
+        if(q.empty){CL.st='noalumno';refresh();return}
+        const ref=fs.doc(db,'necpodcasts_cuaderno',q.docs[0].id),snap=await fs.getDoc(ref),rv=(snap.exists()&&snap.data().v)||{},up={},ids=new Set(Object.keys(rv));
+        try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i),m=/^(?:necpod:)?vocab:(.+)$/.exec(k);if(m)ids.add(m[1])}}catch(e){}
+        ids.forEach(id=>{const loc=getV(id),rem=rv[id]||[],m=mergeL(loc,rem);
+          if(JSON.stringify(m)!==JSON.stringify(loc))LS.set('vocab:'+id,m);
+          if(JSON.stringify(m)!==JSON.stringify(rem))up[id]=m});
+        if(Object.keys(up).length)await fs.setDoc(ref,{v:up,t:fs.serverTimestamp()},{merge:true});
+        CL.ref=ref;CL.fs=fs;CL.st='ok';
+      }catch(e){CL.st='err'}
+      refresh();
+    });
+  }catch(e){CL.st='err';setLabel()}
 }
 
 /* ---------- Galería ---------- */
@@ -231,7 +289,7 @@ function home(){
   $('#back').hidden=true;document.title='NEC Podcasts · Nica English Club';
   const lv=LS.get('lvl','A1'),list=eps.filter(e=>e.level===lv);
   app.innerHTML=`<h1>Escucha. Repite. <em>Responde.</em></h1><p class="sub">Tu galería de podcasts para entrenar el oído. Elige tu nivel y empieza.</p>
-  <div class="chips">${LEVELS.map(l=>`<button class="chip${l===lv?' on':''}" data-l="${l}">${l}<small>${eps.filter(e=>e.level===l).length||'—'}</small></button>`).join('')}<a class="chip" href="#/cuaderno" style="text-decoration:none">📓 Mi cuaderno<small>${eps.reduce((s,e)=>s+getV(e.id).length,0)}</small></a></div>
+  <div class="chips">${LEVELS.map(l=>`<button class="chip${l===lv?' on':''}" data-l="${l}">${l}<small>${eps.filter(e=>e.level===l).length||'—'}</small></button>`).join('')}<a class="chip" href="#/cuaderno" style="text-decoration:none">📓 Mi cuaderno<small>${eps.reduce((s,e)=>s+liveV(e.id).length,0)}</small></a></div>
   <h2 class="lvt">Nivel ${lv}<span>${LN[lv]}</span></h2>
   ${list.length?`<div class="grid">${list.map(card).join('')}</div>`:`<div class="empty"><b>Próximamente</b>Estamos preparando los podcasts de ${lv}.</div>`}`;
   app.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{LS.set('lvl',b.dataset.l);home()});
@@ -261,7 +319,7 @@ function phase(n){
   <div class="seek"><span id="tc">0:00</span><input id="sk" type="range" min="0" max="1000" value="0" aria-label="Posición"><span id="td">0:00</span></div>
   <div class="ctrl"><button id="pv" aria-label="Frase anterior">${svg(IC.prev)}</button><button id="pp" class="big" aria-label="Reproducir o pausar">${svg(IC.play)}</button><button id="nx" aria-label="Frase siguiente">${svg(IC.next)}</button></div>
   <div class="ctl"><button class="btn" data-r=".75">0.75×</button><button class="btn on" data-r="1">1×</button><button class="btn" data-r="1.25">1.25×</button><button class="btn" id="loop">↻ Repetir frase</button></div></div>
-  <div class="right">${hid?'':`<div class="card nb" id="nb"><div class="nbh"><b>Mi cuaderno</b><span id="nbc"></span></div><div class="nbl" id="nbl"></div><p class="nbm" id="nbm" role="status"></p><div class="add"><input class="in" id="mi" maxlength="200" placeholder="Escribe una palabra o frase" aria-label="Palabra o frase" autocomplete="off" autocapitalize="off"><button class="ib dir" id="dr" aria-label="Cambiar dirección de traducción">⇄ EN→ES</button><button class="ib gold" id="ma" aria-label="Agregar">＋</button></div></div><div class="acts" style="margin-bottom:12px"><button class="btn" id="tt" aria-expanded="false">Ver texto completo</button></div><div class="card tr" id="tr" hidden>${S.map((s,i)=>`<p data-i="${i}">${esc(s.t)}</p>`).join('')}</div>`}
+  <div class="right">${hid?'':`<div class="card nb" id="nb"><div class="nbh"><b>Mi cuaderno</b><span id="nbc"></span></div><p class="cls" id="cls"></p><div class="nbl" id="nbl"></div><p class="nbm" id="nbm" role="status"></p><div class="add"><input class="in" id="mi" maxlength="200" placeholder="Escribe una palabra o frase" aria-label="Palabra o frase" autocomplete="off" autocapitalize="off"><button class="ib dir" id="dr" aria-label="Cambiar dirección de traducción">⇄ EN→ES</button><button class="ib gold" id="ma" aria-label="Agregar">＋</button></div></div><div class="acts" style="margin-bottom:12px"><button class="btn" id="tt" aria-expanded="false">Ver texto completo</button></div><div class="card tr" id="tr" hidden>${S.map((s,i)=>`<p data-i="${i}">${esc(s.t)}</p>`).join('')}</div>`}
   <div class="acts"><button class="btn main" id="go">${hid?'Ir a las preguntas →':'Siguiente: sin texto →'}</button>${hid?'<button class="btn" id="bk">← Ver texto</button>':''}</div></div></div>`;
   const a=new Audio(cur.src),pg=$('.pg'),st=$('#stage'),cv=$('#cv'),g=cv.getContext&&cv.getContext('2d'),cap=$('#cap'),tr=$('#tr'),cont=$('#cont'),sk=$('#sk');
   a.preload='metadata';
@@ -305,16 +363,16 @@ function phase(n){
   if(tr)tr.querySelectorAll('p').forEach((p,i)=>p.onclick=()=>{boot();a.currentTime=S[i].s;a.play()});
   if(!hid){
     const pid=cur.id,nbl=$('#nbl'),nbc=$('#nbc'),nbm=$('#nbm'),mi=$('#mi'),dr=$('#dr'),tt=$('#tt');let dir='en-es',tk=0;
-    mark=()=>{const s=new Set(getV(pid).map(x=>x.w.toLowerCase()));cap.querySelectorAll('.wd').forEach(b=>b.classList.toggle('sv',s.has(b.dataset.w.toLowerCase())))};
-    const renderNB=()=>{const L=getV(pid);nbc.textContent=L.length+(L.length===1?' palabra':' palabras');
+    mark=()=>{const s=new Set(liveV(pid).map(x=>x.w.toLowerCase()));cap.querySelectorAll('.wd').forEach(b=>b.classList.toggle('sv',s.has(b.dataset.w.toLowerCase())))};
+    const renderNB=()=>{setLabel();const L=liveV(pid);nbc.textContent=L.length+(L.length===1?' palabra':' palabras');
       nbl.innerHTML=L.length?L.slice().reverse().map(x=>entryHTML(x,true,pid)).join(''):'<p class="nbe">Toca una palabra de la frase amarilla.</p>';mark()};
     const add=async(w,ctx,d)=>{
-      const L=getV(pid),ex=L.find(x=>x.w.toLowerCase()===w.toLowerCase()&&(x.dir||'en-es')===d);if(ex)return{x:ex,dup:true};
+      const L=getV(pid),ex=L.find(x=>!x.del&&x.w.toLowerCase()===w.toLowerCase()&&(x.dir||'en-es')===d);if(ex)return{x:ex,dup:true};
       const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),w,tr:[],ctx,dir:d};L.push(x);setV(pid,L);pending.add(x.id);renderNB();
       try{x.tr=await translate(w,d)}catch(e){x.tr=[]}
       pending.delete(x.id);const L2=getV(pid),y=L2.find(z=>z.id===x.id);if(y){y.tr=x.tr;setV(pid,L2)}renderNB();return{x};
     };
-    wire(nbl,renderNB);renderNB();
+    onSync=renderNB;wire(nbl,renderNB);renderNB();
     cap.onclick=async e=>{const b=e.target.closest('.wd');if(!b)return;a.pause();
       const w=b.dataset.w,my=++tk,ctx=idx>-1?S[idx].t:'',say=h=>{if(my===tk)$('#cm').innerHTML=h};
       cont.hidden=false;cont.innerHTML='<p id="cm" role="status"></p><button class="btn main" id="cn">Continuar ▶</button>';
@@ -367,7 +425,7 @@ function quiz(){
     $('#again').onclick=quiz;$('#rl').onclick=()=>phase(1)};
   show();
 }
-route();
+if(!window.NEC_BLOQUEADO){route();cloudInit()}
 </script>
 </body>
 </html>
