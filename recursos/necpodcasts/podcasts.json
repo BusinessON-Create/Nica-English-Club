@@ -1,0 +1,20 @@
+[
+ {
+  "id": "a1-meet-ana",
+  "title": "Meet Ana",
+  "level": "A1",
+  "desc": "Presentarse, familia y rutina diaria."
+ },
+ {
+  "id": "a2-weekend-city",
+  "title": "A Weekend in the City",
+  "level": "A2",
+  "desc": "Un fin de semana de viaje y compras (pasado simple)."
+ },
+ {
+  "id": "b1-ordering-online",
+  "title": "Ordering Online from Abroad",
+  "level": "B1",
+  "desc": "Cómo comprar en línea en otro país (consejos y detalles)."
+ }
+]

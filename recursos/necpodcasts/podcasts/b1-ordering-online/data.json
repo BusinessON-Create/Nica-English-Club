@@ -1,0 +1,260 @@
+{
+ "title": "Ordering Online from Abroad",
+ "level": "B1",
+ "audio": "audio.mp3",
+ "quizSize": 8,
+ "sentences": [
+  {
+   "t": "Buying things online from another country has become very common, and it is easier than many people think.",
+   "s": 0.0,
+   "e": 5.82
+  },
+  {
+   "t": "First, you choose a store and look carefully at the product page. You should check the price, the customer reviews, and the delivery time.",
+   "s": 6.31,
+   "e": 14.42
+  },
+  {
+   "t": "Some stores offer two options: express shipping, which is faster but more expensive, and regular shipping, which takes longer but costs less.",
+   "s": 14.92,
+   "e": 23.38
+  },
+  {
+   "t": "If you are not in a hurry, regular shipping is usually the better choice.",
+   "s": 23.77,
+   "e": 27.24
+  },
+  {
+   "t": "Then you add the product to your cart and review your order before paying.",
+   "s": 27.63,
+   "e": 31.17
+  },
+  {
+   "t": "Be careful with the details. Sometimes the first payment covers only the product, and the shipping cost is paid when the package arrives, depending on its weight.",
+   "s": 31.63,
+   "e": 40.38
+  },
+  {
+   "t": "Next, you enter your name, your phone number, and your delivery address. If any of this information is wrong, your package could be delayed.",
+   "s": 40.82,
+   "e": 48.31
+  },
+  {
+   "t": "Last month, a friend of mine ordered a pair of headphones this way. She waited eight days, and everything arrived in perfect condition.",
+   "s": 48.72,
+   "e": 55.83
+  },
+  {
+   "t": "She told me that reading the reviews first was the best decision she made.",
+   "s": 56.2,
+   "e": 59.74
+  },
+  {
+   "t": "So, if you have never tried it, take your time, ask questions, and enjoy the experience.",
+   "s": 60.1,
+   "e": 65.31
+  }
+ ],
+ "questions": [
+  {
+   "q": "What is the main idea of the text?",
+   "o": [
+    "How to buy online from another country",
+    "How to open a store",
+    "How to travel abroad",
+    "How to repair a package"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What should you check on the product page?",
+   "o": [
+    "The price, the reviews, and the delivery time",
+    "The owner of the store",
+    "The color and size only",
+    "The weather and the date"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What is the difference between express and regular shipping?",
+   "o": [
+    "Express is faster but more expensive",
+    "Express is slower but cheaper",
+    "Regular is faster and free",
+    "There is no difference"
+   ],
+   "a": 0
+  },
+  {
+   "q": "When is regular shipping usually the better choice?",
+   "o": [
+    "When you are not in a hurry",
+    "When you need it tomorrow",
+    "When the product is broken",
+    "When you have no address"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What do you do after adding the product to the cart?",
+   "o": [
+    "Review your order before paying",
+    "Return the product",
+    "Call the store",
+    "Wait a week"
+   ],
+   "a": 0
+  },
+  {
+   "q": "When might the shipping cost be paid?",
+   "o": [
+    "When the package arrives",
+    "Before choosing the product",
+    "Never",
+    "One year later"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What can the shipping cost depend on?",
+   "o": [
+    "The weight of the package",
+    "The color of the product",
+    "The name of the store",
+    "The age of the customer"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What information do you enter at the end?",
+   "o": [
+    "Name, phone number, and delivery address",
+    "Name and favorite color",
+    "Address and passport photo",
+    "Only an email"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What could happen if the information is wrong?",
+   "o": [
+    "The package could be delayed",
+    "The price goes down",
+    "The store sends a gift",
+    "Nothing happens"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What did the friend order?",
+   "o": [
+    "A pair of headphones",
+    "A laptop",
+    "A jacket",
+    "A phone"
+   ],
+   "a": 0
+  },
+  {
+   "q": "How long did she wait?",
+   "o": [
+    "Eight days",
+    "Three days",
+    "Two months",
+    "One day"
+   ],
+   "a": 0
+  },
+  {
+   "q": "In what condition did the package arrive?",
+   "o": [
+    "Perfect condition",
+    "Damaged",
+    "Open",
+    "Wet"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What was the friend's best decision?",
+   "o": [
+    "Reading the reviews first",
+    "Paying more money",
+    "Choosing express shipping",
+    "Buying two items"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What is the final advice of the text?",
+   "o": [
+    "Take your time, ask questions, and enjoy it",
+    "Never buy from abroad",
+    "Buy as fast as possible",
+    "Only buy expensive things"
+   ],
+   "a": 0
+  },
+  {
+   "q": "\"Reviews\" are...",
+   "o": [
+    "Opinions from other customers",
+    "Discounts",
+    "Delivery boxes",
+    "Store workers"
+   ],
+   "a": 0
+  },
+  {
+   "q": "\"In a hurry\" means...",
+   "o": [
+    "Needing to do something quickly",
+    "Feeling very happy",
+    "Being very hungry",
+    "Being lost"
+   ],
+   "a": 0
+  },
+  {
+   "q": "\"Package\" is closest in meaning to...",
+   "o": [
+    "Parcel",
+    "Bill",
+    "Password",
+    "Coupon"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Choose the correct sentence.",
+   "o": [
+    "She ordered it last month.",
+    "She has ordered it last month.",
+    "She orders it last month.",
+    "She ordering it last month."
+   ],
+   "a": 0
+  },
+  {
+   "q": "\"If you are not in a hurry, regular shipping is usually better.\" This sentence is...",
+   "o": [
+    "A piece of advice",
+    "A complaint",
+    "A question",
+    "A warning about danger"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Which statement is TRUE?",
+   "o": [
+    "The first payment may not include shipping",
+    "Express shipping costs less",
+    "The package arrived broken",
+    "Reviews are not important"
+   ],
+   "a": 0
+  }
+ ]
+}

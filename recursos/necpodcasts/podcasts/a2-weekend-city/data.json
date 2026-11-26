@@ -1,0 +1,217 @@
+{
+ "title": "A Weekend in the City",
+ "level": "A2",
+ "audio": "audio.mp3",
+ "quizSize": 6,
+ "sentences": [
+  {
+   "t": "Last weekend, I visited my cousin Daniel in a big city.",
+   "s": 0.0,
+   "e": 3.54
+  },
+  {
+   "t": "I took a bus on Saturday morning, and the trip took about three hours.",
+   "s": 3.97,
+   "e": 7.5
+  },
+  {
+   "t": "When I arrived, Daniel was waiting for me at the station.",
+   "s": 8.06,
+   "e": 10.8
+  },
+  {
+   "t": "First, we went to a small restaurant for lunch. I ordered chicken with rice, but Daniel ordered a vegetable soup.",
+   "s": 11.34,
+   "e": 17.16
+  },
+  {
+   "t": "After lunch, we walked through the park because the weather was sunny and warm.",
+   "s": 17.65,
+   "e": 21.4
+  },
+  {
+   "t": "In the afternoon, we went shopping. I wanted to buy a jacket, but everything was too expensive.",
+   "s": 21.9,
+   "e": 26.86
+  },
+  {
+   "t": "Finally, I found a nice blue jacket on sale, and I bought it for thirty dollars.",
+   "s": 27.41,
+   "e": 31.52
+  },
+  {
+   "t": "In the evening, we watched a movie at Daniel's apartment.",
+   "s": 32.02,
+   "e": 34.57
+  },
+  {
+   "t": "On Sunday, I went back home. I was tired, but I was really happy.",
+   "s": 35.0,
+   "e": 39.31
+  }
+ ],
+ "questions": [
+  {
+   "q": "Who did the speaker visit?",
+   "o": [
+    "A cousin",
+    "A classmate",
+    "A neighbor"
+   ],
+   "a": 0
+  },
+  {
+   "q": "When did the trip happen?",
+   "o": [
+    "Last weekend",
+    "Last month",
+    "Yesterday"
+   ],
+   "a": 0
+  },
+  {
+   "q": "How did the speaker travel?",
+   "o": [
+    "By bus",
+    "By plane",
+    "By train"
+   ],
+   "a": 0
+  },
+  {
+   "q": "How long was the trip?",
+   "o": [
+    "About three hours",
+    "About one hour",
+    "About five hours"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Who was waiting at the station?",
+   "o": [
+    "Daniel",
+    "A taxi driver",
+    "Nobody"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Where did they have lunch?",
+   "o": [
+    "In a small restaurant",
+    "At home",
+    "In the park"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What did the speaker order?",
+   "o": [
+    "Chicken with rice",
+    "Vegetable soup",
+    "Fish with potatoes"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What did Daniel order?",
+   "o": [
+    "Vegetable soup",
+    "Chicken with rice",
+    "A sandwich"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Why did they walk through the park?",
+   "o": [
+    "The weather was sunny and warm",
+    "It was raining",
+    "They were lost"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What did the speaker want to buy?",
+   "o": [
+    "A jacket",
+    "Shoes",
+    "A hat"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Why didn't the speaker buy anything at first?",
+   "o": [
+    "Everything was too expensive",
+    "The stores were closed",
+    "There were no jackets"
+   ],
+   "a": 0
+  },
+  {
+   "q": "How much was the jacket?",
+   "o": [
+    "Thirty dollars",
+    "Fifteen dollars",
+    "Fifty dollars"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What color was the jacket?",
+   "o": [
+    "Blue",
+    "Black",
+    "Green"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What did they do in the evening?",
+   "o": [
+    "They watched a movie",
+    "They went dancing",
+    "They cooked dinner"
+   ],
+   "a": 0
+  },
+  {
+   "q": "When did the speaker go back home?",
+   "o": [
+    "On Sunday",
+    "On Saturday night",
+    "On Monday"
+   ],
+   "a": 0
+  },
+  {
+   "q": "How did the speaker feel at the end?",
+   "o": [
+    "Tired but happy",
+    "Angry and sad",
+    "Bored"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Choose the correct past form: \"I ___ a jacket.\"",
+   "o": [
+    "bought",
+    "buy",
+    "buyed"
+   ],
+   "a": 0
+  },
+  {
+   "q": "\"On sale\" means...",
+   "o": [
+    "Cheaper than usual",
+    "Very old",
+    "Very big"
+   ],
+   "a": 0
+  }
+ ]
+}

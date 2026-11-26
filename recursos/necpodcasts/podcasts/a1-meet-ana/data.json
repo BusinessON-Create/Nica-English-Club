@@ -1,0 +1,185 @@
+{
+ "title": "Meet Ana",
+ "level": "A1",
+ "audio": "audio.mp3",
+ "quizSize": 5,
+ "sentences": [
+  {
+   "t": "Hello! My name is Ana.",
+   "s": 0.0,
+   "e": 1.86
+  },
+  {
+   "t": "I am twenty-five years old, and I am from Nicaragua.",
+   "s": 2.25,
+   "e": 5.37
+  },
+  {
+   "t": "I live in a small house with my mother and my brother.",
+   "s": 5.79,
+   "e": 8.45
+  },
+  {
+   "t": "Every morning, I wake up at six o'clock.",
+   "s": 8.93,
+   "e": 11.39
+  },
+  {
+   "t": "I eat bread and eggs for breakfast, and I drink a cup of coffee.",
+   "s": 11.81,
+   "e": 15.28
+  },
+  {
+   "t": "Then I take the bus to work.",
+   "s": 15.64,
+   "e": 17.68
+  },
+  {
+   "t": "I work in a shop. I like my job.",
+   "s": 18.07,
+   "e": 20.16
+  },
+  {
+   "t": "In the evening, I go home and watch TV with my family.",
+   "s": 20.56,
+   "e": 23.88
+  }
+ ],
+ "questions": [
+  {
+   "q": "What is the girl's name?",
+   "o": [
+    "Ana",
+    "Maya",
+    "Lucy"
+   ],
+   "a": 0
+  },
+  {
+   "q": "How old is Ana?",
+   "o": [
+    "Twenty-five",
+    "Thirty-five",
+    "Fifteen"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Where is Ana from?",
+   "o": [
+    "Nicaragua",
+    "Mexico",
+    "Spain"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Who does Ana live with?",
+   "o": [
+    "Her mother and her brother",
+    "Her sister and her father",
+    "Nobody"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What kind of home does she live in?",
+   "o": [
+    "A small house",
+    "A big apartment",
+    "A hotel"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What time does Ana wake up?",
+   "o": [
+    "At six",
+    "At five",
+    "At seven"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What does she eat for breakfast?",
+   "o": [
+    "Bread and eggs",
+    "Rice and beans",
+    "Cereal and milk"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What does she drink in the morning?",
+   "o": [
+    "Coffee",
+    "Tea",
+    "Juice"
+   ],
+   "a": 0
+  },
+  {
+   "q": "How does she go to work?",
+   "o": [
+    "By bus",
+    "By car",
+    "On foot"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Where does she work?",
+   "o": [
+    "In a shop",
+    "In a school",
+    "In a hospital"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Does Ana like her job?",
+   "o": [
+    "Yes, she does",
+    "No, she doesn't",
+    "The text doesn't say"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What does she do in the evening?",
+   "o": [
+    "She watches TV with her family",
+    "She goes to class",
+    "She goes to the park"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Ana lives alone. Is this true or false?",
+   "o": [
+    "False",
+    "True",
+    "The text doesn't say"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Choose the correct sentence.",
+   "o": [
+    "I wake up at six.",
+    "I wakes up at six.",
+    "I waking up at six."
+   ],
+   "a": 0
+  },
+  {
+   "q": "\"Every morning\" means...",
+   "o": [
+    "Each day, early in the day",
+    "Only on Sunday",
+    "At night"
+   ],
+   "a": 0
+  }
+ ]
+}
