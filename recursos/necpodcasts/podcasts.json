@@ -19,5 +19,19 @@
   "level": "B1",
   "desc": "Cómo comprar en línea en otro país (consejos y detalles).",
   "dur": "1:05"
+ },
+ {
+  "id": "b2-remote-work",
+  "title": "Working from Home: The Real Trade-Offs",
+  "level": "B2",
+  "desc": "Teletrabajo: ventajas, riesgos y cómo hacerlo funcionar.",
+  "dur": "1:14"
+ },
+ {
+  "id": "c1-multitasking",
+  "title": "The Myth of Multitasking",
+  "level": "C1",
+  "desc": "Por qué hacer varias cosas a la vez no funciona como creemos.",
+  "dur": "1:26"
  }
 ]

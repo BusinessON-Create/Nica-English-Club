@@ -1,0 +1,162 @@
+{
+ "title": "The Myth of Multitasking",
+ "audio": "audio.mp3",
+ "quizSize": 5,
+ "sentences": [
+  {
+   "t": "We tend to admire people who can juggle several tasks at once.",
+   "s": 0.14,
+   "e": 3.73
+  },
+  {
+   "t": "Yet decades of research suggest that what we call multitasking is largely an illusion.",
+   "s": 4.4,
+   "e": 9.44
+  },
+  {
+   "t": "The brain does not actually perform two demanding activities simultaneously.",
+   "s": 9.86,
+   "e": 14.63
+  },
+  {
+   "t": "Instead, it switches rapidly between them, and every switch carries a hidden cost.",
+   "s": 15.13,
+   "e": 20.22
+  },
+  {
+   "t": "Psychologists refer to this as switching cost: the time and mental energy lost each time your attention shifts.",
+   "s": 20.77,
+   "e": 27.89
+  },
+  {
+   "t": "Individually, these losses are tiny, but they accumulate throughout the day.",
+   "s": 28.58,
+   "e": 32.81
+  },
+  {
+   "t": "The consequences go beyond mere inefficiency.",
+   "s": 33.38,
+   "e": 35.88
+  },
+  {
+   "t": "Frequent switching has been linked to more mistakes, shallower understanding, and a noticeable rise in stress.",
+   "s": 36.41,
+   "e": 42.28
+  },
+  {
+   "t": "Ironically, the people who consider themselves the best multitaskers often perform the worst, partly because they are the most easily distracted by anything new.",
+   "s": 42.76,
+   "e": 51.49
+  },
+  {
+   "t": "So what is the alternative?",
+   "s": 52.0,
+   "e": 53.39
+  },
+  {
+   "t": "Many experts recommend working in focused blocks, typically between twenty-five and ninety minutes, with all notifications switched off.",
+   "s": 53.96,
+   "e": 61.42
+  },
+  {
+   "t": "Between blocks, take a genuine pause.",
+   "s": 61.95,
+   "e": 64.37
+  },
+  {
+   "t": "Stepping away allows the mind to consolidate what it has just processed.",
+   "s": 64.86,
+   "e": 68.48
+  },
+  {
+   "t": "It also helps to decide in advance what deserves your undivided attention, rather than letting the loudest demand dictate your priorities.",
+   "s": 68.94,
+   "e": 76.26
+  },
+  {
+   "t": "Ultimately, the goal is not to do more things at once, but to do the important things well.",
+   "s": 76.72,
+   "e": 81.67
+  },
+  {
+   "t": "And that begins with giving each task the attention it deserves.",
+   "s": 82.16,
+   "e": 85.46
+  }
+ ],
+ "questions": [
+  {
+   "q": "What do decades of research suggest about multitasking?",
+   "o": [
+    "It is a skill anyone can master",
+    "It is largely an illusion",
+    "It only works for simple tasks"
+   ],
+   "a": 1
+  },
+  {
+   "q": "How does the brain handle two demanding activities?",
+   "o": [
+    "It performs both at exactly the same time",
+    "It ignores the less important one",
+    "It switches rapidly between them"
+   ],
+   "a": 2
+  },
+  {
+   "q": "What is the 'switching cost'?",
+   "o": [
+    "The time and mental energy lost each time attention shifts",
+    "The money lost when employees change jobs",
+    "The effort needed to learn a new skill"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Which consequence of frequent switching is NOT mentioned?",
+   "o": [
+    "More mistakes",
+    "Shallower understanding",
+    "Higher stress",
+    "Improved creativity"
+   ],
+   "a": 3
+  },
+  {
+   "q": "What is ironic, according to the speaker?",
+   "o": [
+    "Busy people have the most free time",
+    "Self-described best multitaskers often perform the worst",
+    "Technology makes us less connected"
+   ],
+   "a": 1
+  },
+  {
+   "q": "What do many experts recommend?",
+   "o": [
+    "Focused blocks of work with notifications switched off",
+    "Answering every message immediately",
+    "Alternating between tasks every minute"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Why should you take a genuine pause between blocks?",
+   "o": [
+    "To check your phone",
+    "To plan the next meeting",
+    "To let the mind consolidate what it has processed"
+   ],
+   "a": 2
+  },
+  {
+   "q": "What is the main goal, according to the conclusion?",
+   "o": [
+    "To finish as many tasks as possible",
+    "To do the important things well by giving each task its attention",
+    "To work longer hours with fewer breaks"
+   ],
+   "a": 1
+  }
+ ]
+}

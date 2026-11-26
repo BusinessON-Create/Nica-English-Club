@@ -1,0 +1,161 @@
+{
+ "title": "Working from Home: The Real Trade-Offs",
+ "audio": "audio.mp3",
+ "quizSize": 5,
+ "sentences": [
+  {
+   "t": "Working from home used to be a rare perk, but for millions of people it has become the new normal.",
+   "s": 0.13,
+   "e": 5.59
+  },
+  {
+   "t": "The question is no longer whether it works, but what it really costs us.",
+   "s": 6.01,
+   "e": 10.07
+  },
+  {
+   "t": "On the bright side, remote work saves time and money.",
+   "s": 10.47,
+   "e": 13.7
+  },
+  {
+   "t": "You skip the daily commute, you spend less on lunches and transport, and you can organize your day around your own energy levels.",
+   "s": 13.99,
+   "e": 21.45
+  },
+  {
+   "t": "Many employees also report being more productive, because there are fewer interruptions than in a busy office.",
+   "s": 21.84,
+   "e": 27.72
+  },
+  {
+   "t": "However, the picture is not entirely positive.",
+   "s": 28.03,
+   "e": 31.04
+  },
+  {
+   "t": "Without a clear boundary between work and home, the working day tends to stretch longer than anyone intended.",
+   "s": 31.39,
+   "e": 37.32
+  },
+  {
+   "t": "Isolation is another risk.",
+   "s": 37.7,
+   "e": 39.62
+  },
+  {
+   "t": "Casual chats by the coffee machine disappear, and with them go many of the small connections that make a team feel like a team.",
+   "s": 39.97,
+   "e": 47.12
+  },
+  {
+   "t": "So how can you make it work?",
+   "s": 47.52,
+   "e": 48.89
+  },
+  {
+   "t": "Start by creating a dedicated workspace, even if it is just a corner of a room.",
+   "s": 49.22,
+   "e": 53.69
+  },
+  {
+   "t": "Set fixed hours and stick to them, and take real breaks away from the screen.",
+   "s": 53.94,
+   "e": 58.39
+  },
+  {
+   "t": "Finally, make an effort to stay in touch.",
+   "s": 58.8,
+   "e": 61.19
+  },
+  {
+   "t": "A short video call or a quick message can do more for morale than you might expect.",
+   "s": 61.44,
+   "e": 65.76
+  },
+  {
+   "t": "In the end, working from home is neither a dream nor a disaster.",
+   "s": 66.08,
+   "e": 69.83
+  },
+  {
+   "t": "It is a tool, and the results depend on how deliberately we use it.",
+   "s": 70.06,
+   "e": 73.99
+  }
+ ],
+ "questions": [
+  {
+   "q": "What has changed about working from home, according to the podcast?",
+   "o": [
+    "It has become the new normal for millions of people",
+    "It has become rare and exclusive",
+    "It has been banned by many companies"
+   ],
+   "a": 0
+  },
+  {
+   "q": "Which financial benefit of remote work is mentioned?",
+   "o": [
+    "Higher salaries",
+    "Spending less on lunches and transport",
+    "Free office equipment"
+   ],
+   "a": 1
+  },
+  {
+   "q": "Why do many employees feel more productive at home?",
+   "o": [
+    "They work fewer hours",
+    "They have better technology",
+    "There are fewer interruptions than in a busy office"
+   ],
+   "a": 2
+  },
+  {
+   "q": "What tends to happen without a clear boundary between work and home?",
+   "o": [
+    "The working day stretches longer than intended",
+    "People take too many breaks",
+    "Meetings become shorter"
+   ],
+   "a": 0
+  },
+  {
+   "q": "What disappears when people work alone at home?",
+   "o": [
+    "Deadlines",
+    "Casual chats and small connections between colleagues",
+    "Performance reviews"
+   ],
+   "a": 1
+  },
+  {
+   "q": "What does the speaker suggest about a workspace?",
+   "o": [
+    "Rent a desk in a shared office",
+    "Work from the sofa to feel relaxed",
+    "Create a dedicated space, even a corner of a room"
+   ],
+   "a": 2
+  },
+  {
+   "q": "According to the speaker, what can a short video call do?",
+   "o": [
+    "Replace all team meetings",
+    "Do more for morale than you might expect",
+    "Save time on daily planning"
+   ],
+   "a": 1
+  },
+  {
+   "q": "What is the speaker's final conclusion?",
+   "o": [
+    "Remote work is a disaster for most teams",
+    "Remote work is a tool whose results depend on how deliberately we use it",
+    "Offices will soon disappear completely"
+   ],
+   "a": 1
+  }
+ ]
+}
