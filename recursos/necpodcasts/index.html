@@ -137,6 +137,17 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:26px 0}
 .ib.dir{border-radius:99px;border:1px solid var(--line2);font:700 13px 'Bricolage Grotesque';padding:0 12px;white-space:nowrap}
 .ib.gold{background:var(--gold);color:#0a0908;font-weight:800;font-size:22px}
 .nbm{padding:0 18px 10px 56px;font-size:13px;color:var(--bad)}.nbm:empty{display:none}
+html{overscroll-behavior:none;-webkit-text-size-adjust:100%;scrollbar-width:none}
+*{scrollbar-width:none;-webkit-tap-highlight-color:transparent}*::-webkit-scrollbar{display:none}
+body{min-height:100dvh;overflow-x:hidden;-webkit-user-select:none;user-select:none}
+input{-webkit-user-select:text;user-select:text}
+button,a,.chip,.pc,.opt{touch-action:manipulation}
+.wrap{padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+header{position:sticky;top:0;z-index:30;margin:0 -18px;padding:12px 18px;background:rgba(10,9,8,.8);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.pg{grid-template-columns:minmax(0,1fr)}.left,.right{min-width:0}
+.btn:active,.chip:active,.ib:active,.opt:active{transform:scale(.96)}
+.pc:active{transform:scale(.97)}
+@media(min-width:900px){.pg{grid-template-columns:minmax(0,430px) minmax(0,1fr)}.left{position:sticky;top:84px}.nbl{max-height:min(52vh,460px)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -172,17 +183,31 @@ const DE_EMAIL=''; /* PON AQUÍ TU CORREO (opcional): sube el límite diario de 
 const getV=id=>LS.get('vocab:'+id,[]),setV=(id,v)=>LS.set('vocab:'+id,v),pending=new Set();
 const clean=w=>w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'');
 const words=t=>t.split(/(\s+)/).map(p=>{const c=clean(p);return c?`<button class="wd" data-w="${esc(c)}">${esc(p)}</button>`:esc(p)}).join('');
-async function translate(text,dir){
-  const key=dir+'|'+text.toLowerCase().trim(),c=LS.get('trcache',{});
-  if(c[key])return c[key];
-  const[f,t]=dir==='es-en'?['es','en']:['en','es'];
+const mm=async(text,f,t)=>{
   const r=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${f}%7C${t}`+(DE_EMAIL?`&de=${encodeURIComponent(DE_EMAIL)}`:''));
   if(!r.ok)throw new Error('http');
   const d=await r.json(),m=String(d.responseData&&d.responseData.translatedText||'').trim();
   if(+d.responseStatus!==200||d.quotaFinished||!m||/MYMEMORY WARNING|INVALID/i.test(m))throw new Error('quota');
   const seen=new Set([m.toLowerCase()]),list=[m];
-  (d.matches||[]).forEach(x=>{const v=String(x.translation||'').trim(),k=v.toLowerCase();if(v&&list.length<2&&!seen.has(k)){seen.add(k);list.push(v)}});
-  c[key]=list;LS.set('trcache',c);return list;
+  (d.matches||[]).forEach(x=>{const v=String(x.translation||'').trim(),k=v.toLowerCase();
+    if(v&&list.length<2&&!seen.has(k)&&(!x.subject||/^(general|all)$/i.test(x.subject))){seen.add(k);list.push(v)}});
+  return list;
+};
+const gt=async(text,f,t)=>{
+  const r=await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${f}&tl=${t}&dt=t&dt=bd&q=${encodeURIComponent(text)}`);
+  if(!r.ok)throw new Error('http');
+  const d=await r.json(),list=[],add=v=>{v=String(v||'').trim();if(v&&list.length<2&&!list.some(x=>x.toLowerCase()===v.toLowerCase()))list.push(v)};
+  add((d[0]||[]).map(x=>x[0]).join(''));
+  (d[1]||[]).forEach(g=>(g[1]||[]).forEach(add));
+  if(!list.length)throw new Error('empty');
+  return list;
+};
+async function translate(text,dir){
+  const key=dir+'|'+text.toLowerCase().trim(),c=LS.get('trcache2',{});
+  if(c[key])return c[key];
+  const[f,t]=dir==='es-en'?['es','en']:['en','es'];let list;
+  try{list=await gt(text,f,t)}catch(e){list=await mm(text,f,t)}
+  c[key]=list;LS.set('trcache2',c);return list;
 }
 const speak=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';speechSynthesis.speak(u)}catch(e){}};
 const entryHTML=(x,ctx,pid)=>`<div class="en" data-id="${x.id}" data-p="${esc(pid)}"><div class="er"><div class="ew"><b>${esc(x.w)}</b>${x.tr&&x.tr.length?`<span class="tl">${x.tr.map(esc).join(' · ')}</span>`:pending.has(x.id)?'<span class="tl dim">traduciendo…</span>':'<span class="mn"><input class="in" placeholder="Escribe la traducción" aria-label="Traducción"><button class="ib sv" aria-label="Guardar traducción">✓</button></span>'}</div><button class="ib sp" aria-label="Escuchar pronunciación">🔊</button><button class="ib dl" aria-label="Borrar">🗑</button></div>${ctx&&x.ctx?`<small class="cx">${esc(x.ctx)}</small>`:''}</div>`;
