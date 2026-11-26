@@ -152,12 +152,17 @@ header{position:sticky;top:0;z-index:30;margin:0 -18px;padding:12px 18px;backgro
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);max-width:min(92vw,420px);background:var(--card2);border:1px solid var(--gold3);color:var(--tx);border-radius:16px;padding:12px 16px;font-size:14px;line-height:1.35;opacity:0;pointer-events:none;transition:.25s;z-index:60}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 .cls{padding:0 18px 6px 56px;font-size:12px;line-height:1.4;color:var(--mut)}
+#me{display:flex;align-items:center;gap:8px;margin-left:auto;font:700 14px 'Bricolage Grotesque',system-ui,sans-serif}
+#back:not([hidden])+#me{margin-left:10px}#me[hidden]{display:none}
+#me img,#me .av{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid var(--gold3);flex:none}
+#me .av{display:grid;place-items:center;background:var(--gold);color:#0a0908;font:800 16px 'Bricolage Grotesque',sans-serif}
+@media(max-width:480px){#me b{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><img src="logo.png" alt="Nica English Club"><div><b>NEC PODCASTS</b><small>Nica English Club · Training Room</small></div><a id="back" href="#/" hidden>← Podcasts</a></header>
+<header><img src="logo.png" alt="Nica English Club"><div><b>NEC PODCASTS</b><small>Nica English Club · Training Room</small></div><a id="back" href="#/" hidden>← Podcasts</a><div id="me" hidden></div></header>
 <main id="app"></main>
 <footer>No estudies inglés. Entrénalo.</footer>
 </div>
@@ -249,6 +254,10 @@ const FBC={apiKey:"AIzaSyCchgmeTjQdvsBzOJ9MWH6eJryvG83utAA",authDomain:"nicaengl
 const FBV='10.14.1',CL={st:'load',ref:null,fs:null,t:0,q:new Set()};
 const cloudLabel=()=>({ok:'☁ Guardado en tu cuenta',load:'Conectando con tu cuenta…',err:'No se pudo sincronizar ahora. Se guarda en este dispositivo.',noalumno:'No encontré tu ficha de alumno. Se guarda solo en este dispositivo.',off:'Solo en este dispositivo. <a href="https://app.nicaenglishclub.com" style="color:var(--gold)">Inicia sesión en la app</a> para guardarlo en tu cuenta.'}[CL.st]);
 const setLabel=()=>{const c=$('#cls');if(c)c.innerHTML=cloudLabel()};
+const showMe=(n,f)=>{const m=$('#me');if(!m)return;n=String(n||'').trim();if(!n&&!f){m.hidden=true;return}
+  const ini=(n[0]||'?').toUpperCase();
+  m.innerHTML=(f?`<img src="${esc(f)}" alt="" referrerpolicy="no-referrer">`:`<span class="av">${esc(ini)}</span>`)+(n?`<b>${esc(n.split(/\s+/)[0])}</b>`:'');
+  m.hidden=false;const im=m.querySelector('img');if(im)im.onerror=()=>{const a=document.createElement('span');a.className='av';a.textContent=ini;im.replaceWith(a)}};
 const refresh=()=>{setLabel();if(onSync)onSync();else if(!location.hash||location.hash==='#/')home()};
 const mergeL=(a,b)=>{const m=new Map();[...a,...b].forEach(x=>{const o=m.get(x.id);if(!o){m.set(x.id,x);return}
   if(o.del||x.del){m.set(x.id,{id:x.id,del:true});return}m.set(x.id,(o.tr&&o.tr.length)||!(x.tr&&x.tr.length)?o:x)});return[...m.values()].sort((p,q)=>p.id<q.id?-1:1)};
@@ -262,13 +271,14 @@ async function cloudInit(){
     const app=A.getApps().length?A.getApp():A.initializeApp(FBC),auth=Au.getAuth(app),db=fs.getFirestore(app);
     Au.onAuthStateChanged(auth,async u=>{
       CL.ref=null;
-      if(!u||u.isAnonymous||!u.email){CL.st='off';setLabel();return}
-      CL.st='load';setLabel();
+      if(!u||u.isAnonymous||!u.email){CL.st='off';showMe();setLabel();return}
+      showMe(u.displayName,u.photoURL);CL.st='load';setLabel();
       try{
         const col=fs.collection(db,'alumnos'),mail=u.email.toLowerCase();
         let q=await fs.getDocs(fs.query(col,fs.where('email','==',mail),fs.limit(1)));
         if(q.empty&&u.email!==mail)q=await fs.getDocs(fs.query(col,fs.where('email','==',u.email),fs.limit(1)));
         if(q.empty){CL.st='noalumno';refresh();return}
+        {const d=q.docs[0].data()||{};showMe(d.nombre||d.name||d.nombreCompleto||u.displayName,d.foto||d.fotoURL||d.photoURL||d.avatar||u.photoURL)}
         const ref=fs.doc(db,'necpodcasts_cuaderno',q.docs[0].id),snap=await fs.getDoc(ref),rv=(snap.exists()&&snap.data().v)||{},up={},ids=new Set(Object.keys(rv));
         try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i),m=/^(?:necpod:)?vocab:(.+)$/.exec(k);if(m)ids.add(m[1])}}catch(e){}
         ids.forEach(id=>{const loc=getV(id),rem=rv[id]||[],m=mergeL(loc,rem);
