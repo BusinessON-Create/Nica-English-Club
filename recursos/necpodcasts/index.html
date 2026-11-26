@@ -115,6 +115,28 @@ input[type=range]{flex:1;accent-color:var(--gold);height:24px}
 .retry{text-align:center}.retry .bx{font:800 54px 'Bricolage Grotesque';color:var(--bad)}.retry h2{font-size:28px;margin:6px 0}.retry p{color:var(--mut);margin:8px 0 18px}.retry p b{color:var(--gold);font-size:20px}
 .pool{color:var(--mut);font-size:13px;margin-top:10px}
 footer{text-align:center;color:var(--mut);font-size:13px;padding:26px 0}
+.tr[hidden],.cont[hidden]{display:none}
+.cont{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;background:var(--card2);border:1px solid var(--gold3);border-radius:18px;padding:12px 14px;margin:4px 0 10px;animation:capin .3s ease-out}
+.cont p{flex:1 1 180px;font-size:15px;line-height:1.35}.cont p b{color:var(--gold2)}.cont p i{font-style:normal;color:var(--mut);display:block;font-size:13px}
+.wd{display:inline-block;background:none;border:0;color:inherit;font:inherit;letter-spacing:inherit;padding:10px 2px;margin:-10px 0;cursor:pointer;border-radius:8px;-webkit-tap-highlight-color:transparent}
+.wd:hover,.wd:focus-visible{background:rgba(240,180,41,.18);outline:0}
+.wd.sv{text-decoration:underline dotted var(--gold3);text-underline-offset:5px}
+.nb{padding:0;overflow:hidden;margin-bottom:12px;background:linear-gradient(90deg,transparent 41px,rgba(255,106,26,.3) 41px 42px,transparent 42px),repeating-linear-gradient(180deg,transparent 0 31px,rgba(240,180,41,.14) 31px 32px),#100e0c;background-position:0 0,0 8px}
+.nbh{display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px 8px 56px;font:700 13px 'Bricolage Grotesque';letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.nbh span{color:var(--mut);font:500 13px Figtree;text-transform:none;letter-spacing:0}
+.nbe{padding:6px 18px 14px 56px;color:var(--mut);line-height:32px}
+.nbl{max-height:min(46vh,380px);overflow:auto}
+.en{padding:4px 10px 6px 56px;animation:capin .3s ease-out}
+.er{display:flex;align-items:center;gap:2px}
+.ew{flex:1;min-width:0;line-height:32px}.ew b{font-size:19px;color:var(--gold2);margin-right:10px}.tl{font-size:17px}.tl.dim{color:var(--mut)}
+.cx{display:block;color:var(--mut);font-size:13px;line-height:1.35;margin:-2px 0 6px}
+.ib{flex:none;min-width:44px;height:44px;border-radius:50%;border:0;background:none;color:var(--tx);font-size:18px;cursor:pointer}.ib:hover{background:rgba(240,180,41,.14)}
+.mn{display:inline-flex;gap:4px;vertical-align:middle}.mn .in{width:min(180px,40vw)}
+.in{background:#0a0908;border:1px solid var(--line2);color:var(--tx);border-radius:12px;padding:0 12px;height:44px;font:500 16px Figtree;min-width:0}.in:focus{outline:0;border-color:var(--gold)}
+.add{display:flex;gap:6px;padding:10px 10px 10px 56px;border-top:1px solid var(--line)}.add .in{flex:1}
+.ib.dir{border-radius:99px;border:1px solid var(--line2);font:700 13px 'Bricolage Grotesque';padding:0 12px;white-space:nowrap}
+.ib.gold{background:var(--gold);color:#0a0908;font-weight:800;font-size:22px}
+.nbm{padding:0 18px 10px 56px;font-size:13px;color:var(--bad)}.nbm:empty{display:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -141,9 +163,41 @@ async function route(){
   stopAll();
   if(!eps.length){try{eps=await (await fetch('podcasts.json')).json()}catch(e){app.innerHTML='<div class="card">No se pudo cargar podcasts.json. Abre la página desde GitHub Pages, no con doble clic.</div>';return}}
   const h=location.hash;
-  if(h.startsWith('#/p/'))openPlayer(decodeURIComponent(h.slice(4)));else home();
+  if(h==='#/cuaderno')mybook();else if(h.startsWith('#/p/'))openPlayer(decodeURIComponent(h.slice(4)));else home();
 }
 addEventListener('hashchange',route);
+
+/* ---------- Cuaderno de vocabulario ---------- */
+const DE_EMAIL=''; /* PON AQUÍ TU CORREO (opcional): sube el límite diario de MyMemory */
+const getV=id=>LS.get('vocab:'+id,[]),setV=(id,v)=>LS.set('vocab:'+id,v),pending=new Set();
+const clean=w=>w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'');
+const words=t=>t.split(/(\s+)/).map(p=>{const c=clean(p);return c?`<button class="wd" data-w="${esc(c)}">${esc(p)}</button>`:esc(p)}).join('');
+async function translate(text,dir){
+  const key=dir+'|'+text.toLowerCase().trim(),c=LS.get('trcache',{});
+  if(c[key])return c[key];
+  const[f,t]=dir==='es-en'?['es','en']:['en','es'];
+  const r=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${f}%7C${t}`+(DE_EMAIL?`&de=${encodeURIComponent(DE_EMAIL)}`:''));
+  if(!r.ok)throw new Error('http');
+  const d=await r.json(),m=String(d.responseData&&d.responseData.translatedText||'').trim();
+  if(+d.responseStatus!==200||d.quotaFinished||!m||/MYMEMORY WARNING|INVALID/i.test(m))throw new Error('quota');
+  const seen=new Set([m.toLowerCase()]),list=[m];
+  (d.matches||[]).forEach(x=>{const v=String(x.translation||'').trim(),k=v.toLowerCase();if(v&&list.length<2&&!seen.has(k)){seen.add(k);list.push(v)}});
+  c[key]=list;LS.set('trcache',c);return list;
+}
+const speak=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';speechSynthesis.speak(u)}catch(e){}};
+const entryHTML=(x,ctx,pid)=>`<div class="en" data-id="${x.id}" data-p="${esc(pid)}"><div class="er"><div class="ew"><b>${esc(x.w)}</b>${x.tr&&x.tr.length?`<span class="tl">${x.tr.map(esc).join(' · ')}</span>`:pending.has(x.id)?'<span class="tl dim">traduciendo…</span>':'<span class="mn"><input class="in" placeholder="Escribe la traducción" aria-label="Traducción"><button class="ib sv" aria-label="Guardar traducción">✓</button></span>'}</div><button class="ib sp" aria-label="Escuchar pronunciación">🔊</button><button class="ib dl" aria-label="Borrar">🗑</button></div>${ctx&&x.ctx?`<small class="cx">${esc(x.ctx)}</small>`:''}</div>`;
+function wire(root,redraw){root.onclick=e=>{const b=e.target.closest('button'),en=e.target.closest('.en');if(!b||!en)return;
+  const P=en.dataset.p,L=getV(P),i=L.findIndex(x=>x.id===en.dataset.id);if(i<0)return;
+  if(b.classList.contains('sp')){const x=L[i];speak(x.dir==='es-en'?(x.tr&&x.tr[0]||''):x.w)}
+  else if(b.classList.contains('dl')){L.splice(i,1);setV(P,L);redraw()}
+  else if(b.classList.contains('sv')){const v=en.querySelector('.in').value.trim();if(v){L[i].tr=[v];setV(P,L);redraw()}}}}
+function mybook(){
+  $('#back').hidden=false;document.title='Mi cuaderno · NEC Podcasts';
+  const draw=()=>{const g=eps.map(e=>({e,L:getV(e.id)})).filter(x=>x.L.length),n=g.reduce((s,x)=>s+x.L.length,0);
+    app.innerHTML=`<h1 style="font-size:clamp(30px,7vw,46px)">Mi <em>cuaderno</em></h1><p class="sub">${n?`${n} ${n===1?'anotación':'anotaciones'} de todos tus podcasts.`:'Aún no hay palabras. Abre un podcast y toca una palabra de la frase amarilla.'}</p>${g.map(x=>`<h2 class="lvt">${esc(x.e.title)}<span>${esc(x.e.level||'')}</span></h2><div class="card nb"><div class="nbl" style="max-height:none">${x.L.slice().reverse().map(y=>entryHTML(y,true,x.e.id)).join('')}</div></div>`).join('')}`;
+    app.querySelectorAll('.nbl').forEach(el=>wire(el,draw))};
+  draw();
+}
 
 /* ---------- Galería ---------- */
 const card=e=>{const b=LS.get('best:'+e.id,null),c=LV[e.level]||LV.A1;
@@ -152,7 +206,7 @@ function home(){
   $('#back').hidden=true;document.title='NEC Podcasts · Nica English Club';
   const lv=LS.get('lvl','A1'),list=eps.filter(e=>e.level===lv);
   app.innerHTML=`<h1>Escucha. Repite. <em>Responde.</em></h1><p class="sub">Tu galería de podcasts para entrenar el oído. Elige tu nivel y empieza.</p>
-  <div class="chips">${LEVELS.map(l=>`<button class="chip${l===lv?' on':''}" data-l="${l}">${l}<small>${eps.filter(e=>e.level===l).length||'—'}</small></button>`).join('')}</div>
+  <div class="chips">${LEVELS.map(l=>`<button class="chip${l===lv?' on':''}" data-l="${l}">${l}<small>${eps.filter(e=>e.level===l).length||'—'}</small></button>`).join('')}<a class="chip" href="#/cuaderno" style="text-decoration:none">📓 Mi cuaderno<small>${eps.reduce((s,e)=>s+getV(e.id).length,0)}</small></a></div>
   <h2 class="lvt">Nivel ${lv}<span>${LN[lv]}</span></h2>
   ${list.length?`<div class="grid">${list.map(card).join('')}</div>`:`<div class="empty"><b>Próximamente</b>Estamos preparando los podcasts de ${lv}.</div>`}`;
   app.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{LS.set('lvl',b.dataset.l);home()});
@@ -178,22 +232,22 @@ function phase(n){
   app.innerHTML=`${steps(n)}<div class="pg"><div class="left">
   <div class="stage" id="stage"><div class="glow"></div><canvas id="cv"></canvas><div class="disc"></div><img class="lg" src="logo.png" alt=""></div>
   <div class="meta"><span class="lvpill">${esc(cur.level)}</span><b>${esc(cur.title)}</b></div>
-  <div class="cap" id="cap">${hid?headset():'<span class="idle">Toca ▶ para empezar</span>'}</div>
+  <div class="cap" id="cap">${hid?headset():'<span class="idle">Toca ▶ para empezar</span>'}</div>${hid?'':'<div class="cont" id="cont" hidden></div>'}
   <div class="seek"><span id="tc">0:00</span><input id="sk" type="range" min="0" max="1000" value="0" aria-label="Posición"><span id="td">0:00</span></div>
   <div class="ctrl"><button id="pv" aria-label="Frase anterior">${svg(IC.prev)}</button><button id="pp" class="big" aria-label="Reproducir o pausar">${svg(IC.play)}</button><button id="nx" aria-label="Frase siguiente">${svg(IC.next)}</button></div>
   <div class="ctl"><button class="btn" data-r=".75">0.75×</button><button class="btn on" data-r="1">1×</button><button class="btn" data-r="1.25">1.25×</button><button class="btn" id="loop">↻ Repetir frase</button></div></div>
-  <div class="right">${hid?'':`<div class="card tr" id="tr">${S.map((s,i)=>`<p data-i="${i}">${esc(s.t)}</p>`).join('')}</div>`}
+  <div class="right">${hid?'':`<div class="card nb" id="nb"><div class="nbh"><b>Mi cuaderno</b><span id="nbc"></span></div><div class="nbl" id="nbl"></div><p class="nbm" id="nbm" role="status"></p><div class="add"><input class="in" id="mi" maxlength="200" placeholder="Escribe una palabra o frase" aria-label="Palabra o frase" autocomplete="off" autocapitalize="off"><button class="ib dir" id="dr" aria-label="Cambiar dirección de traducción">⇄ EN→ES</button><button class="ib gold" id="ma" aria-label="Agregar">＋</button></div></div><div class="acts" style="margin-bottom:12px"><button class="btn" id="tt" aria-expanded="false">Ver texto completo</button></div><div class="card tr" id="tr" hidden>${S.map((s,i)=>`<p data-i="${i}">${esc(s.t)}</p>`).join('')}</div>`}
   <div class="acts"><button class="btn main" id="go">${hid?'Ir a las preguntas →':'Siguiente: sin texto →'}</button>${hid?'<button class="btn" id="bk">← Ver texto</button>':''}</div></div></div>`;
-  const a=new Audio(cur.src),pg=$('.pg'),st=$('#stage'),cv=$('#cv'),g=cv.getContext&&cv.getContext('2d'),cap=$('#cap'),tr=$('#tr'),sk=$('#sk');
+  const a=new Audio(cur.src),pg=$('.pg'),st=$('#stage'),cv=$('#cv'),g=cv.getContext&&cv.getContext('2d'),cap=$('#cap'),tr=$('#tr'),cont=$('#cont'),sk=$('#sk');
   a.preload='metadata';
-  let idx=-1,loop=false,drag=false,ac=null,an=null,data=null,raf=0;
+  let idx=-1,loop=false,drag=false,ac=null,an=null,data=null,raf=0,mark=()=>{};
   const fit=()=>{const r=st.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d||300;cv.height=r.height*d||300};fit();addEventListener('resize',fit);
   const boot=()=>{if(!ac){try{const AC=window.AudioContext||window.webkitAudioContext;ac=new AC();const s=ac.createMediaElementSource(a);an=ac.createAnalyser();an.fftSize=128;an.smoothingTimeConstant=.82;s.connect(an);an.connect(ac.destination);data=new Uint8Array(an.frequencyBinCount)}catch(e){an=null}}if(ac&&ac.state==='suspended')ac.resume()};
   const toggle=()=>{boot();a.paused?a.play():a.pause()};
-  const sync=()=>{const p=!a.paused;pg.classList.toggle('playing',p);$('#pp').innerHTML=svg(p?IC.pause:IC.play)};
+  const sync=()=>{const p=!a.paused;if(cont&&p)cont.hidden=true;pg.classList.toggle('playing',p);$('#pp').innerHTML=svg(p?IC.pause:IC.play)};
   a.onplay=a.onpause=a.onended=sync;
   a.onloadedmetadata=()=>{$('#td').textContent=fmt(a.duration)};
-  const show=k=>{idx=k;if(!hid){cap.innerHTML=`<span class="sn">${esc(S[k].t)}</span>`;cap.classList.remove('pop');void cap.offsetWidth;cap.classList.add('pop');
+  const show=k=>{idx=k;if(!hid){cap.innerHTML=`<span class="sn">${words(S[k].t)}</span>`;mark();cap.classList.remove('pop');void cap.offsetWidth;cap.classList.add('pop');
     tr.querySelectorAll('p').forEach((p,i)=>p.classList.toggle('now',i===k));const p=tr.children[k];tr.scrollTo({top:p.offsetTop-tr.clientHeight/2+p.clientHeight/2,behavior:'smooth'})}};
   const draw=t=>{
     raf=requestAnimationFrame(draw);
@@ -224,6 +278,33 @@ function phase(n){
   app.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{a.playbackRate=+b.dataset.r;app.querySelectorAll('[data-r]').forEach(x=>x.classList.toggle('on',x===b))});
   $('#loop').onclick=e=>{loop=!loop;e.currentTarget.classList.toggle('on',loop)};
   if(tr)tr.querySelectorAll('p').forEach((p,i)=>p.onclick=()=>{boot();a.currentTime=S[i].s;a.play()});
+  if(!hid){
+    const pid=cur.id,nbl=$('#nbl'),nbc=$('#nbc'),nbm=$('#nbm'),mi=$('#mi'),dr=$('#dr'),tt=$('#tt');let dir='en-es',tk=0;
+    mark=()=>{const s=new Set(getV(pid).map(x=>x.w.toLowerCase()));cap.querySelectorAll('.wd').forEach(b=>b.classList.toggle('sv',s.has(b.dataset.w.toLowerCase())))};
+    const renderNB=()=>{const L=getV(pid);nbc.textContent=L.length+(L.length===1?' palabra':' palabras');
+      nbl.innerHTML=L.length?L.slice().reverse().map(x=>entryHTML(x,true,pid)).join(''):'<p class="nbe">Toca una palabra de la frase amarilla.</p>';mark()};
+    const add=async(w,ctx,d)=>{
+      const L=getV(pid),ex=L.find(x=>x.w.toLowerCase()===w.toLowerCase()&&(x.dir||'en-es')===d);if(ex)return{x:ex,dup:true};
+      const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),w,tr:[],ctx,dir:d};L.push(x);setV(pid,L);pending.add(x.id);renderNB();
+      try{x.tr=await translate(w,d)}catch(e){x.tr=[]}
+      pending.delete(x.id);const L2=getV(pid),y=L2.find(z=>z.id===x.id);if(y){y.tr=x.tr;setV(pid,L2)}renderNB();return{x};
+    };
+    wire(nbl,renderNB);renderNB();
+    cap.onclick=async e=>{const b=e.target.closest('.wd');if(!b)return;a.pause();
+      const w=b.dataset.w,my=++tk,ctx=idx>-1?S[idx].t:'',say=h=>{if(my===tk)$('#cm').innerHTML=h};
+      cont.hidden=false;cont.innerHTML='<p id="cm" role="status"></p><button class="btn main" id="cn">Continuar ▶</button>';
+      $('#cn').onclick=()=>{cont.hidden=true;boot();a.play()};
+      say(`Traduciendo <b>${esc(w)}</b>…`);
+      const r=await add(w,ctx,'en-es');
+      say(r.x.tr.length?`<b>${esc(w)}</b> → ${r.x.tr.map(esc).join(' · ')}<i>${r.dup?'Ya estaba en tu cuaderno.':'Guardada en tu cuaderno.'} Revisa la frase: una palabra suelta puede cambiar de sentido.</i>`:`<b>${esc(w)}</b> quedó guardada, pero no pude traducirla ahora (sin conexión o límite diario). Escribe tú la traducción en el cuaderno.`);
+    };
+    dr.onclick=()=>{dir=dir==='en-es'?'es-en':'en-es';dr.textContent='⇄ '+(dir==='en-es'?'EN→ES':'ES→EN')};
+    const manual=async()=>{const v=mi.value.trim();if(!v)return;mi.value='';nbm.textContent='';
+      const r=await add(v,'',dir);if(!r.x.tr.length&&!r.dup)nbm.textContent='No pude traducir ahora (sin conexión o límite diario). Guardé la entrada: escribe tú la traducción.'};
+    $('#ma').onclick=manual;mi.onkeydown=e=>{if(e.key==='Enter')manual()};
+    tt.onclick=()=>{const open=tr.hidden;tr.hidden=!open;tt.textContent=open?'Ocultar texto completo':'Ver texto completo';tt.setAttribute('aria-expanded',open);
+      if(open&&idx>-1){const p=tr.children[idx];tr.scrollTo({top:p.offsetTop-tr.clientHeight/2+p.clientHeight/2})}};
+  }
   $('#go').onclick=()=>phase(n+1);if($('#bk'))$('#bk').onclick=()=>phase(1);
 }
 
