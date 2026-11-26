@@ -33,5 +33,47 @@
   "level": "C1",
   "desc": "Por qué hacer varias cosas a la vez no funciona como creemos.",
   "dur": "1:26"
+ },
+ {
+  "id": "a1-little-sister",
+  "title": "My Little Sister Learns to Speak",
+  "level": "A1",
+  "desc": "Cómo aprende a hablar una niña: escuchar, repetir y jugar.",
+  "dur": "0:38"
+ },
+ {
+  "id": "a1-right-now",
+  "title": "Right Now",
+  "level": "A1",
+  "desc": "Alguien cuenta lo que hace en este momento (presente continuo).",
+  "dur": "0:32"
+ },
+ {
+  "id": "a1-my-hobbies",
+  "title": "My Hobbies",
+  "level": "A1",
+  "desc": "Tres pasatiempos y por qué me gustan.",
+  "dur": "0:34"
+ },
+ {
+  "id": "b1-everything-went-wrong",
+  "title": "The Day Everything Went Wrong",
+  "level": "B1",
+  "desc": "Una historia en pasado: un lunes que empezó mal y terminó bien.",
+  "dur": "1:05"
+ },
+ {
+  "id": "b1-learn-like-a-child",
+  "title": "Learn English Like a Child",
+  "level": "B1",
+  "desc": "Qué dice la ciencia sobre cómo aprenden los niños y qué puedes copiar.",
+  "dur": "1:13"
+ },
+ {
+  "id": "b1-nicaraguan-food",
+  "title": "Nicaraguan Food Explained",
+  "level": "B1",
+  "desc": "Platos y bebidas de Nicaragua explicados a un extranjero.",
+  "dur": "1:05"
  }
 ]
