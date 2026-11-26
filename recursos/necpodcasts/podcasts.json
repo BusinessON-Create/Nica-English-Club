@@ -3,18 +3,21 @@
   "id": "a1-meet-ana",
   "title": "Meet Ana",
   "level": "A1",
-  "desc": "Presentarse, familia y rutina diaria."
+  "desc": "Presentarse, familia y rutina diaria.",
+  "dur": "0:23"
  },
  {
   "id": "a2-weekend-city",
   "title": "A Weekend in the City",
   "level": "A2",
-  "desc": "Un fin de semana de viaje y compras (pasado simple)."
+  "desc": "Un fin de semana de viaje y compras (pasado simple).",
+  "dur": "0:39"
  },
  {
   "id": "b1-ordering-online",
   "title": "Ordering Online from Abroad",
   "level": "B1",
-  "desc": "Cómo comprar en línea en otro país (consejos y detalles)."
+  "desc": "Cómo comprar en línea en otro país (consejos y detalles).",
+  "dur": "1:05"
  }
 ]
