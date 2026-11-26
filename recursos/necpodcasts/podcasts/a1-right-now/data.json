@@ -1,0 +1,212 @@
+{
+  "title": "Right Now",
+  "audio": "audio.mp3",
+  "quizSize": 5,
+  "sentences": [
+    {
+      "t": "Hello!",
+      "s": 0.11,
+      "e": 0.59
+    },
+    {
+      "t": "Right now, it is seven in the morning.",
+      "s": 0.91,
+      "e": 2.88
+    },
+    {
+      "t": "I am in my kitchen.",
+      "s": 3.24,
+      "e": 4.82
+    },
+    {
+      "t": "I am making breakfast.",
+      "s": 5.31,
+      "e": 6.72
+    },
+    {
+      "t": "I am cooking eggs.",
+      "s": 7.11,
+      "e": 8.03
+    },
+    {
+      "t": "I am making coffee too.",
+      "s": 8.54,
+      "e": 9.71
+    },
+    {
+      "t": "Oh no!",
+      "s": 10.13,
+      "e": 11.08
+    },
+    {
+      "t": "My cat is on the table.",
+      "s": 11.35,
+      "e": 12.85
+    },
+    {
+      "t": "She is eating my bread!",
+      "s": 13.02,
+      "e": 14.38
+    },
+    {
+      "t": "I am laughing.",
+      "s": 14.89,
+      "e": 15.8
+    },
+    {
+      "t": "She is looking at me.",
+      "s": 16.25,
+      "e": 17.21
+    },
+    {
+      "t": "She is not sorry.",
+      "s": 17.58,
+      "e": 18.8
+    },
+    {
+      "t": "Now I am drinking my coffee.",
+      "s": 19.36,
+      "e": 21.3
+    },
+    {
+      "t": "My brother is brushing his teeth.",
+      "s": 21.95,
+      "e": 23.48
+    },
+    {
+      "t": "My mother is looking for her keys.",
+      "s": 24.18,
+      "e": 26.14
+    },
+    {
+      "t": "We are all very busy.",
+      "s": 26.64,
+      "e": 28.2
+    },
+    {
+      "t": "But we are happy.",
+      "s": 28.54,
+      "e": 29.56
+    },
+    {
+      "t": "And you?",
+      "s": 30.01,
+      "e": 30.42
+    },
+    {
+      "t": "What are you doing right now?",
+      "s": 30.82,
+      "e": 31.9
+    }
+  ],
+  "questions": [
+    {
+      "q": "What time is it in the story?",
+      "o": [
+        "Seven in the morning",
+        "Eight in the morning",
+        "Seven at night"
+      ],
+      "a": 0
+    },
+    {
+      "q": "Where is the speaker?",
+      "o": [
+        "In the garden",
+        "In the living room",
+        "In the kitchen"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What is the speaker cooking?",
+      "o": [
+        "Pasta",
+        "Eggs",
+        "Rice"
+      ],
+      "a": 1
+    },
+    {
+      "q": "What does the speaker ask the listener at the end?",
+      "o": [
+        "What are you doing right now?",
+        "Do you like cats and dogs at home?",
+        "What time is it?"
+      ],
+      "a": 0
+    },
+    {
+      "q": "Where is the cat?",
+      "o": [
+        "Under the bed",
+        "On the sofa",
+        "On the table"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What is the cat eating?",
+      "o": [
+        "Eggs",
+        "Bread",
+        "Cheese"
+      ],
+      "a": 1
+    },
+    {
+      "q": "How does the speaker react to the cat?",
+      "o": [
+        "The speaker shouts",
+        "The speaker cries",
+        "The speaker laughs"
+      ],
+      "a": 2
+    },
+    {
+      "q": "How does the cat feel about what she did?",
+      "o": [
+        "She is not sorry",
+        "She is very sorry",
+        "She is afraid"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What is the speaker's brother doing?",
+      "o": [
+        "Making breakfast in the kitchen",
+        "Brushing his teeth",
+        "Watching TV"
+      ],
+      "a": 1
+    },
+    {
+      "q": "What is the speaker's mother looking for?",
+      "o": [
+        "Her keys",
+        "Her phone",
+        "Her glasses"
+      ],
+      "a": 0
+    },
+    {
+      "q": "How does the family feel at the end?",
+      "o": [
+        "Tired and a little angry",
+        "Bored and quiet",
+        "Very busy, but happy"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What is the speaker doing now?",
+      "o": [
+        "Eating bread",
+        "Drinking coffee",
+        "Washing the dishes"
+      ],
+      "a": 1
+    }
+  ]
+}

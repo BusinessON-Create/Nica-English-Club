@@ -1,0 +1,214 @@
+{
+  "title": "Nicaraguan Food Explained",
+  "audio": "audio.mp3",
+  "quizSize": 5,
+  "sentences": [
+    {
+      "t": "If you visit Nicaragua, there is one dish you must try first: gallo pinto.",
+      "s": 0.0,
+      "e": 5.07
+    },
+    {
+      "t": "It is a mix of rice and red beans fried together with onion and a little pepper.",
+      "s": 5.42,
+      "e": 9.79
+    },
+    {
+      "t": "Nicaraguans eat it for breakfast, lunch, and sometimes dinner, and nobody gets tired of it.",
+      "s": 10.13,
+      "e": 15.3
+    },
+    {
+      "t": "For a bigger meal, order a nacatamal on a Saturday morning.",
+      "s": 15.75,
+      "e": 19.8
+    },
+    {
+      "t": "It is a large corn dough pie, filled with pork, potatoes, rice, and spices, and wrapped in banana leaves.",
+      "s": 20.06,
+      "e": 26.55
+    },
+    {
+      "t": "Be careful, though.",
+      "s": 26.91,
+      "e": 27.85
+    },
+    {
+      "t": "One nacatamal is a full meal, and some people need a nap afterwards.",
+      "s": 28.18,
+      "e": 32.25
+    },
+    {
+      "t": "If you prefer something lighter, try vigorón, a popular street dish.",
+      "s": 32.77,
+      "e": 36.84
+    },
+    {
+      "t": "It has boiled yuca, crunchy pork skin, and a fresh cabbage salad, all served on a banana leaf.",
+      "s": 37.12,
+      "e": 42.77
+    },
+    {
+      "t": "To drink, try pinolillo, a traditional cold drink made from toasted corn and cocoa.",
+      "s": 43.29,
+      "e": 48.91
+    },
+    {
+      "t": "It is sweet and very refreshing on a hot day.",
+      "s": 49.24,
+      "e": 51.97
+    },
+    {
+      "t": "What I love most is that every dish has a story.",
+      "s": 52.39,
+      "e": 55.48
+    },
+    {
+      "t": "Many recipes come from our grandmothers, and they are always shared with family.",
+      "s": 55.77,
+      "e": 59.75
+    },
+    {
+      "t": "So when you visit, come hungry, ask questions, and let a local choose your next meal.",
+      "s": 60.09,
+      "e": 64.92
+    }
+  ],
+  "questions": [
+    {
+      "q": "Which dish does the speaker say you must try first?",
+      "o": [
+        "Gallo pinto",
+        "Nacatamal",
+        "Vigorón"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What is gallo pinto mainly made of?",
+      "o": [
+        "Rice and chicken",
+        "Rice and red beans",
+        "Corn and black beans"
+      ],
+      "a": 1
+    },
+    {
+      "q": "When do Nicaraguans eat gallo pinto?",
+      "o": [
+        "Only at breakfast",
+        "Only on Sundays",
+        "Breakfast, lunch, and sometimes dinner"
+      ],
+      "a": 2
+    },
+    {
+      "q": "When does the speaker suggest ordering a nacatamal?",
+      "o": [
+        "On a Saturday morning",
+        "On a Sunday evening after church",
+        "On a weekday at lunch"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What is inside a nacatamal?",
+      "o": [
+        "Chicken, beans, and cheese",
+        "Beef, yuca, and cabbage",
+        "Pork, potatoes, rice, and spices"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What is a nacatamal wrapped in?",
+      "o": [
+        "Dried corn husks",
+        "Banana leaves",
+        "Aluminum foil"
+      ],
+      "a": 1
+    },
+    {
+      "q": "Why might some people need a nap after a nacatamal?",
+      "o": [
+        "One nacatamal is a full meal",
+        "It has a lot of sugar",
+        "It is very spicy"
+      ],
+      "a": 0
+    },
+    {
+      "q": "Which dish does the speaker recommend for something lighter?",
+      "o": [
+        "Gallo pinto",
+        "Pinolillo",
+        "Vigorón"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What is the crunchy part of vigorón?",
+      "o": [
+        "Fried plantain",
+        "Pork skin",
+        "Toasted corn"
+      ],
+      "a": 1
+    },
+    {
+      "q": "What is boiled in vigorón?",
+      "o": [
+        "Yuca",
+        "Plantain",
+        "Potato"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What is pinolillo made from?",
+      "o": [
+        "Coffee and hot milk with sugar",
+        "Fruit and sugar",
+        "Toasted corn and cocoa"
+      ],
+      "a": 2
+    },
+    {
+      "q": "When is pinolillo especially refreshing?",
+      "o": [
+        "On a rainy night",
+        "On a hot day",
+        "After a big meal"
+      ],
+      "a": 1
+    },
+    {
+      "q": "Where do many recipes come from?",
+      "o": [
+        "The speaker's grandmothers",
+        "Famous chefs",
+        "Old restaurants"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What does the speaker love most about the dishes?",
+      "o": [
+        "Every dish is very cheap",
+        "Every dish is spicy",
+        "Every dish has a story"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What advice ends the talk?",
+      "o": [
+        "Cook all the dishes yourself at home",
+        "Let a local choose your next meal",
+        "Eat only street food"
+      ],
+      "a": 1
+    }
+  ]
+}

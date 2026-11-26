@@ -1,0 +1,234 @@
+{
+  "title": "The Day Everything Went Wrong",
+  "audio": "audio.mp3",
+  "quizSize": 5,
+  "sentences": [
+    {
+      "t": "Last Monday was the worst day of my year, and it started before I even opened my eyes.",
+      "s": 0.1,
+      "e": 6.02
+    },
+    {
+      "t": "My phone battery died during the night, so my alarm never rang.",
+      "s": 6.82,
+      "e": 10.0
+    },
+    {
+      "t": "When I finally woke up, I was already forty minutes late for work.",
+      "s": 10.5,
+      "e": 13.61
+    },
+    {
+      "t": "I jumped out of bed, grabbed my keys, and ran outside.",
+      "s": 14.18,
+      "e": 17.03
+    },
+    {
+      "t": "That was when I realized it was pouring rain, and my umbrella was still at the office.",
+      "s": 17.56,
+      "e": 21.43
+    },
+    {
+      "t": "I waited twenty minutes for the bus, and when it arrived, it was completely full.",
+      "s": 21.91,
+      "e": 25.92
+    },
+    {
+      "t": "So I walked, and by the time I reached the building, I was soaked from head to toe.",
+      "s": 26.27,
+      "e": 30.4
+    },
+    {
+      "t": "Then came the real disaster.",
+      "s": 30.91,
+      "e": 32.59
+    },
+    {
+      "t": "My boss was standing in the hall with an important client, and they were waiting for me to present the project.",
+      "s": 33.22,
+      "e": 37.96
+    },
+    {
+      "t": "I opened my laptop, and guess what?",
+      "s": 38.61,
+      "e": 40.41
+    },
+    {
+      "t": "The presentation was not there.",
+      "s": 40.77,
+      "e": 42.51
+    },
+    {
+      "t": "I had saved it on the computer I left at home.",
+      "s": 42.89,
+      "e": 44.79
+    },
+    {
+      "t": "For a moment, I wanted to disappear.",
+      "s": 45.4,
+      "e": 47.39
+    },
+    {
+      "t": "But then I took a deep breath and simply told them the truth.",
+      "s": 48.06,
+      "e": 50.87
+    },
+    {
+      "t": "To my surprise, the client laughed.",
+      "s": 51.51,
+      "e": 53.19
+    },
+    {
+      "t": "He said that he had once arrived at a meeting wearing two different shoes.",
+      "s": 53.7,
+      "e": 56.79
+    },
+    {
+      "t": "In the end, we talked for an hour without any slides, and they signed the contract.",
+      "s": 57.22,
+      "e": 61.04
+    },
+    {
+      "t": "Sometimes the worst days turn into the best stories.",
+      "s": 61.56,
+      "e": 64.37
+    }
+  ],
+  "questions": [
+    {
+      "q": "Why did the speaker's alarm never ring?",
+      "o": [
+        "The speaker forgot to set it",
+        "The phone battery died during the night",
+        "The phone fell and broke"
+      ],
+      "a": 1
+    },
+    {
+      "q": "How late was the speaker for work when waking up?",
+      "o": [
+        "Forty minutes",
+        "Twenty minutes",
+        "One hour"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What was the weather like when the speaker ran outside?",
+      "o": [
+        "It was extremely windy",
+        "It was snowing hard",
+        "It was pouring rain"
+      ],
+      "a": 2
+    },
+    {
+      "q": "Where was the speaker's umbrella?",
+      "o": [
+        "At the office",
+        "At home",
+        "On the bus"
+      ],
+      "a": 0
+    },
+    {
+      "q": "How long did the speaker wait for the bus?",
+      "o": [
+        "Forty-five minutes",
+        "Twenty minutes",
+        "Ten minutes"
+      ],
+      "a": 1
+    },
+    {
+      "q": "Why did the speaker end up walking?",
+      "o": [
+        "The bus never came",
+        "The speaker preferred to walk",
+        "The bus was completely full"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What state was the speaker in when reaching the building?",
+      "o": [
+        "Out of breath and sweating",
+        "Soaked from head to toe",
+        "Covered in mud"
+      ],
+      "a": 1
+    },
+    {
+      "q": "Who was waiting in the hall?",
+      "o": [
+        "The boss and an important client",
+        "The boss and a coworker",
+        "Two important clients"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What were they waiting for the speaker to do?",
+      "o": [
+        "Sign the final contract",
+        "Order lunch for everyone",
+        "Present the project"
+      ],
+      "a": 2
+    },
+    {
+      "q": "Where had the speaker saved the presentation?",
+      "o": [
+        "On a USB drive",
+        "On the computer left at home",
+        "In an email"
+      ],
+      "a": 1
+    },
+    {
+      "q": "What did the speaker do after wanting to disappear?",
+      "o": [
+        "Told them the truth",
+        "Made up a long excuse",
+        "Left the room quietly"
+      ],
+      "a": 0
+    },
+    {
+      "q": "How did the client react?",
+      "o": [
+        "He got angry",
+        "He left the room",
+        "He laughed"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What story did the client tell?",
+      "o": [
+        "He once lost his phone before a meeting",
+        "He once wore two different shoes to a meeting",
+        "He once missed a flight to a meeting"
+      ],
+      "a": 1
+    },
+    {
+      "q": "How long did they talk, and what did they not use?",
+      "o": [
+        "Twenty minutes, without a laptop",
+        "Two hours, without the client",
+        "An hour, without any slides"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What was the final result of the meeting?",
+      "o": [
+        "They signed the contract",
+        "They canceled the project",
+        "They postponed the meeting"
+      ],
+      "a": 0
+    }
+  ]
+}

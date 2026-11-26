@@ -1,0 +1,229 @@
+{
+  "title": "Learn English Like a Child",
+  "audio": "audio.mp3",
+  "quizSize": 5,
+  "sentences": [
+    {
+      "t": "Have you ever wondered how a child learns to speak without a single grammar lesson?",
+      "s": 0.15,
+      "e": 5.18
+    },
+    {
+      "t": "Researchers say the answer is simple: children listen a lot, long before they say their first word.",
+      "s": 5.58,
+      "e": 11.75
+    },
+    {
+      "t": "By the age of one, they already recognize many common words and the rhythm of their language.",
+      "s": 12.21,
+      "e": 17.21
+    },
+    {
+      "t": "Then they start repeating.",
+      "s": 17.57,
+      "e": 19.14
+    },
+    {
+      "t": "They make mistakes, such as saying \"I goed\" instead of \"I went\", but adults rarely correct them harshly.",
+      "s": 19.51,
+      "e": 25.91
+    },
+    {
+      "t": "Instead, they smile and say the right word naturally.",
+      "s": 26.29,
+      "e": 29.51
+    },
+    {
+      "t": "This is important, because fear of mistakes is one of the biggest obstacles for adult learners.",
+      "s": 29.9,
+      "e": 35.68
+    },
+    {
+      "t": "Children do not feel embarrassed, so they keep trying.",
+      "s": 36.07,
+      "e": 39.03
+    },
+    {
+      "t": "Another key factor is repetition.",
+      "s": 39.43,
+      "e": 41.44
+    },
+    {
+      "t": "A child hears the same song or story dozens of times, and each time the language sinks in a little deeper.",
+      "s": 41.82,
+      "e": 48.53
+    },
+    {
+      "t": "So what can you do?",
+      "s": 48.99,
+      "e": 49.83
+    },
+    {
+      "t": "First, listen every day, even if you do not understand everything.",
+      "s": 50.28,
+      "e": 54.09
+    },
+    {
+      "t": "Second, repeat out loud, just like a child would.",
+      "s": 54.59,
+      "e": 57.4
+    },
+    {
+      "t": "Third, give yourself permission to make mistakes.",
+      "s": 57.89,
+      "e": 60.63
+    },
+    {
+      "t": "They are not failures; they are proof that you are learning.",
+      "s": 61.16,
+      "e": 64.36
+    },
+    {
+      "t": "Science cannot make you a child again, but it can show you a better way to learn.",
+      "s": 64.86,
+      "e": 69.19
+    },
+    {
+      "t": "Be patient, be curious, and keep playing with the language.",
+      "s": 69.52,
+      "e": 73.24
+    }
+  ],
+  "questions": [
+    {
+      "q": "What does the talk begin by asking about?",
+      "o": [
+        "Why adults forget new words",
+        "How many words a baby can say",
+        "How a child learns to speak without grammar lessons"
+      ],
+      "a": 2
+    },
+    {
+      "q": "Who says the answer is simple?",
+      "o": [
+        "Researchers",
+        "Language teachers",
+        "Parents"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What do children do a lot before saying their first word?",
+      "o": [
+        "They sing songs",
+        "They listen",
+        "They repeat"
+      ],
+      "a": 1
+    },
+    {
+      "q": "What do one-year-olds already recognize?",
+      "o": [
+        "Common words and the rhythm of their language",
+        "Whole sentences and songs",
+        "Letters and numbers"
+      ],
+      "a": 0
+    },
+    {
+      "q": "Which mistake does the speaker give as an example?",
+      "o": [
+        "Saying \"I runned\"",
+        "Saying \"I eated\"",
+        "Saying \"I goed\""
+      ],
+      "a": 2
+    },
+    {
+      "q": "How do adults usually react to a child's mistakes?",
+      "o": [
+        "They explain the grammar rule",
+        "They smile and say the right word",
+        "They stay silent"
+      ],
+      "a": 1
+    },
+    {
+      "q": "What is one of the biggest obstacles for adult learners?",
+      "o": [
+        "Fear of mistakes",
+        "Not enough time",
+        "Difficult grammar"
+      ],
+      "a": 0
+    },
+    {
+      "q": "Why do children keep trying?",
+      "o": [
+        "They are given small rewards every day",
+        "They want to please adults",
+        "They do not feel embarrassed"
+      ],
+      "a": 2
+    },
+    {
+      "q": "How many times does a child hear the same song or story?",
+      "o": [
+        "Two or three times",
+        "Dozens of times",
+        "Only once"
+      ],
+      "a": 1
+    },
+    {
+      "q": "What is the first tip the speaker gives?",
+      "o": [
+        "Repeat out loud",
+        "Study grammar rules daily",
+        "Listen every day"
+      ],
+      "a": 2
+    },
+    {
+      "q": "How should you repeat, according to the second tip?",
+      "o": [
+        "Out loud",
+        "In writing",
+        "In your head"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What is the third tip?",
+      "o": [
+        "Find a native teacher",
+        "Give yourself permission to make mistakes",
+        "Learn ten words a day"
+      ],
+      "a": 1
+    },
+    {
+      "q": "According to the speaker, what are mistakes?",
+      "o": [
+        "Signs of failure",
+        "Bad habits",
+        "Proof that you are learning"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What can science do for adult learners?",
+      "o": [
+        "Show a better way to learn",
+        "Make them children again",
+        "Remove their fear of mistakes"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What does the speaker say to keep doing at the end?",
+      "o": [
+        "Reading a new book every day",
+        "Playing with the language",
+        "Taking exams"
+      ],
+      "a": 1
+    }
+  ]
+}

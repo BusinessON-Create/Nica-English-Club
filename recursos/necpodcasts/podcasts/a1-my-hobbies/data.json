@@ -1,0 +1,207 @@
+{
+  "title": "My Hobbies",
+  "audio": "audio.mp3",
+  "quizSize": 5,
+  "sentences": [
+    {
+      "t": "I have three hobbies.",
+      "s": 0.15,
+      "e": 1.21
+    },
+    {
+      "t": "Can you guess them?",
+      "s": 1.64,
+      "e": 2.32
+    },
+    {
+      "t": "My first hobby is cooking.",
+      "s": 2.81,
+      "e": 4.4
+    },
+    {
+      "t": "I cook on Sundays.",
+      "s": 4.7,
+      "e": 5.58
+    },
+    {
+      "t": "I make pasta for my family.",
+      "s": 6.0,
+      "e": 7.54
+    },
+    {
+      "t": "My second hobby is dancing.",
+      "s": 8.06,
+      "e": 9.95
+    },
+    {
+      "t": "I dance in my room.",
+      "s": 10.24,
+      "e": 11.15
+    },
+    {
+      "t": "My dog watches me.",
+      "s": 11.5,
+      "e": 12.65
+    },
+    {
+      "t": "He does not like my style!",
+      "s": 12.97,
+      "e": 14.48
+    },
+    {
+      "t": "My third hobby is reading.",
+      "s": 15.01,
+      "e": 16.63
+    },
+    {
+      "t": "I read before I sleep.",
+      "s": 17.03,
+      "e": 18.02
+    },
+    {
+      "t": "I like adventure books.",
+      "s": 18.51,
+      "e": 19.65
+    },
+    {
+      "t": "I like cooking because it is delicious.",
+      "s": 20.3,
+      "e": 22.85
+    },
+    {
+      "t": "I like dancing because it is fun.",
+      "s": 23.43,
+      "e": 25.58
+    },
+    {
+      "t": "I like reading because it is quiet.",
+      "s": 26.02,
+      "e": 28.17
+    },
+    {
+      "t": "Hobbies make me happy.",
+      "s": 28.86,
+      "e": 30.25
+    },
+    {
+      "t": "They make my week better.",
+      "s": 30.59,
+      "e": 31.59
+    },
+    {
+      "t": "Now tell me, what are your hobbies?",
+      "s": 32.04,
+      "e": 33.67
+    }
+  ],
+  "questions": [
+    {
+      "q": "How many hobbies does the speaker have?",
+      "o": [
+        "Two",
+        "Four",
+        "Three"
+      ],
+      "a": 2
+    },
+    {
+      "q": "When does the speaker cook?",
+      "o": [
+        "On Sundays",
+        "On Saturdays",
+        "Every morning"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What does the speaker make for the family?",
+      "o": [
+        "Pizza",
+        "Pasta",
+        "Soup"
+      ],
+      "a": 1
+    },
+    {
+      "q": "Where does the speaker dance?",
+      "o": [
+        "In the kitchen",
+        "At a club",
+        "In my room"
+      ],
+      "a": 2
+    },
+    {
+      "q": "Who watches the speaker dance?",
+      "o": [
+        "The dog",
+        "The cat",
+        "The brother"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What does the dog think of the speaker's style?",
+      "o": [
+        "He loves it a lot",
+        "He does not like it",
+        "He falls asleep on the bed"
+      ],
+      "a": 1
+    },
+    {
+      "q": "When does the speaker read?",
+      "o": [
+        "Before sleeping",
+        "In the morning before work",
+        "On the bus"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What kind of books does the speaker like?",
+      "o": [
+        "Love stories and poems",
+        "Science books",
+        "Adventure books"
+      ],
+      "a": 2
+    },
+    {
+      "q": "Why does the speaker like dancing?",
+      "o": [
+        "Because it is quiet",
+        "Because it is fun",
+        "Because it is delicious"
+      ],
+      "a": 1
+    },
+    {
+      "q": "Why does the speaker like reading?",
+      "o": [
+        "Because it is fun",
+        "Because it is delicious",
+        "Because it is quiet"
+      ],
+      "a": 2
+    },
+    {
+      "q": "What do hobbies do for the speaker's week?",
+      "o": [
+        "They make it better",
+        "They make it longer",
+        "They make it busier"
+      ],
+      "a": 0
+    },
+    {
+      "q": "What does the speaker ask at the end?",
+      "o": [
+        "What is your favorite food?",
+        "What are your hobbies?",
+        "Do you have a dog?"
+      ],
+      "a": 1
+    }
+  ]
+}
